@@ -28,94 +28,87 @@ export const getNavData = app => [
         icon: 'form',
         children: [
           {
-            name: '基础表单',
+            name: '普通用户',
             path: 'basic-form',
             component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
           },
           {
-            name: '分步表单',
+            name: '企业用户',
             path: 'step-form',
             component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm')),
             children: [
               {
                 path: 'confirm',
                 component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
-              },
-              {
-                path: 'result',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step3')),
-              },
+              }
             ],
-          },
-          {
-            name: '高级表单',
-            path: 'advanced-form',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
-          },
+          }
         ],
       },
       {
         name: '设备查询',
-        path: 'search',
+        path: 'basic',
         icon: 'form',
+        component: dynamicWrapper(app, ['profile'], () => import('../routes/Profile/BasicProfile')),
         children: [
-          {
-            name: '基础表单',
-            path: 'basic-form',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
-          },
-          {
-            name: '分步表单',
-            path: 'step-form',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm')),
-            children: [
-              {
-                path: 'confirm',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
-              },
-              {
-                path: 'result',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step3')),
-              },
-            ],
-          },
-          {
-            name: '高级表单',
-            path: 'advanced-form',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
-          },
+          // {
+          //   name: '基础表单',
+          //   path: 'basic-form',
+          //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
+          // },
+          // {
+          //   name: '分步表单',
+          //   path: 'step-form',
+          //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm')),
+          //   children: [
+          //     {
+          //       path: 'confirm',
+          //       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
+          //     },
+          //     {
+          //       path: 'result',
+          //       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step3')),
+          //     },
+          //   ],
+          // },
+          // {
+          //   name: '高级表单',
+          //   path: 'advanced-form',
+          //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
+          // },
         ],
       },
       {
         name: '账户管理',
-        path: 'setting',
+        path: 'advanced-form',
         icon: 'form',
+        component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
         children: [
-          {
-            name: '基础表单',
-            path: 'basic-form',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
-          },
-          {
-            name: '分步表单',
-            path: 'step-form',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm')),
-            children: [
-              {
-                path: 'confirm',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
-              },
-              {
-                path: 'result',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step3')),
-              },
-            ],
-          },
-          {
-            name: '高级表单',
-            path: 'advanced-form',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
-          },
+          // {
+          //   name: '基础表单',
+          //   path: 'basic-form',
+          //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
+          // },
+          // {
+          //   name: '分步表单',
+          //   path: 'step-form',
+          //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm')),
+          //   children: [
+          //     {
+          //       path: 'confirm',
+          //       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
+          //     },
+          //     {
+          //       path: 'result',
+          //       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step3')),
+          //     },
+          //   ],
+          // },
+          // {
+          //   name: '高级表单',
+          //   path: 'advanced-form',
+          //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
+          // },
         ],
       },
       // {

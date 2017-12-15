@@ -35,9 +35,9 @@ export default class CompanyUserList extends React.Component {
             {
                 title: '名称',
                 dataIndex: 'name',
-                // render: (text, record, index) => {
-                //     <Link to="/userManage/step-form">{text}</Link>
-                // },
+                render: text => {
+                    return <Link to="/userManage/company-user-detail">{text}</Link>
+                },
             },
             {
                 title: '联系方式',

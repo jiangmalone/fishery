@@ -45,12 +45,11 @@ export const getNavData = app => [
             name: '企业用户',
             path: 'company-user',
             component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
-            children: [
-              {
-                path: 'confirm',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
-              }
-            ],
+          },
+          {
+            // name: '企业用户',
+            path: 'company-user-detail',
+            component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserDetail')),
           },
           {
             name: '塘口管理',
@@ -71,18 +70,35 @@ export const getNavData = app => [
       {
         name: '设备查询',
         path: 'basic',
-        icon: 'form',
+        icon: 'bars',
         component: dynamicWrapper(app, ['profile'], () => import('../routes/Profile/BasicProfile')),
 
       },
       {
         name: '账户管理',
         path: 'advanced-form',
-        icon: 'form',
+        icon: 'user',
         component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
 
       },
-    ],
+      {
+        // name: '设备相关跳转',
+        path: 'equipment',
+        children: [
+          {
+            // name: '设备管理',
+            path: 'equipment-management',
+            component: dynamicWrapper(app, [], () => import('../routes/Equipment/EquipmentManagement')),
+          },
+          {
+            // name: '设备详情',
+            path: 'equipment-detail',
+            component: dynamicWrapper(app, [], () => import('../routes/Equipment/EquipmentDetail')),
+
+          }
+        ]
+      }
+    ]
   },
   {
     component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),

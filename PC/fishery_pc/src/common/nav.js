@@ -30,15 +30,12 @@ export const getNavData = app => [
           {
             name: '普通用户',
             path: 'common-user',
-            // 
             children: [
               {
-                // name: '普通用户',
                 path: '',
                 component: dynamicWrapper(app, ['commonuser'], () => import('../routes/CommonUser/Index')),
               },
               {
-                // name: '普通用户',
                 path: ':id',
                 component: dynamicWrapper(app, ['commonuser'], () => import('../routes/CommonUser/UserInfo')),
               },
@@ -56,13 +53,16 @@ export const getNavData = app => [
             ],
           },
           {
-            name: '',
-            path: 'pond',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
+            name: '塘口管理',
+            path: 'pondManage',
+            
             children: [
               {
-                path: 'confirm',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
+                path: '',
+                component: dynamicWrapper(app, ['commonuser'], () => import('../routes/pondManage/Index')),
+              },{
+                path: ':id',
+                component: dynamicWrapper(app, ['commonuser'], () => import('../routes/pondManage/Detail')),
               }
             ],
           }
@@ -82,23 +82,6 @@ export const getNavData = app => [
         component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
 
       },
-      // {
-      //   // name: '设备相关跳转',
-      //   path: 'equipment',
-      //   children: [
-      //     {
-      //       // name: '设备管理',
-      //       path: 'equipment-management',
-      //       component: dynamicWrapper(app, ['form'], () => import('../routes/Equipment/EquipmentManagement')),
-      //     },
-      //     {
-      //       // name: '设备详情',
-      //       path: 'equipment-detail',
-      //       component: dynamicWrapper(app, ['form'], () => import('../routes/Equipment/EquipmentDetail')),
-
-      //     }
-      //   ],
-      // },
     ],
   },
   {

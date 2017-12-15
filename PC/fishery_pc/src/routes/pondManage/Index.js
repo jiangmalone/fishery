@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col, Input, Button } from 'antd'
-import {Link} from 'react-router-dom'
+import { Table, Card, Row, Col, Input, Button,Popconfirm } from 'antd'
+import { Link } from 'react-router-dom'
 
 const Search = Input.Search;
 @connect(state => ({
@@ -23,7 +23,6 @@ class UserList extends PureComponent {
     }
 
     render() {
-        console.log(this.props)
         const { list, loading } = this.props;
 
         const columns = [{
@@ -34,42 +33,58 @@ class UserList extends PureComponent {
                 return <span>{index + 1}</span>
             }
         }, {
-            title: '名称',
+            title: '塘口名称',
             dataIndex: 'owner',
             key: 'owner',
-            render: (text,record,index)=>{
-                return <Link to={`common-user/${index}`}>{text}</Link>
+            render: (text, record, index) => {
+                return <Link to={`pondManage/${index}`}>{text}</Link>
             }
         }, {
-            title: '性别',
+            title: '面积（亩）',
             dataIndex: 'gender',
             key: 'gender',
         }, {
-            title: '联系方式',
+            title: '深度（m）',
             dataIndex: 'contact',
             key: 'contact',
         }, {
-            title: '养殖年限',
+            title: '品种',
             dataIndex: 'time',
             key: 'time',
         }, {
-            title: '联系地址',
+            title: '池塘水源',
             dataIndex: 'address',
             key: 'address',
         }, {
-            title: '创建时间',
+            title: '泥底厚度（cm）',
             key: 'createTime',
             dataIndex: 'createTime'
+        }, {
+            title: '塘口密度(kg/㎡)',
+            key: 'createTime1',
+            dataIndex: 'createTime1'
+        }, {
+            title: '操作',
+            dataIndex: 'keyword',
+            render: (text, record, index) => {
+                return <span>
+
+                    <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
+                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.account])}>
+                        <a href="javascript:void(0);">删除</a>
+                    </Popconfirm>
+                </span>
+            }
         }];
         return (
             <PageHeaderLayout>
                 <Card bordered={false}>
                     <Row style={{ marginBottom: '48px' }}>
-                        <Col>用户名称：<Search style={{ width: 200 }} enterButton="查询" /></Col>
+                        <Col>塘口名称：<Search style={{ width: 200 }} enterButton="查询" /></Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
-                        <Button onClick={this.showAddModal}>新建用户</Button>
-                        <Button style={{ marginLeft: '10px' }}>删除用户</Button>
+                        <Button onClick={this.showAddModal}>新增塘口</Button>
+                        <Button style={{ marginLeft: '10px' }}>删除塘口</Button>
                     </Row>
                     <Table loading={loading}
                         dataSource={this.props.list}

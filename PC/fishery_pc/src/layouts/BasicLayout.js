@@ -169,15 +169,15 @@ class BasicLayout extends React.PureComponent {
     });
   }
   getPageTitle() {
-    const { location, getRouteData } = this.props;
-    const { pathname } = location;
-    let title = '渔管在线';
-    getRouteData('BasicLayout').forEach((item) => {
-      if (item.path === pathname) {
-        title = `${item.name} - 渔管在线`;
-      }
-    });
-    return title;
+    // const { location, getRouteData } = this.props;
+    // const { pathname } = location;
+    // let title = '渔管在线';
+    // getRouteData('BasicLayout').forEach((item) => {
+    //   if (item.path === pathname) {
+    //     title = `${item.name} - 渔管在线`;
+    //   }
+    // });
+    return "渔管在线";
   }
   getNoticeData() {
     const { notices = [] } = this.props;

@@ -39,9 +39,9 @@ export default class EquipmentManagement extends React.Component {
             {
                 title: '设备编号',
                 dataIndex: 'number',
-                // render: (text, record, index) => {
-                //     <Link to="/userManage/step-form">{text}</Link>
-                // },
+                render: (text, record, index) => {
+                    return <Link to="/equipment/equipment-detail">{text}</Link>
+                },
             },
             {
                 title: '设备类型',
@@ -109,7 +109,7 @@ export default class EquipmentManagement extends React.Component {
                             <Button onClick={this.showAddModal}>
                                 新建设备
                             </Button>
-                            <Button className={styles.button}>删除设备</Button>
+                            <Button className={styles.deletebutton}>删除设备</Button>
                         </div>
                         <Table
                             loading={this.state.loading}

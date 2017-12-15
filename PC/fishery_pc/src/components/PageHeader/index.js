@@ -75,18 +75,21 @@ export default class PageHeader extends PureComponent {
     } else if (location && location.pathname) {
       const pathSnippets = location.pathname.split('/').filter(i => i);
       const extraBreadcrumbItems = pathSnippets.map((_, index) => {
+        
         const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
         const currentBreadcrumb = getBreadcrumb(breadcrumbNameMap, url);
         const isLinkable = (index !== pathSnippets.length - 1) && currentBreadcrumb.component;
-        return (
-          <Breadcrumb.Item key={url}>
-            {createElement(
-              isLinkable ? linkElement : 'span',
-              { [linkElement === 'a' ? 'href' : 'to']: url },
-              currentBreadcrumb.name || url,
-            )}
-          </Breadcrumb.Item>
-        );
+        if(currentBreadcrumb.name) {
+          return (
+            <Breadcrumb.Item key={url}>
+              {createElement(
+                isLinkable ? linkElement : 'span',
+                { [linkElement === 'a' ? 'href' : 'to']: url },
+                currentBreadcrumb.name,
+              )}
+            </Breadcrumb.Item>
+          );
+        }
       });
       const breadcrumbItems = [(
         <Breadcrumb.Item key="home">

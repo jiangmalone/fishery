@@ -29,13 +29,26 @@ export const getNavData = app => [
         children: [
           {
             name: '普通用户',
-            path: 'basic-form',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
+            path: 'common-user',
+            // 
+            children: [
+              {
+                // name: '普通用户',
+                path: '',
+                component: dynamicWrapper(app, ['commonuser'], () => import('../routes/CommonUser/Index')),
+              },
+              {
+                // name: '普通用户',
+                path: ':id',
+                component: dynamicWrapper(app, ['commonuser'], () => import('../routes/CommonUser/UserInfo')),
+              },
+            ]
           },
           {
             name: '企业用户',
             path: 'company-user',
             component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
+<<<<<<< HEAD
             // children: [
             //   {
             //     name: '企业用户',
@@ -49,6 +62,26 @@ export const getNavData = app => [
             path: 'company-user-detail',
             component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserDetail')),
           },
+=======
+            children: [
+              {
+                path: 'confirm',
+                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
+              }
+            ],
+          },
+          {
+            name: '',
+            path: 'pond',
+            component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
+            children: [
+              {
+                path: 'confirm',
+                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
+              }
+            ],
+          }
+>>>>>>> b733e56efa6345ec0a5ab3ef40cc3728dc4cf652
         ],
       },
       {
@@ -65,6 +98,7 @@ export const getNavData = app => [
         component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
 
       },
+<<<<<<< HEAD
       {
         // name: '设备相关跳转',
         path: 'equipment',
@@ -82,6 +116,25 @@ export const getNavData = app => [
           }
         ],
       },
+=======
+      // {
+      //   // name: '设备相关跳转',
+      //   path: 'equipment',
+      //   children: [
+      //     {
+      //       // name: '设备管理',
+      //       path: 'equipment-management',
+      //       component: dynamicWrapper(app, ['form'], () => import('../routes/Equipment/EquipmentManagement')),
+      //     },
+      //     {
+      //       // name: '设备详情',
+      //       path: 'equipment-detail',
+      //       component: dynamicWrapper(app, ['form'], () => import('../routes/Equipment/EquipmentDetail')),
+
+      //     }
+      //   ],
+      // },
+>>>>>>> b733e56efa6345ec0a5ab3ef40cc3728dc4cf652
     ],
   },
   {

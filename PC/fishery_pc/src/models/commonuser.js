@@ -6,6 +6,7 @@ export default {
   state: {
     list: [],
     loading: false,
+    pagination:{}
   },
 
   effects: {
@@ -31,6 +32,10 @@ export default {
       return {
         ...state,
         list: state.list.concat(action.payload),
+        pagination:{
+          total:state.list.concat(action.payload).length,
+          pageSize:10
+        } 
       };
     },
     changeLoading(state, action) {

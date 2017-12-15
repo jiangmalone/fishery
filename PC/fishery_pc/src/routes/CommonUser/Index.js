@@ -2,13 +2,15 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col,Input } from 'antd'
-import styles from './UserList.less';
-import { Button } from '../../../node_modules/_antd@3.0.1@antd/lib/radio';
+import { Table, Card, Row, Col, Input, Button } from 'antd'
+import UserInfo from './UserInfo';
+import {Link} from 'react-router-dom'
 
 const Search = Input.Search;
 @connect(state => ({
-    list: state.list,
+    list: state.commonUser.list,
+    loading: state.commonUser.loading,
+    pagination: state.commonUser.pagination
 }))
 
 class UserList extends PureComponent {
@@ -16,24 +18,15 @@ class UserList extends PureComponent {
         this.props.dispatch({
             type: 'commonUser/fetch',
             payload: {
-                count: 5,
+                count: 10,
             },
         });
     }
 
-    componentWillReceiveProps(newProps) {
-        console.log(newProps.list)
-    }
-
     render() {
         console.log(this.props)
-        const { list: { list, loading } } = this.props;
-        const paginationProps = {
-            showSizeChanger: true,
-            showQuickJumper: true,
-            pageSize: 5,
-            total: 50,
-        };
+        const { list, loading } = this.props;
+
         const columns = [{
             title: '序号',
             dataIndex: 'index',
@@ -43,8 +36,11 @@ class UserList extends PureComponent {
             }
         }, {
             title: '名称',
-            dataIndex: 'name',
-            key: 'name',
+            dataIndex: 'owner',
+            key: 'owner',
+            render: (text,record,index)=>{
+                return <Link to={`common-user/${index}`}>{text}</Link>
+            }
         }, {
             title: '性别',
             dataIndex: 'gender',
@@ -68,17 +64,23 @@ class UserList extends PureComponent {
         }];
         return (
             <PageHeaderLayout>
-                <Card>
-                    <Row style={{marginBottom:'30px'}}>
-                        <Col>用户名称：<Search style={{ width: 200 }}  enterButton="查询" /></Col>  
+                <Card bordered={false}>
+                    <Row style={{ marginBottom: '48px' }}>
+                        <Col>用户名称：<Search style={{ width: 200 }} enterButton="查询" /></Col>
+                    </Row>
+                    <Row style={{ marginBottom: '15px' }}>
+                        <Button onClick={this.showAddModal}>新建用户</Button>
+                        <Button style={{ marginLeft: '10px' }}>删除用户</Button>
                     </Row>
                     <Table loading={loading}
                         dataSource={this.props.list}
                         columns={columns}
-                        pagination={paginationProps} />
+                        pagination={this.props.pagination}
+                        bordered
+                    />
                 </Card>
             </PageHeaderLayout>
-                );
+        );
     }
 }
 

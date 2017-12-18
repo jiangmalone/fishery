@@ -2,14 +2,15 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col, Input, Button,Popconfirm } from 'antd'
+import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd'
 import { Link } from 'react-router-dom'
-
+import Addmodal from './Addmodal.js'
 const Search = Input.Search;
 @connect(state => ({
     list: state.commonUser.list,
     loading: state.commonUser.loading,
-    pagination: state.commonUser.pagination
+    pagination: state.commonUser.pagination,
+    modalVisible: state.commonUser.modalVisible
 }))
 
 class UserList extends PureComponent {
@@ -22,9 +23,49 @@ class UserList extends PureComponent {
         });
     }
 
+    componentWillReceiveProps(newProps) {
+        console.log(newProps)
+    }
+
+    showAddModal = () => {
+        this.props.dispatch({
+            type: 'commonUser/changeModal',
+            payload: {
+                modalVisible: true,
+            },
+        });
+    }
+
     render() {
         const { list, loading } = this.props;
-
+        const modalProps = {
+            visible: this.props.modalVisible,
+            wrapClassName: 'vertical-center-modal',
+            onCancel: () => {
+                this.props.dispatch({
+                    type: 'commonUser/changeModal',
+                    payload: {
+                        modalVisible: false,
+                    },
+                });
+            },
+            onOk: () => {
+                this.props.dispatch({
+                    type: 'commonUser/changeModal',
+                    payload: {
+                        modalVisible: false,
+                    },
+                });
+            },
+        };
+        const rowSelection = {
+            onChange: (selectedRowKeys, selectedRows) => {
+                //selectedRowKeys  key-->id
+                this.setState({
+                    selectedRowKeys: selectedRowKeys
+                })
+            }
+        };
         const columns = [{
             title: '序号',
             dataIndex: 'index',
@@ -86,8 +127,10 @@ class UserList extends PureComponent {
                         <Button onClick={this.showAddModal}>新增塘口</Button>
                         <Button style={{ marginLeft: '10px' }}>删除塘口</Button>
                     </Row>
+                    <Addmodal {...modalProps} />
                     <Table loading={loading}
-                        dataSource={this.props.list}
+                        rowSelection={rowSelection}
+                        dataSource={list}
                         columns={columns}
                         pagination={this.props.pagination}
                         bordered

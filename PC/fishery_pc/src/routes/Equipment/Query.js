@@ -5,7 +5,6 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { Table, Card, Row, Col, Input, Button } from 'antd'
 import {Link} from 'react-router-dom'
 
-const Search = Input.Search;
 @connect(state => ({
     list: state.commonUser.list,
     loading: state.commonUser.loading,
@@ -26,46 +25,46 @@ class UserList extends PureComponent {
         console.log(this.props)
         const { list, loading } = this.props;
 
-        const columns = [{
-            title: '序号',
-            dataIndex: 'index',
-            key: 'index',
-            render: (text, record, index) => {
-                return <span>{index + 1}</span>
+        const columns = [
+            {
+                title: '序号',
+                dataIndex: 'index'
+            },
+            {
+                title: '设备编号',
+                dataIndex: 'number',
+                render: (text, record, index) => {
+                    return <Link to="/equipment/equipment-detail">{text}</Link>
+                },
+            },
+            {
+                title: '设备类型',
+                dataIndex: 'type',
+            },
+            {
+                title: '设备名称',
+                dataIndex: 'name',
+            },
+            {
+                title: '所属企业',
+                dataIndex: 'enterprise',
+            },
+            {
+                title: '设备状态',
+                dataIndex: 'state',
+            },
+            {
+                title: '创建时间',
+                dataIndex: 'createTime',
             }
-        }, {
-            title: '名称',
-            dataIndex: 'owner',
-            key: 'owner',
-            render: (text,record,index)=>{
-                return <Link to={`common-user/${index}`}>{text}</Link>
-            }
-        }, {
-            title: '性别',
-            dataIndex: 'gender',
-            key: 'gender',
-        }, {
-            title: '联系方式',
-            dataIndex: 'contact',
-            key: 'contact',
-        }, {
-            title: '养殖年限',
-            dataIndex: 'time',
-            key: 'time',
-        }, {
-            title: '联系地址',
-            dataIndex: 'address',
-            key: 'address',
-        }, {
-            title: '创建时间',
-            key: 'createTime',
-            dataIndex: 'createTime'
-        }];
+        ];
         return (
             <PageHeaderLayout>
                 <Card bordered={false}>
                     <Row style={{ marginBottom: '48px' }}>
-                        <Col>用户名称：<Search style={{ width: 200 }} enterButton="查询" /></Col>
+                        <Col>设备编号：<Input style={{ width: 200 }}/></Col>
+                        <Col>企业名称：<Input style={{ width: 200 }}/></Col>
+                        <Button onClick={this.showAddModal}>查询</Button>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
                         <Button onClick={this.showAddModal}>新建用户</Button>

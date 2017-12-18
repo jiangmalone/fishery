@@ -6,7 +6,8 @@ export default {
   state: {
     list: [],
     loading: false,
-    pagination:{}
+    pagination:{},
+    modalvisible:false,
   },
 
   effects: {
@@ -43,6 +44,10 @@ export default {
         ...state,
         loading: action.payload,
       };
+    },
+    changeModal(state, action) {
+      console.log(state,action)
+      return { ...state, ...action.payload };
     },
   },
 };

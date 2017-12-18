@@ -30,15 +30,12 @@ export const getNavData = app => [
           {
             name: '普通用户',
             path: 'common-user',
-            // 
             children: [
               {
-                // name: '普通用户',
                 path: '',
                 component: dynamicWrapper(app, ['commonuser'], () => import('../routes/CommonUser/Index')),
               },
               {
-                // name: '普通用户',
                 path: ':id',
                 component: dynamicWrapper(app, ['commonuser'], () => import('../routes/CommonUser/UserInfo')),
               },
@@ -66,13 +63,27 @@ export const getNavData = app => [
             path: 'company-user-detail',
             component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserDetail')),
           },
+          {
+            name: '塘口管理',
+            path: 'pondManage',
+            
+            children: [
+              {
+                path: '',
+                component: dynamicWrapper(app, ['commonuser'], () => import('../routes/pondManage/Index')),
+              },{
+                path: ':id',
+                component: dynamicWrapper(app, ['commonuser'], () => import('../routes/pondManage/Detail')),
+              }
+            ],
+          }
         ],
       },
       {
         name: '设备查询',
         path: 'basic',
         icon: 'bars',
-        component: dynamicWrapper(app, ['profile'], () => import('../routes/Profile/BasicProfile')),
+        component: dynamicWrapper(app, ['commonuser'], () => import('../routes/Equipment/Query')),
 
       },
       {

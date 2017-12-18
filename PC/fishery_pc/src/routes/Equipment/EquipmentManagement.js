@@ -40,7 +40,7 @@ export default class EquipmentManagement extends React.Component {
                 title: '设备编号',
                 dataIndex: 'number',
                 render: (text, record, index) => {
-                    return <Link to="/equipment/equipment-detail">{text}</Link>
+                    return <Link to={`equipment/${index}`}>{text}</Link>
                 },
             },
             {

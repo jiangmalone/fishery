@@ -32,7 +32,7 @@ export default class CompanyUserDetail extends React.Component {
                             <Link to=""><Button type="primary">管理塘口</Button></Link>
                         </Col>
                         <Col span={3}>
-                            <Link to="/equipment/equipment-management"><Button type="primary">管理设备</Button></Link>
+                            <Link to="/equipment"><Button type="primary">管理设备</Button></Link>
                         </Col>
                     </Row>
                 </Card>

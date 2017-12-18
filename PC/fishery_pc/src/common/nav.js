@@ -47,41 +47,25 @@ export const getNavData = app => [
           {
             name: '企业用户',
             path: 'company-user',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
-<<<<<<< HEAD
-            // children: [
-            //   {
-            //     name: '企业用户',
-            //     path: 'company-user-detail',
-            //     component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserDetail')),
-            //   },
-            // ],
+            // component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
+            children: [
+              {
+                path: '',
+                component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
+              },
+              {
+                // name: '企业用户',
+                path: ':id',
+                component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserDetail')),
+              },
+            ],
           },
+          
           {
             // name: '企业用户',
             path: 'company-user-detail',
             component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserDetail')),
           },
-=======
-            children: [
-              {
-                path: 'confirm',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
-              }
-            ],
-          },
-          {
-            name: '',
-            path: 'pond',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
-            children: [
-              {
-                path: 'confirm',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
-              }
-            ],
-          }
->>>>>>> b733e56efa6345ec0a5ab3ef40cc3728dc4cf652
         ],
       },
       {
@@ -93,48 +77,42 @@ export const getNavData = app => [
       },
       {
         name: '账户管理',
-        path: 'advanced-form',
+        path: 'account-management',
         icon: 'user',
-        component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
+        component: dynamicWrapper(app, [], () => import('../routes/AccountManagement/AccountManagement')),
 
       },
-<<<<<<< HEAD
       {
         // name: '设备相关跳转',
         path: 'equipment',
         children: [
           {
             // name: '设备管理',
-            path: 'equipment-management',
+            path: '',
             component: dynamicWrapper(app, [], () => import('../routes/Equipment/EquipmentManagement')),
           },
+          
           {
             // name: '设备详情',
-            path: 'equipment-detail',
+            path: ':id',
             component: dynamicWrapper(app, [], () => import('../routes/Equipment/EquipmentDetail')),
 
-          }
+          },
+
+          {
+            name: '水质曲线',
+            path: 'water-quality',
+            children: [
+              {
+                path: ":id",
+                component: dynamicWrapper(app, [], () => import('../routes/Equipment/WaterQualityCurve')),
+              }
+            ]
+
+          },
+          
         ],
       },
-=======
-      // {
-      //   // name: '设备相关跳转',
-      //   path: 'equipment',
-      //   children: [
-      //     {
-      //       // name: '设备管理',
-      //       path: 'equipment-management',
-      //       component: dynamicWrapper(app, ['form'], () => import('../routes/Equipment/EquipmentManagement')),
-      //     },
-      //     {
-      //       // name: '设备详情',
-      //       path: 'equipment-detail',
-      //       component: dynamicWrapper(app, ['form'], () => import('../routes/Equipment/EquipmentDetail')),
-
-      //     }
-      //   ],
-      // },
->>>>>>> b733e56efa6345ec0a5ab3ef40cc3728dc4cf652
     ],
   },
   {

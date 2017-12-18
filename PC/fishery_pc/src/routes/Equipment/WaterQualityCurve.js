@@ -3,8 +3,7 @@ import { connect } from 'dva';
 import { Link } from 'dva/router';
 import { Row, Col, Card, Input, Icon, Button, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-// import styles from "./companyUserDetail.less"
-export default class EquipmentDetail extends React.Component {
+export default class WaterQualityCurve extends React.Component {
 
     state={
         loading:false,  
@@ -59,7 +58,7 @@ export default class EquipmentDetail extends React.Component {
                         />
                     </Col>
                     <Col span={4} offset={2} style={{paddingTop: 40}}>
-                        <Link to={`/equipment/water-quality/${0}`}><Button size="large">水质曲线</Button></Link>
+                        <Button size="large">我日哦哦</Button>
                     </Col>
                 </Card>
             </PageHeaderLayout>

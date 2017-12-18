@@ -35,8 +35,8 @@ export default class CompanyUserList extends React.Component {
             {
                 title: '名称',
                 dataIndex: 'name',
-                render: text => {
-                    return <Link to="/userManage/company-user-detail">{text}</Link>
+                render: (text,redcord, index) => {
+                    return <Link to={`company-user/${index}`}>{text}</Link>
                 },
             },
             {

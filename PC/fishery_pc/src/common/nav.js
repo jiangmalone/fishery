@@ -71,7 +71,7 @@ export const getNavData = app => [
         name: '设备查询',
         path: 'basic',
         icon: 'bars',
-        component: dynamicWrapper(app, ['profile'], () => import('../routes/Profile/BasicProfile')),
+        component: dynamicWrapper(app, ['commonuser'], () => import('../routes/Equipment/Query')),
 
       },
       {

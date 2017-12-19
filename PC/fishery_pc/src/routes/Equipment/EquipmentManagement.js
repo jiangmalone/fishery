@@ -4,33 +4,67 @@ import { Link } from 'dva/router';
 import { Table, Row, Col, Card, Input, Icon, Button, InputNumber, Modal, message, Popconfirm } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from "./equipmentManagement.less"
+import update from 'immutability-helper'
 export default class EquipmentManagement extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             loading: false,
-            showAddModal: false
+            showAddModal: false,
+            rowSelection: [],
+            addForm: {
+                name: "",
+                number: "",
+                type: "",
+            }
         }
     }
-    state = {
-        loading: false,
-        showAddModal: false
-    }
-    
 
     showAddModal = () => {
-        console.log("showAddModal");
-        this.setState = ({ 
+        this.setState({ 
             showAddModal: true
-        },()=> {console.log(this.showAddModal)})
+        })
     }
 
     addCompany = () => {
-        console.log("addCompany");
+        const addForm = this.state.addForm;
+        if(!addForm.name) {
+            message.warn("请输入设备名称");
+        } else if (!addForm.number) {
+            message.warn("请输入设备编号");
+        } else if (!addForm.type) {
+            message.warn("请输入设备类型");
+        } else {
+            message.success("添加成功");
+            this.setState({
+                addForm: {
+                    name: "",
+                    number: "",
+                    type: "",
+                },
+                showAddModal: false,
+            })
+        }
+    }
+
+    onValueChange = (key, value) => {
+        if(key) {
+            this.setState({
+                addForm: update(this.state.addForm, { [key]: { $set: value } })
+            })
+        }
     }
 
     render() {
+        const rowSelection = {
+            onChange: (selectedRowKeys, selectedRows) => {
+                //selectedRowKeys  key-->id
+                this.setState({
+                    selectedRowKeys: selectedRowKeys
+                })
+            }
+        };
         const columns = [
             {
                 title: '序号',
@@ -113,6 +147,7 @@ export default class EquipmentManagement extends React.Component {
                         </div>
                         <Table
                             loading={this.state.loading}
+                            rowSelection={rowSelection}
                             dataSource={data}
                             columns={columns}
                             className={styles.table}
@@ -128,10 +163,26 @@ export default class EquipmentManagement extends React.Component {
                 >
                     <Row gutter={16} style={{ marginBottom: '10px' }}>
                         <Col span={8} style={{ textAlign: 'right' }}>
-                            名称 ：
+                            设备名称 ：
                                 </Col>
                         <Col span={8}>
-                            <Input  onChange={(e) => this.onValueChange('parkingLocation', e.target.value)} />
+                            <Input value={this.state.addForm.name}  onChange={(e) => this.onValueChange('name', e.target.value)} />
+                        </Col>
+                    </Row>
+                    <Row gutter={16} style={{ marginBottom: '10px' }}>
+                        <Col span={8} style={{ textAlign: 'right' }}>
+                            设备编号 ：
+                                </Col>
+                        <Col span={8}>
+                            <Input value={this.state.addForm.number}  onChange={(e) => this.onValueChange('number', e.target.value)} />
+                        </Col>
+                    </Row>
+                    <Row gutter={16} style={{ marginBottom: '10px' }}>
+                        <Col span={8} style={{ textAlign: 'right' }}>
+                            设备类型 ：
+                                </Col>
+                        <Col span={8}>
+                            <Input value={this.state.addForm.type}  onChange={(e) => this.onValueChange('type', e.target.value)} />
                         </Col>
                     </Row>
                 </Modal>

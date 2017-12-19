@@ -113,7 +113,7 @@ class TimelineChart extends Component {
     return (
       <div className={styles.timelineChart} style={{ height }}>
         <div>
-          { title && <h4>{title}</h4>}
+          { title && <h1>{title}</h1>}
           <div ref={this.handleRef} />
           <div id={this.sliderId} />
         </div>

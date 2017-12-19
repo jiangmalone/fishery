@@ -14,7 +14,7 @@ const formItemLayout = {
         sm: { span: 16 },
     },
 };
- function AddModal ({ visible, form, onOk, onCancel, wrapClassName }) {
+ function AddModal ({ visible, form, onOk, onCancel, wrapClassName,showMapModal}) {
     const children = [];
     const { getFieldDecorator } = form;
     for (let i = 10; i < 36; i++) {
@@ -43,7 +43,7 @@ const formItemLayout = {
             </FormItem>
             <FormItem label="塘口位置" {...formItemLayout} style={{ width: '100%' }}>
                 <Input style={{ width: 180 }} />&nbsp;
-                <i className="iconfont icon-address" style={{fontSize:'20px'}}></i>
+                <i className="iconfont icon-address" style={{fontSize:'20px',cursor:'pointer'}} onClick={()=>{showMapModal()}}></i>
             </FormItem>
             <FormItem label="深度" {...formItemLayout} style={{ width: '100%' }}>
                 <Input style={{ width: 200 }} addonAfter="m" />

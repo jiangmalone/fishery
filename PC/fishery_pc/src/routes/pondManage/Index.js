@@ -2,15 +2,18 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd'
-import { Link } from 'react-router-dom'
-import Addmodal from './Addmodal.js'
+import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd';
+import { Link } from 'react-router-dom';
+import Addmodal from './Addmodal.js';
+import Mapmoal from './MapModal.js';
+
 const Search = Input.Search;
 @connect(state => ({
     list: state.commonUser.list,
     loading: state.commonUser.loading,
     pagination: state.commonUser.pagination,
-    modalVisible: state.commonUser.modalVisible
+    modalVisible: state.commonUser.modalVisible,
+    mapVisible: state.commonUser.mapVisible
 }))
 
 class UserList extends PureComponent {
@@ -24,7 +27,7 @@ class UserList extends PureComponent {
     }
 
     componentWillReceiveProps(newProps) {
-        console.log(newProps)
+        // console.log(newProps)
     }
 
     showAddModal = () => {
@@ -49,11 +52,39 @@ class UserList extends PureComponent {
                     },
                 });
             },
+            showMapModal: () => {
+                this.props.dispatch({
+                    type: 'commonUser/changeModal',
+                    payload: {
+                        mapVisible: true,
+                    },
+                });
+            },
             onOk: () => {
                 this.props.dispatch({
                     type: 'commonUser/changeModal',
                     payload: {
                         modalVisible: false,
+                    },
+                });
+            }
+        };
+        const mapModalProps = {
+            visible: this.props.mapVisible,
+            wrapClassName: 'vertical-center-map',
+            onMapCancel: () => {
+                this.props.dispatch({
+                    type: 'commonUser/changeModal',
+                    payload: {
+                        mapVisible: false,
+                    },
+                });
+            },
+            onMapOk: () => {
+                this.props.dispatch({
+                    type: 'commonUser/changeModal',
+                    payload: {
+                        mapVisible: false,
                     },
                 });
             },
@@ -135,6 +166,7 @@ class UserList extends PureComponent {
                         pagination={this.props.pagination}
                         bordered
                     />
+                    <Mapmoal {...mapModalProps}/>
                 </Card>
             </PageHeaderLayout>
         );

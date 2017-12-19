@@ -28,6 +28,7 @@
     "g-cloud": "^1.0.2-beta",
     "g2": "^2.3.13",
     "g2-plugin-slider": "^1.2.1",
+    "immutability-helper": "^2.1.2",
     "lodash": "^4.17.4",
     "lodash-decorators": "^4.4.1",
     "lodash.clonedeep": "^4.5.0",
@@ -36,11 +37,11 @@
     "prop-types": "^15.5.10",
     "qs": "^6.5.0",
     "react": "^16.0.0",
+    "react-amap": "^1.2.0",
     "react-container-query": "^0.9.1",
     "react-document-title": "^2.0.3",
     "react-dom": "^16.0.0",
-    "react-fittext": "^1.0.0",
-    "immutability-helper": "^2.1.2"
+    "react-fittext": "^1.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",

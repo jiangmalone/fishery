@@ -8,6 +8,7 @@ export default {
     loading: false,
     pagination:{},
     modalvisible:false,
+    mapVisible:false
   },
 
   effects: {

@@ -13,7 +13,8 @@ const Search = Input.Search;
     loading: state.commonUser.loading,
     pagination: state.commonUser.pagination,
     modalVisible: state.commonUser.modalVisible,
-    mapVisible: state.commonUser.mapVisible
+    mapVisible: state.commonUser.mapVisible,
+    address: state.commonUser.address
 }))
 
 class UserList extends PureComponent {
@@ -44,6 +45,7 @@ class UserList extends PureComponent {
         const modalProps = {
             visible: this.props.modalVisible,
             wrapClassName: 'vertical-center-modal',
+            address:this.props.address,
             onCancel: () => {
                 this.props.dispatch({
                     type: 'commonUser/changeModal',
@@ -60,7 +62,7 @@ class UserList extends PureComponent {
                     },
                 });
             },
-            onOk: () => {
+            onOk: (address) => {
                 this.props.dispatch({
                     type: 'commonUser/changeModal',
                     payload: {
@@ -80,11 +82,12 @@ class UserList extends PureComponent {
                     },
                 });
             },
-            onMapOk: () => {
+            onMapOk: (address) => {
                 this.props.dispatch({
                     type: 'commonUser/changeModal',
                     payload: {
                         mapVisible: false,
+                        address:address
                     },
                 });
             },

@@ -56,7 +56,7 @@ export default class CompanyUserDetail extends React.Component {
             },
             {
                 title: '设备类型',
-                dataIndex: 'type',
+                dataIndex: 'type', 
             },
             {
                 title: '设备名称',

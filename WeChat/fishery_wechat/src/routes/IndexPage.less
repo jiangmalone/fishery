@@ -1,0 +1,137 @@
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+form,
+fieldset,
+legend,
+textarea,
+p,
+blockquote,
+th,
+td,
+section,
+article,
+aside,
+header,
+footer,
+nav,
+dialog,
+figure,
+hgroup,
+em,
+button,
+a,
+input {
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  outline: none;
+}
+.body-bac {
+    box-sizing:border-box;
+    -moz-box-sizing:border-box; 
+    -webkit-box-sizing:border-box; 
+    position: relative;
+    width: 100%;
+    padding-top: .88rem;
+    overflow: hidden;
+    color: #1e1e1e;
+    background: #f0f0f0;
+}
+
+.nav-bar-title{
+    position: fixed;
+    z-index: 1000;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box; 
+    -webkit-box-sizing:border-box; 
+    top:0;
+    width: 100%;
+    padding: 0 .22rem;
+    margin-bottom: 2px;
+    height: .86rem;
+    line-height: .86rem;
+    font-size: .32rem;
+    text-align: center;
+    background: #fff;
+    .back{
+        float: left;
+        width: .64rem;
+        height: 100%;
+        background-size: .2rem .35rem;
+    }
+    .scan{
+        float: right;
+        width: .64rem;
+        height: 100%;
+        font-size: .28rem;
+        // background: url('../../img/scan.png') no-repeat .2rem center;
+        // background-size:.44rem .42rem; 
+    }
+}
+
+.clear:after{
+    content:"";
+    height:0;
+    line-height:0;
+    display:block;
+    visibility:hidden;
+    clear:both
+}
+.clear {
+    zoom: 1
+}
+.star-comment {
+    position: relative;
+    .empty-star {
+        float: left;
+        width: .18rem;
+        height: .18rem;
+        margin-right: .075rem;
+        background-size: 100% 100%;
+        &.big {
+            width: .5rem;
+            height: .5rem;
+            margin-right: .28rem;
+        }
+    }
+    .top-star {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: .18rem;
+        overflow: hidden;
+    }   
+    .star {
+        float: left;
+        width: .18rem;
+        height: .18rem;
+        margin-right: .075rem;
+        background-size: 100% 100%; 
+        &.big {
+            width: .5rem;
+            height: .5rem;
+            margin-right: .28rem;
+        }
+    }
+}
+
+.empty-bac {
+    width: 4.21rem;
+    height: 5.07rem; margin: 0 auto;
+    background-size: 100% 100%;
+    margin-top: 1.5rem;
+}

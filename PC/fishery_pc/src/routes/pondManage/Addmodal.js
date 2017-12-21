@@ -42,9 +42,11 @@ const formItemLayout = {
             <FormItem label="面积" {...formItemLayout} style={{ width: '100%' }}>
                 <Input style={{ width: 200 }} addonAfter="亩" />
             </FormItem>
-            <FormItem label="塘口位置" {...formItemLayout} style={{ width: '100%' }}>
-                <i className="iconfont icon-address" style={{fontSize:'20px',cursor:'pointer'}} onClick={()=>{showMapModal()}}></i>
-                <span>{address?address.district+address.address+address.name:''}</span>&nbsp;
+            <FormItem label="塘口位置" {...formItemLayout} style={{ width: '100%' }} >
+            <div onClick={()=>{showMapModal()}} style={{cursor:'pointer'}}>
+                <span>{address?address.district+address.address+address.name:'(点击地图图标选取地理位置)'}</span>&nbsp;
+                <i className="iconfont icon-address" style={{fontSize:'20px',cursor:'pointer',color:address?'':'#40a9ff'}} ></i>
+           </div>
             </FormItem>
             <FormItem label="深度" {...formItemLayout} style={{ width: '100%' }}>
                 <Input style={{ width: 200 }} addonAfter="m" />

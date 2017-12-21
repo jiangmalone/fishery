@@ -1,0 +1,42 @@
+html, body, :global(#root) {
+  height: 100%;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.globalSpin {
+  width: 100%;
+  margin: 40px 0 !important;
+}
+
+:global(.vertical-center-modal) {
+  position: relative;
+  text-align: center;
+  :global(.ant-modal) {
+    display: inline-block;
+    vertical-align: middle;
+    top: 0;
+    text-align: left;
+  }
+}
+:global(.vertical-center-modal:before) {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  width: 0;
+}
+:global(.vertical-center-map) {
+  position: relative;
+  text-align: center;
+  :global(.ant-modal) {
+    display: inline-block;
+    vertical-align: middle;
+    top: 0;
+    text-align: left;
+  }
+}

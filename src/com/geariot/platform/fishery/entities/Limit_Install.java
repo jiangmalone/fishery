@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class LimitInstall {
+public class Limit_Install {
 
 	private int id;						//数据库记录Id(自增)
 	private float low_limit;			//溶氧下限

@@ -13,7 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class SensorData {
+public class Sensor_Data {
 
 	private int id;								//数据记录Id,自增
 	private float oxygen;						//溶氧量

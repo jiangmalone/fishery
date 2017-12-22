@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class FishCategory {
+public class Fish_Category {
 
 	private int id;						//鱼种Id,自增
 	private String fish_name;			//鱼名

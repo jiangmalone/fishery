@@ -3,7 +3,6 @@ import { connect } from 'dva';
 import { Link } from 'dva/router';
 import { Row, Col, Card, Input, Icon, Button, Table } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-// import styles from "./companyUserDetail.less"
 export default class EquipmentDetail extends React.Component {
 
     state={

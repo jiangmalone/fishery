@@ -8,9 +8,7 @@ import IndexPage from './routes/IndexPage'
 const App = () => (
     <div style={{height:'100%'}}>
         <Switch>
-            
             <Route exact path="/" component={IndexPage}/>
-           
             {/* <Route component={NotFound}/> */}
         </Switch>
     </div>

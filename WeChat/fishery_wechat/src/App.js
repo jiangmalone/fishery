@@ -10,7 +10,6 @@ import Login from './routes/Login/Login';
 const App = () => (
     <div style={{height:'100%'}}>
         <Switch>
-            
             <Route exact path="/" component={IndexPage}/>
            
             <Route exact path="/login" component={Login} />

@@ -19,22 +19,12 @@ public class PondService {
 	@Autowired
 	private PondDao pondDao;
 	
-	public Map<String, Object> test(){
-		List<String> list = new ArrayList<>();
-		list.add("鲫鱼");
-		list.add("刀鱼");
-		Pond pond = new Pond();
-		pond.setArea(20.0f);
-		pond.setDensity(1.2f);
-		pond.setDepth(15f);
-		pond.setLatitude(10.23548f);
-		pond.setLongitude(75.1234f);
-		pond.setName("nihao");
-		pond.setWater_source("changjiang");
-		pond.setAddress("南京小易信息");
-		pond.setFish_category(list);
-		pond.setSediment_thickness(0.5f);
-		pondDao.save(pond);
-		return RESCODE.SUCCESS.getJSONRES(pond);
+	public Map<String, Object> addPond(Pond pond){
+		if(pondDao.findPondByNameAndRelationId(pond.getName(), pond.getRelation())){
+			return RESCODE.POND_NAME_EXIST.getJSONRES();
+		}else{
+			pondDao.save(pond);
+			return RESCODE.SUCCESS.getJSONRES(pond);
+		}
 	}
 }

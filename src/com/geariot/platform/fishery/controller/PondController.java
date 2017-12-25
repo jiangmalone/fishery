@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.service.PondService;
 
 @RestController
@@ -18,7 +19,7 @@ public class PondController {
 	private PondService pondService;
 	
 	@RequestMapping(value = "/addPond" , method = RequestMethod.POST)
-	public Map<String,Object> testAddPond(){
-		return pondService.test();
+	public Map<String,Object> addPond(Pond pond){
+		return pondService.addPond(pond);
 	}
 }

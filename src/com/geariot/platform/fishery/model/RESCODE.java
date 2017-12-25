@@ -14,7 +14,7 @@ public enum RESCODE {
 	NOT_FOUND(2, "无该条记录"),
 	UPDATE_ERROR(3, "更新数据错误"), 
 	CREATE_ERROR(4, "存储数据错误"), 
-	DATE_FORMAT_ERROR(5, "日期格式错误"),
+	POND_NAME_EXIST(5, "该用户下塘口名称重复"),
 	DELETE_ERROR(6, "删除错误"), 
 	DUPLICATED_ERROR(7,"重复数据"),
 	FILE_ERROR(8, "上传文件错误"),

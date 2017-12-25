@@ -12,4 +12,6 @@ import com.geariot.platform.fishery.entities.Pond;
 public interface PondDao {
 	
 	void save(Pond pond);
+	
+	boolean findPondByNameAndRelationId(String name, String relation);
 }

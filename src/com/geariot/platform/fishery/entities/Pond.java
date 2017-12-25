@@ -7,11 +7,14 @@ package com.geariot.platform.fishery.entities;
 
 import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OrderColumn;
 
 @Entity
 public class Pond {
@@ -22,7 +25,7 @@ public class Pond {
 	private String address;				//塘口位置
 	private float longitude;			//塘口经度
 	private float latitude;				//塘口纬度
-	private List<String> fish_category;	//塘口鱼种
+	private List<String> fish_categorys;	//塘口鱼种
 	private String water_source;		//塘口水源
 	private float sediment_thickness;	//底泥厚度
 	private float depth;				//塘口深度
@@ -67,13 +70,6 @@ public class Pond {
 	public void setLatitude(float latitude) {
 		this.latitude = latitude;
 	}
-	@ElementCollection
-	public List<String> getFish_category() {
-		return fish_category;
-	}
-	public void setFish_category(List<String> fish_category) {
-		this.fish_category = fish_category;
-	}
 	public String getWater_source() {
 		return water_source;
 	}
@@ -104,4 +100,13 @@ public class Pond {
 	public void setRelation(String relation) {
 		this.relation = relation;
 	}
+	@ElementCollection(fetch = FetchType.LAZY , targetClass = String.class)
+	@CollectionTable(name = "pond_FishCate")
+	public List<String> getFish_categorys() {
+		return fish_categorys;
+	}
+	public void setFish_categorys(List<String> fish_categorys) {
+		this.fish_categorys = fish_categorys;
+	}
+	
 }

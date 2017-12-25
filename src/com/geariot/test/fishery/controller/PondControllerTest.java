@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations={"classpath:application.xml","classpath:springMVC.xml"})
+@Transactional
 public class PondControllerTest {
 	
 	private MockMvc mockMvc;

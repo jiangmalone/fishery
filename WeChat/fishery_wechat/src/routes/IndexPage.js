@@ -6,7 +6,6 @@ function IndexPage() {
    console.log(document.documentElement.clientWidth)
   return (
     <div className="normal">
-      <h1 className="title">哈哈</h1>
       <div className="welcome"/>
       <Example> </Example>
     </div>

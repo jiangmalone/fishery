@@ -14,7 +14,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OrderColumn;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class Pond {
@@ -100,7 +102,7 @@ public class Pond {
 	public void setRelation(String relation) {
 		this.relation = relation;
 	}
-	@ElementCollection(fetch = FetchType.LAZY , targetClass = String.class)
+	@ElementCollection(fetch=FetchType.EAGER, targetClass = String.class)
 	@CollectionTable(name = "pond_FishCate")
 	public List<String> getFish_categorys() {
 		return fish_categorys;

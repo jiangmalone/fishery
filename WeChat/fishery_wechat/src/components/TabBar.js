@@ -1,16 +1,18 @@
 import React from 'react';
 import { TabBar } from 'antd-mobile';
 import {withRouter} from "react-router-dom";
+import './tabBar.less'
 class BottomTabBar extends React.Component{
     render(){
         return <TabBar
         unselectedTintColor="#949494"
-        tintColor="#597fbf"
+        tintColor="#5dc3ed"
         barTintColor="white"
     >
         <TabBar.Item
             title="首页"
             key="首页"
+          
             icon={<div className="Index-TabBar-1"  />
             }
             selectedIcon={<div className="Index-TabBar-1 Index-TabBar-active" />
@@ -24,12 +26,11 @@ class BottomTabBar extends React.Component{
         <TabBar.Item
             icon={<div className="Index-TabBar-2"  />}
             selectedIcon={<div className="Index-TabBar-2 Index-TabBar-active" />}
-            title="订单"
-            key="订单"
+            title="告警"
+            key="告警"
             selected= {this.props.nowTab==2?true:false}
             onPress = {()=>{
-                dplus.track('订单底栏');
-                this.props.history.push('/serviceCard')
+                this.props.history.push('/alarm')
             }}
         >
         </TabBar.Item>

@@ -12,7 +12,7 @@ public enum RESCODE {
 	SUCCESS(0, "成功"), 
 	WRONG_PARAM(1, "参数错误"), 
 	NOT_FOUND(2, "无该条记录"),
-	UPDATE_ERROR(3, "更新数据错误"), 
+	ACCOUNT_NOT_EXIST(3, "登录账户名不存在"), 
 	CREATE_ERROR(4, "存储数据错误"), 
 	POND_NAME_EXIST(5, "该用户下塘口名称重复"),
 	POND_NOT_EXIST(6, "数据库无此塘口"), 

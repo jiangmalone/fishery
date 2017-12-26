@@ -92,18 +92,19 @@ public class PondDaoImpl implements PondDao {
 	public List<Equipment> findEquipmentByPondId(int pondId, int from, int pageSize) {
 		String hql = "select new Equipment("
 				+ "a.device_sn , a.name , a.status) "
-				+ "from A a where a.pondId = :pondId "
-				+ "UNION ALL"
-				+ " (select new Equipment("
+				+ "from AIO a where a.pondId = :pondId "
+			/*	+ "UNION ALL"
+				+ " (select new com.geariot.platform.fishery.model.Equipment("
 				+ "b.device_sn , b.name , b.status) "
 				+ "from Sensor b where b.pondId = :pondId) "
 				+ "UNION ALL "
-				+ "(select new Equipment("
+				+ "(select new com.geariot.platform.fishery.model.Equipment("
 				+ "c.device_sn , c.name , c.status) from Controller c "
-				+ "where c.pondId = :pondId)";
+				+ "where c.pondId = :pondId)"*/
+				;
 		System.out.println(hql);
 		
-		return getSession().createSQLQuery(hql).setInteger("pondId", pondId).setFirstResult(from).setMaxResults(pageSize).list();
+		return getSession().createQuery(hql).setInteger("pondId", pondId).setFirstResult(from).setMaxResults(pageSize).list();
 	}
 
 }

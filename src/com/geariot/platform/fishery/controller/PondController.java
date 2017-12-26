@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.service.PondService;
 
 @RestController
@@ -18,7 +19,27 @@ public class PondController {
 	private PondService pondService;
 	
 	@RequestMapping(value = "/addPond" , method = RequestMethod.POST)
-	public Map<String,Object> testAddPond(){
-		return pondService.test();
+	public Map<String,Object> addPond(Pond pond){
+		return pondService.addPond(pond);
+	}
+	
+	@RequestMapping(value = "/delPonds" , method = RequestMethod.POST)
+	public Map<String,Object> delPonds(Integer... pondIds){
+		return pondService.delPonds(pondIds);
+	}
+	
+	@RequestMapping(value = "/modifyPond" , method = RequestMethod.POST)
+	public Map<String,Object> modifyPond(Pond pond){
+		return pondService.modifyPond(pond);
+	}
+	
+	@RequestMapping(value = "/query" , method = RequestMethod.GET)
+	public Map<String,Object> queryPond(String relation, String name, int page, int number){
+		return pondService.queryPond(relation, name, page, number);
+	}
+	
+	@RequestMapping(value = "/pondEquipment" , method = RequestMethod.GET)
+	public Map<String,Object> pondEquipment(int pondId, int page, int number){
+		return pondService.pondEquipment(pondId, page, number);
 	}
 }

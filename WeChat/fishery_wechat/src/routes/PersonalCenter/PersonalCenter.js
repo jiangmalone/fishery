@@ -19,8 +19,8 @@ function PersonalCenter() {
           <img src={require('../../img/avatar.jpg')} />
         </div>
         <div className="name">
-          {/* 张蕾西 */}
-          登录/注册
+          张蕾西
+          {/* 登录/注册 */}
           </div>
       </div>
 

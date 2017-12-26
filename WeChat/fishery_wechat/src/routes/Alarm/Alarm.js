@@ -5,51 +5,49 @@ import BottomTabBar from '../../components/TabBar';
 const Item = List.Item;
 const Brief = Item.Brief;
 
-function PersonalCenter() {
+function Alarm() {
   return (
-    <div>
-      <div className="personInfo-box">
-        <div className="backgroundImageFilter">
+    <div className="alarm-box"> 
+        <div className="alarm-list">
+            <div className="list-title">小鱼塘1-传感器1</div>
+            <div className="list-info">
+                <div className="info-state">溶氧数据异常</div>
+                <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
+            </div>
         </div>
-        <div className="out-phone-btn clear">
-          <div className="out-btn" />
-          <div className="phone-btn" />
+        <div className="alarm-list">
+            <div className="list-title">小鱼塘1-传感器1</div>
+            <div className="list-info">
+                <div className="info-state">溶氧数据异常</div>
+                <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
+            </div>
         </div>
-        <div className="avatar">
-          <img src={require('../../img/avatar.jpg')} />
+        <div className="alarm-list">
+            <div className="list-title">小鱼塘1-传感器1</div>
+            <div className="list-info">
+                <div className="info-state">溶氧数据异常</div>
+                <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
+            </div>
         </div>
-        <div className="name">
-          {/* 张蕾西 */}
-          登录/注册
-          </div>
-      </div>
-
-      <List multipleLine={true} className="center-list">
-        <Item
-          thumb={require("../../img/mine_pond.png")}
-          arrow="horizontal"
-          onClick={() => { }}
-        >我的塘口</Item>
-      </List>
-      <List multipleLine={true} className="center-list">
-        <Item
-          thumb={require("../../img/mine_equipment.png")}
-          arrow="horizontal"
-          onClick={() => { }}
-        >我的设备</Item>
-      </List>
-      <List multipleLine={true} className="center-list">
-        <Item
-          thumb={require("../../img/mine_about.png")}
-          arrow="horizontal"
-          onClick={() => { }}
-        >关于渔管在线</Item>
-      </List>
-
-      <BottomTabBar  nowTab={2}/>
+        <div className="alarm-list">
+            <div className="list-title">小鱼塘1-传感器1</div>
+            <div className="list-info">
+                <div className="info-state">溶氧数据异常</div>
+                <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
+            </div>
+        </div>
+        <div className="alarm-list">
+            <div className="list-title">小鱼塘1-传感器1</div>
+            <div className="list-info">
+                <div className="info-state">溶氧数据异常</div>
+                <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
+            </div>
+        </div>
+        <BottomTabBar  nowTab={2}/>
     </div>
+    
   );
 }
 
 
-export default PersonalCenter;
+export default Alarm;

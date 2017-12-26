@@ -24,21 +24,21 @@ function PersonalCenter() {
           </div>
       </div>
 
-      <List multipleLine={true} className="center-list">
+      <List className="center-list">
         <Item
           thumb={require("../../img/mine_pond.png")}
           arrow="horizontal"
           onClick={() => { }}
         >我的塘口</Item>
       </List>
-      <List multipleLine={true} className="center-list">
+      <List className="center-list">
         <Item
           thumb={require("../../img/mine_equipment.png")}
           arrow="horizontal"
           onClick={() => { }}
         >我的设备</Item>
       </List>
-      <List multipleLine={true} className="center-list">
+      <List className="center-list">
         <Item
           thumb={require("../../img/mine_about.png")}
           arrow="horizontal"

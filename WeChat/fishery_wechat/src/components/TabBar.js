@@ -12,6 +12,7 @@ class BottomTabBar extends React.Component{
         <TabBar.Item
             title="首页"
             key="首页"
+          
             icon={<div className="Index-TabBar-1"  />
             }
             selectedIcon={<div className="Index-TabBar-1 Index-TabBar-active" />

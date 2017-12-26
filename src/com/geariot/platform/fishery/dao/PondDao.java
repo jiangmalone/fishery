@@ -29,4 +29,6 @@ public interface PondDao {
 	long queryPondByNameAndRelationCount(String relation, String name);
 	
 	List<Equipment> findEquipmentByPondId(int pondId, int from, int pageSize);
+	
+	long equipmentByPondIdCount(int pondId);
 }

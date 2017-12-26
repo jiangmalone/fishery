@@ -5,11 +5,13 @@ package com.geariot.platform.fishery.dao.impl;
 
 
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -90,21 +92,38 @@ public class PondDaoImpl implements PondDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Equipment> findEquipmentByPondId(int pondId, int from, int pageSize) {
-		String hql = "select new Equipment("
-				+ "a.device_sn , a.name , a.status) "
-				+ "from AIO a where a.pondId = :pondId "
-			/*	+ "UNION ALL"
-				+ " (select new com.geariot.platform.fishery.model.Equipment("
-				+ "b.device_sn , b.name , b.status) "
-				+ "from Sensor b where b.pondId = :pondId) "
-				+ "UNION ALL "
-				+ "(select new com.geariot.platform.fishery.model.Equipment("
-				+ "c.device_sn , c.name , c.status) from Controller c "
-				+ "where c.pondId = :pondId)"*/
-				;
-		System.out.println(hql);
-		
-		return getSession().createQuery(hql).setInteger("pondId", pondId).setFirstResult(from).setMaxResults(pageSize).list();
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a where a.pondId = :pondId ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b where b.pondId = :pondId ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c where c.pondId = :pondId");
+		return getSession().createSQLQuery(sb.toString())
+				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
+				.setInteger("pondId", pondId).setFirstResult(from)
+				.setMaxResults(pageSize).list();
+	}
+
+	@Override
+	public long equipmentByPondIdCount(int pondId) {
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select count(*) from (");
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a where a.pondId = :pondId ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b where b.pondId = :pondId ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c where c.pondId = :pondId) ");
+		sb.append("as total");
+		System.out.println(sb.toString());
+		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString())
+				.setInteger("pondId", pondId).uniqueResult();
+		return big.longValue();
 	}
 
 }

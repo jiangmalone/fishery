@@ -8,8 +8,10 @@ import IndexPage from './routes/IndexPage';
 import Login from './routes/Login/Login';
 import UserInfo from './routes/Login/UserInfo'
 import Alarm from './routes/Alarm/Alarm';
+
 import PersonalCenter from './routes/PersonalCenter/PersonalCenter';
 import addPond from './routes/Mypond/AddPond/AddPond';
+import Main from './routes/Main/Main'
 
 const App = (props) =>{
     return ( true?<div style={{height:'100%'}}>
@@ -19,6 +21,7 @@ const App = (props) =>{
             <Route exact path="/alarm" component={Alarm} />
             <Route path="/center" component={PersonalCenter} />
             <Route path="/addPond" component={addPond} />
+            <Route exact path="/main" component={Main} />
             {/* <Route component={NotFound}/> */}
         </Switch>
     </div>: <Redirect to={{

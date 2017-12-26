@@ -14,4 +14,6 @@ public interface AdminDao {
 	Admin findAdminByAccount(String account);
 	
 	void save(Admin admin);
+	
+	Admin findAdminByAdminId(int adminId);
 }

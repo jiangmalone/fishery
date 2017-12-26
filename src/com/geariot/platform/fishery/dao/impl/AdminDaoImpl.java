@@ -39,4 +39,11 @@ public class AdminDaoImpl implements AdminDao{
 		getSession().save(admin);
 	}
 
+	@Override
+	public Admin findAdminByAdminId(int adminId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Admin");
+		Query query = queryUtils.addInteger("id", adminId).getQuery();
+		return (Admin) query.uniqueResult();
+	}
+
 }

@@ -39,4 +39,11 @@ public class AdminController {
 	public Map<String,Object> logout(){
 		return adminService.logout();
 	}
+	
+	@RequestMapping(value = "/modify" , method = RequestMethod.POST)
+	public Map<String,Object> modifyPSW(int adminId, String password){
+		return adminService.modifyPSW(adminId, password);
+	}
+	
+	
 }

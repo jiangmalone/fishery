@@ -56,4 +56,14 @@ public class AdminService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
+	public Map<String, Object> modifyPSW(int adminId, String password) {
+		Admin exist = adminDao.findAdminByAdminId(adminId);
+		if(exist == null){
+			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
+		}else{
+			exist.setPassword(MD5.compute(password));
+			return RESCODE.SUCCESS.getJSONRES();
+		}
+	}
+
 }

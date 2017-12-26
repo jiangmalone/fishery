@@ -9,16 +9,16 @@ package com.geariot.platform.fishery.model;
  */
 public class Equipment {
 	private String device_sn;
-	private String device_name;
+	private String name;
 	private int status;
 	
-	private Equipment(){
+	public Equipment(){
 		
 	}
 	
-	private Equipment(String device_sn, String device_name, int status){
+	public Equipment(String device_sn, String name, int status){
 		this.device_sn = device_sn;
-		this.device_name = device_name;
+		this.name = name;
 		this.status = status;
 	}
 	
@@ -28,11 +28,11 @@ public class Equipment {
 	public void setDevice_sn(String device_sn) {
 		this.device_sn = device_sn;
 	}
-	public String getDevice_name() {
-		return device_name;
+	public String getName() {
+		return name;
 	}
-	public void setDevice_name(String device_name) {
-		this.device_name = device_name;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public int getStatus() {
 		return status;

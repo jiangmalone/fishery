@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations={"classpath:application.xml","classpath:springMVC.xml"})
-public class PondControllerTest {
+public class AdminControllerTest {
 	
 	private MockMvc mockMvc;
 	
@@ -44,76 +44,45 @@ public class PondControllerTest {
 	}
 	
 	@Test
-	public void addPondTest() throws Exception{
-		mockMvc.perform(post("/pond/addPond").
+	public void addAdminTest() throws Exception{
+		mockMvc.perform(post("/admin/add").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("name", "小易信息")
-				.param("area", "20.0")
-				.param("address", "南京小易信息")
-				.param("longitude", "75.1234")
-				.param("latitude", "10.23548")
-				.param("water_source", "changjiang")
-				.param("sediment_thickness", "0.5")
-				.param("depth", "15.0")
-				.param("density", "1.2")
-				.param("relation", "WX12")
-				.param("fish_categorys", "鲫鱼")
-				.param("fish_categorys", "刀鱼")
+				.param("account", "admin")
+				.param("password", "test")
+				.param("type", "0")
+				.param("companyId", "0")
+				.param("commment", "测试")
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
-	public void delPondTest() throws Exception{
-		mockMvc.perform(post("/pond/delPonds").
+	public void loginTest() throws Exception{
+		mockMvc.perform(post("/admin/login").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("pondIds", "3")
-				.param("pondIds", "4")
+				.param("account", "admin")
+				.param("password", "test")
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-	public void modifyPondTest() throws Exception{
-		mockMvc.perform(post("/pond/modifyPond").
+	public void logoutTest() throws Exception{
+		mockMvc.perform(get("/admin/logout").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("id", "5")
-				.param("name", "南京小易信息")
-				.param("area", "20.0")
-				.param("address", "南京小易信息")
-				.param("longitude", "75.1234")
-				.param("latitude", "10.23548")
-				.param("water_source", "changjiang")
-				.param("sediment_thickness", "0.5")
-				.param("depth", "15.0")
-				.param("density", "1.2")
-				.param("relation", "WX12")
-				.param("fish_categorys", "鲫鱼")
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test
-	public void queryPondTest() throws Exception{
-		mockMvc.perform(get("/pond/query").
+	public void modifyAdminTest() throws Exception{
+		mockMvc.perform(post("/admin/modify").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("name", "息")
-				.param("relation", "WX12")
-				.param("page","1")
-				.param("number","10")
+				.param("adminId", "1")
+				.param("password", "admin")
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 	
-	@Test
-	public void equipmentPondTest() throws Exception{
-		mockMvc.perform(get("/pond/pondEquipment").
-				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("pondId", "5")
-				.param("page","2")
-				.param("number","10")
-				)
-		.andDo(print()).andExpect(status().is2xxSuccessful());
-	}
 }
 

@@ -19,7 +19,7 @@ class BottomTabBar extends React.Component{
             }
             selected= {this.props.nowTab==1?true:false}
             onPress = {()=>{
-             this.props.history.push('/indexPage')
+             this.props.history.push('/main')
             }}
         >
         </TabBar.Item>

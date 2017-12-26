@@ -69,6 +69,8 @@ public class PondService {
 	public Map<String,Object> pondEquipment(int pondId, int page, int number){
 		int from = (page - 1) * number;
 		List<Equipment> equipments = pondDao.findEquipmentByPondId(pondId, from, number);
-		return RESCODE.SUCCESS.getJSONRES(equipments);
+		long count = this.pondDao.equipmentByPondIdCount(pondId);
+		int size = (int) Math.ceil(count / (double) number);
+		return RESCODE.SUCCESS.getJSONRES(equipments,size,count);
 	}
 }

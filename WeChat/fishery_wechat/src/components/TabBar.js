@@ -1,11 +1,12 @@
 import React from 'react';
 import { TabBar } from 'antd-mobile';
 import {withRouter} from "react-router-dom";
+import './tabBar.less'
 class BottomTabBar extends React.Component{
     render(){
         return <TabBar
         unselectedTintColor="#949494"
-        tintColor="#597fbf"
+        tintColor="#5dc3ed"
         barTintColor="white"
     >
         <TabBar.Item

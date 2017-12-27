@@ -12,8 +12,9 @@ import Alarm from './routes/Alarm/Alarm';
 import PersonalCenter from './routes/PersonalCenter/PersonalCenter';
 import addPond from './routes/Mypond/AddPond/AddPond';
 import addFish from './routes/Mypond/AddPond/AddFish';
-import Main from './routes/Main/Main'
-import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygenationSetting'
+import Main from './routes/Main/Main';
+import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygenationSetting';
+import AddEquipment from './routes/Equipment/AddEquipment'
 
 const App = (props) =>{
     return ( true?<div style={{height:'100%'}}>
@@ -26,6 +27,7 @@ const App = (props) =>{
             <Route path="/addFish" component={addFish} />
             <Route exact path="/main" component={Main} />
             <Route exact path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
+            <Route exact path="/addEquipment" component={AddEquipment} />
             {/* <Route component={NotFound}/> */}
         </Switch>
     </div>: <Redirect to={{

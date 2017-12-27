@@ -43,7 +43,7 @@ class Main extends React.Component {
       }
 
     render() {
-        return <div className='bg' >
+        return <div className='main-bg' style={{ minHeight: window.document.body.clientHeight }}>
             <div className='weather-div'>
                 <i className='weather-icon iconfont icon-tianqi'> </i>
                 10-12℃

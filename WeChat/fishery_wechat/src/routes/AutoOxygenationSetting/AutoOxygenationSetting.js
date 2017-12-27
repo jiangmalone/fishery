@@ -1,170 +1,139 @@
-import React from 'react';
-import './autoOxygenationSetting.less';
-import { Flex, Toast, Icon, DatePicker, List } from 'antd-mobile'
+
+import { List, InputItem, Button, DatePicker, Modal } from 'antd-mobile';
+import { createForm } from 'rc-form';
+import NavBar from '../../components/NavBar';
 import { withRouter } from "react-router-dom";
 import addImg from '../../img/add.png'
+import question from '../../img/question.png'
+import './autoOxygenationSetting.less';
+const Item = List.Item;
 
-const nowTimeStamp = Date.now();
-const now = new Date(nowTimeStamp);
-// GMT is not currently observed in the UK. So use UTC now.
-const utcNow = new Date(now.getTime() + (now.getTimezoneOffset() * 60000));
+class AutoOxygenationSetting extends React.Component {
 
-// Make sure that in `time` mode, the maxDate and minDate are within one day.
-let minDate = new Date(nowTimeStamp - 1e7);
-const maxDate = new Date(nowTimeStamp + 1e7);
-// console.log(minDate, maxDate);
-if (minDate.getDate() !== maxDate.getDate()) {
-  // set the minDate to the 0 of maxDate
-  minDate = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
-}
-
-function formatDate(date) {
-  /* eslint no-confusing-arrow: 0 */
-  const pad = n => n < 10 ? `0${n}` : n;
-  const dateStr = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-  const timeStr = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  return `${dateStr} ${timeStr}`;
-}
-
-// If not using `List.Item` as children
-// The `onClick / extra` props need to be processed within the component
-const CustomChildren = ({ extra, onClick, children }) => (
-  <div
-    onClick={onClick}
-    style={{ backgroundColor: '#fff', height: '45px', lineHeight: '45px', padding: '0 15px' }}
-  >
-    {children}
-    <span style={{ float: 'right', color: '#888' }}>{extra}</span>
-  </div>
-);
-
-class AutoOrxygenationSetting extends React.Component {
-
-    constructor(props) {
-        super(props)
-        this.state = {
-            form: {
-            },
-            timeSection: [],
-            time:''
-        }
+    state = {
+        time: '',
+        timeSections: [['', '']],
+        isShowDeclare: false
     }
-
-    
-
-    handlaInput = (type, value) => {
-        if (type) {
-            const form = this.state.form;
-            switch (type) {
-                case 'name':
-                    form['name'] = value;
-                    this.setState({
-                        form: form
-                    })
-                    break;
-                case 'phone':
-                    form['phone'] = value.replace(/\D/g, '');
-                    this.setState({
-                        form: form
-                    })
-                    break;
-                case 'years':
-                    form['years'] = value.replace(/\D/g, '');
-                    this.setState({
-                        form: form
-                    })
-                    break;
-                default: break;
+    onSubmit = () => {
+        this.props.form.validateFields({ force: true }, (error) => {
+            if (!error) {
+                console.log(this.props.form.getFieldsValue());
+            } else {
+                alert('Validation failed');
             }
-        }
+        });
     }
-
-    saveInfo = () => {
-
+    onReset = () => {
+        this.props.form.resetFields();
     }
-
     addTimeSection = () => {
-
-    }
-
-    render() {
-        const times = this.state.timeSection
-        let timeSection = times.map((item, index) => {
-
+        console.log('add')
+        const timeSections = this.state.timeSections;
+        timeSections.push(['', '']);
+        this.setState({
+            timeSections: timeSections
         })
-        return <div className='oxygen-set-bg' style={{ height: window.document.body.clientHeight }} >
-            <div style={{ marginBottom: '.74rem' }}>
-                <div className='input-line'>
-                    <div className='left-item'>
-                        控制器1<span>(增氧机1号)</span>
-                    </div>
-                    <div className='right-item'>
-                        10.26mg/L
-                    </div>
-                </div>
-                <div className='input-line'>
-                    <div className='left-item'>
-                        溶氧下限：
-                    </div>
-                    <div className='right-item'>
-                        <input maxLength='11' className='input' value={this.state.form.phone} onChange={(e) => { this.handlaInput('phone', e.target.value) }} />
-                        mg/L
-                    </div>
-                </div>
-                <div className='input-line'>
-                    <div className='left-item'>
-                        溶氧上限：
-                    </div>
-                    <div className='right-item'>
-                        <input maxLength='11' className='input' value={this.state.form.phone} onChange={(e) => { this.handlaInput('phone', e.target.value) }} />
-                        mg/L
-                    </div>
-                </div>
-                <div className='input-line'>
-                    <div className='left-item'>
-                        溶氧高限：
-                    </div>
-                    <div className='right-item'>
-                        <input className='input' value={this.state.form.years} onChange={(e) => { this.handlaInput('years', e.target.value) }} />
-                        mg/L
-                    </div>
-                </div>
-                <div className='input-line'>
-                    <div className='left-item'>
-                        定时增氧：
-                    </div>
-                    <div className='right-item'>
-                        <div className='input'>
-                            <DatePicker
-                                mode="time"
-                                minuteStep={5}
-                                value={this.state.time}
-                                onChange={time => this.setState({ time })}
+    }
+    render() {
+        const { getFieldProps, getFieldError } = this.props.form;
+        const timeSections = this.state.timeSections;
+        const times = timeSections.map((item, index) => {
 
-                            >
-                                <span>111</span>
-                            </DatePicker>
-                        </div>
-                    </div>
-                </div>
-                <div className='add-block' onClick={this.addTimeSection} >
-                    定时<img className='add-img' src={addImg} />
-                </div>
+            return <Item className='timeItem' key={index} extra={<div className='time' >
 
+                <DatePicker
+                    mode="time"
+                    minuteStep={5}
+                    value={this.state.time}
+                    onChange={time => this.setState({ time })}
+                    className=''
+                >
+                    <span>开始时间&nbsp;</span>
+                </DatePicker>
+                -
+                    <DatePicker
+                    mode="time"
+                    minuteStep={5}
+                    value={this.state.time}
+                    onChange={time => this.setState({ time })}
+                    className=''
+                >
+                    <span>&nbsp;结束时间</span>
+                </DatePicker>
+
+            </div>}>定时增氧</Item>
+        })
+        return (<form className='oxygen-set-bg' >
+            <div className="nav-bar-title">
+                <i className="back" onClick={() => { history.back() }}></i>
+                设置自动增氧
+                <i className="scan" onClick={() => { this.setState({ isShowDeclare: true }) }} ><img src={question} style={{ width: '.44rem', verticalAlign: 'middle' }} /></i>
             </div>
+            <Modal
+                visible={this.state.isShowDeclare}
+                transparent
+                maskClosable={true}
+                onClose={() => {this.setState({isShowDeclare: false})}}
+                title="说明"
+                footer={[{ text: '知道了', onPress: () => { this.setState({isShowDeclare: false}) }}]}
+            >
+                <div style={{ height: 100, textAlign: 'left'}}>
+                    1.下限（低于下限自动开启增氧）；<br />
+                    2.上限（达到上限停止增氧）；<br />
+                    3.高限（高于高限时增氧2小时）；<br />
+                    4.定时增氧（设定时段，定时强制增氧）；<br />
+                </div>
+            </Modal>
+            <List className='os-list'>
+                <Item extra={<span style={{ minWidth: '100px', color: '#000' }} >10.26mg/L</span>}>控制器1<span>(增氧机1)</span></Item>
+                <InputItem
+                    {...getFieldProps('state', {
+                        rules: [
+                            { required: true }
+                        ],
+                    }) }
+                    className="os-input"
+                    error={!!getFieldError('state')}
+                    extra={<span>mg/L</span>}
+                >增氧下限</InputItem>
+                <InputItem
+                    {...getFieldProps('floor', {
+                        rules: [
+                            { required: true }
+                        ],
+                    }) }
+                    className="os-input"
+                    error={!!getFieldError('floor')}
+                    extra={<span>mg/L</span>}
+                >增氧上限</InputItem>
+                <InputItem
+                    {...getFieldProps('upperLimit', {
+                        rules: [
+                            { required: true }
+                        ],
+                    }) }
+                    className="os-input"
+                    error={!!getFieldError('upperLimit')}
+                    extra={<span>mg/L</span>}
+                >增氧高限</InputItem>
 
+                {times}
+            </List>
+            <div className='add-block' onClick={this.addTimeSection} >
+                <span className='add-span'>定时</span><img className='add-img' src={addImg} />
+            </div>
             <div className='buttons'>
-                <div className='left-button' onClick={() => { this.saveInfo() }} >
-                    从 设 备 获 取
+                <div className='left-button'>
+                    从设备获得
+                </div>
+                <div className='right-button' onClick={this.onSubmit}>
+                    设置到设备
+                </div>
             </div>
-                <div className='right-button' onClick={() => { this.saveInfo() }} >
-                    保 存 到 设 备
-            </div>
-
-            </div>
-
-        </div>
+        </form>);
     }
 }
 
-export default withRouter(AutoOrxygenationSetting);
+const AutoOxygenationSettingForm = createForm()(AutoOxygenationSetting);
+export default AutoOxygenationSettingForm;

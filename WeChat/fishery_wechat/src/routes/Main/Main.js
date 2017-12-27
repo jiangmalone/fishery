@@ -1,11 +1,20 @@
 import React from 'react';
 import './main.less'
-import { Flex, Toast, List, Switch, Button } from 'antd-mobile'
+import { Flex, Toast, List, Switch, Button, ActionSheet } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
 import BottomTabBar from '../../components/TabBar';
 import Accordion from '../../components/Accordion';
 import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
+
+const isIPhone = new RegExp('\\biPhone\\b|\\biPod\\b', 'i').test(window.navigator.userAgent);
+let wrapProps;
+if (isIPhone) {
+  wrapProps = {
+    onTouchStart: e => e.preventDefault(),
+  };
+}
+
 class Main extends React.Component {
 
     constructor(props) {
@@ -17,8 +26,24 @@ class Main extends React.Component {
         }
     }
 
+    showActionSheet = () => {
+        const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
+        ActionSheet.showActionSheetWithOptions({
+          options: BUTTONS,
+          cancelButtonIndex: BUTTONS.length - 1,
+          destructiveButtonIndex: BUTTONS.length - 3,
+          title: '你是否确定关闭自动增氧？',
+          maskClosable: true,
+          'data-seed': 'logId',
+          wrapProps,
+        },
+        (buttonIndex) => {
+          this.setState({ clicked: BUTTONS[buttonIndex] });
+        });
+      }
+
     render() {
-        return <div className='bg' style={{ minHeight: window.document.body.clientHeight }} >
+        return <div className='bg' >
             <div className='weather-div'>
                 <i className='weather-icon iconfont icon-tianqi'> </i>
                 10-12℃
@@ -62,9 +87,9 @@ class Main extends React.Component {
 
                         <div className='line' >
                             <div className='name' >
-                                传感器1
+                                控制器1
                             </div>
-                            <button className='auto-button do-auto'>自动</button>
+                            <button className='auto-button do-auto' onClick={this.showActionSheet} >自动</button>
                             <Switch
                                 nanme='watertem'
                                 checked={this.state.waterCheck1}
@@ -75,7 +100,7 @@ class Main extends React.Component {
 
                         <div className='line' >
                             <div className='name' >
-                            传感器2
+                            控制器2
                             </div>
                             <button className='auto-button no-auto'>自动</button>
                             {/* <Switch className='state-switch'></Switch> */}

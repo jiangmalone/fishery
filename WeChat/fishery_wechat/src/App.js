@@ -10,6 +10,7 @@ import Login from './routes/Login/Login';
 import UserInfo from './routes/Login/UserInfo'
 import Alarm from './routes/Alarm/Alarm';
 import Main from './routes/Main/Main'
+import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygenationSetting'
 
 const App = () => (
     <div style={{height:'100%'}}>
@@ -20,6 +21,7 @@ const App = () => (
             <Route exact path="/userInfo" component={UserInfo} />
             <Route exact path="/alarm" component={Alarm} />
             <Route exact path="/main" component={Main} />
+            <Route exact path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
             {/* <Route component={NotFound}/> */}
         </Switch>
     </div>

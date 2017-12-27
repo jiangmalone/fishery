@@ -18,11 +18,16 @@ public enum RESCODE {
 	POND_NOT_EXIST(6, "数据库无此塘口"), 
 	DUPLICATED_ERROR(7,"重复数据"),
 	DELETE_ERROR(8, "删除错误"),
+	AIO_EXIST(9,"该用户下一体机设备码重复"),
 	PSW_ERROR(10, "密码错误"), 
+	SENSOR_EXIST(11,"该用户下传感器设备码重复"),
+	CONTROLLER_EXIST(12,"该用户下控制器设备码重复"),
 	ALREADY_LOGIN(13, "已经登录"), 
 	ACCOUNT_EXIST(14, "该账号已存在"),
+	DEVICESNS_INVALID(15,"该设备码无效"),
 	FOR_EXCEPTION
 	;
+	
 	
 	// 定义私有变量
 	private int nCode;

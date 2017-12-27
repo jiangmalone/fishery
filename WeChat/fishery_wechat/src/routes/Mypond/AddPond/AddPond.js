@@ -52,7 +52,7 @@ function AddPond(props) {
         <Picker data={district} cols={1} {...getFieldProps('district3') } className="forss">
           <List.Item arrow="horizontal">池塘水源</List.Item>
         </Picker>
-        <Item arrow="horizontal"  onClick={() => {}}>
+        <Item wrap={true} arrow="horizontal"  extra={<span>鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼</span>} onClick={() => {}}>
           品种
         </Item>
         <Item extra={<img src={require('../../../img/earth.png')} />}  onClick={() => {}}>

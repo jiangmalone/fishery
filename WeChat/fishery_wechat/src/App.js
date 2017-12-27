@@ -11,6 +11,7 @@ import Alarm from './routes/Alarm/Alarm';
 
 import PersonalCenter from './routes/PersonalCenter/PersonalCenter';
 import addPond from './routes/Mypond/AddPond/AddPond';
+import addFish from './routes/Mypond/AddPond/AddFish';
 import Main from './routes/Main/Main'
 
 const App = (props) =>{
@@ -21,6 +22,7 @@ const App = (props) =>{
             <Route exact path="/alarm" component={Alarm} />
             <Route path="/center" component={PersonalCenter} />
             <Route path="/addPond" component={addPond} />
+            <Route path="/addFish" component={addFish} />
             <Route exact path="/main" component={Main} />
             {/* <Route component={NotFound}/> */}
         </Switch>

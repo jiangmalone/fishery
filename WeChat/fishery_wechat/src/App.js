@@ -16,6 +16,8 @@ import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygena
 import AddEquipment from './routes/Equipment/AddEquipment';
 import MyPond from './routes/Mypond/MyPond/MyPond';
 import MyEquipment from './routes/Equipment/MyEquipment';
+import EquipmentManagement from './routes/Equipment/EquipmentManagement'
+import BindEquipment from './routes/Equipment/BindEquipment'
 
 
 const App = (props) => {
@@ -32,6 +34,9 @@ const App = (props) => {
             <Route exact path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
             <Route exact path="/addEquipment" component={AddEquipment} />
             <Route exact path="/myEquipment" component={MyEquipment} />
+            <Route exact path="/equipmentManagement" component={EquipmentManagement} />
+            <Route exact path="/bindEquipment" component={BindEquipment} />
+
             {/* <Route component={NotFound}/> */}
         </Switch>
     </div> : <Redirect to={{

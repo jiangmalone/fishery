@@ -214,3 +214,14 @@ i{
     transform: translateX(100%);
     transition: all 0.4s ease-out;
 }
+
+//淡入淡出
+.fade-enter {
+    opacity: 0;
+    z-index: 1;
+  }
+
+.fade-enter.fade-enter-active {
+opacity: 1;
+transition: opacity 250ms ease-in;
+}

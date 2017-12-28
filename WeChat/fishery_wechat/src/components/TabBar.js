@@ -2,6 +2,8 @@ import React from 'react';
 import { TabBar } from 'antd-mobile';
 import {withRouter} from "react-router-dom";
 import './tabBar.less'
+import { connect } from 'dva';
+
 class BottomTabBar extends React.Component{
     render(){
         return <TabBar
@@ -19,7 +21,13 @@ class BottomTabBar extends React.Component{
             }
             selected= {this.props.nowTab==1?true:false}
             onPress = {()=>{
-             this.props.history.push('/main')
+             this.props.history.push('/main');
+             this.props.dispatch({
+                type: 'global/changeState',
+                payload: {
+                    transitionName: 'fade'
+                }
+            })
             }}
         >
         </TabBar.Item>
@@ -30,7 +38,13 @@ class BottomTabBar extends React.Component{
             key="告警"
             selected= {this.props.nowTab==2?true:false}
             onPress = {()=>{
-                this.props.history.push('/alarm')
+                this.props.history.push('/alarm');
+                this.props.dispatch({
+                    type: 'global/changeState',
+                    payload: {
+                        transitionName: 'fade'
+                    }
+                })
             }}
         >
         </TabBar.Item>
@@ -41,7 +55,13 @@ class BottomTabBar extends React.Component{
             key="我的"
             selected= {this.props.nowTab==3?true:false}
             onPress = {()=>{
-                this.props.history.push('/center')
+                this.props.history.push('/center');
+                this.props.dispatch({
+                    type: 'global/changeState',
+                    payload: {
+                        transitionName: 'fade'
+                    }
+                })
             }}
         >
         </TabBar.Item>
@@ -49,4 +69,4 @@ class BottomTabBar extends React.Component{
     }
 }
 
-export default withRouter(BottomTabBar);
+export default connect()(withRouter(BottomTabBar));

@@ -4,6 +4,7 @@ const Router = require('react-router-dom');
 const Route = Router.Route;
 const Switch = Router.Switch;
 const Redirect = Router.Redirect;
+import CSSTransitionGroup from "react-addons-css-transition-group";
 import IndexPage from './routes/IndexPage';
 import Login from './routes/Login/Login';
 import UserInfo from './routes/Login/UserInfo'
@@ -19,27 +20,49 @@ import MyEquipment from './routes/Equipment/MyEquipment';
 import EquipmentManagement from './routes/Equipment/EquipmentManagement'
 import BindEquipment from './routes/Equipment/BindEquipment'
 
+const styles = {}
+
+styles.fill = {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    height: '100%'
+}
+
+styles.content = {
+    ...styles.fill
+}
 
 const App = (props) => {
-    return (true ? <div style={{ height: '100%' }}>
-        <Switch>
-            <Route exact path="/" component={IndexPage} />
-            <Route exact path="/userInfo" component={UserInfo} />
-            <Route exact path="/alarm" component={Alarm} />
-            <Route path="/center" component={PersonalCenter} />
-            <Route path="/addPond" component={addPond} />
-            <Route path="/addFish" component={addFish} />
-            <Route path="/MyPond" component={MyPond} />
-            <Route exact path="/main" component={Main} />
-            <Route exact path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
-            <Route exact path="/addEquipment" component={AddEquipment} />
-            <Route exact path="/myEquipment" component={MyEquipment} />
+    return (true ? <CSSTransitionGroup
+        transitionName="right"
+        style={styles.content}
+        transitionEnterTimeout={400}
+        transitionLeaveTimeout={400}
+        // transitionAppear = {true}
+    >
+        {/* <Switch> */}
+        <div key={props.location.pathname} style={styles.content} >
+            <Route location={props.location} exact path="/" component={IndexPage} />
+            <Route location={props.location} path="/userInfo" component={UserInfo} />
+            <Route location={props.location} path="/alarm" component={Alarm} />
+            <Route location={props.location} path="/center" component={PersonalCenter} />
+            <Route location={props.location} path="/addPond" component={addPond} />
+            <Route location={props.location} path="/addFish" component={addFish} />
+            <Route location={props.location} path="/MyPond" component={MyPond} />
+            <Route location={props.location} path="/main" component={Main} />
+            <Route location={props.location} path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
+            <Route location={props.location} path="/addEquipment" component={AddEquipment} />
+            <Route location={props.location} path="/myEquipment" component={MyEquipment} />
             <Route exact path="/equipmentManagement" component={EquipmentManagement} />
             <Route exact path="/bindEquipment" component={BindEquipment} />
 
             {/* <Route component={NotFound}/> */}
-        </Switch>
-    </div> : <Redirect to={{
+            {/* </Switch> */}
+        </div>
+    </CSSTransitionGroup> : <Redirect to={{
         pathname: '/login',
         state: { from: props.location }
     }} />

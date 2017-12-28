@@ -5,9 +5,16 @@ import BottomTabBar from '../../components/TabBar';
 const Item = List.Item;
 const Brief = Item.Brief;
 
-function PersonalCenter() {
-  return (
-    <div>
+class PersonalCenter extends React.Component{
+
+  constructor(props) {
+    super(props)
+    this.state = {
+
+    }
+  }
+  render() {
+    return (<div className="body-fill">
       <div className="personInfo-box">
         <div className="backgroundImageFilter">
         </div>
@@ -20,35 +27,36 @@ function PersonalCenter() {
         </div>
         <div className="name">
           张蕾西
-          {/* 登录/注册 */}
-          </div>
+            {/* 登录/注册 */}
+        </div>
       </div>
 
       <List className="center-list">
         <Item
           thumb={require("../../img/mine_pond.png")}
           arrow="horizontal"
-          onClick={() => { }}
+          onClick={() => { this.props.history.push('/MyPond') }}
         >我的塘口</Item>
       </List>
       <List className="center-list">
         <Item
           thumb={require("../../img/mine_equipment.png")}
           arrow="horizontal"
-          onClick={() => { }}
+          onClick={() => { this.props.history.push('/MyPond') }}
         >我的设备</Item>
       </List>
       <List className="center-list">
         <Item
           thumb={require("../../img/mine_about.png")}
           arrow="horizontal"
-          onClick={() => { }}
+          onClick={() => { this.props.history.push('/MyPond') }}
         >关于渔管在线</Item>
       </List>
-
-      <BottomTabBar  nowTab={3}/>
+      <BottomTabBar nowTab={3} />
     </div>
-  );
+    );
+  }
+
 }
 
 

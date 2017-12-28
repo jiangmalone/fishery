@@ -2,14 +2,8 @@ import React from 'react';
 import { List, InputItem, Picker,ActionSheet  } from 'antd-mobile';
 import NavBar from '../../../components/NavBar';
 import { createForm } from 'rc-form';
-import './Mypond.less'
-let wrapProps;
-const isIPhone = new RegExp('\\biPhone\\b|\\biPod\\b', 'i').test(window.navigator.userAgent);
-if (isIPhone) {
-  wrapProps = {
-    onTouchStart: e => e.preventDefault(),
-  };
-}
+import './Mypond.less';
+
 class MyPond extends React.Component {
 
     constructor(props) {
@@ -27,10 +21,11 @@ class MyPond extends React.Component {
             // title: 'title',
             message: '您是否确定删除该塘口？',
             maskClosable: true,
-            'data-seed': 'logId',
-            wrapProps,
+            'data-seed': 'mypond',
+            // wrapProps,
         },
         (buttonIndex) => {
+            console.log(buttonIndex)
             this.setState({ clicked: BUTTONS[buttonIndex] });
         });
     }
@@ -87,7 +82,7 @@ class MyPond extends React.Component {
                             </span>
                         </div>
                     </div>
-                    <div className="mypond-delete" onClick={this.showActionSheet}>
+                    <div className="mypond-delete" onClick={()=>{this.showActionSheet()}}>
                         <img src={require('../../../img/btn_remove.png')} />
                     </div>
                 </div>

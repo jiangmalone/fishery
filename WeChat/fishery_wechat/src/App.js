@@ -56,8 +56,8 @@ const App = (props) => {
             <Route location={props.location} path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
             <Route location={props.location} path="/addEquipment" component={AddEquipment} />
             <Route location={props.location} path="/myEquipment" component={MyEquipment} />
-            <Route exact path="/equipmentManagement" component={EquipmentManagement} />
-            <Route exact path="/bindEquipment" component={BindEquipment} />
+            <Route location={props.location} exact path="/equipmentManagement" component={EquipmentManagement} />
+            <Route location={props.location} exact path="/bindEquipment" component={BindEquipment} />
 
             {/* <Route component={NotFound}/> */}
             {/* </Switch> */}

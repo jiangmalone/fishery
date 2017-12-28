@@ -5,7 +5,7 @@ import BottomTabBar from '../../components/TabBar';
 const Item = List.Item;
 const Brief = Item.Brief;
 
-function Alarm() {
+function Alarm(props) {
   return (
     <div className="alarm-box"> 
         <div className="alarm-list">

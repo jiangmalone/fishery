@@ -32,7 +32,7 @@ class MyPond extends React.Component {
     render() {
         return (
             <div className="body-bac">
-                <div className="nav-bar-title">
+                <div className="nav-bar-title" >
                     <i className="back" onClick={() => { history.back() }}></i>
                     我的塘口
                     <i className="edit"></i>

@@ -1,6 +1,6 @@
 import React from 'react';
 import './myEquipment.less'
-import { Flex, Toast, List, Button, Modal } from 'antd-mobile'
+import { Flex, Toast, List, Button, Modal, ActionSheet } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
 import Accordion from '../../components/Accordion';
 import offline from '../../img/equ_link_off.png'
@@ -20,14 +20,26 @@ class MyEquipment extends React.Component {
         this.setState({ isEdit: !this.state.isEdit })
     }
 
-
+    showActionSheet = () => {
+        
+    }
 
     wouldDelete = () => {
-        console.log('wouldDelete');
-        alert('删除', '确定删除该设备吗？', [
-            { text: '取消', onPress: () => console.log('取消') },
-            { text: '确定', onPress: () => this.doDelete() },
-          ])
+        const BUTTONS = ['删除', '取消'];
+        ActionSheet.showActionSheetWithOptions({
+            options: BUTTONS,
+            cancelButtonIndex: BUTTONS.length - 1,
+            destructiveButtonIndex: BUTTONS.length - 2,
+            // title: 'title',
+            message: '您是否确定删除该设备？',
+            maskClosable: true,
+            'data-seed': 'mypond',
+            // wrapProps,
+        },
+        (buttonIndex) => {
+            console.log(buttonIndex)
+            this.setState({ clicked: BUTTONS[buttonIndex] });
+        });
     }
 
     doDelete = () => {

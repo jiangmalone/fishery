@@ -68,7 +68,7 @@ class AutoOxygenationSetting extends React.Component {
             <div className="nav-bar-title">
                 <i className="back" onClick={() => { history.back() }}></i>
                 设置自动增氧
-                <i className="scan" onClick={() => { this.setState({ isShowDeclare: true }) }} ><img src={question} style={{ width: '.44rem', verticalAlign: 'middle' }} /></i>
+                <i className="right-item-none" onClick={() => { this.setState({ isShowDeclare: true }) }} ><img src={question} style={{ width: '.44rem', verticalAlign: 'middle' }} /></i>
             </div>
             <Modal
                 visible={this.state.isShowDeclare}

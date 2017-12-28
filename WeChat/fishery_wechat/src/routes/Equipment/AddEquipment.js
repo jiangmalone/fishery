@@ -22,10 +22,10 @@ class AddEquipment extends React.Component {
     }
 
     render() {
-        return (<div className='addEqu_bg'>
+        return (<div className='addEqu_bg' >
             <NavBar
                 title='添加设备'
-            ></NavBar>
+            />
             <div className='add-line'>
                 <input placeholder='请输入设备编号' value={this.state.equipmentCode} onChange={e => this.setState({equipmentCode: e.target.value})} />
                 <div onClick={this.doAddEquipment}>添加</div>

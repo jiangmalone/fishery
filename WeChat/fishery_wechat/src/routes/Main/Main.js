@@ -7,14 +7,6 @@ import Accordion from '../../components/Accordion';
 import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
 
-const isIPhone = new RegExp('\\biPhone\\b|\\biPod\\b', 'i').test(window.navigator.userAgent);
-let wrapProps;
-if (isIPhone) {
-  wrapProps = {
-    onTouchStart: e => e.preventDefault(),
-  };
-}
-
 class Main extends React.Component {
 
     constructor(props) {
@@ -22,11 +14,11 @@ class Main extends React.Component {
         this.state = {
             waterCheck1: false,
             waterCheck2: false,
-
         }
     }
 
     showActionSheet = () => {
+        console.log('aaaa')
         const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
         ActionSheet.showActionSheetWithOptions({
           options: BUTTONS,
@@ -35,7 +27,6 @@ class Main extends React.Component {
           title: '你是否确定关闭自动增氧？',
           maskClosable: true,
           'data-seed': 'logId',
-          wrapProps,
         },
         (buttonIndex) => {
           this.setState({ clicked: BUTTONS[buttonIndex] });

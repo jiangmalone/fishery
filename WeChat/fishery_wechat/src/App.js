@@ -15,7 +15,10 @@ import Main from './routes/Main/Main';
 import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygenationSetting';
 import AddEquipment from './routes/Equipment/AddEquipment';
 import MyPond from './routes/Mypond/MyPond/MyPond';
+<<<<<<< HEAD
 import MyEquipment from './routes/Equipment/MyEquipment';
+=======
+>>>>>>> 6cd4611de2264b1f1c2ad7d96a48da199bee4d57
 
 
 const App = (props) => {

@@ -2,10 +2,11 @@ import React from 'react';
 import './personalCenter.less';
 import { List } from 'antd-mobile';
 import BottomTabBar from '../../components/TabBar';
+import { connect } from 'dva';
 const Item = List.Item;
 const Brief = Item.Brief;
 
-class PersonalCenter extends React.Component{
+class PersonalCenter extends React.Component {
 
   constructor(props) {
     super(props)
@@ -35,21 +36,45 @@ class PersonalCenter extends React.Component{
         <Item
           thumb={require("../../img/mine_pond.png")}
           arrow="horizontal"
-          onClick={() => { this.props.history.push('/MyPond') }}
+          onClick={() => {
+            this.props.history.push('/MyPond');
+            this.props.dispatch({
+              type: 'global/changeState',
+              payload: {
+                transitionName: 'left'
+              }
+            })
+          }}
         >我的塘口</Item>
       </List>
       <List className="center-list">
         <Item
           thumb={require("../../img/mine_equipment.png")}
           arrow="horizontal"
-          onClick={() => { this.props.history.push('/MyPond') }}
+          onClick={() => {
+            this.props.history.push('/MyPond');
+            this.props.dispatch({
+              type: 'global/changeState',
+              payload: {
+                transitionName: 'left'
+              }
+            })
+          }}
         >我的设备</Item>
       </List>
       <List className="center-list">
         <Item
           thumb={require("../../img/mine_about.png")}
           arrow="horizontal"
-          onClick={() => { this.props.history.push('/MyPond') }}
+          onClick={() => {
+            this.props.history.push('/MyPond');
+            this.props.dispatch({
+              type: 'global/changeState',
+              payload: {
+                transitionName: 'left'
+              }
+            })
+          }}
         >关于渔管在线</Item>
       </List>
       <BottomTabBar nowTab={3} />
@@ -60,4 +85,6 @@ class PersonalCenter extends React.Component{
 }
 
 
-export default PersonalCenter;
+export default connect((state)=>({
+  transitionName:global.transitionName
+}))(PersonalCenter);

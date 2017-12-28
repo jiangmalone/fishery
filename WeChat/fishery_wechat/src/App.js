@@ -4,6 +4,7 @@ const Router = require('react-router-dom');
 const Route = Router.Route;
 const Switch = Router.Switch;
 const Redirect = Router.Redirect;
+import { connect } from 'dva';
 import CSSTransitionGroup from "react-addons-css-transition-group";
 import IndexPage from './routes/IndexPage';
 import Login from './routes/Login/Login';
@@ -34,34 +35,40 @@ styles.content = {
 }
 
 const App = (props) => {
-    return (true ? <CSSTransitionGroup
-        transitionName="right"
+    console.log(props)
+    return (true ? <div><CSSTransitionGroup
+        transitionName={props.transitionName}
         style={styles.content}
         transitionEnterTimeout={400}
         transitionLeaveTimeout={400}
-        // transitionAppear = {true}
+    // transitionAppear = {true}
     >
         {/* <Switch> */}
         <div key={props.location.pathname} style={styles.content} >
+            <Route location={props.location} path="/alarm" component={Alarm} />
+            <Route location={props.location} path="/main" component={Main} />
             <Route location={props.location} exact path="/" component={IndexPage} />
             <Route location={props.location} path="/userInfo" component={UserInfo} />
-            <Route location={props.location} path="/alarm" component={Alarm} />
             <Route location={props.location} path="/center" component={PersonalCenter} />
             <Route location={props.location} path="/addPond" component={addPond} />
             <Route location={props.location} path="/addFish" component={addFish} />
             <Route location={props.location} path="/MyPond" component={MyPond} />
-            <Route location={props.location} path="/main" component={Main} />
             <Route location={props.location} path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
             <Route location={props.location} path="/addEquipment" component={AddEquipment} />
             <Route location={props.location} path="/myEquipment" component={MyEquipment} />
             {/* <Route component={NotFound}/> */}
             {/* </Switch> */}
         </div>
-    </CSSTransitionGroup> : <Redirect to={{
+    </CSSTransitionGroup>
+    </div> : <Redirect to={{
         pathname: '/login',
         state: { from: props.location }
     }} />
     )
 };
 
-module.exports = App;
+module.exports = connect((state) => {
+    return ({
+        transitionName: state.global.transitionName
+    })
+})(App);

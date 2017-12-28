@@ -1,7 +1,8 @@
 import React from 'react';
-import { List, InputItem, Picker,ActionSheet  } from 'antd-mobile';
+import { List, InputItem, Picker, ActionSheet } from 'antd-mobile';
 import NavBar from '../../../components/NavBar';
 import { createForm } from 'rc-form';
+import { connect } from 'dva';
 import './Mypond.less';
 
 class MyPond extends React.Component {
@@ -24,16 +25,24 @@ class MyPond extends React.Component {
             'data-seed': 'mypond',
             // wrapProps,
         },
-        (buttonIndex) => {
-            console.log(buttonIndex)
-            this.setState({ clicked: BUTTONS[buttonIndex] });
-        });
+            (buttonIndex) => {
+                console.log(buttonIndex)
+                this.setState({ clicked: BUTTONS[buttonIndex] });
+            });
     }
     render() {
         return (
             <div className="body-bac">
                 <div className="nav-bar-title" >
-                    <i className="back" onClick={() => { history.back() }}></i>
+                    <i className="back" onClick={() => {
+                        history.back();
+                         this.props.dispatch({
+                            type: 'global/changeState',
+                            payload: {
+                                transitionName: 'right'
+                            }
+                        })
+                    }}></i>
                     我的塘口
                     <i className="edit"></i>
                 </div>
@@ -82,7 +91,7 @@ class MyPond extends React.Component {
                             </span>
                         </div>
                     </div>
-                    <div className="mypond-delete" onClick={()=>{this.showActionSheet()}}>
+                    <div className="mypond-delete" onClick={() => { this.showActionSheet() }}>
                         <img src={require('../../../img/btn_remove.png')} />
                     </div>
                 </div>
@@ -143,4 +152,4 @@ class MyPond extends React.Component {
 
 }
 
-export default MyPond;
+export default connect()(MyPond);

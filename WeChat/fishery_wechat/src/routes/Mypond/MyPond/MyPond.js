@@ -110,6 +110,7 @@ function MyPond() {
                     <img src={require('../../../img/btn_remove.png')}/>
                 </div>
             </div>
+            <div className="addPond-btn">取消</div>
             <div className="btn_add">
             </div>
         </div>

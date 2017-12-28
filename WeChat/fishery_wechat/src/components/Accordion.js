@@ -9,8 +9,13 @@ class Accordion extends React.Component {
     constructor(props) {
         super(props)
         let isShowChildren = this.props.isShow ? true : false
+        let isShowState = true;
+        if(this.props.isShowState != undefined && !this.props.isShowState) {
+            isShowState = false;
+        }
         this.state = {
-            isShowChildren: isShowChildren
+            isShowChildren: isShowChildren,
+            isShowState: isShowState
         }
     }
 
@@ -25,7 +30,7 @@ class Accordion extends React.Component {
         return(<div className = 'accordion-item'>
             <div className='name-line' onClick={() => {this.handlaClick()}}>
                 <div className='name'>{this.props.title}</div>
-                <img className='state-img' src={this.props.isOnline? online : offline} />
+                {this.state.isShowState && <img className='state-img' src={this.props.isOnline? online : offline} />}
                 <Icon type={this.state.isShowChildren? 'up' : 'down'} className='icon'></Icon>
             </div>
             {this.state.isShowChildren && <div>

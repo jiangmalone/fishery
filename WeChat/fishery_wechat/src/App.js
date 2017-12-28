@@ -8,17 +8,14 @@ import IndexPage from './routes/IndexPage';
 import Login from './routes/Login/Login';
 import UserInfo from './routes/Login/UserInfo'
 import Alarm from './routes/Alarm/Alarm';
-
 import PersonalCenter from './routes/PersonalCenter/PersonalCenter';
 import addPond from './routes/Mypond/AddPond/AddPond';
 import addFish from './routes/Mypond/AddPond/AddFish';
 import Main from './routes/Main/Main';
 import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygenationSetting';
-import AddEquipment from './routes/Equipment/AddEquipment'
-
+import AddEquipment from './routes/Equipment/AddEquipment';
 import MyPond from './routes/Mypond/MyPond/MyPond';
-import Main from './routes/Main/Main'
-import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygenationSetting'
+import MyEquipment from './routes/Equipment/MyEquipment';
 
 
 const App = (props) => {
@@ -34,6 +31,7 @@ const App = (props) => {
             <Route exact path="/main" component={Main} />
             <Route exact path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
             <Route exact path="/addEquipment" component={AddEquipment} />
+            <Route exact path="/myEquipment" component={MyEquipment} />
             {/* <Route component={NotFound}/> */}
         </Switch>
     </div> : <Redirect to={{

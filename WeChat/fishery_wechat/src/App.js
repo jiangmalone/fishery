@@ -17,8 +17,6 @@ import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygena
 import AddEquipment from './routes/Equipment/AddEquipment'
 
 import MyPond from './routes/Mypond/MyPond/MyPond';
-import Main from './routes/Main/Main'
-import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygenationSetting'
 
 
 const App = (props) => {

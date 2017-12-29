@@ -1,69 +1,24 @@
 import React from 'react';
-import './myEquipment.less'
-import { Flex, Toast, List, Button, Modal, ActionSheet } from 'antd-mobile'
+import './sensorDetail.less'
+import { } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
-import { connect } from 'dva';
-import Accordion from '../../components/Accordion';
 import offline from '../../img/equ_link_off.png'
 import online from '../../img/equ_link_on.png'
-const alert = Modal.alert;
 
-class MyEquipment extends React.Component {
+class SensorDetail extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            isEdit: false
+            isShowDetail: false
         }
-    }
-
-    edit = () => {
-        this.setState({ isEdit: !this.state.isEdit })
-    }
-
-    showActionSheet = () => {
-        
-    }
-
-    wouldDelete = () => {
-        const BUTTONS = ['删除', '取消'];
-        ActionSheet.showActionSheetWithOptions({
-            options: BUTTONS,
-            cancelButtonIndex: BUTTONS.length - 1,
-            destructiveButtonIndex: BUTTONS.length - 2,
-            // title: 'title',
-            message: '您是否确定删除该设备？',
-            maskClosable: true,
-            'data-seed': 'mypond',
-            // wrapProps,
-        },
-        (buttonIndex) => {
-            console.log(buttonIndex)
-            this.setState({ clicked: BUTTONS[buttonIndex] });
-        });
-    }
-
-    doDelete = () => {
-        console.log('doDelete');
-    }
-
-    addEquipment = () => {
-        console.log('add');
     }
 
     render() {
         return <div className='my-equipment-bg' style={{ minHeight: window.document.body.clientHeight }}>
             <div className="nav-bar-title">
-            <i className="back" onClick={() => {
-                        history.back();
-                        this.props.dispatch({
-                            type: 'global/changeState',
-                            payload: {
-                                transitionName: 'right'
-                            }
-                        })
-                    }}></i>
-                我的设备
+                <i className="back" onClick={() => { history.back() }}></i>
+                小渔塘-传感器1
                 <i className={this.state.isEdit ? 'right-item-none' : "edit"} onClick={this.edit} >{this.state.isEdit && "取消"}</i>
             </div>
             <div className='equipment-type'>
@@ -170,4 +125,4 @@ class MyEquipment extends React.Component {
     }
 }
 
-export default connect()(MyEquipment);
+export default withRouter(SensorDetail);

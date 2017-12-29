@@ -119,9 +119,7 @@ export const getNavData = app => [
                 component: dynamicWrapper(app, [], () => import('../routes/Equipment/WaterQualityCurve')),
               }
             ]
-
           },
-          
         ],
       },
     ],

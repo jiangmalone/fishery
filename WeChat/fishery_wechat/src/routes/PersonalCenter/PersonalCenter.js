@@ -52,7 +52,7 @@ class PersonalCenter extends React.Component {
           thumb={require("../../img/mine_equipment.png")}
           arrow="horizontal"
           onClick={() => {
-            this.props.history.push('/MyPond');
+            this.props.history.push('/MyEquipment');
             this.props.dispatch({
               type: 'global/changeState',
               payload: {

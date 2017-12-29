@@ -57,6 +57,7 @@ public class CompanyDaoImpl implements CompanyDao {
 		return company;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Company> queryList(String name, int page, int number) {
 		QueryUtils qutils = new QueryUtils(getSession(), "from Company");

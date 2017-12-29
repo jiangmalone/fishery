@@ -1,0 +1,69 @@
+package com.geariot.platform.fishery.dao.impl;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.geariot.platform.fishery.dao.TimerDao;
+import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.utils.Constants;
+import com.geariot.platform.fishery.utils.QueryUtils;
+@Repository
+public class TimerDaoImpl implements TimerDao {
+
+
+	@Autowired
+	private SessionFactory sessionFactory;
+	
+	private Session getSession() {
+		return sessionFactory.getCurrentSession();
+	}
+	@Override
+	public void save(Timer timer) {
+		this.getSession().save(timer);
+
+	}
+
+	@Override
+	public void delete(String device_sn) {
+		String hql = "delete from Timer where device_sn in :device_sn";
+		this.getSession().createQuery(hql).setString("device_sn",device_sn).executeUpdate();
+
+	}
+
+	@Override
+	public Timer findTimerById(int timerId) {
+		String hql = "from Timer where id= :id ";
+		Timer timer= (Timer) getSession().createQuery(hql).setInteger("id",timerId).setCacheable(Constants.SELECT_CACHE).uniqueResult();
+			return timer;
+	}
+
+	@Override
+	public Timer findTimerByDeviceSns(String device_sn) {
+		String hql = "from Timer where device_sn= :device_sn ";
+		Timer timer= (Timer) getSession().createQuery(hql).setString("device_sn",device_sn).setCacheable(Constants.SELECT_CACHE).uniqueResult();
+			return timer;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Timer> queryTimerByDeviceSn(String device_sn, int from, int pageSize) {
+		QueryUtils qutils = new QueryUtils(getSession(), "Timer");
+		Query query = qutils.addStringLike("device_sn", device_sn)
+		.setFirstResult(from)
+		.setMaxResults(pageSize)
+		.getQuery();
+		return query.list();
+	}
+
+	@Override
+	public void updateTimer(Timer timer) {
+		// TODO Auto-generated method stub
+		this.getSession().merge(timer);
+	}
+
+}

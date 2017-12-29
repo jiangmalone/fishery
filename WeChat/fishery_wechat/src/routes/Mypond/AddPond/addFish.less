@@ -11,6 +11,10 @@
 .fish-type {
     padding: 0 .3rem;
     color: #1e1e1e;
+    transition: background 1s;
+    -moz-transition: background 1s;	/* Firefox 4 */
+    -webkit-transition: background 1s;	/* Safari 和 Chrome */
+    -o-transition: background 1s;	/* Opera */
     background: #fff;
     .fish-name {
         padding: .36rem 0;
@@ -21,6 +25,9 @@
             font-size: .5rem;
             color: #35b4e8;
         }
+    }
+    &.active {
+        background: #eee;
     }
 }
 .addFish-btn {

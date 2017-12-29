@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'dva';
 
 function NavBar(props) {
-    console.log(props)
     return <div className="nav-bar-title">
         <i className="back" onClick={() => {
             history.back();

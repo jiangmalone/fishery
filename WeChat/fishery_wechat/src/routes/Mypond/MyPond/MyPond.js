@@ -10,7 +10,7 @@ class MyPond extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            edit: false
         }
     }
     showActionSheet = () => {
@@ -27,7 +27,7 @@ class MyPond extends React.Component {
         },
             (buttonIndex) => {
                 console.log(buttonIndex)
-                this.setState({ clicked: BUTTONS[buttonIndex] });
+                this.setState({ clicked: BUTTONS[buttonIndex], edit: !this.state.edit });
             });
     }
     render() {
@@ -36,7 +36,7 @@ class MyPond extends React.Component {
                 <div className="nav-bar-title" >
                     <i className="back" onClick={() => {
                         history.back();
-                         this.props.dispatch({
+                        this.props.dispatch({
                             type: 'global/changeState',
                             payload: {
                                 transitionName: 'right'
@@ -44,7 +44,7 @@ class MyPond extends React.Component {
                         })
                     }}></i>
                     我的塘口
-                    <i className="edit"></i>
+                    <i className={this.state.edit?'right-item-none':'edit'} onClick={() => { this.setState({ edit: !this.state.edit }) }}></i>
                 </div>
                 <div className="mypond-bac"></div>
                 <div className="mypond-content">
@@ -91,9 +91,9 @@ class MyPond extends React.Component {
                             </span>
                         </div>
                     </div>
-                    <div className="mypond-delete" onClick={() => { this.showActionSheet() }}>
+                    {this.state.edit && <div className="mypond-delete" onClick={() => { this.showActionSheet() }}>
                         <img src={require('../../../img/btn_remove.png')} />
-                    </div>
+                    </div>}
                 </div>
                 <div className="mypond-content">
                     <div>
@@ -139,12 +139,19 @@ class MyPond extends React.Component {
                             </span>
                         </div>
                     </div>
-                    <div className="mypond-delete">
+                    {this.state.edit && <div className="mypond-delete" onClick={() => { this.showActionSheet() }}>
                         <img src={require('../../../img/btn_remove.png')} />
-                    </div>
+                    </div>}
                 </div>
                 <div className="addPond-btn">取消</div>
-                <div className="btn_add">
+                <div className="btn_add" onClick={() => {
+                    this.props.history.push('/addPond'); this.props.dispatch({
+                        type: 'global/changeState',
+                        payload: {
+                            transitionName: 'fade'
+                        }
+                    })
+                }}>
                 </div>
             </div>
         );

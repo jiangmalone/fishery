@@ -104,7 +104,7 @@ public class UserService {
 
 	public Map<String, Object> queryCompany(String name, int page, int number) {
 		int from = (page - 1) * number;
-		List<Company> list = companyDao.queryList(name, page, number);
+		List<Company> list = companyDao.queryList(name, from, number);
 		if (list == null || list.isEmpty()) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
@@ -115,7 +115,7 @@ public class UserService {
 
 	public Map<String, Object> queryWXUser(String name, int page, int number) {
 		int from = (page - 1) * number;
-		List<WXUser> list = wxuserDao.queryList(name, page, number);
+		List<WXUser> list = wxuserDao.queryList(name, from, number);
 		if (list == null || list.isEmpty()) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}

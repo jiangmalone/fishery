@@ -20,6 +20,7 @@ import MyPond from './routes/Mypond/MyPond/MyPond';
 import MyEquipment from './routes/Equipment/MyEquipment';
 import EquipmentManagement from './routes/Equipment/EquipmentManagement'
 import BindEquipment from './routes/Equipment/BindEquipment'
+import AddAddress from './routes/Mypond/AddPond/AddAddress';
 
 const styles = {}
 
@@ -59,7 +60,7 @@ const App = (props) => {
             <Route location={props.location} path="/myEquipment" component={MyEquipment} />
             <Route location={props.location} exact path="/equipmentManagement" component={EquipmentManagement} />
             <Route location={props.location} exact path="/bindEquipment" component={BindEquipment} />
-
+            <Route location={props.location} exact path="/address" component={AddAddress} />
             {/* <Route component={NotFound}/> */}
             {/* </Switch> */}
         </div>

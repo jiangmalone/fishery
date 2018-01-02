@@ -54,7 +54,12 @@ public class EquipmentService {
 	
 
 	public Map<String, Object> setLimit(Limit_Install limit_Install) {
-		String deviceSn=limit_Install.getDevice_sn().substring(0, 2);
+		String deviceSn;
+		try {
+			deviceSn = limit_Install.getDevice_sn().substring(0, 2);
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
 		if (deviceSn.equals("01")|| deviceSn.equals("02")) {
 			if (aioDao.findAIOByDeviceSns(limit_Install.getDevice_sn()) == null) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
@@ -73,7 +78,12 @@ public class EquipmentService {
 	public Map<String, Object> delEquipment(String[] device_sns) {
 		for (String device : device_sns) {
 
-			String devices = device.trim().substring(0, 2);
+			String devices;
+			try {
+				devices = device.trim().substring(0, 2);
+			} catch (Exception e) {
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
+			}
 
 			if (devices.equals("01") || devices.equals("02")) {
 				aioDao.delete(device);
@@ -89,7 +99,12 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> setTimer(Timer timer) {
-		String deviceSn=timer.getDevice_sn().substring(0, 2);
+		String deviceSn;
+		try {
+			deviceSn = timer.getDevice_sn().substring(0, 2);
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
 		if (deviceSn.equals("01")|| deviceSn.equals("02")) {
 			if (aioDao.findAIOByDeviceSns(timer.getDevice_sn()) == null) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
@@ -106,7 +121,12 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> queryEquipment(String device_sn, String relation, String name, int page, int number) {
-		String deviceSn=device_sn.trim().substring(0, 2);
+		String deviceSn;
+		try {
+			deviceSn = device_sn.trim().substring(0, 2);
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
 		if (deviceSn.equals("01") || deviceSn.equals("02")) {
 			List<AIO> list=aioDao.queryAIOByNameAndRelation(relation, name, page, number);
 			if(list.isEmpty())
@@ -145,7 +165,12 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> addEquipment(String device_sn ,String name, String relation) {
-		String deviceSn=device_sn.trim().substring(0, 2);
+		String deviceSn;
+		try {
+			deviceSn = device_sn.trim().substring(0, 2);
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
 		if (deviceSn.equals("01") || deviceSn.equals("02")) {
 			AIO exist=aioDao.findAIOByDeviceSns(device_sn);
 			if(exist!=null) 
@@ -183,7 +208,12 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> realTimeData(String device_sn) {
-		String deviceSn=device_sn.trim().substring(0, 2);
+		String deviceSn;
+		try {
+			deviceSn = device_sn.trim().substring(0, 2);
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
 		if (deviceSn.equals("01")|| deviceSn.equals("02")) {
 			if (aioDao.findAIOByDeviceSns(device_sn) == null) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();

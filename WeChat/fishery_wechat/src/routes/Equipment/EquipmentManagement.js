@@ -2,8 +2,6 @@ import React from 'react';
 import './equipmentManagement.less'
 import { ActionSheet } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
-import offline from '../../img/equ_offline.png'
-import online from '../../img/equ_online.png'
 import NavBar from '../../components/NavBar';
 
 class EquipmentManagement extends React.Component {

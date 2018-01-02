@@ -4,9 +4,7 @@ import { Flex, Toast, List, Button, Modal, ActionSheet } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
 import { connect } from 'dva';
 import Accordion from '../../components/Accordion';
-import offline from '../../img/equ_link_off.png'
-import online from '../../img/equ_link_on.png'
-const alert = Modal.alert;
+const alert = Modal.alert; 
 
 class MyEquipment extends React.Component {
 

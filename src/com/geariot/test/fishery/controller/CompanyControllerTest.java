@@ -139,8 +139,8 @@ public class CompanyControllerTest {
 	public void queryWXUserTest() throws Exception{
 		mockMvc.perform(get("/usermanagement/queryWXUser").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("name", "库")
-				.param("page", "1")
+				.param("name", "小")
+				.param("page", "2")
 				.param("number", "3")
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());

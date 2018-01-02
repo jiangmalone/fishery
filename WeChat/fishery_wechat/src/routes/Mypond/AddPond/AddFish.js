@@ -12,8 +12,8 @@ class AddFish extends Component {
         }
     }
     render() {
-        const fishs = [1,2,3,4,5].map((item,index)=>{
-            return         <div key={index} ref={(div) => { this[`dom${index}`] = div }} className="fish-type" onTouchStart={() => {
+        const fishs = [1, 2, 3, 4, 5].map((item, index) => {
+            return <div key={index} ref={(div) => { this[`dom${index}`] = div }} className="fish-type" onTouchStart={() => {
                 this[`dom${index}`].className = "fish-type active"
             }} onTouchEnd={() => {
                 this[`dom${index}`].className = "fish-type"

@@ -21,8 +21,9 @@ import MyEquipment from './routes/Equipment/MyEquipment';
 import EquipmentManagement from './routes/Equipment/EquipmentManagement';
 import BindEquipment from './routes/Equipment/BindEquipment';
 import SensorDetail from './routes/Equipment/SensorDetail';
+import AddAddress from './routes/Mypond/AddPond/AddAddress';
 
-const styles = {}
+let styles = {}
 
 styles.fill = {
     position: 'absolute',
@@ -35,7 +36,7 @@ styles.fill = {
 
 styles.content = {
     ...styles.fill
-}
+};
 
 const App = (props) => {
     return (true ? <div><CSSTransitionGroup
@@ -62,6 +63,7 @@ const App = (props) => {
             <Route location={props.location} exact path="/bindEquipment" component={BindEquipment} />
             <Route location={props.location} exact path="/sensorDetail" component={SensorDetail} />
 
+            <Route location={props.location} exact path="/address" component={AddAddress} />
             {/* <Route component={NotFound}/> */}
             {/* </Switch> */}
         </div>

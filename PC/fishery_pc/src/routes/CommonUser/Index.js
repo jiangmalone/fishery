@@ -2,8 +2,9 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col, Input, Button } from 'antd'
-import {Link} from 'react-router-dom'
+import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd'
+import { Link } from 'react-router-dom'
+import AddUser from './AddUser'
 
 const Search = Input.Search;
 @connect(state => ({
@@ -13,6 +14,13 @@ const Search = Input.Search;
 }))
 
 class UserList extends PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+            view: false
+        }
+    }
+
     componentDidMount() {
         this.props.dispatch({
             type: 'commonUser/fetch',
@@ -22,8 +30,24 @@ class UserList extends PureComponent {
         });
     }
 
+    showAddModal = () => {
+        this.setState({
+            view: true
+        })
+    }
+
+    onOk = (values) => {
+  
+        console.log(values)
+        this.props.dispatch({
+            type: 'commonUser/addUser',
+            payload:values,
+        });
+        this.setState({
+            view: false
+        })
+    }
     render() {
-        console.log(this.props)
         const { list, loading } = this.props;
 
         const columns = [{
@@ -37,7 +61,7 @@ class UserList extends PureComponent {
             title: '名称',
             dataIndex: 'owner',
             key: 'owner',
-            render: (text,record,index)=>{
+            render: (text, record, index) => {
                 return <Link to={`common-user/${index}`}>{text}</Link>
             }
         }, {
@@ -60,7 +84,18 @@ class UserList extends PureComponent {
             title: '创建时间',
             key: 'createTime',
             dataIndex: 'createTime'
-        }];
+        }, {
+            title: '操作',
+            dataIndex: 'keyword',
+            render: (text, record, index) => {
+                return <span>
+                    <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
+                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.account])}>
+                        <a href="javascript:void(0);">删除</a>
+                    </Popconfirm>
+                </span>
+            }
+        },];
         return (
             <PageHeaderLayout>
                 <Card bordered={false}>
@@ -77,6 +112,7 @@ class UserList extends PureComponent {
                         pagination={this.props.pagination}
                         bordered
                     />
+                    <AddUser visible={this.state.view} onOk={this.onOk} wrapClassName='vertical-center-modal' onCancel={this.onOk} />
                 </Card>
             </PageHeaderLayout>
         );

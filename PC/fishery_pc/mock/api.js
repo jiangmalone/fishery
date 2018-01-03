@@ -186,6 +186,19 @@ export const getNotice = [
   },
 ];
 
+export const addUser = {
+  code: "0",                //类型：String  必有字段  备注：无
+  msg: "成功",                //类型：String  必有字段  备注：无
+  data: {
+    name: "hanhan",                //类型：String  必有字段  备注：无
+    phone: "18362981113",                //类型：String  必有字段  备注：无
+    sex: "",                //类型：String  必有字段  备注：无
+    life: "",                //类型：String  必有字段  备注：无
+    address: "",                //类型：String  必有字段  备注：无
+    createDate: "2017-01-01"                //类型：String  必有字段  备注：无
+  },
+}
+
 export const getActivities = [
   {
     id: 'trend-1',
@@ -292,4 +305,5 @@ export default {
   getNotice,
   getActivities,
   getFakeList,
+  addUser
 };

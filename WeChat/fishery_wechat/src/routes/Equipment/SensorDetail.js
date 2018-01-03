@@ -80,80 +80,48 @@ class SensorDetail extends React.Component {
             overlayAry.push(item);
         }
         return (<div className='sensorDetail-bg' >
-            <NavBar
-                mode="light"
-                icon={<img src={back_img} style={{width: '.2rem', height: '.35rem'}} /> }
-                rightContent={
-                    <Popover mask
-                        overlayClassName="fortest"
-                        overlayStyle={{ color: 'currentColor' }}
-                        visible={this.state.isShowMore}
-                    
-                        overlay={
-                            overlayAry
-                        }
-                        align={{
-                            overflow: { adjustY: 0, adjustX: 0 },
-                            offset: [-10, 0],
-                        }}
-                        onVisibleChange={this.handleVisibleChange}
-                        onSelect={this.onSelect}
-                    >
-                        <div style={{
-                            height: '100%',
-                            padding: '0 15px',
-                            marginRight: '-15px',
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
-                        >
-                            <img src={btn_list} style={{ height: '.4rem' }} />
-                        </div>
-                    </Popover>
-                }
-            >
-                {this.state.title}
-            </NavBar>
+
             <div className="nav-bar-title">
-            <i className="back" onClick={() => {
-                        history.back();
-                        this.props.dispatch({
-                            type: 'global/changeState',
-                            payload: {
-                                transitionName: 'right'
-                            }
-                        })
-                    }}></i>
+                <i className="back" onClick={() => {
+                    history.back();
+                    this.props.dispatch({
+                        type: 'global/changeState',
+                        payload: {
+                            transitionName: 'right'
+                        }
+                    })
+                }}></i>
                 {this.state.title}
                 <i className={"edit"} ></i>
             </div>
-            <Popover mask
-                        overlayClassName="fortest"
-                        overlayStyle={{ color: 'currentColor' }}
-                        visible={this.state.isShowMore}
-                    
-                        overlay={
-                            overlayAry
-                        }
-                        align={{
-                            overflow: { adjustY: 0, adjustX: 0 },
-                            offset: [-10, 0],
-                        }}
-                        onVisibleChange={this.handleVisibleChange}
-                        onSelect={this.onSelect}
-                    >
-                        <div style={{
-                            height: '100%',
-                            padding: '0 15px',
-                            marginRight: '-15px',
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
-                        >
-                            <img src={btn_list} style={{ height: '.4rem' }} />
-                        </div>
-                    </Popover>
+            <Popover
+                mask
+                overlayClassName="fortest"
+                overlayStyle={{ color: 'currentColor' }}
+                visible={this.state.isShowMore}
+
+                overlay={
+                    overlayAry
                 }
+                align={{
+                    overflow: { adjustY: 0, adjustX: 0 },
+                    offset: [-10, 0],
+                }}
+                onVisibleChange={this.handleVisibleChange}
+                onSelect={this.onSelect}
+            >
+                <div style={{
+                    height: '100%',
+                    padding: '0 15px',
+                    marginRight: '-15px',
+                    display: 'flex',
+                    alignItems: 'center',
+                }}
+                >
+                    <img src={btn_list} style={{ height: '.4rem' }} />
+                </div>
+            </Popover>
+            }
             <div className='state-head' onClick={this.changeDetailShowState} >
 
                 <img src={offline} style={{ marginLeft: 0 }} />

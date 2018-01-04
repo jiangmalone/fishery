@@ -10,21 +10,83 @@ import correct from '../../img/btn_correct.png';
 import back_img from '../../img/back.png';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
 
-const data = [
-    { year: "1991", value: 3 },
-    { year: "1992", value: 4 },
-    { year: "1993", value: 3.5 },
-    { year: "1994", value: 5 },
-    { year: "1995", value: 4.9 },
-    { year: "1996", value: 6 },
-    { year: "1997", value: 7 },
-    { year: "1998", value: 9 },
-    { year: "1999", value: 13 }
+const dayPHData = [
+    { time: "9:00", ph: 3 },
+    { time: "10:00", ph: 4 },
+    { time: "11:00", ph: 3.5 },
+    { time: "12:00", ph: 5 },
+    { time: "13:00", ph: 4.9 },
+    { time: "14:00", ph: 6 },
+    { time: "15:00", ph: 7 },
+    { time: "16:00", ph: 9 },
+    { time: "17:00", ph: 13 }
+];
+const monthPHData = [
+    { time: "星期一", ph: 9 },
+    { time: "星期二", ph: 9.9 },
+    { time: "星期三", ph: 9.5 },
+    { time: "星期四", ph: 7 },
+    { time: "星期五", ph: 8 },
+    { time: "星期六", ph: 9 },
+    { time: "星期日", ph: 7 },
 ];
 const cols = {
-    'value': { min: 0 },
-    'year': { range: [0, 1] }
+    'ph': { min: 0 },
+    'time': { range: [0, 1] }
 };
+
+const dayOData = [
+    { time: "9:00", o: 3 },
+    { time: "10:00", o: 4 },
+    { time: "11:00", o: 3.5 },
+    { time: "12:00", o: 5 },
+    { time: "13:00", o: 4.9 },
+    { time: "14:00", o: 6 },
+    { time: "15:00", o: 7 },
+    { time: "16:00", o: 9 },
+    { time: "17:00", o: 13 }
+];
+const monthOData = [
+    { time: "星期一", o: 9 },
+    { time: "星期二", o: 9.9 },
+    { time: "星期三", o: 9.5 },
+    { time: "星期四", o: 7 },
+    { time: "星期五", o: 8 },
+    { time: "星期六", o: 9 },
+    { time: "星期日", o: 7 },
+];
+const oCols = {
+    'o': { min: 0 },
+    'time': { range: [0, 1] }
+};
+
+const dayWaterData = [
+    { time: "9:00", '温度': 3 },
+    { time: "10:00", '温度': 4 },
+    { time: "11:00", '温度': 3.5 },
+    { time: "12:00", '温度': 5 },
+    { time: "13:00", '温度': 4.9 },
+    { time: "14:00", '温度': 6 },
+    { time: "15:00", '温度': 7 },
+    { time: "16:00", '温度': 9 },
+    { time: "17:00", '温度': 13 }
+];
+const monthWaterData = [
+    { time: "星期一",  '温度': 9 },
+    { time: "星期二",  '温度': 9.9 },
+    { time: "星期三",  '温度': 9.5 },
+    { time: "星期四",  '温度': 7 },
+    { time: "星期五",  '温度': 8 },
+    { time: "星期六",  '温度': 9 },
+    { time: "星期日",  '温度': 7 },
+];
+const waterCols = {
+    '温度': { min: 0 },
+    'time': { range: [0, 1] }
+};
+
+
+
 class SensorDetail extends React.Component {
 
     constructor(props) {
@@ -36,6 +98,7 @@ class SensorDetail extends React.Component {
             selected: '',
             isShowDetail: false,
             isSelectToday: true,
+            data: dayPHData,
         }
     }
 
@@ -64,8 +127,15 @@ class SensorDetail extends React.Component {
         if (state == this.state.isSelectToday) {
             return;
         } else {
+            let data = [];
+            if(!this.state.isSelectToday) {
+                data = dayPHData
+            } else {
+                data = monthPHData
+            }
             this.setState({
-                isSelectToday: !this.state.isSelectToday
+                isSelectToday: !this.state.isSelectToday,
+                data: data
             })
         }
     }
@@ -141,32 +211,32 @@ class SensorDetail extends React.Component {
             </div>
             <div className='chart-div'>
                 <p>PH变化曲线</p>
-                <Chart height={400} data={data} scale={cols} forceFit>
-                    <Axis name="year" />
-                    <Axis name="value" />
+                <Chart height={400} data={this.state.data} scale={cols} forceFit>
+                    <Axis name="time" />
+                    <Axis name="ph" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="year*value" size={2} />
-                    <Geom type='point' position="year*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                    <Geom type="line" position="time*ph" size={2} />
+                    <Geom type='point' position="time*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
             </div>
             <div className='chart-div'>
                 <p>PH变化曲线</p>
-                <Chart height={400} data={data} scale={cols} forceFit>
-                    <Axis name="year" />
-                    <Axis name="value" />
+                <Chart height={400} data={this.state.data} scale={cols} forceFit>
+                    <Axis name="time" />
+                    <Axis name="ph" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="year*value" size={2} />
-                    <Geom type='point' position="year*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                    <Geom type="line" position="time*ph" size={2} />
+                    <Geom type='point' position="time*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
             </div>
             <div className='chart-div'>
                 <p>PH变化曲线</p>
-                <Chart height={400} data={data} scale={cols} forceFit>
-                    <Axis name="year" />
-                    <Axis name="value" />
+                <Chart height={400} data={this.state.data} scale={cols} forceFit>
+                    <Axis name="time" />
+                    <Axis name="ph" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="year*value" size={2} />
-                    <Geom type='point' position="year*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                    <Geom type="line" position="time*ph" size={2} />
+                    <Geom type='point' position="time*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
             </div>
         </div>);

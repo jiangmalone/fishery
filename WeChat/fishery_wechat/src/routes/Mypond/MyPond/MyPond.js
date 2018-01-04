@@ -13,6 +13,11 @@ class MyPond extends React.Component {
             edit: false
         }
     }
+
+    componentDidMount(){
+        
+    }
+
     showActionSheet = () => {
         const BUTTONS = ['删除', '取消'];
         ActionSheet.showActionSheetWithOptions({
@@ -44,7 +49,7 @@ class MyPond extends React.Component {
                         })
                     }}></i>
                     我的塘口
-                    <i className={this.state.edit?'right-item-none':'edit'} onClick={() => { this.setState({ edit: !this.state.edit }) }}></i>
+                    <i className={this.state.edit ? 'right-item-none' : 'edit'} onClick={() => { this.setState({ edit: !this.state.edit }) }}></i>
                 </div>
                 <div className="mypond-bac"></div>
                 <div className="mypond-content">

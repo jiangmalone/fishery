@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import { Map, MouseTool } from 'react-amap';
 import { Input } from 'antd-mobile';
 import NavBar from '../../../components/NavBar';
+import './addFish.less'
+import { connect } from 'dva';
 
 class MapModal extends PureComponent {
     constructor() {
@@ -49,7 +51,7 @@ class MapModal extends PureComponent {
                 AMap.event.addListener(autocomplete, "select", (e) => {
                     //TODO 针对选中的poi实现自己的功能
                     placeSearch.setCity(e.poi.adcode);
-                    placeSearch.search(this.state.address.addressComponent.city + e.poi.name);
+                    placeSearch.search(e.poi.name);
                     this.setState({
                         address: e.poi
                     })
@@ -67,12 +69,11 @@ class MapModal extends PureComponent {
                     events={this.amapEvents} >
                 </Map>
                 <div style={{ position: 'absolute', top: '0.88rem', zIndex: '1000', background: 'rgba(0,0,0,0.5)', color: '#fff', width: '100%' }}>
-                    <input id="keyword" ref="keyword" name="keyword" style={{ marginLeft: '.1rem', verticalAlign: 'middle', background: 'none', border: 'none', display: 'inline-block', width: '6rem', height: '.8rem', color: '#FFF' }} placeholder={this.state.formattedAddress} />
-                    <div style={{ width: '1rem', height: '.6rem', display: 'inline-block', background: '#fff', verticalAlign: 'middle', borderRadius: '.1rem', color: '#1f1f1f', lineHeight: '.6rem', textAlign: 'center' }} >确定</div>
+                    <textarea  id="keyword" ref="keyword" name="keyword" style={{padding:'.2rem 0', marginLeft: '.1rem', verticalAlign: 'middle', background: 'none', border: 'none', display: 'inline-block', width: '6rem', color: '#FFF' }} placeholder={`定位地址：${this.state.address.formattedAddress?this.state.address.formattedAddress:'无'} `}/>
+                    <div style={{ width: '1rem', marginLeft:'.1rem',height: '.6rem', display: 'inline-block', background: '#fff', verticalAlign: 'middle', borderRadius: '.1rem', color: '#1f1f1f', lineHeight: '.6rem', textAlign: 'center' }} onClick={()=>{history.back();}}>确定</div>
                 </div>
             </div>
         )
     }
-
 }
-export default MapModal
+export default connect()(MapModal)

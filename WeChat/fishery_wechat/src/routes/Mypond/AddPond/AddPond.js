@@ -72,7 +72,15 @@ class AddPond extends React.Component {
                     }} extra={<span>鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼</span>} >
                         品种
                     </Item>
-                    <Item extra={<img src={require('../../../img/earth.png')} />} onClick={() => { }}>
+                    <Item extra={<span><img src={require('../../../img/earth.png')} /></span>} onClick={() => {
+                        this.props.history.push('/address');
+                        this.props.dispatch({
+                            type: 'global/changeState',
+                            payload: {
+                                transitionName: 'left'
+                            }
+                        })
+                    }}>
                         塘口位置
                     </Item>
                 </List>

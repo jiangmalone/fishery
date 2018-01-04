@@ -7,6 +7,8 @@ import Accordion from '../../components/Accordion';
 import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
 
+import { queryPonds, pondEquipment } from '../../services/pond.js'; //接口
+
 class Main extends React.Component {
 
     constructor(props) {
@@ -14,26 +16,47 @@ class Main extends React.Component {
         this.state = {
             waterCheck1: false,
             waterCheck2: false,
+            ponds: [],
         }
     }
 
+    componentDidMount() {
+        this.queryPonds();
+    }
+
+    queryPonds = () => {
+        queryPonds({
+            page: 1,
+            number: 99
+        }).then((res) => {
+            console.log(res);
+            if (res.data.code == '0') {
+
+            }
+        }).catch((error) => { console.log(error) });
+    }
+
     showActionSheet = () => {
-        console.log('aaaa')
         const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
         ActionSheet.showActionSheetWithOptions({
-          options: BUTTONS,
-          cancelButtonIndex: BUTTONS.length - 1,
-          destructiveButtonIndex: BUTTONS.length - 3,
-          title: '你是否确定关闭自动增氧？',
-          maskClosable: true,
-          'data-seed': 'logId',
+            options: BUTTONS,
+            cancelButtonIndex: BUTTONS.length - 1,
+            destructiveButtonIndex: BUTTONS.length - 3,
+            title: '你是否确定关闭自动增氧？',
+            maskClosable: true,
+            'data-seed': 'logId',
         },
-        (buttonIndex) => {
-          this.setState({ clicked: BUTTONS[buttonIndex] });
-        });
-      }
+            (buttonIndex) => {
+                console.log(buttonIndex);
+                this.setState({ clicked: BUTTONS[buttonIndex] });
+            });
+    }
 
     render() {
+
+        const ponds = this.state.ponds.map((pond, index) => {
+            
+        } );
         return <div className='main-bg' style={{ minHeight: window.document.body.clientHeight }}>
             <div className='weather-div'>
                 <i className='weather-icon iconfont icon-tianqi'> </i>
@@ -84,21 +107,21 @@ class Main extends React.Component {
                             <Switch
                                 nanme='watertem'
                                 checked={this.state.waterCheck1}
-                                onClick={(checked) => { console.log(checked); this.setState({waterCheck1: !this.state.waterCheck1}) }}
+                                onClick={(checked) => { console.log(checked); this.setState({ waterCheck1: !this.state.waterCheck1 }) }}
                                 className='state-switch'
                             />
                         </div>
 
                         <div className='line' >
                             <div className='name' >
-                            控制器2
+                                控制器2
                             </div>
                             <button className='auto-button no-auto'>自动</button>
                             {/* <Switch className='state-switch'></Switch> */}
                             <Switch
                                 nanme='watertem'
                                 checked={this.state.waterCheck2}
-                                onClick={(checked) => { console.log(checked); this.setState({waterCheck2: !this.state.waterCheck2}) }}
+                                onClick={(checked) => { console.log(checked); this.setState({ waterCheck2: !this.state.waterCheck2 }) }}
                                 className='state-switch'
                             />
                         </div>

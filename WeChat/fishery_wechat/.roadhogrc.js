@@ -23,10 +23,9 @@ export default {
       ],
       proxy: {
         "/api": {
-          //"target": "http://172.17.3.122:8080/freelycar_wechat/api/",//赵冉
-          "target": "http://192.168.1.162:8080/freelycar_wechat/api/",  //小轩
+          "target": "http://172.17.3.103:8080/frishery/api/",//小轩
           // "target": "http://172.17.3.158:8081/freelycar_wechat/api/",//小付
-          
+
           // "target": "http://localhost:8081/freelycar_wechat/api/",  //localhost
 
           "changeOrigin": true,

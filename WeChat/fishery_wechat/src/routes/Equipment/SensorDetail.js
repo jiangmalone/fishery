@@ -1,15 +1,14 @@
 import React from 'react';
 import './sensorDetail.less'
-import { Popover, Icon, NavBar } from 'antd-mobile'
+import { Popover, Icon, NavBar, List } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
 import offline from '../../img/equ_offline.png'
 import online from '../../img/equ_online.png'
 const Item = Popover.Item;
-import btn_list from '../../img/btn_list.png';
+// import btn_list from '../../img/btn_list.png';
 import correct from '../../img/btn_correct.png';
 import back_img from '../../img/back.png';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
-
 
 const data = [
     { year: "1991", value: 3 },
@@ -92,20 +91,19 @@ class SensorDetail extends React.Component {
                     })
                 }}></i>
                 {this.state.title}
-                <i className={"edit"} ></i>
+                <i className="right-item-none list" onClick={() => {
+                    this.setState({ isShowMore: !this.state.isShowMore })
+                }} ></i>
             </div>
             <Popover
                 mask
                 overlayClassName="fortest"
                 overlayStyle={{ color: 'currentColor' }}
                 visible={this.state.isShowMore}
-
-                overlay={
-                    overlayAry
-                }
+                overlay={ overlayAry }
                 align={{
                     overflow: { adjustY: 0, adjustX: 0 },
-                    offset: [-10, 0],
+                    offset: [-26, 50],
                 }}
                 onVisibleChange={this.handleVisibleChange}
                 onSelect={this.onSelect}
@@ -118,10 +116,8 @@ class SensorDetail extends React.Component {
                     alignItems: 'center',
                 }}
                 >
-                    <img src={btn_list} style={{ height: '.4rem' }} />
                 </div>
             </Popover>
-            }
             <div className='state-head' onClick={this.changeDetailShowState} >
 
                 <img src={offline} style={{ marginLeft: 0 }} />

@@ -20,7 +20,6 @@ class Accordion extends React.Component {
     }
 
     handlaClick = () => {
-        console.log('1')
         this.setState({
             isShowChildren: !this.state.isShowChildren
         })

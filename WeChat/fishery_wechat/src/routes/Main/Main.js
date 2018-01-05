@@ -7,7 +7,7 @@ import Accordion from '../../components/Accordion';
 import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
 
-import { queryPonds, pondEquipment } from '../../services/pond.js'; //接口
+import { pondQuery, pondEquipment } from '../../services/pondManage.js'; //接口
 
 class Main extends React.Component {
 

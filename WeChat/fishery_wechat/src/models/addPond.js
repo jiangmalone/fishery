@@ -1,4 +1,4 @@
-import { logout } from '../services/user.js'
+import { pondQuery } from '../services/pondManage.js'
 export default {
 
     namespace: 'pond',
@@ -8,27 +8,23 @@ export default {
         score: []
     },
 
-    //   subscriptions: {
-    //     setup({ dispatch, history }) {  // eslint-disable-line
-    //     	history.listen((location) => {
-    //         const pathname = location.pathname;
-    //         if(pathname == '/center') {
-    //           dispatch({ type: 'query'},{payload:{}})
-    //         }else if(pathname == '/pointsDetail') {
-    //         	dispatch({ type: 'score'},{payload:{}})
-    //         }
-    //       });
-    //     },
-    //   },
+    subscriptions: {
+        setup({ dispatch, history }) {  // eslint-disable-line
+            history.listen((location) => {
+                const pathname = location.pathname;
+                if (pathname == '/addPond') {
+                    dispatch({ type: 'query' }, { payload: {relation:'',page:99,number:10} })
+                }
+            });
+        },
+    },
 
     effects: {
         *fetch({ payload }, { call, put }) {  // eslint-disable-line
             yield put({ type: 'save' });
         },
         *query({ payload }, { call, put }) {
-            console.log(payload)
-            const data = yield call(query, payload)
-            console.log(data.data)
+            const data = yield call(pondQuery, payload)
             if (data) {
                 yield put({
                     type: 'changeState',

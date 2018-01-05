@@ -6,7 +6,7 @@ export default {
         return post('api/user/updateWXUser', options, params)
     },
 
-    logout: (params) => {
-        return get('api/user/logout', params)
+    queryEquipment: (params) => {
+        return get('api/equipment/query', params)
     },
 }

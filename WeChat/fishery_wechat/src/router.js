@@ -4,13 +4,13 @@ import App from './App.js'
 import './routes/IndexPage.less'
 import Login from './routes/Login/Login';
 
-
 function RouterConfig({ history }) {
+
   return (
     <Router history={history}>
-    <div>
+      <div>
         <Route path="/login" component={Login} />
-        <Route path="/"  component={App} />
+        <Route path="/" component={App} />
       </div>
     </Router>
   );

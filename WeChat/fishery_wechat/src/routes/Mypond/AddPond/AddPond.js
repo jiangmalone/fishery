@@ -15,15 +15,23 @@ class AddPond extends React.Component {
             edit: false
         }
     }
+
+    submit=()=>{
+        this.props.form.validateFields((error,value)=>{
+            if(!error) {
+                console.log(value)    
+            }
+        })
+    }
     render() {
-        const { getFieldProps, getFieldError } = this.props.form;
+        const { getFieldProps, getFieldError ,validateFields} = this.props.form;
         const district = [{ label: '淡水', value: '淡水' }, { label: '盐水', value: '盐水' }, { label: '淡盐水', value: '淡盐水' }]
         return (
             <form className="body-bac">
                 <NavBar title={"添加塘口"} />
                 <List className="addPond-list">
                     <InputItem
-                        {...getFieldProps('account', {
+                        {...getFieldProps('name', {
                             // initialValue: 'little ant',
                             rules: [
                                 { required: true, message: '请输入塘口名称' }
@@ -31,34 +39,42 @@ class AddPond extends React.Component {
                         }) }
                         clear
                         className="addpond-input"
-                        error={!!getFieldError('account')}
+                        error={!!getFieldError('name')}
                         placeholder="请输入塘口名称"
                     >塘口名称</InputItem>
                     <InputItem
-                        {...getFieldProps('account') }
+                        {...getFieldProps('area') }
                         clear
                         className="addpond-input"
                         labelNumber='5'
-                        error={!!getFieldError('account')}
+                        error={!!getFieldError('area')}
                         placeholder="请输入塘口面积"
                     >面积(亩)</InputItem>
                     <InputItem
-                        {...getFieldProps('account') }
+                        {...getFieldProps('depth') }
                         clear
                         className="addpond-input"
                         labelNumber='5'
-                        error={!!getFieldError('account')}
+                        error={!!getFieldError('depth')}
                         placeholder="请输入塘口深度"
                     >深度(m)</InputItem>
                     <InputItem
-                        {...getFieldProps('account') }
+                        {...getFieldProps('density') }
                         clear
                         className="addpond-input"
                         labelNumber='5'
-                        error={!!getFieldError('account')}
+                        error={!!getFieldError('density')}
+                        placeholder="请输入塘口密度"
+                    >塘口密度(kg/㎡)</InputItem>
+                    <InputItem
+                        {...getFieldProps('sediment_thickness') }
+                        clear
+                        className="addpond-input"
+                        labelNumber='5'
+                        error={!!getFieldError('sediment_thickness')}
                         placeholder="请输入底泥厚度"
                     >底泥厚度(m)</InputItem>
-                    <Picker data={district} cols={1} {...getFieldProps('district3') } className="forss">
+                    <Picker data={district} cols={1} {...getFieldProps('water_source') } className="forss">
                         <List.Item arrow="horizontal">池塘水源</List.Item>
                     </Picker>
                     <Item arrow="horizontal" onClick={() => {
@@ -84,7 +100,7 @@ class AddPond extends React.Component {
                         塘口位置
                     </Item>
                 </List>
-                <div className="addPond-btn">确认提交</div>
+                <div className="addPond-btn" onClick={()=>{this.submit()}}>确认提交</div>
             </form>
         );
     }

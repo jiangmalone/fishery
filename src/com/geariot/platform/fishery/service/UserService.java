@@ -34,6 +34,7 @@ public class UserService {
 		}
 		wxuser.setCreateDate(new Date());
 		wxuserDao.save(wxuser);
+		wxuser.setRelationId("WX"+wxuser.getId());
 		return RESCODE.SUCCESS.getJSONRES(wxuser);
 	}
 
@@ -44,6 +45,7 @@ public class UserService {
 		}
 		company.setCreateDate(new Date());
 		companyDao.save(company);
+		company.setRelationId("CO"+company.getId());
 		return RESCODE.SUCCESS.getJSONRES(company);
 	}
 

@@ -16,14 +16,14 @@ public class WebServiceController {
 	
 	private String weatherUrl = "http://restapi.amap.com/v3/weather/weatherInfo";
 	
-	private String weatherExtensions ="base";
+	private String weatherExtensions ="all";
 	
 	private String ContentType = "application/json";
 	
 	@RequestMapping(value = "/weather" , method = RequestMethod.POST)
-	public String getWeatherTest(String name){
+	public String getWeatherTest(String city){
 		Map<String,Object> param = new HashMap<>();
-		param.put("city", name);
+		param.put("city", city);
 		param.put("extensions",weatherExtensions);
 		param.put("key", mapApiKey);
 		Map<String, Object> head = setWeatherHead();

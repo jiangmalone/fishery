@@ -1,51 +1,49 @@
-import { pondQuery } from '../services/pondManage.js'
+import { pondQuery, addPond } from '../services/pondManage.js'
+const delay = timeout => new Promise(resolve => setTimeout(resolve, timeout));
 export default {
 
     namespace: 'pond',
 
     state: {
         list: [],
-        score: []
+        loading: false,
     },
 
     subscriptions: {
         setup({ dispatch, history }) {  // eslint-disable-line
             history.listen((location) => {
                 const pathname = location.pathname;
-                if (pathname == '/addPond') {
-                    dispatch({ type: 'query' }, { payload: {relation:'',page:99,number:10} })
+                if (pathname == '/myPond') {
+                    dispatch({ type: 'query', payload: { relation: '', page: 99, number: 10 } })
                 }
             });
         },
     },
 
     effects: {
-        *fetch({ payload }, { call, put }) {  // eslint-disable-line
-            yield put({ type: 'save' });
-        },
         *query({ payload }, { call, put }) {
+            console.log(payload)
             const data = yield call(pondQuery, payload)
             if (data) {
                 yield put({
                     type: 'changeState',
                     list: {
-                        list: data.data
+                        list: data.data.data
                     },
                 })
             }
         },
-        *score({ payload }, { call, put }) {
-            console.log(payload)
-            const data = yield call(score, payload)
-            console.log(data.data)
-            if (data) {
-                yield put({
-                    type: 'changeScore',
-                    list: {
-                        score: data.data
-                    },
-                })
+        *addPond({ payload }, { call, put }) {
+            yield put({ type: 'showLoginLoading' });
+            let data = yield call(addPond, payload);
+            yield call(delay, 1000);
+            if(data.data.code !='0') {
+                yield put({ type: 'errorShow',error:data.data.msg })
+            } else {
+                yield put({ type: 'errorShow',error:false })
+                
             }
+            yield put({ type: 'hideLoginLoading' })
         },
     },
 
@@ -53,9 +51,21 @@ export default {
         changeState(state, action) {
             return { ...state, ...action.payload, ...action.list };
         },
-        changeScore(state, action) {
-            return { ...state, ...action.payload, ...action.list };
+        hideLoginLoading(state, action) {
+            return {
+                loading: false,
+            }
         },
+        showLoginLoading(state, action) {
+            return {
+                loading: true
+            }
+        },
+        errorShow(state,action) {
+            return {
+                error:action.error
+            }
+        }
     },
 
 };

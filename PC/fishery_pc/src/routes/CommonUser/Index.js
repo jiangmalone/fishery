@@ -37,7 +37,6 @@ class UserList extends PureComponent {
     }
 
     onOk = (values) => {
-  
         console.log(values)
         this.props.dispatch({
             type: 'commonUser/addUser',
@@ -47,6 +46,7 @@ class UserList extends PureComponent {
             view: false
         })
     }
+    
     render() {
         const { list, loading } = this.props;
 

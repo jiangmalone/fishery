@@ -3,7 +3,6 @@ import get from '../utils/get';
 
 export default {
     pondQuery: (params) => {
-        console.log(params)
         return get('api/pond/query', params)
     },
     addPond:(params)=>{

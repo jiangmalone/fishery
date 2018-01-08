@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, InputItem, Picker, ActionSheet } from 'antd-mobile';
+import { List, InputItem, Picker, ActionSheet,ActivityIndicator } from 'antd-mobile';
 import NavBar from '../../../components/NavBar';
 import { createForm } from 'rc-form';
 import { connect } from 'dva';
@@ -11,21 +11,27 @@ class MyPond extends React.Component {
         super(props)
         this.state = {
             list: this.props.list,
-            edit:this.props.list.length==0?false:true
+            edit: this.props.list.length == 0 ? false : true,
+            loading:this.props.loading
         }
     }
 
-    componentWillReceiveProps(newProps){
-        if(newProps.list.length!==this.props.list.length) {
+    componentWillReceiveProps(newProps) {
+        if (newProps.list.length !== this.props.list.length) {
             console.log('11')
             this.setState({
-                list:newProps.list,
-                edit:newProps.list.length==0?false:true
+                list: newProps.list,
+                edit: newProps.list.length == 0 ? false : true
+            })
+        }
+        if (newProps.loading != this.state.loading) {
+            this.setState({
+                loading: newProps.loading
             })
         }
     }
 
-    showActionSheet = () => {
+    showActionSheet = (index, id) => {
         const BUTTONS = ['删除', '取消'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
@@ -39,12 +45,14 @@ class MyPond extends React.Component {
         },
             (buttonIndex) => {
                 console.log(buttonIndex)
+                if(buttonIndex==0) {
+                    this.deletePond(index,id)
+                }
                 this.setState({ clicked: BUTTONS[buttonIndex], edit: !this.state.edit });
             });
     }
 
     addPond = () => {
-     
         this.props.dispatch({
             type: 'global/changeState',
             payload: {
@@ -53,55 +61,73 @@ class MyPond extends React.Component {
         })
         this.props.history.push('/addPond');
     }
+
+    deletePond = (index, id) => {
+        this.props.dispatch({
+            type: 'pond/deletePond',
+            payload: {
+                index: index,
+                id: id
+            }
+        })
+    }
     render() {
         let ponds = ''
         if (this.state.list.length > 0) {
             ponds = this.state.list.map((item, index) => {
-                return <div className="mypond-content">
+                return <div className="mypond-content" key={index} >
                     <div>
-                        <div className="content-title">小鱼塘</div>
+                        <div className="content-title">{item.name}</div>
                         <div>
                             <span className="content-info">
                                 <i className="content-info-img area-img" />
                                 <span className="content-info-value">
-                                    20亩
-                        </span>
+                                    {item.area}亩
+                                </span>
                             </span>
-                            <span className="content-info">
-                                <i className="content-info-img address-img" />
-                                <span className="content-info-value">
-                                    南京玄武区鱼儿乐…
-                        </span>
-                            </span>
-                        </div>
-                        <div>
                             <span className="content-info">
                                 <i className="content-info-img waterDepth-img" />
                                 <span className="content-info-value">
-                                    500m
-                        </span>
-                            </span>
-                            <span className="content-info">
-                                <i className="content-info-img poolFish-img" />
-                                <span className="content-info-value">
-                                    鲫鱼，草鱼...
-                        </span>
+                                    {item.depth}m
+                                </span>
                             </span>
                             <span className="content-info">
                                 <i className="content-info-img poolWater-img" />
                                 <span className="content-info-value">
-                                    淡水
-                        </span>
+                                    {item.water_source}
+                                </span>
                             </span>
                             <span className="content-info">
                                 <i className="content-info-img poolThickness-img" />
                                 <span className="content-info-value">
-                                    50cm
-                        </span>
+                                    {item.sediment_thickness}cm
+                                </span>
+                            </span>
+                        </div>
+                        <div>
+                            <span className="content-info">
+                                <i className="content-info-img density-img" />
+                                <span className="content-info-value">
+                                    {item.density}kg/㎡
+                                </span>
+                            </span>
+                            <span className="content-info">
+                                <i className="content-info-img poolFish-img" />
+                                <span className="content-info-value">
+                                    {item.fish_categorys.length > 0 ? `${item.fish_categorys[0]},${item.fish_categorys[1]}...` : ''}
+                                </span>
+                            </span>
+                        </div>
+                        <div>
+                            <span className="content-info">
+                                <i className="content-info-img address-img" />
+                                <span className="content-info-value">
+                                    {item.address}
+                                </span>
                             </span>
                         </div>
                     </div>
-                    {this.state.edit && <div className="mypond-delete" onClick={() => { this.showActionSheet() }}>
+                    {!this.state.edit && <div className="mypond-delete" onClick={() => { this.showActionSheet(index, item.id) }}>
                         <img src={require('../../../img/btn_remove.png')} />
                     </div>}
                 </div>
@@ -112,7 +138,7 @@ class MyPond extends React.Component {
                 <div className="nav-bar-title" >
                     <i className="back" onClick={() => {
                         history.back();
-                        this.state.dispatch({
+                        this.props.dispatch({
                             type: 'global/changeState',
                             payload: {
                                 transitionName: 'right'
@@ -120,14 +146,14 @@ class MyPond extends React.Component {
                         })
                     }}></i>
                     我的塘口
-                    <i className={this.state.edit ?  'edit':'right-item-none'} onClick={() => { this.setState({ edit: !this.state.edit }) }}></i>
+                    <i className={this.state.edit ? 'edit' : 'right-item-none'} onClick={() => { this.setState({ edit: !this.state.edit }) }}></i>
                 </div>
                 {this.state.list.length > 0 && <div className="mypond-bac"></div>}
                 {this.state.list.length > 0 && ponds}
-                {this.state.list.length > 0 && <div className="addPond-btn">取消</div>}
+                {!this.state.edit && <div onClick={() => { this.setState({ edit: !this.state.edit }) }} className="addPond-btn">取消</div>}
                 {this.state.list.length > 0 && <div className="btn_add" onClick={() => {
-                    this.state.history.push('/addPond');
-                    this.state.dispatch({
+                    this.props.history.push('/addPond');
+                    this.props.dispatch({
                         type: 'global/changeState',
                         payload: {
                             transitionName: 'fade'
@@ -141,6 +167,11 @@ class MyPond extends React.Component {
                     <div className="btn_add1" onClick={() => { this.addPond() }}>
                     </div>
                 </div>}
+                <ActivityIndicator
+                    toast
+                    text="等待中..."
+                    animating={this.state.loading}
+                />
             </div>
         );
     }
@@ -149,6 +180,7 @@ class MyPond extends React.Component {
 
 export default connect((state) => {
     return ({
+        loading: state.pond.loading,
         list: state.pond.list
     })
 })(MyPond);

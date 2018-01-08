@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,17 +21,17 @@ public class EquipmentController {
 	@Autowired
 	private EquipmentService equipmentService;
 	@RequestMapping(value = "/limit" , method = RequestMethod.POST)
-	public Map<String,Object> setLimit(Limit_Install limit_Install){
+	public Map<String,Object> setLimit(@RequestBody Limit_Install limit_Install){
 		return equipmentService.setLimit(limit_Install);
 	}
 	
-	@RequestMapping(value = "/delEquipments" , method = RequestMethod.POST)
+	@RequestMapping(value = "/delEquipments" , method = RequestMethod.GET)
 	public Map<String,Object> delEquipment(String... device_sns){
 		return equipmentService.delEquipment(device_sns);
 	}
 	
 	@RequestMapping(value = "/timer" , method = RequestMethod.POST)
-	public Map<String,Object> setTimer(Timer timer){
+	public Map<String,Object> setTimer(@RequestBody Timer timer){
 		return equipmentService.setTimer(timer);
 	}
 	

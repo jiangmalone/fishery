@@ -24,7 +24,7 @@ public class PondController {
 		return pondService.addPond(pond);
 	}
 	
-	@RequestMapping(value = "/delPonds" , method = RequestMethod.POST)
+	@RequestMapping(value = "/delPonds" , method = RequestMethod.GET)
 	public Map<String,Object> delPonds(Integer... pondIds){
 		return pondService.delPonds(pondIds);
 	}

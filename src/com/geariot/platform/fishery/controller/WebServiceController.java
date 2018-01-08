@@ -20,7 +20,7 @@ public class WebServiceController {
 	
 	private String ContentType = "application/json";
 	
-	@RequestMapping(value = "/weather" , method = RequestMethod.POST)
+	@RequestMapping(value = "/weather" , method = RequestMethod.GET)
 	public String getWeatherTest(String city){
 		Map<String,Object> param = new HashMap<>();
 		param.put("city", city);

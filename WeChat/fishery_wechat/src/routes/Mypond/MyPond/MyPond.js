@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, InputItem, Picker, ActionSheet,ActivityIndicator } from 'antd-mobile';
+import { List, InputItem, Picker, ActionSheet, ActivityIndicator } from 'antd-mobile';
 import NavBar from '../../../components/NavBar';
 import { createForm } from 'rc-form';
 import { connect } from 'dva';
@@ -12,7 +12,7 @@ class MyPond extends React.Component {
         this.state = {
             list: this.props.list,
             edit: this.props.list.length == 0 ? false : true,
-            loading:this.props.loading
+            loading: this.props.loading
         }
     }
 
@@ -45,8 +45,8 @@ class MyPond extends React.Component {
         },
             (buttonIndex) => {
                 console.log(buttonIndex)
-                if(buttonIndex==0) {
-                    this.deletePond(index,id)
+                if (buttonIndex == 0) {
+                    this.deletePond(index, id)
                 }
                 this.setState({ clicked: BUTTONS[buttonIndex], edit: !this.state.edit });
             });
@@ -67,7 +67,7 @@ class MyPond extends React.Component {
             type: 'pond/deletePond',
             payload: {
                 index: index,
-                id: id
+                id: id  
             }
         })
     }
@@ -150,7 +150,7 @@ class MyPond extends React.Component {
                 </div>
                 {this.state.list.length > 0 && <div className="mypond-bac"></div>}
                 {this.state.list.length > 0 && ponds}
-                {!this.state.edit && <div onClick={() => { this.setState({ edit: !this.state.edit }) }} className="addPond-btn">取消</div>}
+                {!this.state.edit && this.state.list.length > 0 && <div onClick={() => { this.setState({ edit: !this.state.edit }) }} className="addPond-btn">取消</div>}
                 {this.state.list.length > 0 && <div className="btn_add" onClick={() => {
                     this.props.history.push('/addPond');
                     this.props.dispatch({

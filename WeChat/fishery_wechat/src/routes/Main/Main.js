@@ -18,6 +18,8 @@ class Main extends React.Component {
             waterCheck1: false,
             waterCheck2: false,
             ponds: [],
+            temp: '** ~ ** ℃',
+            weatherIcon: ''
         }
     }
 
@@ -37,13 +39,46 @@ class Main extends React.Component {
             }
         }).catch((error) => { console.log(error) });
     }
+
     getWeather = () => {
         getWeather({
             city:'320100'
         }).then((res) => {
-            console.log(res);
+            if(res.status = 1) {
+                let data = res.data;
+                if( data.forecasts && data.forecasts.length >= 1 && data.forecasts[0].casts && data.forecasts[0].casts.length >= 1) {
+                    console.log('2');
+                    let today = data.forecasts[0].casts[0];
+                    let temp = today.nighttemp + ' ~ ' + today.daytemp + ' ℃';
+                    let dayweather = this.getWeatherIconName(today.dayweather);
+                    this.setState({temp : temp, weatherIcon: dayweather});
+                }
+            }
         }).catch((error) => { console.log(error) });
     }
+
+    getWeatherIconName = (dayweather) => {
+        if(dayweather) {
+            if(dayweather.indexOf('晴') >= 0) {
+                return 'icon-tianqi1';
+            } else if (dayweather.indexOf('云') >= 0) {
+                return 'icon-tianqi2';
+            } else if (dayweather.indexOf('雨') >= 0) {
+                return 'icon-tianqizhenyu';
+            } else if (dayweather.indexOf('雪') >= 0) {
+                return 'icon-Icon';
+            } else if (dayweather.indexOf('雨') >= 0 && dayweather.indexOf('雷') >= 0) {
+                return 'icon-tianqi3';
+            } else {
+                return 'icon-tianqi1';
+            }
+        } else {
+            return ''
+        }
+    }
+
+
+
     queryEquipment = () => {
 
     }
@@ -141,8 +176,8 @@ class Main extends React.Component {
         const ponds = this.getPondsAccordion();
         return <div className='main-bg' style={{ minHeight: window.document.body.clientHeight }}>
             <div className='weather-div'>
-                <i className='weather-icon iconfont icon-tianqi'> </i>
-                10-12℃
+                <i className={`weather-icon iconfont ${this.state.weatherIcon}`}> </i> 
+                {this.state.temp}
             </div>
             <div className='fishpond-item'>
                 {ponds}

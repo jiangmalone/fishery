@@ -6,6 +6,7 @@ import getParameterByName from '../../utils/getParam.js'
 
 import defaultAvater from '../../img/default-avater.jpg';
 import SexRadio from '../../components/SexRadio';
+import { modifyWXUser } from '../../services/user.js'; //接口
 class UserInfo extends React.Component {
 
     constructor(props) {
@@ -13,7 +14,7 @@ class UserInfo extends React.Component {
         this.state = {
             form: {
                 name: '',
-                sex: 0,
+                sex: 0,  //0 man 1 faleman
                 phone: '',
                 years: ''
             }
@@ -21,8 +22,11 @@ class UserInfo extends React.Component {
     }
 
     handlaSexClick = (type) => {
+        console.log(type);
+        const form = this.state.form;
+        form['sex'] = type ? '女' : '男';
         this.setState({
-
+            form: form
         })
     }
 
@@ -58,7 +62,22 @@ class UserInfo extends React.Component {
         if(form.name == '') {   //请输入名称
             Toast.fail('请输入您的姓名！', 1);
         } else {
-
+            const form = this.state.form;
+            modifyWXUser({
+                // id: window.localStorage.getItem('clientId'),
+                id: 1,
+                name: form.name,
+                phone: form.phone,
+                sex: form.sex,
+                life: form.years
+            }).then((res) => {
+                console.log(res);
+                if(res.data.code == 0) {
+                    
+                } else {
+                    Toast.fail(res.data.msg, 1);
+                }
+            }).catch((error) => { console.log(error) });
         }
     }
 
@@ -81,7 +100,7 @@ class UserInfo extends React.Component {
                         性别
                     </div>
                     <div className='right-item'>
-                        <SexRadio handlaClick={() => this.handlaSexClick()} ></SexRadio>
+                        <SexRadio handlaClick={this.handlaSexClick} ></SexRadio>
                     </div>
                 </div>
                 <div className='input-line'>

@@ -3,6 +3,7 @@ package com.geariot.platform.fishery.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,21 +20,21 @@ public class UserController {
 	private UserService userService;
 	
 	@RequestMapping(value = "/addCompany" , method = RequestMethod.POST)
-	public Map<String, Object> addCompany(Company company){
+	public Map<String, Object> addCompany(@RequestBody Company company){
 		return userService.addCompany(company);
 	}
 	@RequestMapping(value = "/addWXUser" , method = RequestMethod.POST)
-	public Map<String, Object> addWXUser(WXUser wxuser){
+	public Map<String, Object> addWXUser(@RequestBody WXUser wxuser){
 		return userService.addWXUser(wxuser);
 	}
 	
 	@RequestMapping(value = "/modifyCompany" , method = RequestMethod.POST)
-	public Map<String,Object> modifyCompany(Company company){
+	public Map<String,Object> modifyCompany(@RequestBody Company company){
 		return userService.modifyCompany(company);
 	}
 
 	@RequestMapping(value = "/modifyWXUser" , method = RequestMethod.POST)
-	public Map<String,Object> modifyWXUser(WXUser wxuser){
+	public Map<String,Object> modifyWXUser(@RequestBody WXUser wxuser){
 		return userService.modifyWXUser(wxuser);
 	}
 	

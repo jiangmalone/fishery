@@ -1,6 +1,6 @@
 import React from 'react';
 import './addPond.less';
-import { List, InputItem, Picker, ActivityIndicator,Toast } from 'antd-mobile';
+import { List, InputItem, Picker, ActivityIndicator, Toast } from 'antd-mobile';
 import NavBar from '../../../components/NavBar';
 import { createForm } from 'rc-form';
 import { connect } from 'dva';
@@ -19,15 +19,15 @@ class AddPond extends React.Component {
 
     componentWillReceiveProps(newProps) {
         if (newProps.loading != this.state.loading) {
-            console.log(newProps.loading,this.state.loading)
             this.setState({
                 loading: newProps.loading
             })
         }
         if (newProps.error) {
-            Toast.error(newProps.error, 2);
+            Toast.fail(newProps.error, 2);
         }
     }
+
 
     submit = () => {
         this.props.form.validateFields((error, value) => {
@@ -60,11 +60,11 @@ class AddPond extends React.Component {
                         placeholder="请输入塘口名称"
                     >塘口名称</InputItem>
                     <InputItem
-                        {...getFieldProps('area',{
-                            rules:[
-                                {type:'float',message:'请输入正确数据'}
+                        {...getFieldProps('area', {
+                            rules: [
+                                { types: ['float', 'int'], message: '请输入正确数据' }
                             ]
-                        })}
+                        }) }
                         clear
                         className="addpond-input"
                         labelNumber='5'
@@ -72,11 +72,11 @@ class AddPond extends React.Component {
                         placeholder="请输入塘口面积"
                     >面积(亩)</InputItem>
                     <InputItem
-                        {...getFieldProps('depth',{
-                            rules:[
-                                {type:'float',message:'请输入正确数据'}
+                        {...getFieldProps('depth', {
+                            rules: [
+                                { types: ['float', 'int'], message: '请输入正确数据' }
                             ]
-                        })}
+                        }) }
                         clear
                         className="addpond-input"
                         labelNumber='5'
@@ -84,9 +84,9 @@ class AddPond extends React.Component {
                         placeholder="请输入塘口深度"
                     >深度(m)</InputItem>
                     <InputItem
-                        {...getFieldProps('density',{
-                            rules:[
-                                {type:'float',message:'请输入正确数据'}
+                        {...getFieldProps('density', {
+                            rules: [
+                                { types: ['float', 'int'], message: '请输入正确数据' }
                             ]
                         }) }
                         clear
@@ -96,11 +96,11 @@ class AddPond extends React.Component {
                         placeholder="请输入塘口密度"
                     >塘口密度(kg/㎡)</InputItem>
                     <InputItem
-                        {...getFieldProps('sediment_thickness',{
-                            rules:[
-                                {type:'float',message:'请输入正确数据'}
+                        {...getFieldProps('sediment_thickness', {
+                            rules: [
+                                { types: ['float', 'int'], message: '请输入正确数据' }
                             ]
-                        } )}
+                        }) }
                         clear
                         className="addpond-input"
                         labelNumber='5'
@@ -150,10 +150,23 @@ class AddPond extends React.Component {
 
 }
 
-const AddPondForm = createForm()(AddPond);
+
+const AddPondForm = createForm({
+    mapPropsToFields: (props) => {
+        return { ...props.formData.fields }
+
+    },
+    onFieldsChange: (props, fields) => {
+        props.dispatch({
+            type: 'pond/changeState',
+            payload: { formData: { fields: { ...props.formData.fields, ...fields } } }
+        })
+    }
+})(AddPond);
 export default connect((state => {
     return ({
         loading: state.pond.loading,
-        error: state.pond.error
+        error: state.pond.error,
+        formData: state.pond.formData
     })
 }))(AddPondForm);

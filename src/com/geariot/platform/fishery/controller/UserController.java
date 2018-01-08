@@ -38,11 +38,11 @@ public class UserController {
 		return userService.modifyWXUser(wxuser);
 	}
 	
-	@RequestMapping(value = "/delCompany" , method = RequestMethod.POST)
+	@RequestMapping(value = "/delCompany" , method = RequestMethod.GET)
 	public Map<String,Object> deleteCompany(Integer... companyIds ){
 		return userService.deleteCompany(companyIds);
 	}
-	@RequestMapping(value = "/delWXUser" , method = RequestMethod.POST)
+	@RequestMapping(value = "/delWXUser" , method = RequestMethod.GET)
 	public Map<String,Object> deleteWXUser(Integer... WXUserIds ){
 		return userService.deleteWXUser(WXUserIds);
 	}

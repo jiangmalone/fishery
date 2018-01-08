@@ -25,7 +25,7 @@ public class EquipmentController {
 		return equipmentService.setLimit(limit_Install);
 	}
 	
-	@RequestMapping(value = "/delEquipments" , method = RequestMethod.POST)
+	@RequestMapping(value = "/delEquipments" , method = RequestMethod.GET)
 	public Map<String,Object> delEquipment(String... device_sns){
 		return equipmentService.delEquipment(device_sns);
 	}

@@ -4,5 +4,4 @@ export default {
     modifyWXUser: (params) => {
         return post('api/usermanagement/modifyWXUser', params)
     }
-
 }

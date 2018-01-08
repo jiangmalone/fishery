@@ -4,6 +4,7 @@ import NavBar from '../../components/NavBar';
 import { withRouter } from "react-router-dom";
 import './addEquipment.less';
 import scan from '../../img/scan_QR.png'
+import { addEquipment } from '../../services/equipment.js'; //接口
 
 class AddEquipment extends React.Component {
 
@@ -19,6 +20,14 @@ class AddEquipment extends React.Component {
 
     doAddEquipment = () => {
         console.log(this.state.equipmentCode)
+        addEquipment({
+            device_sn: this.state.equipmentCode,
+            name: '设备名称',
+            relation: ''
+        }).then((res) => {
+
+        }).catch((error) => { console.log(error) });
+        
     }
 
     render() {

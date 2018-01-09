@@ -9,18 +9,18 @@ import Mapmoal from './MapModal.js';
 
 const Search = Input.Search;
 @connect(state => ({
-    list: state.commonUser.list,
-    loading: state.commonUser.loading,
-    pagination: state.commonUser.pagination,
-    modalVisible: state.commonUser.modalVisible,
-    mapVisible: state.commonUser.mapVisible,
-    address: state.commonUser.address
+    list: state.pond.list,
+    loading: state.pond.loading,
+    pagination: state.pond.pagination,
+    modalVisible: state.pond.modalVisible,
+    mapVisible: state.pond.mapVisible,
+    address: state.pond.address
 }))
 
-class UserList extends PureComponent {
+class PondList extends PureComponent {
     componentDidMount() {
         this.props.dispatch({
-            type: 'commonUser/fetch',
+            type: 'pond/fetch',
             payload: {
                 count: 10,
             },
@@ -33,7 +33,7 @@ class UserList extends PureComponent {
 
     showAddModal = () => {
         this.props.dispatch({
-            type: 'commonUser/changeModal',
+            type: 'pond/changeModal',
             payload: {
                 modalVisible: true,
             },
@@ -48,7 +48,7 @@ class UserList extends PureComponent {
             address:this.props.address,
             onCancel: () => {
                 this.props.dispatch({
-                    type: 'commonUser/changeModal',
+                    type: 'pond/changeModal',
                     payload: {
                         modalVisible: false,
                     },
@@ -56,7 +56,7 @@ class UserList extends PureComponent {
             },
             showMapModal: () => {
                 this.props.dispatch({
-                    type: 'commonUser/changeModal',
+                    type: 'pond/changeModal',
                     payload: {
                         mapVisible: true,
                     },
@@ -64,7 +64,7 @@ class UserList extends PureComponent {
             },
             onOk: (address) => {
                 this.props.dispatch({
-                    type: 'commonUser/changeModal',
+                    type: 'pond/changeModal',
                     payload: {
                         modalVisible: false,
                     },
@@ -76,7 +76,7 @@ class UserList extends PureComponent {
             wrapClassName: 'vertical-center-map',
             onMapCancel: () => {
                 this.props.dispatch({
-                    type: 'commonUser/changeModal',
+                    type: 'pond/changeModal',
                     payload: {
                         mapVisible: false,
                     },
@@ -84,7 +84,7 @@ class UserList extends PureComponent {
             },
             onMapOk: (address) => {
                 this.props.dispatch({
-                    type: 'commonUser/changeModal',
+                    type: 'pond/changeModal',
                     payload: {
                         mapVisible: false,
                         address:address
@@ -177,4 +177,4 @@ class UserList extends PureComponent {
 }
 
 
-export default UserList
+export default PondList

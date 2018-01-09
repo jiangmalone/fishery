@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 public class SocketServiceLoader implements ServletContextListener{ 
 	// socket server 线程
+	//1
 	private static final Logger log = LogManager.getLogger(SocketServiceLoader.class);
 	//private SocketThread socketThread;
 

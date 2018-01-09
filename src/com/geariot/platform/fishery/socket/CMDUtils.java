@@ -32,7 +32,7 @@ public class CMDUtils {
 	private static SocketChannel readChannel=null;
 	private static String deviceSn;
 	private static byte way;
-    
+    //1
 	public static void preHandle(SelectionKey key) {
 		Map<String,Object> attachmentObject=(Map<String,Object>) key.attachment();
 		 data =((ByteArrayOutputStream) attachmentObject.get("baos")).toByteArray();		

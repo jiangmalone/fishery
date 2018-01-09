@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 
 public class NIOServer {
-
+//1
 	private static final Logger log = LogManager.getLogger(NIOServer.class);
 	// 通道管理器
 	private static Selector selector;

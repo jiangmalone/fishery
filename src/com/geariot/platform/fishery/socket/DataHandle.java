@@ -22,7 +22,7 @@ public class DataHandle {
 		/*public static Lock getLock() {
 			return lock;
 		}*/
-	
+	//1
 	public void handle(SelectionKey key) {
 		Map<String,Object> attachmentObject=(Map<String,Object>) key.attachment();
 		byte[] data =((ByteArrayOutputStream) attachmentObject.get("baos")).toByteArray();		

@@ -59,4 +59,16 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 		return dataList;
 	}
 
+	@Override
+	public void updateData(Sensor_Data sensor_Data) {
+		// TODO Auto-generated method stub
+		this.getSession().merge(sensor_Data);
+	}
+
+	@Override
+	public void save(Sensor_Data sensor_Data) {
+		// TODO Auto-generated method stub
+		this.getSession().save(sensor_Data);
+	}
+
 }

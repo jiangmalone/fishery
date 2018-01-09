@@ -70,10 +70,10 @@ export const getNavData = app => [
             children: [
               {
                 path: '',
-                component: dynamicWrapper(app, ['commonuser'], () => import('../routes/pondManage/Index')),
+                component: dynamicWrapper(app, ['pond'], () => import('../routes/pondManage/Index')),
               },{
                 path: ':id',
-                component: dynamicWrapper(app, ['commonuser'], () => import('../routes/pondManage/Detail')),
+                component: dynamicWrapper(app, ['pond'], () => import('../routes/pondManage/Detail')),
               }
             ],
           }

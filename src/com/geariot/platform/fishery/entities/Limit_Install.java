@@ -18,7 +18,13 @@ public class Limit_Install {
 	private float up_limit;				//溶氧上限
 	private float high_limit;			//溶氧高限
 	private String device_sn;			//设备编号
-	
+	private int way;                    //第几路
+	public int getWay() {
+		return way;
+	}
+	public void setWay(int way) {
+		this.way = way;
+	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getId() {

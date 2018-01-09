@@ -65,9 +65,9 @@ const proxy = {
     'list|100': [{ name: '@city', 'value|1-100': 150, 'type|0-2': 1 }]
   }),
   'GET /api/fake_list': getFakeList,
-  'GET /api/usermanagement/addWXUSer':(req,res)=>{
-    res.send(addUser)
-  },
+  // 'GET /api/usermanagement/addWXUSer':(req,res)=>{
+  //   res.send(addUser)
+  // },
   'GET /api/fake_chart_data': getFakeChartData,
   'GET /api/profile/basic': getProfileBasicData,
   'GET /api/profile/advanced': getProfileAdvancedData,

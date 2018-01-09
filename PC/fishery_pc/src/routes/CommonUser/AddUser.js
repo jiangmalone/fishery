@@ -25,11 +25,11 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName }) {
             validateFieldsAndScroll((err, values) => {
                 if (!err) {
                     obj = values
-                } 
+                }
             })
             onOk(obj)
         }}
-        onCancel={()=>{onCancel()}}
+        onCancel={() => { onCancel() }}
         wrapClassName={wrapClassName}
         okText="确认"
         cancelText="取消">
@@ -72,4 +72,37 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName }) {
     </Modal >
 }
 
-export default Form.create()(AddUser)
+let UserForm = Form.create({
+    mapPropsToFields: (props) => {
+        return {
+            name: Form.createFormField({
+                ...props.formData.fields.name
+            }),
+            sex: Form.createFormField({
+                ...props.formData.fields.sex
+            }),
+            phone: Form.createFormField({
+                ...props.formData.fields.phone
+            }),
+            life: Form.createFormField({
+                ...props.formData.fields.life
+            }),
+            address: Form.createFormField({
+                ...props.formData.fields.address
+            }),
+        }
+    },
+    onFieldsChange: (props, fields) => {
+        props.dispatch({
+            type: 'commonUser/changeModal',
+            payload: { formData: { fields: { ...props.formData.fields, ...fields } } }
+        })
+    }
+})(AddUser)
+export default connect((state => {
+    return ({
+        loading: state.commonUser.loading,
+        error: state.commonUser.error,
+        formData: state.commonUser.formData
+    })
+}))(UserForm)

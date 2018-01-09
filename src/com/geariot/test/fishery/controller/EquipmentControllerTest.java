@@ -122,7 +122,7 @@ public class EquipmentControllerTest {
 		while(i<10) {
 		mockMvc.perform(post("/equipment/add").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sn", String.format("02222222%d",i ))
+				.param("device_sn", String.format("0",i ))
 				.param("name", "1")
 				.param("relation", "1")
 				)

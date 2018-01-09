@@ -44,6 +44,20 @@ class UserList extends PureComponent {
         })
     }
 
+    modifyInfo = (record,index)=>{
+        let formData = {}
+        for(let key in record) {
+            formData[key].value = record[key]
+        }
+        this.props.dispatch({
+            type:'/commonUser/changeModal',
+            payload:{
+                formData:{field:formData}
+            }
+        })
+        this.showAddModal()
+        
+    }
     onOk = (values) => {
         this.props.dispatch({
             type: 'commonUser/addUser',
@@ -122,7 +136,6 @@ class UserList extends PureComponent {
                     origRows = origRows.filter((obj) => {
                         return obj.key !== changableRow.key;
                     });
-
                 }
                 console.log(origKeys)
                 this.setState({
@@ -155,8 +168,8 @@ class UserList extends PureComponent {
             key: 'phone',
         }, {
             title: '养殖年限',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'life',
+            key: 'life',
         }, {
             title: '联系地址',
             dataIndex: 'address',
@@ -170,7 +183,7 @@ class UserList extends PureComponent {
             dataIndex: 'keyword',
             render: (text, record, index) => {
                 return <span>
-                    <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
+                    <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }} >修改</a></span>
                     <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id+''])}>
                         <a href="javascript:void(0);">删除</a>
                     </Popconfirm>

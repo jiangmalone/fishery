@@ -47,15 +47,19 @@ export default {
         });
       }
     },
-    // *modifyWXUser({payload},{call,put}) {
-    //   const response = yield call(modifyWXUser,payload);
-    //   if(response.code=='0') {
-    //     yield put({
-    //       type: 'modifyList',
-    //       payload: response.data,
-    //     });
-    //   }
-    // },
+    *modifyWXUser({payload},{call,put}) {
+      const response = yield call(modifyWXUser,payload.record);
+      if(response.code=='0') {
+        yield put({
+          type: 'modifyList',
+          payload: {
+            index:payload.index,
+            data:response.data,
+          },
+        });
+     
+      }
+    },
     *deleteUser({ payload }, { call, put }) {
       const response = yield call(delWXUser, { WXUserIds: payload.WXUserIds });
       if (response.code == '0') {
@@ -87,12 +91,12 @@ export default {
         pagination: { ...state.pagination, total: state.pagination.total + 1 }
       };
     },
-    // modifyList(state,action) {
-    //   return {
-    //     ...state,
-    //     list:update(state.list,([action.index],{$set:action.data}))
-    //   }
-    // },
+    modifyList(state,action) {
+      return {
+        ...state,
+        list:update(state.list,([action.payload.index],{$set:action.payload.data}))
+      }
+    },
     changeLoading(state, action) {
       return {
         ...state,

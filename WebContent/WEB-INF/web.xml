@@ -10,8 +10,13 @@
 	</context-param>
 
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+   </listener>
+
+	<!-- 开启socket服务 -->
+	<listener>
+		<listener-class>com.geariot.platform.fishery.socket.SocketServiceLoader</listener-class>
+	</listener> 
 	
 	<listener>
 		<listener-class>com.geariot.platform.fishery.utils.SocketListener</listener-class>

@@ -21,7 +21,13 @@ public class Sensor_Data {
 	private float pH_value;						//ph值
 	private Date receiveTime;					//上位机该条数据发送到服务器时间
 	private String device_sn;					//上位机设备编号
-	
+	private int way;
+	public int getWay() {
+		return way;
+	}
+	public void setWay(int way) {
+		this.way = way;
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {

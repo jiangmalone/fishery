@@ -25,6 +25,7 @@ class AddEquipment extends React.Component {
             name: '设备名称',
             relation: ''
         }).then((res) => {
+            console.log(res);
 
         }).catch((error) => { console.log(error) });
         

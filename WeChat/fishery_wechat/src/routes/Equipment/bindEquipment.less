@@ -22,26 +22,27 @@
 
     .bind-info{
         margin: .0rem .3rem;
-        font-size: .35rem;
+        
         margin-top: .3rem;
         margin-bottom: .5rem;
-        .line {
-            height: 1.15rem;
-            padding: 0 .3rem;
-            line-height: 1.15rem;
-            background: #fff;
-            .left {
-                vertical-align: middle;
-                display: inline-block;
-                width: 2rem;
+        
+        .am-list .am-list-body{
+            .am-list-line:after {
+                display: none;
             }
-            .right {
-                vertical-align: middle;
-                display: inline-block;
-                width: 4.3rem;
-                text-align: right;
+            .am-list-item {
+                padding-left: .3rem;
+                border-bottom: 0;
+                .am-list-line {
+                    height: 1.15rem;
+                    .am-list-content , .am-list-extra {
+                        font-size: .35rem;
+                    }
+                }
             }
         }
+        
+        
     }
 
     .save-button{

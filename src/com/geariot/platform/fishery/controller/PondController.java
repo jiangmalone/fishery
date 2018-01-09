@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,17 +20,17 @@ public class PondController {
 	private PondService pondService;
 	
 	@RequestMapping(value = "/addPond" , method = RequestMethod.POST)
-	public Map<String,Object> addPond(Pond pond){
+	public Map<String,Object> addPond(@RequestBody Pond pond){
 		return pondService.addPond(pond);
 	}
 	
-	@RequestMapping(value = "/delPonds" , method = RequestMethod.POST)
+	@RequestMapping(value = "/delPonds" , method = RequestMethod.GET)
 	public Map<String,Object> delPonds(Integer... pondIds){
 		return pondService.delPonds(pondIds);
 	}
 	
 	@RequestMapping(value = "/modifyPond" , method = RequestMethod.POST)
-	public Map<String,Object> modifyPond(Pond pond){
+	public Map<String,Object> modifyPond(@RequestBody Pond pond){
 		return pondService.modifyPond(pond);
 	}
 	

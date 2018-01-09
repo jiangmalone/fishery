@@ -15,7 +15,8 @@ class Login extends React.Component {
         this.state = {
             allowSend: true,
             isphone: false,
-            wait: 60
+            wait: 60,
+            phone: ''
         }
     }
 
@@ -84,7 +85,6 @@ class Login extends React.Component {
                     window.localStorage.setItem('openid', getParameterByName('openid'))
                     window.localStorage.setItem('clientId', res.data.client.id)
                     dplus.track('登录', { 'phone': this.state.phone });
-                    //this.props.history.push(`/${getParameterByName('directUrl')  == 'ordertrack' ? 'ordertrack?orderId=$' : getParameterByName('directUrl') }`)
                     if (window.localStorage.getItem('isInfoSaved')) {
                         this.props.history.push(`/indexPage`)
                     } else {
@@ -100,10 +100,12 @@ class Login extends React.Component {
             <Flex justify='center'>
                 <img className='logo' src={login_logo} />
             </Flex>
-            <Flex justify='center' >
-                <div className='input-up'>
-                    <img src={login_user_logo} style={{ width: '.4rem', verticalAlign: 'middle', backgroundColor: '#fff', padding: 10, opacity: 0.7 }} />
-                    <input className='no-border' style={{ width: '6.4rem', paddingLeft: 15, backgroundColor: "#fff",opacity: 0.3  }} onChange={(e) => {
+            <div className='input-up'>
+                <img src={login_user_logo} style={{ width: '.4rem', verticalAlign: 'middle', backgroundColor: '#fff', padding: 10, opacity: 0.7 }} />
+                <input className='no-border'
+                    style={{ width: '6.4rem', paddingLeft: 15, backgroundColor: "#fff", opacity: 0.3 }}
+                    onChange={(e) => {
+                        console.log('heihei')
                         if ((/^1(3|4|5|7|8)\d{9}$/.test(e.target.value))) {
                             this.setState({
                                 phone: e.target.value,
@@ -115,17 +117,26 @@ class Login extends React.Component {
                                 isphone: false
                             })
                         }
-                    }} placeholder="请输入手机号码" />
+                    }}
+                    placeholder="请输入手机号码"
+                    value={this.state.phone}
+                />
+            </div>
+            <div className='input-up'>
+                <img src={login_password_logo} style={{ width: '.4rem', verticalAlign: 'middle', backgroundColor: '#fff', padding: 10, opacity: 0.7 }} />
+                <input className='no-border'
+                    placeholder="请输入验证码"
+                    style={{ display: 'inner-block', width: '4rem', paddingLeft: 15, backgroundColor: "#fff", opacity: 0.3 }}
+                    onChange={(e) => { this.setState({ smscode: e.target.value }) }}
+                />
+                <div className='no-border'
+                    style={{ lineHeight: '.9rem', display: 'inline-block', color: this.state.isphone ? '#5b87e5' : '#35b4e8', verticalAlign: 'middle', padding: '0 .49rem', backgroundColor: "#fff", opacity: 0.3 }}
+                    onClick={() => { if (this.state.isphone) { this.sendCode() } }}
+                >
+                    {this.state.allowSend ? '获取验证码' : `${this.state.wait}s后重发`}
                 </div>
-            </Flex>
-            <Flex justify='center'>
-                <div className='input-up'>
-                    <img src={login_password_logo} style={{ width: '.4rem', verticalAlign: 'middle', backgroundColor: '#fff', padding: 10, opacity: 0.7 }} />
-                    <input className='no-border' placeholder="请输入验证码" style={{ display: 'inner-block', width: '4rem', paddingLeft: 15, backgroundColor: "#fff",opacity: 0.3}} onChange={(e) => { this.setState({ smscode: e.target.value }) }} />
-                    <div className='no-border' style={{lineHeight: '.9rem', display: 'inline-block', color: this.state.isphone ? '#5b87e5' : '#35b4e8', verticalAlign: 'middle', padding: '0 .49rem', backgroundColor: "#fff",opacity: 0.3}} onClick={() => { if (this.state.isphone) { this.sendCode() } }}>{this.state.allowSend ? '获取验证码' : `${this.state.wait}s后重发`}</div>
-                </div>
-            </Flex>
-            <div style={{ width: '5.5rem' ,height: '0.8rem', textAlign: 'center', color: "#fff", borderRadius: '10rem', lineHeight: '0.8rem', margin: '0 auto', background: '#35b4e8', marginTop: 15}} onClick={() => { this.Login() }}>
+            </div>
+            <div style={{ width: '5.5rem', height: '0.8rem', textAlign: 'center', color: "#fff", borderRadius: '10rem', lineHeight: '0.8rem', margin: '0 auto', background: '#35b4e8', marginTop: 15 }} onClick={() => { this.Login() }}>
                 登 录
             </div>
             <div style={{ textAlign: 'center', color: "#fff", lineHeight: '0.98rem', fontSize: '.18rem' }}>

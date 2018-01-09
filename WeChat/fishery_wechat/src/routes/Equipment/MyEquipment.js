@@ -46,7 +46,13 @@ class MyEquipment extends React.Component {
     }
 
     addEquipment = () => {
-        console.log('add');
+        this.props.dispatch({
+            type: 'global/changeState',
+            payload: {
+                transitionName: 'left'
+            }
+        })
+        this.props.history.push('/addEquipment');
     }
 
     render() {

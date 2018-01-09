@@ -1,6 +1,6 @@
 import React from 'react';
 import './addPond.less';
-import { List, InputItem, Picker } from 'antd-mobile';
+import { List, InputItem, Picker, ActivityIndicator, Toast } from 'antd-mobile';
 import NavBar from '../../../components/NavBar';
 import { createForm } from 'rc-form';
 import { connect } from 'dva';
@@ -12,18 +12,43 @@ class AddPond extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            edit: false
+            edit: false,
+            loading: this.props.loading
         }
     }
+
+    componentWillReceiveProps(newProps) {
+        if (newProps.loading != this.state.loading) {
+            this.setState({
+                loading: newProps.loading
+            })
+        }
+        if (newProps.error) {
+            Toast.fail(newProps.error, 2);
+        }
+    }
+
+
+    submit = () => {
+        this.props.form.validateFields((error, value) => {
+            if (!error) {
+                console.log(value)
+            }
+            value.relation = 'wx3'
+            this.props.dispatch({
+                type: 'pond/addPond',
+                payload: value
+            })
+        })
+    }
     render() {
-        const { getFieldProps, getFieldError } = this.props.form;
-        const district = [{ label: '淡水', value: '淡水' }, { label: '盐水', value: '盐水' }, { label: '淡盐水', value: '淡盐水' }]
+        const { getFieldProps, getFieldError, validateFields } = this.props.form;
         return (
             <form className="body-bac">
                 <NavBar title={"添加塘口"} />
                 <List className="addPond-list">
                     <InputItem
-                        {...getFieldProps('account', {
+                        {...getFieldProps('name', {
                             // initialValue: 'little ant',
                             rules: [
                                 { required: true, message: '请输入塘口名称' }
@@ -31,36 +56,65 @@ class AddPond extends React.Component {
                         }) }
                         clear
                         className="addpond-input"
-                        error={!!getFieldError('account')}
+                        error={!!getFieldError('name')}
                         placeholder="请输入塘口名称"
                     >塘口名称</InputItem>
                     <InputItem
-                        {...getFieldProps('account') }
+                        {...getFieldProps('area', {
+                            rules: [
+                                { types: ['float', 'int'], message: '请输入正确数据' }
+                            ]
+                        }) }
                         clear
                         className="addpond-input"
                         labelNumber='5'
-                        error={!!getFieldError('account')}
+                        error={!!getFieldError('area')}
                         placeholder="请输入塘口面积"
                     >面积(亩)</InputItem>
                     <InputItem
-                        {...getFieldProps('account') }
+                        {...getFieldProps('depth', {
+                            rules: [
+                                { types: ['float', 'int'], message: '请输入正确数据' }
+                            ]
+                        }) }
                         clear
                         className="addpond-input"
                         labelNumber='5'
-                        error={!!getFieldError('account')}
+                        error={!!getFieldError('depth')}
                         placeholder="请输入塘口深度"
                     >深度(m)</InputItem>
                     <InputItem
-                        {...getFieldProps('account') }
+                        {...getFieldProps('density', {
+                            rules: [
+                                { types: ['float', 'int'], message: '请输入正确数据' }
+                            ]
+                        }) }
                         clear
                         className="addpond-input"
                         labelNumber='5'
-                        error={!!getFieldError('account')}
+                        error={!!getFieldError('density')}
+                        placeholder="请输入塘口密度"
+                    >塘口密度(kg/㎡)</InputItem>
+                    <InputItem
+                        {...getFieldProps('sediment_thickness', {
+                            rules: [
+                                { types: ['float', 'int'], message: '请输入正确数据' }
+                            ]
+                        }) }
+                        clear
+                        className="addpond-input"
+                        labelNumber='5'
+                        error={!!getFieldError('sediment_thickness')}
                         placeholder="请输入底泥厚度"
                     >底泥厚度(m)</InputItem>
-                    <Picker data={district} cols={1} {...getFieldProps('district3') } className="forss">
-                        <List.Item arrow="horizontal">池塘水源</List.Item>
-                    </Picker>
+                    <InputItem
+                        {...getFieldProps('water_source') }
+                        clear
+                        className="addpond-input"
+                        labelNumber='5'
+                        error={!!getFieldError('water_source')}
+                        placeholder="请输入池塘水源"
+                    >池塘水源</InputItem>
                     <Item arrow="horizontal" onClick={() => {
                         this.props.history.push('/addFish');
                         this.props.dispatch({
@@ -84,12 +138,35 @@ class AddPond extends React.Component {
                         塘口位置
                     </Item>
                 </List>
-                <div className="addPond-btn">确认提交</div>
+                <div className="addPond-btn" onClick={() => { this.submit() }}>确认提交</div>
+                <ActivityIndicator
+                    toast
+                    text="等待中..."
+                    animating={this.state.loading}
+                />
             </form>
         );
     }
 
 }
 
-const AddPondForm = createForm()(AddPond);
-export default connect()(AddPondForm);
+
+const AddPondForm = createForm({
+    mapPropsToFields: (props) => {
+        return { ...props.formData.fields }
+
+    },
+    onFieldsChange: (props, fields) => {
+        props.dispatch({
+            type: 'pond/changeState',
+            payload: { formData: { fields: { ...props.formData.fields, ...fields } } }
+        })
+    }
+})(AddPond);
+export default connect((state => {
+    return ({
+        loading: state.pond.loading,
+        error: state.pond.error,
+        formData: state.pond.formData
+    })
+}))(AddPondForm);

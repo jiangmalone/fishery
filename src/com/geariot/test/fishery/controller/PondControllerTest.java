@@ -12,8 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.result.PrintingResultHandler;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -47,7 +45,7 @@ public class PondControllerTest {
 	public void addPondTest() throws Exception{
 		mockMvc.perform(post("/pond/addPond").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("name", "小易信息")
+				.param("name", "大傻逼")
 				.param("area", "20.0")
 				.param("address", "南京小易信息")
 				.param("longitude", "75.1234")
@@ -56,7 +54,7 @@ public class PondControllerTest {
 				.param("sediment_thickness", "0.5")
 				.param("depth", "15.0")
 				.param("density", "1.2")
-				.param("relation", "WX12")
+				.param("relation", "WX3")
 				.param("fish_categorys", "鲫鱼")
 				.param("fish_categorys", "刀鱼")
 				)
@@ -115,5 +113,6 @@ public class PondControllerTest {
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
+	
 }
 

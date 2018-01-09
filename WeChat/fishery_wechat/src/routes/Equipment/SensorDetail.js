@@ -36,15 +36,15 @@ const cols = {
 };
 
 const dayOData = [
-    { time: "9:00", o: 3 },
-    { time: "10:00", o: 4 },
-    { time: "11:00", o: 3.5 },
-    { time: "12:00", o: 5 },
-    { time: "13:00", o: 4.9 },
-    { time: "14:00", o: 6 },
-    { time: "15:00", o: 7 },
+    { time: "9:00", o: 7 },
+    { time: "10:00", o: 3 },
+    { time: "11:00", o: 3 },
+    { time: "12:00", o: 9 },
+    { time: "13:00", o: 7 },
+    { time: "14:00", o: 0 },
+    { time: "15:00", o: 4 },
     { time: "16:00", o: 9 },
-    { time: "17:00", o: 13 }
+    { time: "17:00", o: 7 }
 ];
 const monthOData = [
     { time: "星期一", o: 9 },
@@ -98,7 +98,9 @@ class SensorDetail extends React.Component {
             selected: '',
             isShowDetail: false,
             isSelectToday: true,
-            data: dayPHData,
+            phData: dayPHData,
+            oData: dayOData,
+            waterData: dayWaterData
         }
     }
 
@@ -127,15 +129,23 @@ class SensorDetail extends React.Component {
         if (state == this.state.isSelectToday) {
             return;
         } else {
-            let data = [];
+            let phData = [];
+            let oData = [];
+            let waterData = [];
             if(!this.state.isSelectToday) {
-                data = dayPHData
+                phData = dayPHData;
+                oData = dayOData;
+                waterData = dayWaterData;
             } else {
-                data = monthPHData
+                phData = monthPHData;
+                oData = monthOData;
+                waterData = monthWaterData;
             }
             this.setState({
                 isSelectToday: !this.state.isSelectToday,
-                data: data
+                phData: phData,
+                oData: oData,
+                waterData: waterData
             })
         }
     }
@@ -211,7 +221,7 @@ class SensorDetail extends React.Component {
             </div>
             <div className='chart-div'>
                 <p>PH变化曲线</p>
-                <Chart height={400} data={this.state.data} scale={cols} forceFit>
+                <Chart height={400} data={this.state.phData} scale={cols} forceFit>
                     <Axis name="time" />
                     <Axis name="ph" />
                     <Tooltip crosshairs={{ type: "y" }} />
@@ -220,23 +230,23 @@ class SensorDetail extends React.Component {
                 </Chart>
             </div>
             <div className='chart-div'>
-                <p>PH变化曲线</p>
-                <Chart height={400} data={this.state.data} scale={cols} forceFit>
+                <p>溶氧变化曲线</p>
+                <Chart height={400} data={this.state.oData} scale={oCols} forceFit>
                     <Axis name="time" />
-                    <Axis name="ph" />
+                    <Axis name="o" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="time*ph" size={2} />
-                    <Geom type='point' position="time*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                    <Geom type="line" position="time*o" size={2} />
+                    <Geom type='point' position="time*o" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
             </div>
             <div className='chart-div'>
-                <p>PH变化曲线</p>
-                <Chart height={400} data={this.state.data} scale={cols} forceFit>
+                <p>水温变化曲线</p>
+                <Chart height={400} data={this.state.waterData} scale={waterCols} forceFit>
                     <Axis name="time" />
-                    <Axis name="ph" />
+                    <Axis name="温度" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="time*ph" size={2} />
-                    <Geom type='point' position="time*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                    <Geom type="line" position="time*温度" size={2} />
+                    <Geom type='point' position="time*温度" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
             </div>
         </div>);

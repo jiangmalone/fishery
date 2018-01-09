@@ -1,22 +1,20 @@
-import { pondQuery, addPond ,delPonds} from '../services/pondManage.js'
+import { queryEquipment, addEquipment } from '../services/equipment.js'
 import update from 'immutability-helper'
-import { routerRedux } from 'dva/router'
 const delay = timeout => new Promise(resolve => setTimeout(resolve, timeout));
 export default {
 
-    namespace: 'pond',
+    namespace: 'equipment',
 
     state: {
         list: [],
         loading: false,
-        formData:{fields:{}}
     },
 
     subscriptions: {
         setup({ dispatch, history }) {  // eslint-disable-line
             history.listen((location) => {
                 const pathname = location.pathname;
-                if (pathname == '/MyPond') {
+                if (pathname == '/MyEquipment') {
                     dispatch({ type: 'query', payload: { relation: 'wx3', page: 1, number: 99 } })
                 }
             });
@@ -25,6 +23,8 @@ export default {
 
     effects: {
         *query({ payload }, { call, put }) {
+            yield put({ type: 'showLoginLoading' });
+            yield call(delay, 1000);
             console.log(payload)
             const data = yield call(pondQuery, payload)
             if (data) {
@@ -35,18 +35,18 @@ export default {
                     },
                 })
             }
+            yield put({ type: 'hideLoginLoading' })
         },
-        *addPond({ payload }, { call, put }) {
+        *addEquipment({ payload }, { call, put }) {
             yield put({ type: 'showLoginLoading' });
-            let data = yield call(addPond, payload);
+            let data = yield call(addEquipment, payload);
             yield call(delay, 1000);
             if(data.data.code !='0') {
-                yield put({ type: 'errorShow',error:data.data.msg });
+                yield put({ type: 'errorShow',error:data.data.msg })
                 yield call(delay, 1000);
-                yield put({ type: 'errorShow',error:false });
+                yield put({ type: 'errorShow',error:false })
             } else {
-                yield put(routerRedux.push('/MyPond'))
-                yield put({ type: 'errorShow',error:false });
+                yield put({ type: 'errorShow',error:false })
             }
             yield put({ type: 'hideLoginLoading' })
         },

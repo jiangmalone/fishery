@@ -10,6 +10,7 @@
     margin-top: .2rem;
     padding: .3rem;
     border-bottom: 1px solid #dad9d9;
+    justify-content:space-between;
     background: #fff;
     .content-title {
         font-size: .4rem;
@@ -17,6 +18,7 @@
     }
     .mypond-delete {
         align-self: center;
+        justify-self: right;
         width: .48rem;
         height: .48rem;
         img {
@@ -63,6 +65,10 @@
                 background: url(../../../img/pool_thickness.png) no-repeat  left;
                 background-size: .36rem .36rem;  
             }
+            &.density-img {
+                background: url(../../../img/midu.png) no-repeat  left;
+                background-size: .27rem .3rem;  
+            }
         }
         .content-info-value {
             vertical-align: middle;
@@ -77,4 +83,24 @@
     height: .96rem;
     background: url(../../../img/btn_add.png) no-repeat center;
     background-size: 100% 100%;
+}
+
+.none-list {
+    margin-top: 3rem;
+    text-align: center;
+    font-size: .4rem;
+    line-height: .6rem;
+    color: #707070;
+    img {
+        width: .93rem;
+        height: .8rem;
+    }
+    .btn_add1 {
+        display: inline-block;
+        margin-top: .4rem;
+        width: .96rem;
+        height: .96rem;
+        background: url(../../../img/btn_add.png) no-repeat center;
+        background-size: 100% 100%;
+    }
 }

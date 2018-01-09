@@ -1,6 +1,6 @@
 
 import { login } from '../services/user.js'
-import { routeRedux } from 'dva/router'
+import { routerRedux } from 'dva/router'
 const delay = timeout => new Promise(resolve => setTimeout(resolve, timeout));
 export default {
 

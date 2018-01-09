@@ -12,7 +12,7 @@ export default {
         return get('api/pond/pondEquipment',params)
     },
     delPonds:(params)=>{
-        return post('api/pond/delPonds',params)
+        return get('api/pond/delPonds',params)
     },
     modifyPond:(params)=>{
         return post('api/pond/modifyPond',params)

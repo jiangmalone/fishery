@@ -1,5 +1,4 @@
 package com.geariot.platform.fishery.socket;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -34,27 +33,32 @@ public class RequestProcessor {
     }
 
 	public  void read(SelectionKey key) throws IOException {
-		SocketChannel readChannel = (SocketChannel) key.channel();
-		// I/O读数据操作
-		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		int len = 0;
-		while (true) {
-			buffer.clear();
-			len = readChannel.read(buffer);
-			if (len == -1)
-				break;
-			buffer.flip();
-			while (buffer.hasRemaining()) {
-				baos.write(buffer.get());
-			}
-
-			//System.out.println("服务器端接收到的数据：" + new String(baos.toByteArray()));
+		// 服务器可读取消息:得到事件发生的Socket通道
+				SocketChannel readChannel = (SocketChannel) key.channel();
+				// 创建读取的缓冲区
+				ByteBuffer buffer = ByteBuffer.allocate(100);
+				try
+				{
+					readChannel.read(buffer);
+				}
+				catch (IOException e1)
+				{
+					System.out.println("Connection reset by peer 3");
+					try
+					{
+						readChannel.close();
+						System.out.println("Close channel");
+					} 
+					catch (IOException e)
+					{
+						System.out.println("Close channel Exception");
+					}
+				}
+				byte[] data = buffer.array();
 			Map<String,Object> map=new HashMap<String,Object>();
-			map.put("baos", baos);
+			map.put("data", data);
 			map.put("readChannel", readChannel);
 			key.attach(map);
-           new DataHandle().handle(key);
+           new DataHandle().handle(key); 
 		}
 	}
-}

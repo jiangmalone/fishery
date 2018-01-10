@@ -106,11 +106,11 @@ public class CommonUtils {
 	public static String printHexStringMerge(byte[] source,int start,int num) {
 		String target=null;
 		while(num!=0) {
-			target=printHexString(source[start]);
+			target+=printHexString(source[start]);
 			start++;
 			num--;
 		}
-		return target;
+		return target.substring(4);
 	}
 	
 	public static byte arrayMerge(byte[] source,int start,int num) {

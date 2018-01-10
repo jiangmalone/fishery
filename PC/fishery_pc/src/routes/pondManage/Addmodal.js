@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Modal, Input, Select } from 'antd';
+import { Form, Modal, Input, Select, InputNumber } from 'antd';
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -16,13 +16,23 @@ const formItemLayout = {
 };
 function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, showMapModal, address }) {
     const children = [];
-    const { getFieldDecorator } = form;
+    const { getFieldDecorator, validateFieldsAndScroll } = form;
     for (let i = 10; i < 36; i++) {
         children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
     }
     return <Modal title={modifyId ? "新增塘口" : '修改塘口'}
         visible={visible}
-        onOk={onOk}
+        onOk={() => {
+            let obj = {}
+            validateFieldsAndScroll((err, values) => {
+                if (!err) {
+                    obj = values
+                }
+            })
+            console.log(obj)
+            onOk(obj)
+
+        }}
         onCancel={onCancel}
         wrapClassName={wrapClassName}
         okText="确认"
@@ -39,7 +49,7 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 })(<Input style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="面积" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('area')(<Input style={{ width: 200 }} addonAfter="亩" />)}
+                {getFieldDecorator('area', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="亩" />)}
             </FormItem>
             <FormItem label="塘口位置" {...formItemLayout} style={{ width: '100%' }} >
                 <div onClick={() => { showMapModal() }} style={{ cursor: 'pointer' }}>
@@ -48,10 +58,10 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 </div>
             </FormItem>
             <FormItem label="深度" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('depth')(<Input style={{ width: 200 }} addonAfter="m" />)}
+                {getFieldDecorator('depth', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="m" />)}
             </FormItem>
             <FormItem label="养殖品种" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('fish_cate')(<Select
+                {getFieldDecorator('fish_categorys')(<Select
                     mode="tags"
                     placeholder="Please select"
                     style={{ width: '200px' }}
@@ -63,10 +73,10 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 {getFieldDecorator('water_source')(<Input style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="底泥厚度" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('sediment_thickness')(<Input style={{ width: 200 }} addonAfter="cm" />)}
+                {getFieldDecorator('sediment_thickness', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="cm" />)}
             </FormItem>
             <FormItem label="塘口密度" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('density')(<Input style={{ width: 200 }} addonAfter="kg/㎡" />)}
+                {getFieldDecorator('density', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="kg/㎡" />)}
             </FormItem>
         </Form>
     </Modal >
@@ -84,8 +94,8 @@ let AddModalForm = Form.create({
             depth: Form.createFormField({
                 ...props.formData.fields.depth
             }),
-            fish_cate: Form.createFormField({
-                ...props.formData.fields.fish_cate
+            fish_categorys: Form.createFormField({
+                ...props.formData.fields.fish_categorys
             }),
             address: Form.createFormField({
                 ...props.formData.fields.address

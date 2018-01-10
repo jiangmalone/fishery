@@ -39,14 +39,11 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
         cancelText="取消">
         <Form style={{ width: '100%' }}>
             <FormItem label="塘口名称" {...formItemLayout} style={{ width: '100%' }}>
-                <span>南京鱼儿欢欢有限公司</span>
-            </FormItem>
-            <FormItem label="塘口名称" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('name', {
                     rules: [
                         { required: true, message: '请填写塘口名称' },
                     ],
-                })(<Input style={{ width: 200 }} />)}
+                })(<Input style={{ width: 200 }} disabled={modifyId?true:false}  />)}
             </FormItem>
             <FormItem label="面积" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('area', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="亩" />)}

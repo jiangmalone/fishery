@@ -47,17 +47,17 @@ export default {
         });
       }
     },
-    *modifyWXUser({payload},{call,put}) {
-      const response = yield call(modifyWXUser,payload.record);
-      if(response.code=='0') {
+    *modifyWXUser({ payload }, { call, put }) {
+      const response = yield call(modifyWXUser, payload.data);
+      if (response.code == '0') {
         yield put({
           type: 'modifyList',
           payload: {
-            index:payload.index,
-            data:response.data,
+            index: payload.index,
+            data: response.data,
           },
         });
-     
+
       }
     },
     *deleteUser({ payload }, { call, put }) {
@@ -91,10 +91,10 @@ export default {
         pagination: { ...state.pagination, total: state.pagination.total + 1 }
       };
     },
-    modifyList(state,action) {
+    modifyList(state, action) {
       return {
         ...state,
-        list:update(state.list,([action.payload.index],{$set:action.payload.data}))
+        list: update(state.list, { [action.payload.index]: { $set: action.payload.data } })
       }
     },
     changeLoading(state, action) {
@@ -104,7 +104,6 @@ export default {
       };
     },
     changeModal(state, action) {
-      console.log(state, action)
       return { ...state, ...action.payload };
     },
   },

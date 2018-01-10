@@ -20,6 +20,9 @@ class UserList extends PureComponent {
             view: false,
             selectedRows: [],
             selectedRowKeys: [],
+            mode: 'add',
+            index:'',
+            modifyId:''
         }
     }
 
@@ -34,40 +37,65 @@ class UserList extends PureComponent {
         });
     }
 
-    componentWillReceiveProps() {
 
-    }
-
-    showAddModal = () => {
+    showAddModal = (mode = 'add', index, id) => {
         this.setState({
-            view: true
+            view: true,
+            mode: mode,
+            index: index,
+            modifyId: id
         })
     }
 
-    modifyInfo = (record,index)=>{
+    modifyInfo = (record, index) => {
         let formData = {}
-        for(let key in record) {
-            formData[key].value = record[key]
+        console.log(record)
+        for (let key in record) {
+            console.log(key)
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
         }
+        console.log(formData)
         this.props.dispatch({
-            type:'/commonUser/changeModal',
-            payload:{
-                formData:{field:formData}
+            type: 'commonUser/changeModal',
+            payload: {
+                formData: { fields: formData }
             }
         })
-        this.showAddModal()
-        
+        this.showAddModal('modify', index, record.id)
     }
+
     onOk = (values) => {
-        this.props.dispatch({
-            type: 'commonUser/addUser',
-            payload: values,
-        });
+        console.log(this.state.index)
+        let tmp = this.state.index
+        if (!tmp && typeof (tmp) != "undefined" && tmp != 0) {
+            this.props.dispatch({
+                type: 'commonUser/addUser',
+                payload: values,
+            });
+        } else {
+            values.id = this.state.modifyId
+            this.props.dispatch({
+                type: 'commonUser/modifyWXUser',
+                payload: {
+                    index: this.state.index,
+                    data: values
+                },
+            });
+        }
         this.setState({
             view: false
         })
     }
 
+
+    onCancel = () => {
+        this.setState({
+            view: false
+        })
+    }
 
     handleTableChange = (pagination) => {
         const pager = { ...this.props.pagination };
@@ -82,12 +110,12 @@ class UserList extends PureComponent {
         });
     }
 
-    onDelete = (idArray)=>{
+    onDelete = (idArray) => {
         this.props.dispatch({
             type: 'commonUser/deleteUser',
             payload: {
-                WXUserIds:idArray,
-                pagination:this.props.pagination
+                WXUserIds: idArray,
+                pagination: this.props.pagination
             },
         });
     }
@@ -183,8 +211,8 @@ class UserList extends PureComponent {
             dataIndex: 'keyword',
             render: (text, record, index) => {
                 return <span>
-                    <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }} >修改</a></span>
-                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id+''])}>
+                    <span > <a href="javascript:void(0);" style={{ marginRight: '15px' }} onClick={() => { this.modifyInfo(record, index) }}>修改</a></span>
+                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
                         <a href="javascript:void(0);">删除</a>
                     </Popconfirm>
                 </span>
@@ -198,7 +226,7 @@ class UserList extends PureComponent {
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
                         <Button onClick={this.showAddModal}>新建用户</Button>
-                        <Button style={{ marginLeft: '10px' }} onClick={()=>this.onDelete(this.state.selectedRowKeys)}>删除用户</Button>
+                        <Button style={{ marginLeft: '10px' }} onClick={() => this.onDelete(this.state.selectedRowKeys)}>删除用户</Button>
                     </Row>
                     <Table loading={loading}
                         dataSource={this.props.list}
@@ -208,7 +236,7 @@ class UserList extends PureComponent {
                         onChange={this.handleTableChange}
                         bordered
                     />
-                    <AddUser visible={this.state.view} onOk={this.onOk} wrapClassName='vertical-center-modal' onCancel={this.onOk} />
+                    <AddUser modifyId={this.state.modifyId} visible={this.state.view} onOk={this.onOk} wrapClassName='vertical-center-modal' onCancel={this.onCancel} />
                 </Card>
             </PageHeaderLayout>
         );

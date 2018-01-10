@@ -24,8 +24,6 @@ export async function modifyPond(params) {
 }
 
 export async function delPonds(params) {
-    // params = stringify(params).replace(/\%.*?$/,'')
-    // console.log(params)
     let str = ''
     for (let item of params.pondIds) {
         str = 'pondIds=' + item + '&' + str

@@ -15,10 +15,10 @@ const formItemLayout = {
         sm: { span: 16 },
     },
 };
-function AddUser({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
+function AddUser({ visible, form, onOk, onCancel, wrapClassName, modifyId }) {
     const { getFieldDecorator, validateFieldsAndScroll } = form;
 
-    return <Modal title={modifyId?"新增塘口":'修改塘口'}
+    return <Modal title={modifyId ? "新增用户" : '修改用户'}
         visible={visible}
         onOk={() => {
             let obj = {}
@@ -57,14 +57,14 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
             <FormItem label="养殖年限" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('life', {
                     rules: [
-                        { required: true, message: '请填写用户联系方式' },
+                        { required: true, message: '请填写用户养殖年限' },
                     ],
                 })(<Input style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="联系地址" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('address', {
                     rules: [
-                        { required: true, message: '请填写用户联系方式' },
+                        { required: true, message: '请填写用户联系地址' },
                     ],
                 })(<Input style={{ width: 200 }} />)}
             </FormItem>

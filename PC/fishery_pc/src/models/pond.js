@@ -1,5 +1,5 @@
 import { queryFakeList, addUser } from '../services/api';
-import { queryWXUser } from '../services/user'
+import { queryPond, addPond, modifyPond, delPonds } from '../services/pond'
 
 export default {
     namespace: 'pond',
@@ -11,6 +11,7 @@ export default {
         modalvisible: false,
         mapVisible: false,
         address: '',
+        formData: { fields: {} }
     },
 
     effects: {
@@ -19,23 +20,58 @@ export default {
                 type: 'changeLoading',
                 payload: true,
             });
-            const response = yield call(queryFakeList, payload);
-            yield put({
-                type: 'appendList',
-                payload: Array.isArray(response) ? response : [],
-            });
+            const response = yield call(queryPond, payload);
+            console.log(response)
+            if (response.code == "0") {
+                for (let item of response.data) {
+                    item.key = item.id
+                }
+                yield put({
+                    type: 'appendList',
+                    payload: {
+                        list: Array.isArray(response.data) ? response.data : [],
+                        pagination: {
+                            total: response.realSize,
+                        }
+                    }
+                });
+            }
             yield put({
                 type: 'changeLoading',
                 payload: false,
             });
         },
-        *addUser({ payload }, { call, put }) {
-            const response = yield call(addUser, payload);
+        *addPond({ payload }, { call, put }) {
+            const response = yield call(addPond, payload);
             if (response.code == '0') {
                 yield put({
                     type: 'addList',
                     payload: response.data,
                 });
+            }
+        },
+        *modifyPond({ payload }, { call, put }) {
+            const response = yield call(modifyPond, payload.data);
+            if (response.code == '0') {
+                yield put({
+                    type: 'modifyList',
+                    payload: {
+                        index: payload.index,
+                        data: response.data,
+                    },
+                });
+            }
+        },
+        *deletePond({ payload }, { call, put }) {
+            const response = yield call(delPonds, { pondIds: payload.pondIds });
+            if (response.code == '0') {
+                yield put({
+                    type: 'fetch',
+                    payload: {
+                        page: payload.pagination.current,
+                        number: 10
+                    }
+                })
             }
         }
     },
@@ -44,11 +80,8 @@ export default {
         appendList(state, action) {
             return {
                 ...state,
-                list: action.payload,
-                pagination: {
-                    total: action.payload.length,
-                    pageSize: 10
-                }
+                list: action.payload.list,
+                pagination: { ...state.pagination, ...action.payload.pagination }
             };
         },
         addList(state, action) {
@@ -62,6 +95,12 @@ export default {
                     pageSize: 10
                 }
             };
+        },
+        modifyList(state, action) {
+            return {
+                ...state,
+                list: update(state.list, { [action.payload.index]: { $set: action.payload.data } })
+            }
         },
         changeLoading(state, action) {
             return {

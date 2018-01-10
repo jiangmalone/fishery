@@ -7,9 +7,9 @@ import { Link } from 'react-router-dom'
 
 const Search = Input.Search;
 @connect(state => ({
-    list: state.commonUser.list,
-    loading: state.commonUser.loading,
-    pagination: state.commonUser.pagination
+    list: state.pond.list,
+    loading: state.pond.loading,
+    pagination: state.pond.pagination
 }))
 
 class UserList extends PureComponent {

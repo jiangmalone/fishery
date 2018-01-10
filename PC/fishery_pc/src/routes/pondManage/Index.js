@@ -263,7 +263,7 @@ class PondList extends PureComponent {
             <PageHeaderLayout>
                 <Card bordered={false}>
                     <Row style={{ marginBottom: '48px' }}>
-                        <Col>塘口名称：<Search style={{ width: 200 }} enterButton="查询" /></Col>
+                        <Col>塘口名称：<Search style={{ width: 200 }} onSearch={value => this.onSearch(value)} enterButton="查询" /></Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
                         <Button onClick={this.showAddModal}>新增塘口</Button>

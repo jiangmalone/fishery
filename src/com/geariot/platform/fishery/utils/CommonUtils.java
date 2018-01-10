@@ -116,7 +116,7 @@ public class CommonUtils {
 	public static byte arrayMerge(byte[] source,int start,int num) {
 		byte target=0;
 		while(num!=0) {
-			target=source[start];
+			target+=source[start];
 			start++;
 			num--;
 		}

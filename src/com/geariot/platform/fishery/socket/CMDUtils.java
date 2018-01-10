@@ -1,6 +1,5 @@
 package com.geariot.platform.fishery.socket;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -14,12 +13,12 @@ import org.apache.log4j.Logger;
 
 import com.geariot.platform.fishery.dao.AlarmDao;
 import com.geariot.platform.fishery.dao.LimitDao;
-import com.geariot.platform.fishery.dao.SelfTestDao;
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.entities.Alarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor_Data;
+import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
 
@@ -32,19 +31,23 @@ public class CMDUtils {
 	private static SocketChannel readChannel=null;
 	private static String deviceSn;
 	private static byte way;
-    //1
+	
+	@SuppressWarnings("unchecked")
 	public static void preHandle(SelectionKey key) {
+		System.out.println(key.attachment());
 		Map<String,Object> attachmentObject=(Map<String,Object>) key.attachment();
-		 data =((ByteArrayOutputStream) attachmentObject.get("baos")).toByteArray();		
+		 data =(byte[]) attachmentObject.get("data");		
 		 readChannel=(SocketChannel) attachmentObject.get("readChannel");
 		 deviceSn=(String) attachmentObject.get("deviceSn");
+		 System.out.println(deviceSn+"..........................");
 		 way=(byte) attachmentObject.get("way");
 	}
 	// 自检
 	public static void selfTestCMD(SelectionKey key) throws IOException {
 		//clientMap.put(String.valueOf(id), readChannel);
 	       preHandle(key);
-	       SelfTestDao selfTestDao=(SelfTestDao) ApplicationUtil.getBean("selfTestDao");
+	       SocketSerivce serivce =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+	       System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		    byte ac = data[7];
 			byte[] byteLongitude =new byte[4];
 			CommonUtils.arrayHandle(data, byteLongitude, 8, 0, 4);
@@ -64,7 +67,7 @@ public class CMDUtils {
            selfTest.setLongitude(longitude);
            selfTest.setGprs(gprs);
            selfTest.setStatus(sensor);
-			selfTestDao.save(selfTest);
+           row_count = serivce.save(selfTest);
 			if(row_count==1)
 				response(19);
 	}
@@ -83,9 +86,7 @@ public class CMDUtils {
 			float low= CommonUtils.byte2float(bytelow,0);
 			byte check1 = data[19];
 			String suffix1 = CommonUtils.printHexStringMerge(data,20,4);
-			/*Dao_Threshold dao_Threshold = new Dao_Threshold();
-			row_count = dao_Threshold.insertOne(String.valueOf(id), way, (double)up, (double)high, (double)low, "1");
-			*/
+			SocketSerivce serivce =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			LimitDao limitdao=(LimitDao) ApplicationUtil.getBean("limitDao");
 			Limit_Install limit=new Limit_Install();
 			limit.setDevice_sn(deviceSn);

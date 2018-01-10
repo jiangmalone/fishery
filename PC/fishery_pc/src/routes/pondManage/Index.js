@@ -18,17 +18,9 @@ const Search = Input.Search;
 }))
 
 class PondList extends PureComponent {
-    componentDidMount() {
-        this.props.dispatch({
-            type: 'pond/fetch',
-            payload: {
-                count: 10,
-            },
-        });
-    }
 
-    componentWillReceiveProps(newProps) {
-        // console.log(newProps)
+    componentDidMount() {
+        this.onSearch()
     }
 
     showAddModal = () => {
@@ -40,12 +32,23 @@ class PondList extends PureComponent {
         });
     }
 
+    onSearch = (value) => {
+        this.props.dispatch({
+            type: 'pond/fetch',
+            payload: {
+                name: value,
+                number: 10,
+                page: 1
+            },
+        })
+    }
+
     render() {
         const { list, loading } = this.props;
         const modalProps = {
             visible: this.props.modalVisible,
             wrapClassName: 'vertical-center-modal',
-            address:this.props.address,
+            address: this.props.address,
             onCancel: () => {
                 this.props.dispatch({
                     type: 'pond/changeModal',
@@ -87,7 +90,7 @@ class PondList extends PureComponent {
                     type: 'pond/changeModal',
                     payload: {
                         mapVisible: false,
-                        address:address
+                        address: address
                     },
                 });
             },
@@ -109,35 +112,35 @@ class PondList extends PureComponent {
             }
         }, {
             title: '塘口名称',
-            dataIndex: 'owner',
-            key: 'owner',
+            dataIndex: 'name',
+            key: 'name',
             render: (text, record, index) => {
-                return <Link to={`pondManage/${index}`}>{text}</Link>
+                return <Link to={`pondManage/${record.id}`}>{text}</Link>
             }
         }, {
             title: '面积（亩）',
-            dataIndex: 'gender',
-            key: 'gender',
+            dataIndex: 'area',
+            key: 'area',
         }, {
             title: '深度（m）',
-            dataIndex: 'contact',
-            key: 'contact',
+            dataIndex: 'depth',
+            key: 'depth',
         }, {
             title: '品种',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'fish_categorys',
+            key: 'fish_categorys',
         }, {
             title: '池塘水源',
             dataIndex: 'address',
             key: 'address',
         }, {
             title: '泥底厚度（cm）',
-            key: 'createTime',
-            dataIndex: 'createTime'
+            key: 'sediment_thickness',
+            dataIndex: 'sediment_thickness'
         }, {
             title: '塘口密度(kg/㎡)',
-            key: 'createTime1',
-            dataIndex: 'createTime1'
+            key: 'density',
+            dataIndex: 'density'
         }, {
             title: '操作',
             dataIndex: 'keyword',
@@ -169,7 +172,7 @@ class PondList extends PureComponent {
                         pagination={this.props.pagination}
                         bordered
                     />
-                    <Mapmoal {...mapModalProps}/>
+                    <Mapmoal {...mapModalProps} />
                 </Card>
             </PageHeaderLayout>
         );

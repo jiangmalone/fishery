@@ -5,43 +5,167 @@ import { Table, Row, Col, Card, Input, Icon, Button, InputNumber, Modal, message
 const Search = Input.Search;
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from "./companyUserList.less"
+import AddCompanyUser from './AddCompanyUser';
+
+@connect(state => ({
+    list: state.companyUser.list,
+    loading: state.companyUser.loading,
+    pagination: state.companyUser.pagination
+}))
 export default class CompanyUserList extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            loading: false,
-            showAddModal: false
+            selectedRows: [],
+            selectedRowKeys: [],
+            showAddModal: false,
+            modifyId:'',
+            mode: 'add',
+            index:'',
         }
     }
-    
-    showAddModal = () => {
-        console.log("showAddModal");
-        this.setState = ({ 
-            showAddModal: true
-        },()=> {console.log(this.showAddModal)})
+
+    componentDidMount() {
+        console.log(this.props.list)
+        this.props.dispatch({
+            type: 'companyUser/fetch',
+            payload: {
+                number: 10,
+                page: 1
+            },
+        });
     }
 
-    addCompany = () => {
-        console.log("addCompany");
+    showAddModal = (mode = 'add', index, id) => {
+        this.setState({
+            showAddModal: true,
+            mode: mode,
+            index: index,
+            modifyId: id
+        })
+    }
+
+    modifyInfo = (record, index) => {
+        let formData = {}
+        for (let key in record) {
+            console.log(key)
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
+        }
+        console.log(formData)
+        this.props.dispatch({
+            type: 'companyUser/changeModal',
+            payload: {
+                formData: { fields: formData }
+            }
+        })
+        this.showAddModal('modify', index, record.id)
+    }
+
+    onOk = (values) => {
+        console.log(values);
+        console.log('onOk');
+        if (isNaN(this.state.index)) {
+            this.props.dispatch({
+                type: 'companyUser/clearFormData'
+            });
+            this.props.dispatch({
+                type: 'companyUser/addCompany',
+                payload: values,
+            });
+        } else {
+            values.id = this.state.modifyId
+            this.props.dispatch({
+                type: 'companyUser/modifyCompany',
+                payload: {
+                    index: this.state.index,
+                    data: values
+                },
+            });
+        }
+        this.setState({
+            showAddModal: false
+        })
+    }
+
+    onCancel = () => {
+        this.setState({
+            showAddModal: false
+        })
     }
 
     render() {
+        const rowSelection = {
+            //针对全选
+            onSelectAll: (selected, selectedRows, changeRows) => {
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origRows = [...origRows, ...changeRows];
+                    for (let item of changeRows) {
+                        origKeys.push(item.id);
+                    }
+                } else {
+                    for (let change of changeRows) {
+                        origKeys = origKeys.filter((obj) => {
+                            return obj !== change.key;
+                        });
+                        origRows = origRows.filter((obj) => {
+                            return obj.key !== change.key;
+                        });
+                    }
+                }
+                this.setState({
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows,
+                });
+
+            },
+            selectedRowKeys: this.state.selectedRowKeys,
+            onSelect: (changableRow, selected, selectedRows) => {
+                //state里面记住这两个变量就好
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origKeys = [...origKeys, changableRow.key];
+                    origRows = [...origRows, changableRow];
+                } else {
+                    origKeys = origKeys.filter((obj) => {
+                        return obj !== changableRow.key;
+                    });
+                    origRows = origRows.filter((obj) => {
+                        return obj.key !== changableRow.key;
+                    });
+                }
+                console.log(origKeys)
+                this.setState({
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows
+                });
+            }
+        }
         const columns = [
             {
                 title: '序号',
-                dataIndex: 'index'
+                dataIndex: 'index',
+                key: 'index',
+                render: (text, record, index) => {
+                    return <span>{index + 1}</span>
+                }
             },
             {
                 title: '名称',
                 dataIndex: 'name',
-                render: (text,redcord, index) => {
+                render: (text, redcord, index) => {
                     return <Link to={`company-user/${index}`}>{text}</Link>
                 },
             },
             {
                 title: '联系方式',
-                dataIndex: 'connect',
+                dataIndex: 'phone',
             },
             {
                 title: '联系地址',
@@ -49,11 +173,11 @@ export default class CompanyUserList extends React.Component {
             },
             {
                 title: '养殖年限',
-                dataIndex: 'years',
+                dataIndex: 'life',
             },
             {
                 title: '创建时间',
-                dataIndex: 'createTime',
+                dataIndex: 'createDate',
             },
             {
                 title: '操作',
@@ -69,21 +193,12 @@ export default class CompanyUserList extends React.Component {
                 }
             },
         ];
-        const data = [{
-            name: '杨威的企业',
-            index: "1",
-            connect: 888988888,
-            address: '中南海',
-            years: 12,
-            createTime: "2017-12-14",
-            key: 1
-        }];
         return (
             <PageHeaderLayout >
                 <Card bordered={false}>
                     <Row>
 
-                        <Col>企业名称: &nbsp;<Search style={{ width: 200 }} placeholder="" enterButton="查询" /></Col> 
+                        <Col>企业名称: &nbsp;<Search style={{ width: 200 }} placeholder="" enterButton="查询" /></Col>
                     </Row>
                 </Card>
                 <Card bordered={false}>
@@ -96,52 +211,22 @@ export default class CompanyUserList extends React.Component {
                         </div>
                         <Table
                             loading={this.state.loading}
-                            dataSource={data}
+                            dataSource={this.props.list}
                             columns={columns}
+                            rowSelection={rowSelection}
                             className={styles.table}
                             bordered
                         />
                     </div>
                 </Card>
-                <Modal
-                    title="新增企业"
+                <AddCompanyUser
+                    modifyId={this.state.modifyId}
                     visible={this.state.showAddModal}
-                    onOk={() => this.addCompany()}
-                    onCancel={() => this.setState({ showAddModal: false })}
-                >
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            名称 ：
-                                </Col>
-                        <Col span={8}>
-                            <Input  onChange={(e) => this.onValueChange('parkingLocation', e.target.value)} />
-                        </Col>
-                    </Row>
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            联系方式：
-                                </Col>
-                        <Col span={8}>
-                            <Input  onChange={(e) => this.onValueChange('parkingLocation', e.target.value)} />
-                        </Col>
-                    </Row>
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            养殖年限：
-                                </Col>
-                        <Col span={8}>
-                            <Input type="textarea" rows={3}  onChange={(e) => this.onValueChange('comment', e.target.value)} />
-                        </Col>
-                    </Row>
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            联系地址:
-                                </Col>
-                        <Col span={8}>
-                            <Input type="textarea" rows={3}  onChange={(e) => this.onValueChange('comment', e.target.value)} />
-                        </Col>
-                    </Row>
-                </Modal>
+                    onOk={this.onOk}
+                    wrapClassName='vertical-center-modal'
+                    onCancel={this.onCancel}
+                />
+
             </PageHeaderLayout>
         );
     }

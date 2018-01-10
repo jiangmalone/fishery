@@ -38,3 +38,24 @@ export async function delWXUser(params) {
   str = str.slice(0,-1)
   return request(`/api/usermanagement/delWXUser?${str}`)
 }
+
+//企业用户相关
+
+export async function queryCompany(params) {
+  return request(`/api/usermanagement/queryCompany?${stringify(params)}`);
+}
+
+export async function addCompany(params) {
+  return request('/api/usermanagement/addCompany', {
+    method: 'POST',
+    body: params
+  });
+}
+
+export async function modifyCompany(params) {
+  return request('/api/usermanagement/modifyCompany', {
+    method: 'POST',
+    body: params
+  });
+}
+

@@ -1,9 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Modal, Input, Select, Radio } from 'antd';
+import { Form, Modal, Input} from 'antd';
 
-const RadioGroup = Radio.Group;
-const Option = Select.Option;
 const FormItem = Form.Item;
 const formItemLayout = {
     labelCol: {
@@ -15,10 +13,10 @@ const formItemLayout = {
         sm: { span: 16 },
     },
 };
-function AddUser({ visible, form, onOk, onCancel, wrapClassName, modifyId }) {
+function AddUser({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
     const { getFieldDecorator, validateFieldsAndScroll } = form;
 
-    return <Modal title={modifyId ? "新增用户" : '修改用户'}
+    return <Modal title={modifyId?"新增企业":'修改企业'}
         visible={visible}
         onOk={() => {
             let obj = {}
@@ -37,34 +35,28 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName, modifyId }) {
             <FormItem label="名称" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('name', {
                     rules: [
-                        { required: true, message: '请填写用户名称' },
+                        { required: true, message: '请填写企业名称' },
                     ],
                 })(<Input style={{ width: 200 }} />)}
-            </FormItem>
-            <FormItem label="性别" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('sex')(<RadioGroup>
-                    <Radio value={'男'}>男</Radio>
-                    <Radio value={'女'}>女</Radio>
-                </RadioGroup>)}
             </FormItem>
             <FormItem label="联系方式" {...formItemLayout} style={{ width: '100%' }} >
                 {getFieldDecorator('phone', {
                     rules: [
-                        { required: true, message: '请填写用户联系方式' },
+                        { required: true, message: '请填写企业联系方式' },
                     ],
                 })(<Input style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="养殖年限" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('life', {
                     rules: [
-                        { required: true, message: '请填写用户养殖年限' },
+                        { required: true, message: '请填写企业养殖年限' },
                     ],
                 })(<Input style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="联系地址" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('address', {
                     rules: [
-                        { required: true, message: '请填写用户联系地址' },
+                        { required: true, message: '请填写企业联系地址' },
                     ],
                 })(<Input style={{ width: 200 }} />)}
             </FormItem>
@@ -72,14 +64,11 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName, modifyId }) {
     </Modal >
 }
 
-let UserForm = Form.create({
+let CompanyForm = Form.create({
     mapPropsToFields: (props) => {
         return {
             name: Form.createFormField({
                 ...props.formData.fields.name
-            }),
-            sex: Form.createFormField({
-                ...props.formData.fields.sex
             }),
             phone: Form.createFormField({
                 ...props.formData.fields.phone
@@ -94,15 +83,15 @@ let UserForm = Form.create({
     },
     onFieldsChange: (props, fields) => {
         props.dispatch({
-            type: 'commonUser/changeModal',
+            type: 'companyUser/changeModal',
             payload: { formData: { fields: { ...props.formData.fields, ...fields } } }
         })
     }
 })(AddUser)
 export default connect((state => {
     return ({
-        loading: state.commonUser.loading,
-        error: state.commonUser.error,
-        formData: state.commonUser.formData
+        loading: state.companyUser.loading,
+        error: state.companyUser.error,
+        formData: state.companyUser.formData
     })
-}))(UserForm)
+}))(CompanyForm)

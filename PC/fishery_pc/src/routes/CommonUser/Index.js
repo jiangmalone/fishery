@@ -61,7 +61,7 @@ class UserList extends PureComponent {
     }
 
     onOk = (values) => {
-        if (!this.state.modifyId&&this.state.modifyId!=0) {
+        if (!this.state.modifyId && this.state.modifyId !== 0) {
             this.props.dispatch({
                 type: 'commonUser/addUser',
                 payload: values,
@@ -227,7 +227,7 @@ class UserList extends PureComponent {
             <PageHeaderLayout>
                 <Card bordered={false}>
                     <Row style={{ marginBottom: '48px' }}>
-                        <Col>用户名称：<Search style={{ width: 200 }} onSearch={value => console.log(value)} enterButton="查询" /></Col>
+                        <Col>用户名称：<Search style={{ width: 200 }} onSearch={value => this.onSearch(value)} enterButton="查询" /></Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
                         <Button onClick={this.showAddModal}>新建用户</Button>

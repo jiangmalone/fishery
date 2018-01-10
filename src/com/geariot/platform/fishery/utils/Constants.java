@@ -18,6 +18,8 @@ public class Constants {
 	public static final String RESPONSE_CLIENT_KEY = "client";
 	public static final String RESPONSE_REAL_SIZE_KEY = "realSize";
 	public static final String RESPONSE_AMOUNT_KEY = "amount";
+	public static final int PORT = 5678;
+	public static final int POOL_SIZE = 20;
 
 	/*是否开启查询缓存*/
 	public static boolean SELECT_CACHE = false;

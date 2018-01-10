@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.SelfTestDao;
-import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.utils.QueryUtils;
 @Repository

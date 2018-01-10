@@ -21,20 +21,13 @@ class UserList extends PureComponent {
             selectedRows: [],
             selectedRowKeys: [],
             mode: 'add',
-            index:'',
-            modifyId:''
+            index: '',
+            modifyId: ''
         }
     }
 
     componentDidMount() {
-        console.log(this.props.list)
-        this.props.dispatch({
-            type: 'commonUser/fetch',
-            payload: {
-                number: 10,
-                page: 1
-            },
-        });
+        this.onSearch()
     }
 
 
@@ -68,9 +61,7 @@ class UserList extends PureComponent {
     }
 
     onOk = (values) => {
-        console.log(this.state.index)
-        let tmp = this.state.index
-        if (!tmp && typeof (tmp) != "undefined" && tmp != 0) {
+        if (!this.state.modifyId&&this.state.modifyId!=0) {
             this.props.dispatch({
                 type: 'commonUser/addUser',
                 payload: values,
@@ -90,6 +81,17 @@ class UserList extends PureComponent {
         })
     }
 
+    onSearch = (value) => {
+        this.props.dispatch({
+            type: 'commonUser/fetch',
+            payload: {
+                name: value,
+                number: 10,
+                page: 1
+            },
+        })
+    }
+
 
     onCancel = () => {
         this.setState({
@@ -105,9 +107,12 @@ class UserList extends PureComponent {
             payload: {
                 number: 10,
                 page: pagination.current,
-                pagination: pager
             },
         });
+        this.props.dispatch({
+            type: 'commonUser/changeModal',
+            payload: { pagination: pager }
+        })
     }
 
     onDelete = (idArray) => {
@@ -222,7 +227,7 @@ class UserList extends PureComponent {
             <PageHeaderLayout>
                 <Card bordered={false}>
                     <Row style={{ marginBottom: '48px' }}>
-                        <Col>用户名称：<Search style={{ width: 200 }} enterButton="查询" /></Col>
+                        <Col>用户名称：<Search style={{ width: 200 }} onSearch={value => console.log(value)} enterButton="查询" /></Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
                         <Button onClick={this.showAddModal}>新建用户</Button>

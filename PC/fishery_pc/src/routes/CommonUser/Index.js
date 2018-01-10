@@ -17,39 +17,166 @@ class UserList extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            view: false
+            view: false,
+            selectedRows: [],
+            selectedRowKeys: [],
+            mode: 'add',
+            index: '',
+            modifyId: ''
         }
     }
 
     componentDidMount() {
-        this.props.dispatch({
-            type: 'commonUser/fetch',
-            payload: {
-                count: 10,
-            },
-        });
+        this.onSearch()
     }
 
-    showAddModal = () => {
+
+    showAddModal = (mode = 'add', index, id) => {
         this.setState({
-            view: true
+            view: true,
+            mode: mode,
+            index: index,
+            modifyId: id
         })
     }
 
-    onOk = (values) => {
-        console.log(values)
+    modifyInfo = (record, index) => {
+        let formData = {}
+        console.log(record)
+        for (let key in record) {
+            console.log(key)
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
+        }
+        console.log(formData)
         this.props.dispatch({
-            type: 'commonUser/addUser',
-            payload:values,
-        });
+            type: 'commonUser/changeModal',
+            payload: {
+                formData: { fields: formData }
+            }
+        })
+        this.showAddModal('modify', index, record.id)
+    }
+
+    onOk = (values) => {
+        if (!this.state.modifyId&&this.state.modifyId!=0) {
+            this.props.dispatch({
+                type: 'commonUser/addUser',
+                payload: values,
+            });
+        } else {
+            values.id = this.state.modifyId
+            this.props.dispatch({
+                type: 'commonUser/modifyWXUser',
+                payload: {
+                    index: this.state.index,
+                    data: values
+                },
+            });
+        }
         this.setState({
             view: false
         })
     }
-    
+
+    onSearch = (value) => {
+        this.props.dispatch({
+            type: 'commonUser/fetch',
+            payload: {
+                name: value,
+                number: 10,
+                page: 1
+            },
+        })
+    }
+
+
+    onCancel = () => {
+        this.setState({
+            view: false
+        })
+    }
+
+    handleTableChange = (pagination) => {
+        const pager = { ...this.props.pagination };
+        pager.current = pagination.current;
+        this.props.dispatch({
+            type: 'commonUser/fetch',
+            payload: {
+                number: 10,
+                page: pagination.current,
+            },
+        });
+        this.props.dispatch({
+            type: 'commonUser/changeModal',
+            payload: { pagination: pager }
+        })
+    }
+
+    onDelete = (idArray) => {
+        this.props.dispatch({
+            type: 'commonUser/deleteUser',
+            payload: {
+                WXUserIds: idArray,
+                pagination: this.props.pagination
+            },
+        });
+    }
+
+
     render() {
         const { list, loading } = this.props;
+        const rowSelection = {
+            //针对全选
+            onSelectAll: (selected, selectedRows, changeRows) => {
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origRows = [...origRows, ...changeRows];
+                    for (let item of changeRows) {
+                        origKeys.push(item.id);
+                    }
+                } else {
+                    for (let change of changeRows) {
+                        origKeys = origKeys.filter((obj) => {
+                            return obj !== change.key;
+                        });
+                        origRows = origRows.filter((obj) => {
+                            return obj.key !== change.key;
+                        });
+                    }
+                }
+                this.setState({
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows,
+                });
 
+            },
+            selectedRowKeys: this.state.selectedRowKeys,
+            onSelect: (changableRow, selected, selectedRows) => {
+                //state里面记住这两个变量就好
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origKeys = [...origKeys, changableRow.key];
+                    origRows = [...origRows, changableRow];
+                } else {
+                    origKeys = origKeys.filter((obj) => {
+                        return obj !== changableRow.key;
+                    });
+                    origRows = origRows.filter((obj) => {
+                        return obj.key !== changableRow.key;
+                    });
+                }
+                console.log(origKeys)
+                this.setState({
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows
+                });
+            }
+        }
         const columns = [{
             title: '序号',
             dataIndex: 'index',
@@ -59,38 +186,38 @@ class UserList extends PureComponent {
             }
         }, {
             title: '名称',
-            dataIndex: 'owner',
-            key: 'owner',
+            dataIndex: 'name',
+            key: 'name',
             render: (text, record, index) => {
                 return <Link to={`common-user/${index}`}>{text}</Link>
             }
         }, {
             title: '性别',
-            dataIndex: 'gender',
-            key: 'gender',
+            dataIndex: 'sex',
+            key: 'sex',
         }, {
             title: '联系方式',
-            dataIndex: 'contact',
-            key: 'contact',
+            dataIndex: 'phone',
+            key: 'phone',
         }, {
             title: '养殖年限',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'life',
+            key: 'life',
         }, {
             title: '联系地址',
             dataIndex: 'address',
             key: 'address',
         }, {
             title: '创建时间',
-            key: 'createTime',
-            dataIndex: 'createTime'
+            key: 'createDate',
+            dataIndex: 'createDate'
         }, {
             title: '操作',
             dataIndex: 'keyword',
             render: (text, record, index) => {
                 return <span>
-                    <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
-                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.account])}>
+                    <span > <a href="javascript:void(0);" style={{ marginRight: '15px' }} onClick={() => { this.modifyInfo(record, index) }}>修改</a></span>
+                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
                         <a href="javascript:void(0);">删除</a>
                     </Popconfirm>
                 </span>
@@ -100,19 +227,21 @@ class UserList extends PureComponent {
             <PageHeaderLayout>
                 <Card bordered={false}>
                     <Row style={{ marginBottom: '48px' }}>
-                        <Col>用户名称：<Search style={{ width: 200 }} enterButton="查询" /></Col>
+                        <Col>用户名称：<Search style={{ width: 200 }} onSearch={value => console.log(value)} enterButton="查询" /></Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
                         <Button onClick={this.showAddModal}>新建用户</Button>
-                        <Button style={{ marginLeft: '10px' }}>删除用户</Button>
+                        <Button style={{ marginLeft: '10px' }} onClick={() => this.onDelete(this.state.selectedRowKeys)}>删除用户</Button>
                     </Row>
                     <Table loading={loading}
                         dataSource={this.props.list}
                         columns={columns}
+                        rowSelection={rowSelection}
                         pagination={this.props.pagination}
+                        onChange={this.handleTableChange}
                         bordered
                     />
-                    <AddUser visible={this.state.view} onOk={this.onOk} wrapClassName='vertical-center-modal' onCancel={this.onOk} />
+                    <AddUser modifyId={this.state.modifyId} visible={this.state.view} onOk={this.onOk} wrapClassName='vertical-center-modal' onCancel={this.onCancel} />
                 </Card>
             </PageHeaderLayout>
         );

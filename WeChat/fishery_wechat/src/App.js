@@ -16,6 +16,7 @@ import addFish from './routes/Mypond/AddPond/AddFish';
 import Main from './routes/Main/Main';
 import AutoOrxygenationSetting from './routes/AutoOxygenationSetting/AutoOxygenationSetting';
 import AddEquipment from './routes/Equipment/AddEquipment';
+import AddEquipmentDetail from './routes/Equipment/AddEquipmentDetail';
 import MyPond from './routes/Mypond/MyPond/MyPond';
 import MyEquipment from './routes/Equipment/MyEquipment';
 import EquipmentManagement from './routes/Equipment/EquipmentManagement';
@@ -58,8 +59,9 @@ const App = (props) => {
             <Route location={props.location} path="/MyPond" component={MyPond} />
             <Route location={props.location} path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
             <Route location={props.location} path="/addEquipment" component={AddEquipment} />
+            <Route location={props.location} path="/addEquipmentDetail" component={AddEquipmentDetail} />
             <Route location={props.location} path="/myEquipment" component={MyEquipment} />
-            <Route location={props.location} exact path="/equipmentManagement" component={EquipmentManagement} />
+            <Route location={props.location} exact path="/equipmentManagement/:storeId" component={EquipmentManagement} />
             <Route location={props.location} exact path="/bindEquipment" component={BindEquipment} />
             <Route location={props.location} exact path="/sensorDetail" component={SensorDetail} />
 

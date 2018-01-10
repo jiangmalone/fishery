@@ -2,40 +2,26 @@ import React from 'react';
 import './bindEquipment.less'
 import { Picker, List } from 'antd-mobile'
 import { createForm } from 'rc-form';
+import { connect } from 'dva';
 import { withRouter } from "react-router-dom";
 import NavBar from '../../components/NavBar';
 const testData = [
-    'a',
-    'b'
+    {
+        label: '2013',
+        value: '2013',
+    },
+    {
+        label: '2014',
+        value: '2014',
+    },
 ]
-const seasons = [
-    [
-        {
-            label: '2013',
-            value: '2013',
-        },
-        {
-            label: '2014',
-            value: '2014',
-        },
-    ],
-    [
-        {
-            label: '春',
-            value: '春',
-        },
-        {
-            label: '夏',
-            value: '夏',
-        },
-    ],
-];
 class BindEquipment extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
-
+            bindEquipment: '',
+            bindPort: '',
         }
     }
 
@@ -51,26 +37,27 @@ class BindEquipment extends React.Component {
                 </div>
             </div>
             <div className='bind-info' >
-                <div className='line' >
-                    <div className='left'>绑定设备：</div>
-                    <div className='right'>
-                        设备
-                    </div>
-                </div>
-                <div className='line' >
-                    <div className='left'>绑定端口：</div>
-                    {/* <Picker
-                        cols={1}
-                        data={seasons}
-                        > */}
-                    <div className='right'>
-                        设备
-                    </div>
-                    {/* </Picker> */}
-                </div>
+               
                 <List>
-                    <Picker data={testData} cols={1} className="forss">
-                        <List.Item arrow="horizontal" key='1'>Single</List.Item>
+                    <Picker 
+                    data={testData} 
+                    cols={1} 
+                    className="forss" 
+                    extra="请选择"
+                    onOk={e => this.setState({ bindEquipment: e })}
+                    value={this.state.bindEquipment}
+                    >
+                        <List.Item arrow="horizontal" key='1'>绑定设备：</List.Item>
+                    </Picker>
+                    <Picker 
+                    data={testData} 
+                    cols={1} 
+                    className="forss" 
+                    extra="请选择"
+                    onOk={e => this.setState({ bindPort: e })}
+                    value={this.state.bindPort}
+                    >
+                        <List.Item arrow="horizontal" key='1'>绑定端口：</List.Item>
                     </Picker>
                 </List>
             </div>
@@ -82,4 +69,4 @@ class BindEquipment extends React.Component {
     }
 }
 
-export default withRouter(BindEquipment);
+export default connect()(BindEquipment);

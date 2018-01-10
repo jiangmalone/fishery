@@ -15,21 +15,21 @@ const formItemLayout = {
         sm: { span: 16 },
     },
 };
-function AddUser({ visible, form, onOk, onCancel, wrapClassName }) {
+function AddUser({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
     const { getFieldDecorator, validateFieldsAndScroll } = form;
 
-    return <Modal title="新增塘口"
+    return <Modal title={modifyId?"新增塘口":'修改塘口'}
         visible={visible}
         onOk={() => {
             let obj = {}
             validateFieldsAndScroll((err, values) => {
                 if (!err) {
                     obj = values
-                } 
+                }
             })
             onOk(obj)
         }}
-        onCancel={()=>{onCancel()}}
+        onCancel={() => { onCancel() }}
         wrapClassName={wrapClassName}
         okText="确认"
         cancelText="取消">
@@ -43,8 +43,8 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName }) {
             </FormItem>
             <FormItem label="性别" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('sex')(<RadioGroup>
-                    <Radio value={1}>男</Radio>
-                    <Radio value={2}>女</Radio>
+                    <Radio value={'男'}>男</Radio>
+                    <Radio value={'女'}>女</Radio>
                 </RadioGroup>)}
             </FormItem>
             <FormItem label="联系方式" {...formItemLayout} style={{ width: '100%' }} >
@@ -72,4 +72,37 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName }) {
     </Modal >
 }
 
-export default Form.create()(AddUser)
+let UserForm = Form.create({
+    mapPropsToFields: (props) => {
+        return {
+            name: Form.createFormField({
+                ...props.formData.fields.name
+            }),
+            sex: Form.createFormField({
+                ...props.formData.fields.sex
+            }),
+            phone: Form.createFormField({
+                ...props.formData.fields.phone
+            }),
+            life: Form.createFormField({
+                ...props.formData.fields.life
+            }),
+            address: Form.createFormField({
+                ...props.formData.fields.address
+            }),
+        }
+    },
+    onFieldsChange: (props, fields) => {
+        props.dispatch({
+            type: 'commonUser/changeModal',
+            payload: { formData: { fields: { ...props.formData.fields, ...fields } } }
+        })
+    }
+})(AddUser)
+export default connect((state => {
+    return ({
+        loading: state.commonUser.loading,
+        error: state.commonUser.error,
+        formData: state.commonUser.formData
+    })
+}))(UserForm)

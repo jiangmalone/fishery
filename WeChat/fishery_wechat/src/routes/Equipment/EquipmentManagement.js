@@ -2,7 +2,10 @@ import React from 'react';
 import './equipmentManagement.less'
 import { ActionSheet } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
+import { connect } from 'dva';
 import NavBar from '../../components/NavBar';
+import online from '../../img/state-online.png';
+import offline from '../../img/state-offline.png';
 
 class EquipmentManagement extends React.Component {
 
@@ -11,6 +14,10 @@ class EquipmentManagement extends React.Component {
         this.state = {
             isEdit: false
         }
+    }
+
+    componentDidMount() {
+        console.log( this.props.match.params.storeId)
     }
 
     unlockEquipment = () => {
@@ -31,8 +38,15 @@ class EquipmentManagement extends React.Component {
         });
     }
 
-    lockEquipment = () => {
+    bindEquipment = () => {
         console.log('lockEquipment');
+        this.props.dispatch({
+            type: 'global/changeState',
+            payload: {
+                transitionName: 'left'
+            }
+        })
+        this.props.history.push('/bindEquipment');
     }
 
     render() {
@@ -71,7 +85,7 @@ class EquipmentManagement extends React.Component {
                 </div>
                 <div className='prot-name-line' >
                     <div className='left '>端口名称：端口2（未绑定）</div>
-                    <div className='right binded'>
+                    <div className='right binded' onClick={() => {this.bindEquipment()}} >
                     绑定
                     </div>
                 </div>
@@ -80,4 +94,4 @@ class EquipmentManagement extends React.Component {
     }
 }
 
-export default withRouter(EquipmentManagement);
+export default connect()(EquipmentManagement);

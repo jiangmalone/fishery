@@ -10,7 +10,14 @@
     "development": {
       "extraBabelPlugins": [
         "dva-hmr"
-      ]
+      ],
+      "proxy":{
+        "/api":{
+          "target": "http://172.17.3.110:8080/fishery/api/",
+          "changeOrigin": true,
+          "pathRewrite": { "^/api": "" }
+        }
+      }
     }
   },
   "externals": {

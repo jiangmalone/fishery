@@ -27,6 +27,14 @@ export async function modifyWXUser(params) {
   });
 }
 
+
 export async function delWXUser(params) {
-  return request(`/api/usermanagement/delWXUser?${stringify(params)}`);
+  // params = stringify(params).replace(/\%.*?$/,'')
+  // console.log(params)
+  let str = ''
+  for(let item of params.WXUserIds) {
+    str= 'WXUserIds='+item+'&'+str
+  }
+  str = str.slice(0,-1)
+  return request(`/api/usermanagement/delWXUser?${str}`)
 }

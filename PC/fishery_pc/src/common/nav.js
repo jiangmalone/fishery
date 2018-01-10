@@ -48,7 +48,7 @@ export const getNavData = app => [
             children: [
               {
                 path: '',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
+                component: dynamicWrapper(app, ['companyuser'], () => import('../routes/CompanyUser/CompanyUserList')),
               },
               {
                 // name: '企业用户',

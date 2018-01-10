@@ -34,13 +34,39 @@ class PondList extends PureComponent {
         this.onSearch()
     }
 
-    showAddModal = () => {
+
+    modifyInfo = (record, index) => {
+        let formData = {}
+        console.log(record)
+        for (let key in record) {
+            console.log(key)
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
+        }
+        console.log(formData)
+        this.props.dispatch({
+            type: 'pond/changeModal',
+            payload: {
+                formData: { fields: formData }
+            }
+        })
+        this.showAddModal('modify', index, record.id)
+    }
+
+    showAddModal = (mode = 'add', index, id) => {
         this.props.dispatch({
             type: 'pond/changeModal',
             payload: {
                 modalVisible: true,
             },
         });
+        this.setState({
+            mode: mode,
+            index: index,
+            modifyId: id
+        })
     }
 
     onSearch = (value) => {
@@ -55,6 +81,7 @@ class PondList extends PureComponent {
     }
 
     onDelete = (idArray) => {
+        console.log(this.props.pagination)
         this.props.dispatch({
             type: 'pond/deletePond',
             payload: {
@@ -87,7 +114,7 @@ class PondList extends PureComponent {
                 });
             },
             onOk: (values) => {
-                console.log(!this.state.modifyId , this.state.modifyId !== 0)
+                console.log(!this.state.modifyId, this.state.modifyId !== 0)
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
                     values.relation = 'WX18'
                     this.props.dispatch({
@@ -225,8 +252,8 @@ class PondList extends PureComponent {
             dataIndex: 'keyword',
             render: (text, record, index) => {
                 return <span>
-                    <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
-                    <Popconfirm title="确认要删除嘛?"  onConfirm={() => this.onDelete([record.id + ''])}>
+                    <span> <a href="javascript:void(0);" onClick={() => { this.modifyInfo(record, index) }} style={{ marginRight: '15px' }}>修改</a></span>
+                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
                         <a href="javascript:void(0);">删除</a>
                     </Popconfirm>
                 </span>

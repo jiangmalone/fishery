@@ -1,5 +1,6 @@
 import { queryFakeList, addUser } from '../services/api';
 import { queryPond, addPond, modifyPond, delPonds } from '../services/pond'
+import update from 'immutability-helper'
 
 export default {
     namespace: 'pond',
@@ -90,10 +91,7 @@ export default {
             return {
                 ...state,
                 list: list,
-                pagination: {
-                    total: state.pagination.length + 1,
-                    pageSize: 10
-                }
+                pagination: { ...state.pagination, total: state.pagination.total + 1 }
             };
         },
         modifyList(state, action) {
@@ -109,7 +107,6 @@ export default {
             };
         },
         changeModal(state, action) {
-            console.log(state, action)
             return { ...state, ...action.payload };
         },
     },

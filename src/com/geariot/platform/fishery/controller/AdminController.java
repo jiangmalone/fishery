@@ -31,7 +31,7 @@ public class AdminController {
 		return adminService.add(admin);
 	}
 	
-	@RequestMapping(value = "/login" , method = RequestMethod.POST)
+	@RequestMapping(value = "/login" , method = RequestMethod.GET)
 	public Map<String,Object> login(String account, String password){
 		return adminService.login(account, password);
 	}
@@ -41,7 +41,7 @@ public class AdminController {
 		return adminService.logout();
 	}
 	
-	@RequestMapping(value = "/modify" , method = RequestMethod.POST)
+	@RequestMapping(value = "/modify" , method = RequestMethod.GET)
 	public Map<String,Object> modifyPSW(int adminId, String password){
 		return adminService.modifyPSW(adminId, password);
 	}

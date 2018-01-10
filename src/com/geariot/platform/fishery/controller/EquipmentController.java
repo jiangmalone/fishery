@@ -45,7 +45,7 @@ public class EquipmentController {
 		 equipmentService.exportData(device_sn, startTime, endTime,response);
 	}
 	
-	@RequestMapping(value = "/add" , method = RequestMethod.POST)
+	@RequestMapping(value = "/add" , method = RequestMethod.GET)
 	public Map<String,Object> addEquipment(String device_sn,String name,String relation){
 		return equipmentService.addEquipment(device_sn,name,relation);
 	}

@@ -59,3 +59,15 @@ export async function modifyCompany(params) {
   });
 }
 
+export async function delCompany(params) {
+  console.log('network dele')
+  console.log(params)
+  let str = ''
+  for(let item of params.companyIds) {
+    str= 'companyIds='+item+'&'+str
+  }
+  str = str.slice(0,-1)
+  console.log(str)
+  return request(`/api/usermanagement/delCompany?${str}`)
+}
+

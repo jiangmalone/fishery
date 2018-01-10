@@ -20,14 +20,13 @@ export default class CompanyUserList extends React.Component {
             selectedRows: [],
             selectedRowKeys: [],
             showAddModal: false,
-            modifyId:'',
+            modifyId: '',
             mode: 'add',
-            index:'',
+            index: '',
         }
     }
 
     componentDidMount() {
-        console.log(this.props.list)
         this.props.dispatch({
             type: 'companyUser/fetch',
             payload: {
@@ -38,6 +37,15 @@ export default class CompanyUserList extends React.Component {
     }
 
     showAddModal = (mode = 'add', index, id) => {
+        if (!id && id != 0) {    //新增的话，清空之前可能有的数据
+            this.props.dispatch({
+                type: 'companyUser/changeModal',
+                payload: {
+                    formData: { fields: {} }
+                }
+            })
+        }
+
         this.setState({
             showAddModal: true,
             mode: mode,
@@ -46,16 +54,33 @@ export default class CompanyUserList extends React.Component {
         })
     }
 
+    onDelete = (idArray) => {
+        console.log(idArray);
+        if(idArray.length <= 0) {
+            message.warn('请选择需要删除的企业！');
+            return;
+        }
+        this.props.dispatch({
+            type: 'companyUser/delCompany',
+            payload: {
+                companyIds: idArray,
+                pagination: this.props.pagination
+            },
+        });
+        this.setState({
+            selectedRows: [],
+            selectedRowKeys: []
+        })
+    }
+
     modifyInfo = (record, index) => {
         let formData = {}
         for (let key in record) {
-            console.log(key)
             formData[key] = {
                 value: record[key],
                 name: key
             }
         }
-        console.log(formData)
         this.props.dispatch({
             type: 'companyUser/changeModal',
             payload: {
@@ -69,9 +94,7 @@ export default class CompanyUserList extends React.Component {
         console.log(values);
         console.log('onOk');
         if (isNaN(this.state.index)) {
-            this.props.dispatch({
-                type: 'companyUser/clearFormData'
-            });
+
             this.props.dispatch({
                 type: 'companyUser/addCompany',
                 payload: values,
@@ -95,6 +118,33 @@ export default class CompanyUserList extends React.Component {
         this.setState({
             showAddModal: false
         })
+    }
+
+    handleTableChange = (pagination) => {
+        const pager = { ...this.props.pagination };
+        pager.current = pagination.current;
+        this.props.dispatch({
+            type: 'companyUser/fetch',
+            payload: {
+                number: 10,
+                page: pagination.current,
+            },
+        });
+        this.props.dispatch({
+            type: 'companyUser/changeModal',
+            payload: { pagination: pager }
+        })
+    }
+
+    onSearch = (value) => {
+        this.props.dispatch({
+            type: 'companyUser/fetch',
+            payload: {
+                number: 10,
+                page: 1,
+                name: value
+            },
+        });
     }
 
     render() {
@@ -160,7 +210,7 @@ export default class CompanyUserList extends React.Component {
                 title: '名称',
                 dataIndex: 'name',
                 render: (text, redcord, index) => {
-                    return <Link to={`company-user/${index}`}>{text}</Link>
+                    return <Link to={`company-user/${redcord.id}`}>{text}</Link>
                 },
             },
             {
@@ -186,7 +236,7 @@ export default class CompanyUserList extends React.Component {
                     return <span>
 
                         <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
-                        <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.account])}>
+                        <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
                     </span>
@@ -197,8 +247,14 @@ export default class CompanyUserList extends React.Component {
             <PageHeaderLayout >
                 <Card bordered={false}>
                     <Row>
-
-                        <Col>企业名称: &nbsp;<Search style={{ width: 200 }} placeholder="" enterButton="查询" /></Col>
+                        <Col>企业名称: &nbsp;
+                            <Search
+                                style={{ width: 200 }}
+                                placeholder=""
+                                enterButton="查询"
+                                onSearch={(value) => this.onSearch(value)}
+                            />
+                        </Col>
                     </Row>
                 </Card>
                 <Card bordered={false}>
@@ -207,7 +263,12 @@ export default class CompanyUserList extends React.Component {
                             <Button onClick={this.showAddModal}>
                                 新建企业
                             </Button>
-                            <Button className={styles.button}>删除企业</Button>
+                            <Button
+                                className={styles.button}
+                                onClick={() => this.onDelete(this.state.selectedRowKeys)}
+                            >
+                                删除企业
+                            </Button>
                         </div>
                         <Table
                             loading={this.state.loading}
@@ -215,6 +276,8 @@ export default class CompanyUserList extends React.Component {
                             columns={columns}
                             rowSelection={rowSelection}
                             className={styles.table}
+                            pagination={this.props.pagination}
+                            onChange={this.handleTableChange}
                             bordered
                         />
                     </div>
@@ -226,7 +289,6 @@ export default class CompanyUserList extends React.Component {
                     wrapClassName='vertical-center-modal'
                     onCancel={this.onCancel}
                 />
-
             </PageHeaderLayout>
         );
     }

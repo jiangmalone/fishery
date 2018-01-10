@@ -28,6 +28,10 @@ export default class CompanyUserDetail extends React.Component {
         this.randomMarkers = this.randomMarkers.bind(this)
     }
 
+    componentDidMount() {
+        console.log(this.props.match.params.id)  //获得参数的方法
+    }
+
     randomMarkers() {
         this.setState({
             markers: randomMarker(2)

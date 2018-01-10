@@ -1,4 +1,4 @@
-import { queryCompany, addCompany, modifyCompany } from '../services/user'
+import { queryCompany, addCompany, modifyCompany, delCompany } from '../services/user'
 import update from 'immutability-helper'
 
 import {message} from 'antd';
@@ -67,7 +67,20 @@ export default {
         message.error(response.msg, 1);
       }
     },
-    *deleteCompany({ payload}, {call, put}) {
+    *delCompany({ payload}, {call, put}) {
+      const response = yield call(delCompany, { companyIds: payload.companyIds });
+      if (response.code == '0') {
+        message.success('删除企业成功', 1);
+        yield put({
+          type: 'fetch',
+          payload: {
+            page: payload.pagination.current,
+            number: 10
+          }
+        })
+      } else {
+        message.success(response.msg, 1);
+      }
     }
   },
 
@@ -104,9 +117,6 @@ export default {
     },
     changeModal(state, action) {
       return { ...state, ...action.payload };
-    },
-    clearFormData(state, action) {
-      return { ...state, formData: { fields: {} } };
     },
   },
 };

@@ -18,7 +18,6 @@ export default {
         payload: true,
       });
       const response = yield call(queryWXUser, payload);
-      console.log(response)
       if (response.code == "0") {
         for (let item of response.data) {
           item.key = item.id

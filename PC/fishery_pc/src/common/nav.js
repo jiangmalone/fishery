@@ -53,7 +53,7 @@ export const getNavData = app => [
               {
                 // name: '企业用户',
                 path: ':id',
-                component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserDetail')),
+                component: dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail')),
               },
             ],
           },
@@ -61,7 +61,7 @@ export const getNavData = app => [
           {
             // name: '企业用户',
             path: 'company-user-detail',
-            component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserDetail')),
+            component: dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail')),
           },
           {
             name: '塘口管理',
@@ -90,7 +90,7 @@ export const getNavData = app => [
         name: '账户管理',
         path: 'account-management',
         icon: 'user',
-        component: dynamicWrapper(app, [], () => import('../routes/AccountManagement/AccountManagement')),
+        component: dynamicWrapper(app, ['login'], () => import('../routes/AccountManagement/AccountManagement')),
 
       },
       {

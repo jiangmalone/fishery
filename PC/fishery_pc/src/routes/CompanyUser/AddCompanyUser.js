@@ -60,6 +60,13 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
                     ],
                 })(<Input style={{ width: 200 }} />)}
             </FormItem>
+            <FormItem label="邮箱地址" {...formItemLayout} style={{ width: '100%' }}>
+                {getFieldDecorator('mail_address', {
+                    rules: [
+                        { required: true, message: '请填写企业邮箱地址' },
+                    ],
+                })(<Input style={{ width: 200 }} />)}
+            </FormItem>
         </Form>
     </Modal >
 }
@@ -78,6 +85,9 @@ let CompanyForm = Form.create({
             }),
             address: Form.createFormField({
                 ...props.formData.fields.address
+            }),
+            mail_address: Form.createFormField({
+                ...props.formData.fields.mail_address
             }),
         }
     },

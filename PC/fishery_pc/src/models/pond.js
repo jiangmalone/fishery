@@ -7,7 +7,7 @@ export default {
     state: {
         list: [],
         loading: false,
-        pagination: {},
+        pagination: { current: 1 },
         modalvisible: false,
         mapVisible: false,
         address: '',

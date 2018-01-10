@@ -61,7 +61,7 @@ class UserList extends PureComponent {
     }
 
     onOk = (values) => {
-        if (!this.state.modifyId && this.state.modifyId != 0) {
+        if (!this.state.modifyId && this.state.modifyId !== 0) {
             this.props.dispatch({
                 type: 'commonUser/addUser',
                 payload: values,

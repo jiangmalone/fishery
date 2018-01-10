@@ -68,9 +68,7 @@ export default {
       }
     },
     *delCompany({ payload}, {call, put}) {
-      console.log('delCompany')
       const response = yield call(delCompany, { companyIds: payload.companyIds });
-      console.log(response);
       if (response.code == '0') {
         message.success('删除企业成功', 1);
         yield put({

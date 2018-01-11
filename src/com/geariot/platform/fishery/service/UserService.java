@@ -126,4 +126,19 @@ public class UserService {
 		return RESCODE.SUCCESS.getJSONRES(list,size,count);
 	}
 
+	public Map<String, Object> WXUserDetail(int id) {
+		WXUser wxUser = wxuserDao.findUserById(id);
+		if (wxUser == null) {
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}
+		return RESCODE.SUCCESS.getJSONRES(wxUser);
+	}
+	
+	public Map<String, Object> CompanyDetail(int id) {
+		Company company = companyDao.findCompanyById(id);
+		if (company == null) {
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}
+		return RESCODE.SUCCESS.getJSONRES(company);
+	}
 }

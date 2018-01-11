@@ -57,5 +57,14 @@ public class UserController {
 		return userService.queryWXUser(name, page, number);
 	}
 	
+	@RequestMapping(value = "/WXUserDetail" , method = RequestMethod.GET)
+	public Map<String,Object> WXUserDetail(int id){
+		return userService.WXUserDetail(id);
+	}
+	
+	@RequestMapping(value = "/CompanyDetail" , method = RequestMethod.GET)
+	public Map<String,Object> CompanyDetail(int id){
+		return userService.CompanyDetail(id);
+	}
 	
 }

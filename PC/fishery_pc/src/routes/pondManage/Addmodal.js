@@ -50,7 +50,7 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
             </FormItem>
             <FormItem label="塘口位置" {...formItemLayout} style={{ width: '100%' }} >
                 <div onClick={() => { showMapModal() }} style={{ cursor: 'pointer' }}>
-                    <span>{address ? address.district||'' + address.address||'' + address.name||'' : '(点击地图图标选取地理位置)'}</span>&nbsp;
+                    <span>{address ? (address.district || '' + address.address || '' + address.name || '' ): '(点击地图图标选取地理位置)'}</span>&nbsp;
                 <i className="iconfont icon-address" style={{ fontSize: '20px', cursor: 'pointer', color: address ? '' : '#40a9ff' }} ></i>
                 </div>
             </FormItem>

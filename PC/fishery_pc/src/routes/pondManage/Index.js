@@ -60,7 +60,8 @@ class PondList extends PureComponent {
             this.props.dispatch({
                 type: 'pond/changeModal',
                 payload: {
-                    formData: { fields: {} }
+                    formData: { fields: {} },
+                    address:''
                 }
             })
         } else {
@@ -80,7 +81,7 @@ class PondList extends PureComponent {
         this.setState({
             mode: mode,
             index: index,
-            modifyId: record.id
+            modifyId: record.id || ''
         })
     }
 
@@ -132,13 +133,18 @@ class PondList extends PureComponent {
                 console.log(!this.state.modifyId, this.state.modifyId !== 0)
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
                     values.relation = 'WX18';
-                    values.address = this.props.address
+                    values.address = this.props.address.district+this.props.address.address+this.props.address.name;
+                    values.latitude = this.props.address.location.lat;
+                    values.longitude = this.props.address.location.lng;
                     this.props.dispatch({
                         type: 'pond/addPond',
                         payload: values,
                     });
                 } else {
-                    values.id = this.state.modifyId
+                    values.id = this.state.modifyId;
+                    values.address = this.props.address.district+this.props.address.address+this.props.address.name;
+                    values.latitude = this.props.address.location.lat;
+                    values.longitude = this.props.address.location.lng;
                     this.props.dispatch({
                         type: 'pond/modifyPond',
                         payload: {

@@ -2,14 +2,15 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col, Input, Button,Popconfirm } from 'antd'
+import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd'
 import { Link } from 'react-router-dom'
 
 const Search = Input.Search;
 @connect(state => ({
     list: state.pond.list,
     loading: state.pond.loading,
-    pagination: state.pond.pagination
+    pagination: state.pond.pagination,
+    formData: state.pond.formData
 }))
 
 class UserList extends PureComponent {
@@ -23,7 +24,7 @@ class UserList extends PureComponent {
     }
 
     render() {
-        const { list, loading } = this.props;
+        const { list, loading, formData } = this.props;
 
         const columns = [{
             title: '序号',
@@ -64,24 +65,24 @@ class UserList extends PureComponent {
         }];
         return (
             <PageHeaderLayout>
-                <Card title="塘口信息" bordered={false} style={{ marginBottom:'20px'}}>
+                <Card title="塘口信息" bordered={false} style={{ marginBottom: '20px' }}>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>塘口名称：涵抱抱</Col>
-                        <Col span={4}>面积（亩）：50</Col>
-                        <Col span={4}>深度（m）：20</Col>
+                        <Col span={4}>塘口名称：{formData.fields.name}</Col>
+                        <Col span={4}>面积（亩）：{formData.fields.area}</Col>
+                        <Col span={4}>深度（m）：{formData.fields.depth}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>养殖品种：12</Col>
-                        <Col span={4}>池塘水源：南京市玄武大道1号</Col>
-                        <Col span={4}>底泥厚度(cm)：</Col>
+                        <Col span={4}>养殖品种：{formData.fields.fish_categorys}</Col>
+                        <Col span={4}>池塘水源：{formData.fields.water_source}</Col>
+                        <Col span={4}>底泥厚度(cm)：{formData.fields.sediment_thickness}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>塘口密度(㎏/㎡)：12</Col>
-                        <Col span={4}>塘口位置：南京市玄武大道1号</Col>
+                        <Col span={4}>塘口密度(㎏/㎡)：{formData.fields.density}</Col>
+                        <Col span={4}>塘口位置：{formData.fields.address}</Col>
                         <Col span={4}></Col>
                     </Row>
                 </Card>
-                <Card title="绑定设备" bordered={false} style={{ marginBottom:'20px'}}>
+                <Card title="绑定设备" bordered={false} style={{ marginBottom: '20px' }}>
                     <Table loading={loading}
                         dataSource={this.props.list}
                         columns={columns}

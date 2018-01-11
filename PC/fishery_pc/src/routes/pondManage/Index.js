@@ -35,7 +35,7 @@ class PondList extends PureComponent {
     }
 
 
-    modifyInfo = (record, index) => {
+    modifyInfo = (record, index, isDetail) => {
         let formData = {}
         console.log(record)
         for (let key in record) {
@@ -45,14 +45,15 @@ class PondList extends PureComponent {
                 name: key
             }
         }
-        console.log(formData)
         this.props.dispatch({
             type: 'pond/changeModal',
             payload: {
                 formData: { fields: formData }
             }
         })
-        this.showAddModal('modify', index, record)
+        if (!isDetail) {
+            this.showAddModal('modify', index, record)
+        }
     }
 
     showAddModal = (mode = 'add', index, record) => {
@@ -61,7 +62,7 @@ class PondList extends PureComponent {
                 type: 'pond/changeModal',
                 payload: {
                     formData: { fields: {} },
-                    address:''
+                    address: ''
                 }
             })
         } else {
@@ -133,7 +134,7 @@ class PondList extends PureComponent {
                 console.log(!this.state.modifyId, this.state.modifyId !== 0)
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
                     values.relation = 'WX18';
-                    values.address = this.props.address.district+this.props.address.address+this.props.address.name;
+                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location.lat;
                     values.longitude = this.props.address.location.lng;
                     this.props.dispatch({
@@ -142,7 +143,7 @@ class PondList extends PureComponent {
                     });
                 } else {
                     values.id = this.state.modifyId;
-                    values.address = this.props.address.district+this.props.address.address+this.props.address.name;
+                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location.lat;
                     values.longitude = this.props.address.location.lng;
                     this.props.dispatch({
@@ -243,7 +244,7 @@ class PondList extends PureComponent {
             dataIndex: 'name',
             key: 'name',
             render: (text, record, index) => {
-                return <Link to={`pondManage/${record.id}`}>{text}</Link>
+                return <Link onClick={() => this.modifyInfo(record, index, true)} to={`pondManage/${record.id}`}>{text}</Link>
             }
         }, {
             title: '面积（亩）',

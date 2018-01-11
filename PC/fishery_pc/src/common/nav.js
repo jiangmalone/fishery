@@ -99,15 +99,19 @@ export const getNavData = app => [
         children: [
           {
             // name: '设备管理',
-            path: '',
-            component: dynamicWrapper(app, [], () => import('../routes/Equipment/EquipmentManagement')),
+            path: ':id',
+            component: dynamicWrapper(app, ['equipment'], () => import('../routes/Equipment/EquipmentManagement')),
           },
           
           {
             // name: '设备详情',
-            path: ':id',
-            component: dynamicWrapper(app, [], () => import('../routes/Equipment/EquipmentDetail')),
-
+            path: 'detail',
+            children: [
+              {
+                path: ':id',
+                component: dynamicWrapper(app, ['equipment'], () => import('../routes/Equipment/EquipmentDetail')),
+              }
+            ]
           },
 
           {

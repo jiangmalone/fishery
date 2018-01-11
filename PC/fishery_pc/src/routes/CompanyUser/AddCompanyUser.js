@@ -22,10 +22,11 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
             let obj = {}
             validateFieldsAndScroll((err, values) => {
                 if (!err) {
-                    obj = values
+                    obj = values;
+                    onOk(obj)
                 }
             })
-            onOk(obj)
+            
         }}
         onCancel={() => { onCancel() }}
         wrapClassName={wrapClassName}

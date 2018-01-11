@@ -45,7 +45,6 @@ export default class CompanyUserList extends React.Component {
                 }
             })
         }
-
         this.setState({
             showAddModal: true,
             mode: mode,
@@ -55,8 +54,7 @@ export default class CompanyUserList extends React.Component {
     }
 
     onDelete = (idArray) => {
-        console.log(idArray);
-        if(idArray.length <= 0) {
+        if (idArray.length <= 0) {
             message.warn('请选择需要删除的企业！');
             return;
         }
@@ -91,10 +89,7 @@ export default class CompanyUserList extends React.Component {
     }
 
     onOk = (values) => {
-        console.log(values);
-        console.log('onOk');
         if (isNaN(this.state.index)) {
-
             this.props.dispatch({
                 type: 'companyUser/addCompany',
                 payload: values,
@@ -190,7 +185,6 @@ export default class CompanyUserList extends React.Component {
                         return obj.key !== changableRow.key;
                     });
                 }
-                console.log(origKeys)
                 this.setState({
                     selectedRowKeys: origKeys,
                     selectedRows: origRows
@@ -222,6 +216,10 @@ export default class CompanyUserList extends React.Component {
                 dataIndex: 'address',
             },
             {
+                title: '邮箱地址',
+                dataIndex: 'mail_address',
+            },
+            {
                 title: '养殖年限',
                 dataIndex: 'life',
             },
@@ -234,8 +232,9 @@ export default class CompanyUserList extends React.Component {
                 dataIndex: 'keyword',
                 render: (text, record, index) => {
                     return <span>
-
-                        <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
+                        <span onClick={() => { this.modifyInfo(record, index) }}>
+                            <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a>
+                        </span>
                         <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
@@ -271,7 +270,7 @@ export default class CompanyUserList extends React.Component {
                             </Button>
                         </div>
                         <Table
-                            loading={this.state.loading}
+                            loading={this.props.loading}
                             dataSource={this.props.list}
                             columns={columns}
                             rowSelection={rowSelection}

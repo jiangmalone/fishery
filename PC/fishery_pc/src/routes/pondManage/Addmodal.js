@@ -43,14 +43,14 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                     rules: [
                         { required: true, message: '请填写塘口名称' },
                     ],
-                })(<Input style={{ width: 200 }} disabled={modifyId?true:false}  />)}
+                })(<Input style={{ width: 200 }} disabled={modifyId ? true : false} />)}
             </FormItem>
             <FormItem label="面积" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('area', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="亩" />)}
             </FormItem>
             <FormItem label="塘口位置" {...formItemLayout} style={{ width: '100%' }} >
                 <div onClick={() => { showMapModal() }} style={{ cursor: 'pointer' }}>
-                    <span>{address ? address.district + address.address + address.name : '(点击地图图标选取地理位置)'}</span>&nbsp;
+                    <span>{address ? address.district||'' + address.address||'' + address.name||'' : '(点击地图图标选取地理位置)'}</span>&nbsp;
                 <i className="iconfont icon-address" style={{ fontSize: '20px', cursor: 'pointer', color: address ? '' : '#40a9ff' }} ></i>
                 </div>
             </FormItem>

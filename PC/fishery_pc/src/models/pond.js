@@ -52,6 +52,7 @@ export default {
             }
         },
         *modifyPond({ payload }, { call, put }) {
+        
             const response = yield call(modifyPond, payload.data);
             if (response.code == '0') {
                 yield put({
@@ -59,6 +60,12 @@ export default {
                     payload: {
                         index: payload.index,
                         data: response.data,
+                    },
+                });
+                yield put({
+                    type: 'changeModal',
+                    payload: {
+                        address: response.data.address,
                     },
                 });
             }
@@ -107,6 +114,7 @@ export default {
             };
         },
         changeModal(state, action) {
+            console.log(action)
             return { ...state, ...action.payload };
         },
     },

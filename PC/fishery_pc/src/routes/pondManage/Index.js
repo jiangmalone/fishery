@@ -52,10 +52,25 @@ class PondList extends PureComponent {
                 formData: { fields: formData }
             }
         })
-        this.showAddModal('modify', index, record.id)
+        this.showAddModal('modify', index, record)
     }
 
-    showAddModal = (mode = 'add', index, id) => {
+    showAddModal = (mode = 'add', index, record) => {
+        if (mode == 'add') {
+            this.props.dispatch({
+                type: 'pond/changeModal',
+                payload: {
+                    formData: { fields: {} }
+                }
+            })
+        } else {
+            this.props.dispatch({
+                type: 'pond/changeModal',
+                payload: {
+                    address: { address: record.address }
+                }
+            })
+        }
         this.props.dispatch({
             type: 'pond/changeModal',
             payload: {
@@ -65,7 +80,7 @@ class PondList extends PureComponent {
         this.setState({
             mode: mode,
             index: index,
-            modifyId: id
+            modifyId: record.id
         })
     }
 
@@ -116,7 +131,8 @@ class PondList extends PureComponent {
             onOk: (values) => {
                 console.log(!this.state.modifyId, this.state.modifyId !== 0)
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
-                    values.relation = 'WX18'
+                    values.relation = 'WX18';
+                    values.address = this.props.address
                     this.props.dispatch({
                         type: 'pond/addPond',
                         payload: values,
@@ -127,7 +143,7 @@ class PondList extends PureComponent {
                         type: 'pond/modifyPond',
                         payload: {
                             index: this.state.index,
-                            data: values
+                            data: values,
                         },
                     });
                 }
@@ -266,7 +282,7 @@ class PondList extends PureComponent {
                         <Col>塘口名称：<Search style={{ width: 200 }} onSearch={value => this.onSearch(value)} enterButton="查询" /></Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
-                        <Button onClick={this.showAddModal}>新增塘口</Button>
+                        <Button onClick={() => this.showAddModal()}>新增塘口</Button>
                         <Button style={{ marginLeft: '10px' }} onClick={() => this.onDelete(this.state.selectedRowKeys)}>删除塘口</Button>
                     </Row>
                     <Addmodal {...modalProps} />

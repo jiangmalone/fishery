@@ -32,7 +32,6 @@ class UserList extends PureComponent {
 
 
     showAddModal = (mode = 'add', index, id) => {
-        console.log(mode)
         if (mode == 'add') {
             this.props.dispatch({
                 type: 'commonUser/changeModal',

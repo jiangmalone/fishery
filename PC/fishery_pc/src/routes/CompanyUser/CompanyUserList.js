@@ -5,85 +5,255 @@ import { Table, Row, Col, Card, Input, Icon, Button, InputNumber, Modal, message
 const Search = Input.Search;
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from "./companyUserList.less"
+import AddCompanyUser from './AddCompanyUser';
+
+@connect(state => ({
+    list: state.companyUser.list,
+    loading: state.companyUser.loading,
+    pagination: state.companyUser.pagination
+}))
 export default class CompanyUserList extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            loading: false,
-            showAddModal: false
+            selectedRows: [],
+            selectedRowKeys: [],
+            showAddModal: false,
+            modifyId: '',
+            mode: 'add',
+            index: '',
         }
     }
-    
-    showAddModal = () => {
-        console.log("showAddModal");
-        this.setState = ({ 
-            showAddModal: true
-        },()=> {console.log(this.showAddModal)})
+
+    componentDidMount() {
+        this.props.dispatch({
+            type: 'companyUser/fetch',
+            payload: {
+                number: 10,
+                page: 1
+            },
+        });
     }
 
-    addCompany = () => {
-        console.log("addCompany");
+    showAddModal = (mode = 'add', index, id) => {
+        if (!id && id != 0) {    //新增的话，清空之前可能有的数据
+            this.props.dispatch({
+                type: 'companyUser/changeModal',
+                payload: {
+                    formData: { fields: {} }
+                }
+            })
+        }
+        this.setState({
+            showAddModal: true,
+            mode: mode,
+            index: index,
+            modifyId: id
+        })
+    }
+
+    onDelete = (idArray) => {
+        if (idArray.length <= 0) {
+            message.warn('请选择需要删除的企业！');
+            return;
+        }
+        this.props.dispatch({
+            type: 'companyUser/delCompany',
+            payload: {
+                companyIds: idArray,
+                pagination: this.props.pagination
+            },
+        });
+        this.setState({
+            selectedRows: [],
+            selectedRowKeys: []
+        })
+    }
+
+    modifyInfo = (record, index) => {
+        let formData = {}
+        for (let key in record) {
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
+        }
+        this.props.dispatch({
+            type: 'companyUser/changeModal',
+            payload: {
+                formData: { fields: formData }
+            }
+        })
+        this.showAddModal('modify', index, record.id)
+    }
+
+    onOk = (values) => {
+        if (isNaN(this.state.index)) {
+            this.props.dispatch({
+                type: 'companyUser/addCompany',
+                payload: values,
+            });
+        } else {
+            values.id = this.state.modifyId
+            this.props.dispatch({
+                type: 'companyUser/modifyCompany',
+                payload: {
+                    index: this.state.index,
+                    data: values
+                },
+            });
+        }
+        this.setState({
+            showAddModal: false
+        })
+    }
+
+    onCancel = () => {
+        this.setState({
+            showAddModal: false
+        })
+    }
+
+    handleTableChange = (pagination) => {
+        const pager = { ...this.props.pagination };
+        pager.current = pagination.current;
+        this.props.dispatch({
+            type: 'companyUser/fetch',
+            payload: {
+                number: 10,
+                page: pagination.current,
+            },
+        });
+        this.props.dispatch({
+            type: 'companyUser/changeModal',
+            payload: { pagination: pager }
+        })
+    }
+
+    onSearch = (value) => {
+        this.props.dispatch({
+            type: 'companyUser/fetch',
+            payload: {
+                number: 10,
+                page: 1,
+                name: value
+            },
+        });
     }
 
     render() {
+        const rowSelection = {
+            //针对全选
+            onSelectAll: (selected, selectedRows, changeRows) => {
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origRows = [...origRows, ...changeRows];
+                    for (let item of changeRows) {
+                        origKeys.push(item.id);
+                    }
+                } else {
+                    for (let change of changeRows) {
+                        origKeys = origKeys.filter((obj) => {
+                            return obj !== change.key;
+                        });
+                        origRows = origRows.filter((obj) => {
+                            return obj.key !== change.key;
+                        });
+                    }
+                }
+                this.setState({
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows,
+                });
+
+            },
+            selectedRowKeys: this.state.selectedRowKeys,
+            onSelect: (changableRow, selected, selectedRows) => {
+                //state里面记住这两个变量就好
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origKeys = [...origKeys, changableRow.key];
+                    origRows = [...origRows, changableRow];
+                } else {
+                    origKeys = origKeys.filter((obj) => {
+                        return obj !== changableRow.key;
+                    });
+                    origRows = origRows.filter((obj) => {
+                        return obj.key !== changableRow.key;
+                    });
+                }
+                this.setState({
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows
+                });
+            }
+        }
         const columns = [
             {
                 title: '序号',
-                dataIndex: 'index'
+                dataIndex: 'index',
+                key: 'index',
+                render: (text, record, index) => {
+                    return <span>{index + 1}</span>
+                }
             },
             {
                 title: '名称',
                 dataIndex: 'name',
-                render: (text,redcord, index) => {
-                    return <Link to={`company-user/${index}`}>{text}</Link>
+                render: (text, redcord, index) => {
+                    return <Link to={`company-user/${redcord.id}`}>{text}</Link>
                 },
             },
             {
                 title: '联系方式',
-                dataIndex: 'connect',
+                dataIndex: 'phone',
             },
             {
                 title: '联系地址',
                 dataIndex: 'address',
             },
             {
+                title: '邮箱地址',
+                dataIndex: 'mail_address',
+            },
+            {
                 title: '养殖年限',
-                dataIndex: 'years',
+                dataIndex: 'life',
             },
             {
                 title: '创建时间',
-                dataIndex: 'createTime',
+                dataIndex: 'createDate',
             },
             {
                 title: '操作',
                 dataIndex: 'keyword',
                 render: (text, record, index) => {
                     return <span>
-
-                        <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
-                        <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.account])}>
+                        <span onClick={() => { this.modifyInfo(record, index) }}>
+                            <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a>
+                        </span>
+                        <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
                     </span>
                 }
             },
         ];
-        const data = [{
-            name: '杨威的企业',
-            index: "1",
-            connect: 888988888,
-            address: '中南海',
-            years: 12,
-            createTime: "2017-12-14",
-            key: 1
-        }];
         return (
             <PageHeaderLayout >
                 <Card bordered={false}>
                     <Row>
-
-                        <Col>企业名称: &nbsp;<Search style={{ width: 200 }} placeholder="" enterButton="查询" /></Col> 
+                        <Col>企业名称: &nbsp;
+                            <Search
+                                style={{ width: 200 }}
+                                placeholder=""
+                                enterButton="查询"
+                                onSearch={(value) => this.onSearch(value)}
+                            />
+                        </Col>
                     </Row>
                 </Card>
                 <Card bordered={false}>
@@ -92,56 +262,32 @@ export default class CompanyUserList extends React.Component {
                             <Button onClick={this.showAddModal}>
                                 新建企业
                             </Button>
-                            <Button className={styles.button}>删除企业</Button>
+                            <Button
+                                className={styles.button}
+                                onClick={() => this.onDelete(this.state.selectedRowKeys)}
+                            >
+                                删除企业
+                            </Button>
                         </div>
                         <Table
-                            loading={this.state.loading}
-                            dataSource={data}
+                            loading={this.props.loading}
+                            dataSource={this.props.list}
                             columns={columns}
+                            rowSelection={rowSelection}
                             className={styles.table}
+                            pagination={this.props.pagination}
+                            onChange={this.handleTableChange}
                             bordered
                         />
                     </div>
                 </Card>
-                <Modal
-                    title="新增企业"
+                <AddCompanyUser
+                    modifyId={this.state.modifyId}
                     visible={this.state.showAddModal}
-                    onOk={() => this.addCompany()}
-                    onCancel={() => this.setState({ showAddModal: false })}
-                >
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            名称 ：
-                                </Col>
-                        <Col span={8}>
-                            <Input  onChange={(e) => this.onValueChange('parkingLocation', e.target.value)} />
-                        </Col>
-                    </Row>
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            联系方式：
-                                </Col>
-                        <Col span={8}>
-                            <Input  onChange={(e) => this.onValueChange('parkingLocation', e.target.value)} />
-                        </Col>
-                    </Row>
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            养殖年限：
-                                </Col>
-                        <Col span={8}>
-                            <Input type="textarea" rows={3}  onChange={(e) => this.onValueChange('comment', e.target.value)} />
-                        </Col>
-                    </Row>
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            联系地址:
-                                </Col>
-                        <Col span={8}>
-                            <Input type="textarea" rows={3}  onChange={(e) => this.onValueChange('comment', e.target.value)} />
-                        </Col>
-                    </Row>
-                </Modal>
+                    onOk={this.onOk}
+                    wrapClassName='vertical-center-modal'
+                    onCancel={this.onCancel}
+                />
             </PageHeaderLayout>
         );
     }

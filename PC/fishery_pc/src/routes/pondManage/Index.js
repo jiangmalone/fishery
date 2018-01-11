@@ -18,24 +18,95 @@ const Search = Input.Search;
 }))
 
 class PondList extends PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+            view: false,
+            selectedRows: [],
+            selectedRowKeys: [],
+            mode: 'add',
+            index: '',
+            modifyId: '',
+        }
+    }
+
     componentDidMount() {
+        this.onSearch()
+    }
+
+
+    modifyInfo = (record, index, isDetail) => {
+        let formData = {}
+        console.log(record)
+        for (let key in record) {
+            console.log(key)
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
+        }
         this.props.dispatch({
-            type: 'pond/fetch',
+            type: 'pond/changeModal',
             payload: {
-                count: 10,
-            },
-        });
+                formData: { fields: formData }
+            }
+        })
+        this.showAddModal('modify', index, record)
     }
 
-    componentWillReceiveProps(newProps) {
-        // console.log(newProps)
-    }
-
-    showAddModal = () => {
+    showAddModal = (mode = 'add', index, record) => {
+        if (mode == 'add') {
+            this.props.dispatch({
+                type: 'pond/changeModal',
+                payload: {
+                    formData: { fields: {} },
+                    address: ''
+                }
+            })
+        } else {
+            this.props.dispatch({
+                type: 'pond/changeModal',
+                payload: {
+                    address: {
+                        address: record.address, location: {
+                            lat: record.latitude,
+                            lng: record.longitude
+                        }
+                    }
+                }
+            })
+        }
         this.props.dispatch({
             type: 'pond/changeModal',
             payload: {
                 modalVisible: true,
+            },
+        });
+        this.setState({
+            mode: mode,
+            index: index,
+            modifyId: record.id || ''
+        })
+    }
+
+    onSearch = (value) => {
+        this.props.dispatch({
+            type: 'pond/fetch',
+            payload: {
+                name: value,
+                number: 10,
+                page: 1
+            },
+        })
+    }
+
+    onDelete = (idArray) => {
+        console.log(this.props.pagination)
+        this.props.dispatch({
+            type: 'pond/deletePond',
+            payload: {
+                pondIds: idArray,
+                pagination: this.props.pagination
             },
         });
     }
@@ -45,7 +116,7 @@ class PondList extends PureComponent {
         const modalProps = {
             visible: this.props.modalVisible,
             wrapClassName: 'vertical-center-modal',
-            address:this.props.address,
+            address: this.props.address,
             onCancel: () => {
                 this.props.dispatch({
                     type: 'pond/changeModal',
@@ -62,7 +133,30 @@ class PondList extends PureComponent {
                     },
                 });
             },
-            onOk: (address) => {
+            onOk: (values) => {
+                console.log(!this.state.modifyId, this.state.modifyId !== 0)
+                if (!this.state.modifyId && this.state.modifyId !== 0) {
+                    values.relation = 'WX18';
+                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
+                    values.latitude = this.props.address.location.lat;
+                    values.longitude = this.props.address.location.lng;
+                    this.props.dispatch({
+                        type: 'pond/addPond',
+                        payload: values,
+                    });
+                } else {
+                    values.id = this.state.modifyId;
+                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
+                    values.latitude = this.props.address.location.lat;
+                    values.longitude = this.props.address.location.lng;
+                    this.props.dispatch({
+                        type: 'pond/modifyPond',
+                        payload: {
+                            index: this.state.index,
+                            data: values,
+                        },
+                    });
+                }
                 this.props.dispatch({
                     type: 'pond/changeModal',
                     payload: {
@@ -87,19 +181,60 @@ class PondList extends PureComponent {
                     type: 'pond/changeModal',
                     payload: {
                         mapVisible: false,
-                        address:address
+                        address: address
                     },
                 });
             },
         };
         const rowSelection = {
-            onChange: (selectedRowKeys, selectedRows) => {
-                //selectedRowKeys  key-->id
+            //针对全选
+            onSelectAll: (selected, selectedRows, changeRows) => {
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origRows = [...origRows, ...changeRows];
+                    for (let item of changeRows) {
+                        origKeys.push(item.id);
+                    }
+                } else {
+                    for (let change of changeRows) {
+                        origKeys = origKeys.filter((obj) => {
+                            return obj !== change.key;
+                        });
+                        origRows = origRows.filter((obj) => {
+                            return obj.key !== change.key;
+                        });
+                    }
+                }
                 this.setState({
-                    selectedRowKeys: selectedRowKeys
-                })
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows,
+                });
+
+            },
+            selectedRowKeys: this.state.selectedRowKeys,
+            onSelect: (changableRow, selected, selectedRows) => {
+                //state里面记住这两个变量就好
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origKeys = [...origKeys, changableRow.key];
+                    origRows = [...origRows, changableRow];
+                } else {
+                    origKeys = origKeys.filter((obj) => {
+                        return obj !== changableRow.key;
+                    });
+                    origRows = origRows.filter((obj) => {
+                        return obj.key !== changableRow.key;
+                    });
+                }
+                console.log(origKeys)
+                this.setState({
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows
+                });
             }
-        };
+        }
         const columns = [{
             title: '序号',
             dataIndex: 'index',
@@ -109,43 +244,42 @@ class PondList extends PureComponent {
             }
         }, {
             title: '塘口名称',
-            dataIndex: 'owner',
-            key: 'owner',
+            dataIndex: 'name',
+            key: 'name',
             render: (text, record, index) => {
-                return <Link to={`pondManage/${index}`}>{text}</Link>
+                return <Link to={`pondManage/${record.id}`}>{text}</Link>
             }
         }, {
             title: '面积（亩）',
-            dataIndex: 'gender',
-            key: 'gender',
+            dataIndex: 'area',
+            key: 'area',
         }, {
             title: '深度（m）',
-            dataIndex: 'contact',
-            key: 'contact',
+            dataIndex: 'depth',
+            key: 'depth',
         }, {
             title: '品种',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'fish_categorys',
+            key: 'fish_categorys',
         }, {
             title: '池塘水源',
-            dataIndex: 'address',
-            key: 'address',
+            dataIndex: 'water_source',
+            key: 'water_source',
         }, {
             title: '泥底厚度（cm）',
-            key: 'createTime',
-            dataIndex: 'createTime'
+            key: 'sediment_thickness',
+            dataIndex: 'sediment_thickness'
         }, {
             title: '塘口密度(kg/㎡)',
-            key: 'createTime1',
-            dataIndex: 'createTime1'
+            key: 'density',
+            dataIndex: 'density'
         }, {
             title: '操作',
             dataIndex: 'keyword',
             render: (text, record, index) => {
                 return <span>
-
-                    <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
-                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.account])}>
+                    <span> <a href="javascript:void(0);" onClick={() => { this.modifyInfo(record, index) }} style={{ marginRight: '15px' }}>修改</a></span>
+                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
                         <a href="javascript:void(0);">删除</a>
                     </Popconfirm>
                 </span>
@@ -155,11 +289,11 @@ class PondList extends PureComponent {
             <PageHeaderLayout>
                 <Card bordered={false}>
                     <Row style={{ marginBottom: '48px' }}>
-                        <Col>塘口名称：<Search style={{ width: 200 }} enterButton="查询" /></Col>
+                        <Col>塘口名称：<Search style={{ width: 200 }} onSearch={value => this.onSearch(value)} enterButton="查询" /></Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
-                        <Button onClick={this.showAddModal}>新增塘口</Button>
-                        <Button style={{ marginLeft: '10px' }}>删除塘口</Button>
+                        <Button onClick={() => this.showAddModal()}>新增塘口</Button>
+                        <Button style={{ marginLeft: '10px' }} onClick={() => this.onDelete(this.state.selectedRowKeys)}>删除塘口</Button>
                     </Row>
                     <Addmodal {...modalProps} />
                     <Table loading={loading}
@@ -169,7 +303,7 @@ class PondList extends PureComponent {
                         pagination={this.props.pagination}
                         bordered
                     />
-                    <Mapmoal {...mapModalProps}/>
+                    <Mapmoal {...mapModalProps} />
                 </Card>
             </PageHeaderLayout>
         );

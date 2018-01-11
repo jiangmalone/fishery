@@ -38,3 +38,36 @@ export async function delWXUser(params) {
   str = str.slice(0,-1)
   return request(`/api/usermanagement/delWXUser?${str}`)
 }
+
+//企业用户相关
+
+export async function queryCompany(params) {
+  return request(`/api/usermanagement/queryCompany?${stringify(params)}`);
+}
+
+export async function addCompany(params) {
+  return request('/api/usermanagement/addCompany', {
+    method: 'POST',
+    body: params
+  });
+}
+
+export async function modifyCompany(params) {
+  return request('/api/usermanagement/modifyCompany', {
+    method: 'POST',
+    body: params
+  });
+}
+
+export async function delCompany(params) {
+  console.log('network dele')
+  console.log(params)
+  let str = ''
+  for(let item of params.companyIds) {
+    str= 'companyIds='+item+'&'+str
+  }
+  str = str.slice(0,-1)
+  console.log(str)
+  return request(`/api/usermanagement/delCompany?${str}`)
+}
+

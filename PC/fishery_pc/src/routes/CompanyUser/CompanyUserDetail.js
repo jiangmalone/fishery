@@ -28,6 +28,10 @@ export default class CompanyUserDetail extends React.Component {
         this.randomMarkers = this.randomMarkers.bind(this)
     }
 
+    componentDidMount() {
+        console.log(this.props.match.params.id)  //获得参数的方法
+    }
+
     randomMarkers() {
         this.setState({
             markers: randomMarker(2)
@@ -104,7 +108,7 @@ export default class CompanyUserDetail extends React.Component {
                             <Link to=""><Button type="primary">管理塘口</Button></Link>
                         </Col>
                         <Col span={3}>
-                            <Link to="/equipment"><Button type="primary">管理设备</Button></Link>
+                            <Link to={`/equipment/${this.props.match.params.id}`}><Button type="primary">管理设备</Button></Link>
                         </Col>
                     </Row>
                     <Row style={{ marginTop: 30 }}>

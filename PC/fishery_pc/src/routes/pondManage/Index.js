@@ -244,7 +244,7 @@ class PondList extends PureComponent {
             dataIndex: 'name',
             key: 'name',
             render: (text, record, index) => {
-                return <Link onClick={() => this.modifyInfo(record, index, true)} to={`pondManage/${record.id}`}>{text}</Link>
+                return <Link  to={`pondManage/${record.id}`}>{text}</Link>
             }
         }, {
             title: '面积（亩）',

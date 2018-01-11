@@ -7,24 +7,26 @@ import { Link } from 'react-router-dom'
 
 const Search = Input.Search;
 @connect(state => ({
-    list: state.pond.list,
+    pondList: state.pond.pondList,
     loading: state.pond.loading,
-    pagination: state.pond.pagination,
-    formData: state.pond.formData
+    pagination2: state.pond.pagination2,
 }))
 
-class UserList extends PureComponent {
+class PondDetail extends PureComponent {
     componentDidMount() {
+        console.log(this.props.match)
         this.props.dispatch({
-            type: 'commonUser/fetch',
+            type: 'pond/fetchEquipment',
             payload: {
-                count: 10,
+                pondId: this.props.match.params.id,
+                page: 1,
+                number: 10
             },
         });
     }
 
     render() {
-        const { list, loading, formData } = this.props;
+        const { pondList, loading, pagination2 } = this.props;
 
         const columns = [{
             title: '序号',
@@ -35,23 +37,19 @@ class UserList extends PureComponent {
             }
         }, {
             title: '设备编号',
-            dataIndex: 'owner',
-            key: 'owner',
+            dataIndex: 'device_sn',
+            key: 'device_sn',
             render: (text, record, index) => {
                 return <Link to={`${index}`}>{text}</Link>
             }
         }, {
             title: '设备名称',
-            dataIndex: 'gender',
-            key: 'gender',
+            dataIndex: 'name',
+            key: 'name',
         }, {
             title: '设备状态',
-            dataIndex: 'contact',
-            key: 'contact',
-        }, {
-            title: '绑定时间',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'status',
+            key: 'status',
         }, {
             title: '操作',
             dataIndex: 'keyword',
@@ -67,26 +65,26 @@ class UserList extends PureComponent {
             <PageHeaderLayout>
                 <Card title="塘口信息" bordered={false} style={{ marginBottom: '20px' }}>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>塘口名称：{formData.fields.name}</Col>
-                        <Col span={4}>面积（亩）：{formData.fields.area}</Col>
-                        <Col span={4}>深度（m）：{formData.fields.depth}</Col>
+                        <Col span={4}>塘口名称：{'value' || ''}</Col>
+                        <Col span={4}>面积（亩）：{'value' || ''}</Col>
+                        <Col span={4}>深度（m）：{'value' || ''}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>养殖品种：{formData.fields.fish_categorys}</Col>
-                        <Col span={4}>池塘水源：{formData.fields.water_source}</Col>
-                        <Col span={4}>底泥厚度(cm)：{formData.fields.sediment_thickness}</Col>
+                        {/* <Col span={4}>养殖品种：{formData.fields.fish_categorys}</Col> */}
+                        <Col span={4}>池塘水源：{'value' || ''}</Col>
+                        <Col span={4}>底泥厚度(cm)：{'value' || ''}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>塘口密度(㎏/㎡)：{formData.fields.density}</Col>
-                        <Col span={4}>塘口位置：{formData.fields.address}</Col>
+                        <Col span={4}>塘口密度(㎏/㎡)：{'value' || ''}</Col>
+                        <Col span={4}>塘口位置：{'value' || ''}</Col>
                         <Col span={4}></Col>
                     </Row>
                 </Card>
                 <Card title="绑定设备" bordered={false} style={{ marginBottom: '20px' }}>
                     <Table loading={loading}
-                        dataSource={this.props.list}
+                        dataSource={pondList}
                         columns={columns}
-                        pagination={this.props.pagination}
+                        pagination={pagination2}
                         bordered
                     />
                 </Card>
@@ -96,4 +94,4 @@ class UserList extends PureComponent {
 }
 
 
-export default UserList
+export default PondDetail

@@ -1,6 +1,5 @@
 package com.geariot.platform.fishery.socket;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
@@ -40,7 +39,7 @@ public class DataHandle {
 			byte[] byteID = new byte[3];
 
 			CommonUtils.arrayHandle(data, byteID, 2, 0, 3);
-			String deviceSn = String.valueOf(CommonUtils.bytesToInt(byteID));
+			String deviceSn = CommonUtils.printHexStringMerge(byteID,0,3);
 			byte way = data[5];
 			byte order = data[6];
 			attachmentObject.put("deviceSn", deviceSn);
@@ -49,8 +48,8 @@ public class DataHandle {
 				System.out.println(order);
 				switch (order) {
 				case 0:
-					System.out.println("jinlaile");
 					CMDUtils.selfTestCMD(key);
+					System.out.println("switch代码处理完");
 					break;
 				case 1:
 					CMDUtils.uploadLimitCMD(key);
@@ -183,6 +182,7 @@ public class DataHandle {
 				default:
 					break;
 				}
+				
 			} catch (IOException e1) {
 				System.out.println("Connection reset by peer");
 				Boolean ret = false;
@@ -200,7 +200,6 @@ public class DataHandle {
 
 			}
 
-		} else
-			System.out.println("hahaha");
+		} 
 	}
 }

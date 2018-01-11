@@ -7,7 +7,9 @@ import java.nio.channels.SocketChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -18,13 +20,16 @@ import com.geariot.platform.fishery.entities.Alarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor_Data;
+import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
+import com.geariot.platform.fishery.utils.StringUtils;
 
 public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static Map<String, SocketChannel> clientMap = new HashMap<String, SocketChannel>();
 	private static	byte[] response = null;
 	private static byte[] data=null;
 	private static SocketChannel readChannel=null;
@@ -41,12 +46,13 @@ public class CMDUtils {
 		 deviceSn=(String) attachmentObject.get("deviceSn");
 		 System.out.println(deviceSn+"..........................");
 		 way=(byte) attachmentObject.get("way");
-
+        
 	}
 	// 自检
 	public static void selfTestCMD(SelectionKey key) throws IOException {
-		//clientMap.put(String.valueOf(id), readChannel);   
+		  
 		preHandle(key);
+		clientMap.put(deviceSn, readChannel); 
 	       SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	       System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		    byte ac = data[7];
@@ -68,6 +74,7 @@ public class CMDUtils {
            selfTest.setLongitude(longitude);
            selfTest.setGprs(gprs);
            selfTest.setStatus(sensor);
+           selfTest.setCreateDate(new Date());
 		service.save(selfTest);
 		response(19);
 	}
@@ -98,8 +105,30 @@ public class CMDUtils {
 	}
 
 	// 服务器设限下发给终端
-	public static void downLimitCMD() {
-
+	public static Map<String, Object> downLimitCMD(String deviceSn,Limit_Install limit) {
+		SocketChannel channel=clientMap.get(deviceSn);
+		if(channel==null) {
+        	return RESCODE.NOT_OPEN.getJSONRES();
+        }
+		if(!channel.isConnected()) {
+			return RESCODE.CONNECTION_CLOSED.getJSONRES();
+		}
+		byte[] request = new byte[24];
+		request=StringUtils.add(deviceSn, limit.getWay(), (byte)0x02)
+		.append(CommonUtils.printHexStringMerge((CommonUtils.getByteArray(limit.getHigh_limit())), 0, 4))
+		.append(CommonUtils.printHexStringMerge(CommonUtils.getByteArray(limit.getUp_limit()), 0, 4))
+		.append(CommonUtils.printHexStringMerge(CommonUtils.getByteArray(limit.getLow_limit()), 0, 4)).toString()
+		.getBytes();
+	    request[18]=CommonUtils.arrayMerge(request, 2, 17);
+	    CommonUtils.addSuffix(request, 19);
+	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
+	    try {
+			channel.write(outBuffer);
+		} catch (IOException e) {
+			return RESCODE.SEND_FAILED.getJSONRES();
+		}
+	    return RESCODE.SUCCESS.getJSONRES();
+        
 	}
 
 	// 5分钟一次上传溶氧和水温值
@@ -306,5 +335,6 @@ public class CMDUtils {
 		CommonUtils.arrayHandle(data, response, dataStart, 8, 4);
 		ByteBuffer outBuffer = ByteBuffer.wrap(response);
 		readChannel.write(outBuffer);// 将消息回送给客户端
+		System.out.println("cmd代码处理完");
 	}
 }

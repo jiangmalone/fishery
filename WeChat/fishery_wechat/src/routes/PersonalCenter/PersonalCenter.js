@@ -1,11 +1,11 @@
 import React from 'react';
 import './personalCenter.less';
-import { List } from 'antd-mobile';
+import { List, Toast ,Modal} from 'antd-mobile';
 import BottomTabBar from '../../components/TabBar';
 import { connect } from 'dva';
 const Item = List.Item;
 const Brief = Item.Brief;
-
+const alert = Modal.alert;
 class PersonalCenter extends React.Component {
 
   constructor(props) {
@@ -14,14 +14,23 @@ class PersonalCenter extends React.Component {
 
     }
   }
+  logOut = () => {
+    alert('退出登录', '你确定吗?', [
+      { text: '取消', onPress: () => console.log('cancel') },
+      {
+        text: '确定',
+        onPress: () => console.log('退出登录')
+      },
+    ])
+  }
   render() {
     return (<div className="body-fill">
       <div className="personInfo-box">
         <div className="backgroundImageFilter">
         </div>
         <div className="out-phone-btn clear">
-          <div className="out-btn" />
-          <div className="phone-btn" />
+          <div className="out-btn" onClick={() => { this.logOut() }} />
+          <a href="tel:15105182270" className="phone-btn" />
         </div>
         <div className="avatar">
           <img src={require('../../img/avatar.jpg')} />
@@ -85,6 +94,6 @@ class PersonalCenter extends React.Component {
 }
 
 
-export default connect((state)=>({
-  transitionName:global.transitionName
+export default connect((state) => ({
+  transitionName: global.transitionName
 }))(PersonalCenter);

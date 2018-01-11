@@ -67,15 +67,41 @@ class MyPond extends React.Component {
             type: 'pond/deletePond',
             payload: {
                 index: index,
-                id: id  
+                id: id
             }
         })
+    }
+
+    gotoDetail = (record) => {
+        let formData = {}
+        console.log(record)
+        for (let key in record) {
+            console.log(key)
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
+        }
+        this.props.dispatch({
+            type: 'pond/changeState',
+            payload: {
+                formData: { fields: formData }
+            }
+        })
+        this.props.dispatch({
+            type: 'global/changeState',
+            payload: {
+                transitionName: 'left'
+            }
+        })
+        this.props.history.push(`/addPond/${record.id}`);
+
     }
     render() {
         let ponds = ''
         if (this.state.list.length > 0) {
             ponds = this.state.list.map((item, index) => {
-                return <div className="mypond-content" key={index} >
+                return <div className="mypond-content" onClick={() => { this.gotoDetail(item) }} key={index} >
                     <div>
                         <div className="content-title">{item.name}</div>
                         <div>

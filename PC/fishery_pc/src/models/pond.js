@@ -44,7 +44,7 @@ export default {
                 payload: false,
             });
         },
-        *fetchEquipment({ payload }, { call ,put}) {
+        *fetchEquipment({ payload }, { call, put }) {
             yield put({
                 type: 'changeLoading',
                 payload: true,
@@ -93,7 +93,12 @@ export default {
                 yield put({
                     type: 'changeModal',
                     payload: {
-                        address: response.data.address,
+                        address: {
+                            address: response.data.address, location: {
+                                lat: response.data.latitude,
+                                lng: response.data.longitude
+                            }
+                        },
                     },
                 });
             }

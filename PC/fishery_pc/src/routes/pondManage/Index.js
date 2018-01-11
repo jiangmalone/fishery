@@ -51,9 +51,7 @@ class PondList extends PureComponent {
                 formData: { fields: formData }
             }
         })
-        if (!isDetail) {
-            this.showAddModal('modify', index, record)
-        }
+        this.showAddModal('modify', index, record)
     }
 
     showAddModal = (mode = 'add', index, record) => {
@@ -69,7 +67,12 @@ class PondList extends PureComponent {
             this.props.dispatch({
                 type: 'pond/changeModal',
                 payload: {
-                    address: { address: record.address }
+                    address: {
+                        address: record.address, location: {
+                            lat: record.latitude,
+                            lng: record.longitude
+                        }
+                    }
                 }
             })
         }
@@ -244,7 +247,7 @@ class PondList extends PureComponent {
             dataIndex: 'name',
             key: 'name',
             render: (text, record, index) => {
-                return <Link  to={`pondManage/${record.id}`}>{text}</Link>
+                return <Link to={`pondManage/${record.id}`}>{text}</Link>
             }
         }, {
             title: '面积（亩）',

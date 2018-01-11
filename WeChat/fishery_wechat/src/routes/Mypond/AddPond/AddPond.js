@@ -34,18 +34,26 @@ class AddPond extends React.Component {
             if (!error) {
                 console.log(value)
             }
-            value.relation = 'wx3'
-            this.props.dispatch({
-                type: 'pond/addPond',
-                payload: value
-            })
+            value.relation = 'wx3';
+            if (this.props.match.params.id) {
+                value.id = this.props.match.params.id;
+                this.props.dispatch({
+                    type: 'pond/modifyPond',
+                    payload: value
+                })
+            } else {
+                this.props.dispatch({
+                    type: 'pond/addPond',
+                    payload: value
+                })
+            }
         })
     }
     render() {
         const { getFieldProps, getFieldError, validateFields } = this.props.form;
         return (
             <form className="body-bac">
-                <NavBar title={"添加塘口"} />
+                <NavBar title={!this.props.match.params.id ? "添加塘口" : '修改塘口'} />
                 <List className="addPond-list">
                     <InputItem
                         {...getFieldProps('name', {
@@ -62,7 +70,7 @@ class AddPond extends React.Component {
                     <InputItem
                         {...getFieldProps('area', {
                             rules: [
-                                { types: ['float', 'int'], message: '请输入正确数据' }
+                                { type: 'number', message: '请输入正确数据' }
                             ]
                         }) }
                         clear
@@ -74,7 +82,7 @@ class AddPond extends React.Component {
                     <InputItem
                         {...getFieldProps('depth', {
                             rules: [
-                                { types: ['float', 'int'], message: '请输入正确数据' }
+                                { type: 'number', message: '请输入正确数据' }
                             ]
                         }) }
                         clear
@@ -86,7 +94,7 @@ class AddPond extends React.Component {
                     <InputItem
                         {...getFieldProps('density', {
                             rules: [
-                                { types: ['float', 'int'], message: '请输入正确数据' }
+                                { type: 'number', message: '请输入正确数据' }
                             ]
                         }) }
                         clear
@@ -98,7 +106,7 @@ class AddPond extends React.Component {
                     <InputItem
                         {...getFieldProps('sediment_thickness', {
                             rules: [
-                                { types: ['float', 'int'], message: '请输入正确数据' }
+                                { type: 'number', message: '请输入正确数据' }
                             ]
                         }) }
                         clear

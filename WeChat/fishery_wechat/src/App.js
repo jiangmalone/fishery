@@ -55,6 +55,7 @@ const App = (props) => {
             <Route location={props.location} path="/userInfo" component={UserInfo} />
             <Route location={props.location} path="/center" component={PersonalCenter} />
             <Route location={props.location} path="/addPond" component={addPond} />
+            <Route location={props.location} path="/addPond/:id" component={addPond} />
             <Route location={props.location} path="/addFish" component={addFish} />
             <Route location={props.location} path="/MyPond" component={MyPond} />
             <Route location={props.location} path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />

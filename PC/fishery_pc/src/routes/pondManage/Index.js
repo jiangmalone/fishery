@@ -35,7 +35,7 @@ class PondList extends PureComponent {
     }
 
 
-    modifyInfo = (record, index) => {
+    modifyInfo = (record, index, isDetail) => {
         let formData = {}
         console.log(record)
         for (let key in record) {
@@ -45,17 +45,37 @@ class PondList extends PureComponent {
                 name: key
             }
         }
-        console.log(formData)
         this.props.dispatch({
             type: 'pond/changeModal',
             payload: {
                 formData: { fields: formData }
             }
         })
-        this.showAddModal('modify', index, record.id)
+        this.showAddModal('modify', index, record)
     }
 
-    showAddModal = (mode = 'add', index, id) => {
+    showAddModal = (mode = 'add', index, record) => {
+        if (mode == 'add') {
+            this.props.dispatch({
+                type: 'pond/changeModal',
+                payload: {
+                    formData: { fields: {} },
+                    address: ''
+                }
+            })
+        } else {
+            this.props.dispatch({
+                type: 'pond/changeModal',
+                payload: {
+                    address: {
+                        address: record.address, location: {
+                            lat: record.latitude,
+                            lng: record.longitude
+                        }
+                    }
+                }
+            })
+        }
         this.props.dispatch({
             type: 'pond/changeModal',
             payload: {
@@ -65,7 +85,7 @@ class PondList extends PureComponent {
         this.setState({
             mode: mode,
             index: index,
-            modifyId: id
+            modifyId: record.id || ''
         })
     }
 
@@ -116,18 +136,24 @@ class PondList extends PureComponent {
             onOk: (values) => {
                 console.log(!this.state.modifyId, this.state.modifyId !== 0)
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
-                    values.relation = 'WX18'
+                    values.relation = 'WX18';
+                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
+                    values.latitude = this.props.address.location.lat;
+                    values.longitude = this.props.address.location.lng;
                     this.props.dispatch({
                         type: 'pond/addPond',
                         payload: values,
                     });
                 } else {
-                    values.id = this.state.modifyId
+                    values.id = this.state.modifyId;
+                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
+                    values.latitude = this.props.address.location.lat;
+                    values.longitude = this.props.address.location.lng;
                     this.props.dispatch({
                         type: 'pond/modifyPond',
                         payload: {
                             index: this.state.index,
-                            data: values
+                            data: values,
                         },
                     });
                 }
@@ -266,7 +292,7 @@ class PondList extends PureComponent {
                         <Col>塘口名称：<Search style={{ width: 200 }} onSearch={value => this.onSearch(value)} enterButton="查询" /></Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
-                        <Button onClick={this.showAddModal}>新增塘口</Button>
+                        <Button onClick={() => this.showAddModal()}>新增塘口</Button>
                         <Button style={{ marginLeft: '10px' }} onClick={() => this.onDelete(this.state.selectedRowKeys)}>删除塘口</Button>
                     </Row>
                     <Addmodal {...modalProps} />

@@ -32,6 +32,15 @@ class UserList extends PureComponent {
 
 
     showAddModal = (mode = 'add', index, id) => {
+        if (mode == 'add') {
+            this.props.dispatch({
+                type: 'commonUser/changeModal',
+                payload: {
+                    formData: { fields: {} }
+                }
+            })
+        }
+
         this.setState({
             view: true,
             mode: mode,
@@ -230,7 +239,7 @@ class UserList extends PureComponent {
                         <Col>用户名称：<Search style={{ width: 200 }} onSearch={value => this.onSearch(value)} enterButton="查询" /></Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
-                        <Button onClick={this.showAddModal}>新建用户</Button>
+                        <Button onClick={()=>this.showAddModal('add')}>新建用户</Button>
                         <Button style={{ marginLeft: '10px' }} onClick={() => this.onDelete(this.state.selectedRowKeys)}>删除用户</Button>
                     </Row>
                     <Table loading={loading}

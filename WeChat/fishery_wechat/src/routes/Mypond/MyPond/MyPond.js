@@ -58,6 +58,12 @@ class MyPond extends PureComponent {
                 transitionName: 'fade'
             }
         })
+        this.props.dispatch({
+            type: 'pond/changeState',
+            payload: {
+                formData: { fields: formData }
+            }
+        })
         this.props.history.push('/addPond');
     }
 
@@ -77,7 +83,7 @@ class MyPond extends PureComponent {
         for (let key in record) {
             console.log(key)
             formData[key] = {
-                value: record[key]+'',
+                value: record[key] + '',
                 name: key
             }
         }
@@ -131,7 +137,7 @@ class MyPond extends PureComponent {
                                     {item.sediment_thickness}cm
                                 </span>
                             </span>
-                       
+
                             <span className="content-info">
                                 <i className="content-info-img density-img" />
                                 <span className="content-info-value">

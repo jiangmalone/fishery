@@ -55,7 +55,7 @@ public class EquipmentControllerTest {
 	public void setLimitTest() throws Exception{
 		mockMvc.perform(post("/equipment/limit").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sn", "022222220")
+				.param("device_sn", "1507375")
 				.param("low_limit", "1.1")
 				.param("up_limit", "9.1")
 				.param("high_limit", "11.1")

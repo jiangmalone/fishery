@@ -1,7 +1,9 @@
-import { queryWXUser, addWXUser, delWXUser, modifyWXUser } from '../services/user'
+import { queryEquipment, addEquipment, modifyEquipment, delEquipments} from '../services/equipment'
 import update from 'immutability-helper'
+import {message} from 'antd';
+
 export default {
-  namespace: 'commonUser',
+  namespace: 'equipment',
 
   state: {
     list: [],
@@ -17,7 +19,8 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryWXUser, payload);
+      const response = yield call(queryEquipment, payload);
+      
       if (response.code == "0") {
         for (let item of response.data) {
           item.key = item.id
@@ -31,24 +34,30 @@ export default {
             }
           }
         });
-      }
+      } else if (response.code) {
+        message.error(response.msg, 1);
+      } 
       yield put({
         type: 'changeLoading',
         payload: false,
       });
     },
-    *addUser({ payload }, { call, put }) {
-      const response = yield call(addWXUser, payload);
+    *addEquipment({ payload }, { call, put }) {
+      const response = yield call(addEquipment, payload);
       if (response.code == '0') {
+        message.success('新增设备成功', 1);
         yield put({
           type: 'addList',
           payload: response.data,
         });
+      } else {
+        message.error(response.msg, 1);
       }
     },
-    *modifyWXUser({ payload }, { call, put }) {
-      const response = yield call(modifyWXUser, payload.data);
+    *modifyEquipment({ payload }, { call, put }) {
+      const response = yield call(modifyEquipment, payload.data);
       if (response.code == '0') {
+        message.success('修改设备成功', 1);
         yield put({
           type: 'modifyList',
           payload: {
@@ -56,12 +65,14 @@ export default {
             data: response.data,
           },
         });
-
+      } else {
+        message.error(response.msg, 1);
       }
     },
-    *deleteUser({ payload }, { call, put }) {
-      const response = yield call(delWXUser, { WXUserIds: payload.WXUserIds });
+    *delEquipments({ payload}, {call, put}) {
+      const response = yield call(delEquipments, { equipmentIds: payload.equipmentIds });
       if (response.code == '0') {
+        message.success('删除设备成功', 1);
         yield put({
           type: 'fetch',
           payload: {
@@ -69,6 +80,8 @@ export default {
             number: 10
           }
         })
+      } else {
+        message.success(response.msg, 1);
       }
     }
   },
@@ -87,13 +100,15 @@ export default {
       return {
         ...state,
         list: list,
-        pagination: { ...state.pagination, total: state.pagination.total + 1 }
+        pagination: { ...state.pagination, total: state.pagination.total + 1 },
+        formData: { fields: {} }
       };
     },
     modifyList(state, action) {
       return {
         ...state,
-        list: update(state.list, { [action.payload.index]: { $set: action.payload.data } })
+        list: update(state.list, { [action.payload.index]: { $set: action.payload.data } }),
+        formData: { fields: {} }
       }
     },
     changeLoading(state, action) {

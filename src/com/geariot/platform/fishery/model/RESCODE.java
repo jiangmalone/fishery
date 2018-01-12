@@ -25,6 +25,9 @@ public enum RESCODE {
 	ALREADY_LOGIN(13, "已经登录"), 
 	ACCOUNT_EXIST(14, "该账号已存在"),
 	DEVICESNS_INVALID(15,"该设备码无效"),
+	NOT_OPEN(16,"设备尚未开机"),
+	CONNECTION_CLOSED(17,"与终端的连接已断开"),
+	SEND_FAILED(18,"服务器下发命令失败"),
 	FOR_EXCEPTION
 	;
 	

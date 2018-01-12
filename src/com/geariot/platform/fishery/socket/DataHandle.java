@@ -1,10 +1,10 @@
 package com.geariot.platform.fishery.socket;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.catalina.tribes.util.Arrays;
 
@@ -40,7 +40,7 @@ public class DataHandle {
 			byte[] byteID = new byte[3];
 
 			CommonUtils.arrayHandle(data, byteID, 2, 0, 3);
-			String deviceSn = String.valueOf(CommonUtils.bytesToInt(byteID));
+			String deviceSn = CommonUtils.printHexStringMerge(byteID,0,3);
 			byte way = data[5];
 			byte order = data[6];
 			attachmentObject.put("deviceSn", deviceSn);
@@ -49,17 +49,17 @@ public class DataHandle {
 				System.out.println(order);
 				switch (order) {
 				case 0:
-					System.out.println("jinlaile");
 					CMDUtils.selfTestCMD(key);
+					System.out.println("switch代码处理完");
 					break;
 				case 1:
 					CMDUtils.uploadLimitCMD(key);
 					break;
-				// case为2的时候终端发个确认的指令过来，读到这个数据不知道怎么处理，先放在这
 				case 2:
-					byte check2 = data[7];
-					String suffix2 = CommonUtils.printHexStringMerge(data, 8, 4);
+					//byte check2 = data[7];
+					//String suffix2 = CommonUtils.printHexStringMerge(data, 8, 4);
 					// System.out.println("server set limit success !!!");
+					CMDUtils.setFeedback(new AtomicBoolean(true));
 					break;
 				case 3:
 					CMDUtils.timingUploadCMD(key);
@@ -183,6 +183,7 @@ public class DataHandle {
 				default:
 					break;
 				}
+				
 			} catch (IOException e1) {
 				System.out.println("Connection reset by peer");
 				Boolean ret = false;
@@ -200,7 +201,6 @@ public class DataHandle {
 
 			}
 
-		} else
-			System.out.println("hahaha");
+		} 
 	}
 }

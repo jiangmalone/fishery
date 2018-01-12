@@ -1,70 +1,188 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Table, Row, Col, Card, Input, Icon, Button, InputNumber, Modal, message, Popconfirm } from 'antd';
+import { Table, Row, Col, Card, Input, Button, Popconfirm } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from "./equipmentManagement.less"
 import update from 'immutability-helper'
+import AddEquipment from './AddEquipment';
+
+@connect(state => ({
+    list: state.equipment.list,
+    loading: state.equipment.loading,
+    pagination: state.equipment.pagination
+}))
+
 export default class EquipmentManagement extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            loading: false,
+            name: '',
+            code: '',   //查询用
+            selectedRows: [],
+            selectedRowKeys: [],
             showAddModal: false,
-            rowSelection: [],
-            addForm: {
-                name: "",
-                number: "",
-                type: "",
+            modifyId: '',
+            mode: 'add',
+            index: '',
+        }
+    }
+
+    componentDidMount() {
+        this.props.dispatch({
+            type: 'equipment/fetch',
+            payload: {
+                number: 10,
+                page: 1,
+                relation: this.props.match.params.id
+            },
+        });
+    }
+
+    showAddModal = (mode = 'add', index, id) => {
+        if (!id && id != 0) {    //新增的话，清空之前可能有的数据
+            this.props.dispatch({
+                type: 'equipment/changeModal',
+                payload: {
+                    formData: { fields: {} }
+                }
+            })
+        }
+        this.setState({
+            showAddModal: true,
+            mode: mode,
+            index: index,
+            modifyId: id
+        })
+    }
+
+    onDelete = (idArray) => {
+        if (idArray.length <= 0) {
+            message.warn('请选择需要删除的企业！');
+            return;
+        }
+        this.props.dispatch({
+            type: 'equipment/delCompany',
+            payload: {
+                companyIds: idArray,
+                pagination: this.props.pagination
+            },
+        });
+        this.setState({
+            selectedRows: [],
+            selectedRowKeys: []
+        })
+    }
+
+    modifyInfo = (record, index) => {
+        let formData = {}
+        for (let key in record) {
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
+        }
+        this.props.dispatch({
+            type: 'equipment/changeModal',
+            payload: {
+                formData: { fields: formData }
+            }
+        })
+        this.showAddModal('modify', index, record.id)
+    }
+
+    onOk = (values) => {
+        if (isNaN(this.state.index)) {
+            this.props.dispatch({
+                type: 'equipment/addCompany',
+                payload: values,
+            });
+        } else {
+            values.id = this.state.modifyId
+            this.props.dispatch({
+                type: 'equipment/modifyCompany',
+                payload: {
+                    index: this.state.index,
+                    data: values
+                },
+            });
+        }
+        this.setState({
+            showAddModal: false
+        })
+    }
+
+    onCancel = () => {
+        this.setState({
+            showAddModal: false
+        })
+    }
+
+    handleInputChange = (type, value) => {
+        if (type) {
+            if (type == 'name') {
+                this.setState({name: value});
+            } else if (type == 'code') {
+                this.setState({code: value});
             }
         }
     }
 
-    showAddModal = () => {
-        this.setState({ 
-            showAddModal: true
-        })
-    }
-
-    addCompany = () => {
-        const addForm = this.state.addForm;
-        if(!addForm.name) {
-            message.warn("请输入设备名称");
-        } else if (!addForm.number) {
-            message.warn("请输入设备编号");
-        } else if (!addForm.type) {
-            message.warn("请输入设备类型");
-        } else {
-            message.success("添加成功");
-            this.setState({
-                addForm: {
-                    name: "",
-                    number: "",
-                    type: "",
-                },
-                showAddModal: false,
-            })
-        }
-    }
-
-    onValueChange = (key, value) => {
-        if(key) {
-            this.setState({
-                addForm: update(this.state.addForm, { [key]: { $set: value } })
-            })
-        }
+    doSearch = () => {
+        console.log('search ' + this.state.name + this.state.code);
     }
 
     render() {
         const rowSelection = {
-            onChange: (selectedRowKeys, selectedRows) => {
-                //selectedRowKeys  key-->id
+            //针对全选
+            onSelectAll: (selected, selectedRows, changeRows) => {
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origRows = [...origRows, ...changeRows];
+                    for (let item of changeRows) {
+                        origKeys.push(item.id);
+                    }
+                } else {
+                    for (let change of changeRows) {
+                        origKeys = origKeys.filter((obj) => {
+                            return obj !== change.key;
+                        });
+                        origRows = origRows.filter((obj) => {
+                            return obj.key !== change.key;
+                        });
+                    }
+                }
                 this.setState({
-                    selectedRowKeys: selectedRowKeys
-                })
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows,
+                });
+
+            },
+            selectedRowKeys: this.state.selectedRowKeys,
+            onSelect: (changableRow, selected, selectedRows) => {
+                //state里面记住这两个变量就好
+                let origKeys = this.state.selectedRowKeys;
+                let origRows = this.state.selectedRows;
+                if (selected) {
+                    origKeys = [...origKeys, changableRow.key];
+                    origRows = [...origRows, changableRow];
+                } else {
+                    origKeys = origKeys.filter((obj) => {
+                        return obj !== changableRow.key;
+                    });
+                    origRows = origRows.filter((obj) => {
+                        return obj.key !== changableRow.key;
+                    });
+                }
+                this.setState({
+                    selectedRowKeys: origKeys,
+                    selectedRows: origRows
+                });
             }
-        };
+        }
+
         const columns = [
             {
                 title: '序号',
@@ -74,7 +192,7 @@ export default class EquipmentManagement extends React.Component {
                 title: '设备编号',
                 dataIndex: 'number',
                 render: (text, record, index) => {
-                    return <Link to={`equipment/${index}`}>{text}</Link>
+                    return <Link to={`equipment/${record.id}`}>{text}</Link>
                 },
             },
             {
@@ -107,35 +225,34 @@ export default class EquipmentManagement extends React.Component {
                 }
             },
         ];
-        const data = [{
-            name: '涡轮增压机',
-            index: "1",
-            number: 88888888,
-            type: '反人类设备',
-            state: "即将开启",
-            createTime: "2017-12-14",
-            key: 1
-        }];
         return (
             <PageHeaderLayout >
                 <Card bordered={false}>
-                <Row>
-                <Col span={7}>
-                    <div style={{ marginBottom: 16 }}>
-                        设备编号：&nbsp;
-                        <Input style={{ width: '200px' }} />
-                    </div>
-                </Col>
-                <Col span={7}>
-                    <div style={{ marginBottom: 16 }}>
-                        设备名称：&nbsp;
-                        <Input style={{ width: '200px' }} />
-                    </div>
-                </Col>
-                <Col span={2}>
-                    <Button type="primary" >查询</Button>
-                </Col>
-            </Row>
+                    <Row>
+                        <Col span={7}>
+                            <div style={{ marginBottom: 16 }}>
+                                设备编号：&nbsp;
+                                <Input
+                                    style={{ width: '200px' }}
+                                    value={this.state.code}
+                                    onChange={e => this.handleInputChange('code', e.target.value)}
+                                />
+                            </div>
+                        </Col>
+                        <Col span={7}>
+                            <div style={{ marginBottom: 16 }}>
+                                设备名称：&nbsp;
+                                <Input
+                                    style={{ width: '200px' }}
+                                    value={this.state.name}
+                                    onChange={e => this.handleInputChange('name', e.target.value)}
+                                />
+                            </div>
+                        </Col>
+                        <Col span={2}>
+                            <Button type="primary" onClick={this.doSearch} >查询</Button>
+                        </Col>
+                    </Row>
                 </Card>
                 <Card bordered={false}>
                     <div>
@@ -143,49 +260,32 @@ export default class EquipmentManagement extends React.Component {
                             <Button onClick={this.showAddModal}>
                                 新建设备
                             </Button>
-                            <Button className={styles.deletebutton}>删除设备</Button>
+                            <Button
+                                className={styles.deletebutton}
+                                onClick={() => this.onDelete(this.state.selectedRowKeys)}
+                            >
+                                删除设备
+                            </Button>
                         </div>
                         <Table
-                            loading={this.state.loading}
+                            loading={this.props.loading}
                             rowSelection={rowSelection}
-                            dataSource={data}
+                            dataSource={this.props.list}
                             columns={columns}
                             className={styles.table}
+                            pagination={this.props.pagination}
+                            onChange={this.handleTableChange}
                             bordered
                         />
                     </div>
                 </Card>
-                <Modal
-                    title="新增设备"
+                <AddEquipment
+                    modifyId={this.state.modifyId}
                     visible={this.state.showAddModal}
-                    onOk={() => this.addCompany()}
-                    onCancel={() => this.setState({ showAddModal: false })}
-                >
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            设备名称 ：
-                                </Col>
-                        <Col span={8}>
-                            <Input value={this.state.addForm.name}  onChange={(e) => this.onValueChange('name', e.target.value)} />
-                        </Col>
-                    </Row>
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            设备编号 ：
-                                </Col>
-                        <Col span={8}>
-                            <Input value={this.state.addForm.number}  onChange={(e) => this.onValueChange('number', e.target.value)} />
-                        </Col>
-                    </Row>
-                    <Row gutter={16} style={{ marginBottom: '10px' }}>
-                        <Col span={8} style={{ textAlign: 'right' }}>
-                            设备类型 ：
-                                </Col>
-                        <Col span={8}>
-                            <Input value={this.state.addForm.type}  onChange={(e) => this.onValueChange('type', e.target.value)} />
-                        </Col>
-                    </Row>
-                </Modal>
+                    onOk={this.onOk}
+                    wrapClassName='vertical-center-modal'
+                    onCancel={this.onCancel}
+                />
             </PageHeaderLayout>
         );
     }

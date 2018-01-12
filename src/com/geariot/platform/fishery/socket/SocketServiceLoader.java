@@ -13,7 +13,7 @@ public class SocketServiceLoader implements ServletContextListener{
 	// socket server 线程
 	//1
 	private static final Logger log = LogManager.getLogger(SocketServiceLoader.class);
-	//private SocketThread socketThread;
+	
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
@@ -27,8 +27,8 @@ public class SocketServiceLoader implements ServletContextListener{
 	public void contextInitialized(ServletContextEvent arg0) {
 		// TODO Auto-generated method stub
 		NIOServer server = new NIOServer();
-
-		new Thread(new Runnable() {
+		//看看这边执行了几次
+		    new Thread(new Runnable() {
 
 			@Override
 			public void run() {

@@ -1,5 +1,6 @@
 import { queryFakeList, addUser } from '../services/api';
-import { queryPond, addPond, modifyPond, delPonds } from '../services/pond'
+import { queryPond, addPond, modifyPond, delPonds, pondEquipment } from '../services/pond'
+import update from 'immutability-helper'
 
 export default {
     namespace: 'pond',
@@ -11,7 +12,9 @@ export default {
         modalvisible: false,
         mapVisible: false,
         address: '',
-        formData: { fields: {} }
+        formData: { fields: {} },
+        pondList: [],
+        pagination2: { current: 1 }
     },
 
     effects: {
@@ -41,6 +44,32 @@ export default {
                 payload: false,
             });
         },
+        *fetchEquipment({ payload }, { call, put }) {
+            yield put({
+                type: 'changeLoading',
+                payload: true,
+            });
+            const response = yield call(pondEquipment, payload);
+            console.log(response)
+            if (response.code == "0") {
+                for (let item of response.data) {
+                    item.key = item.id
+                }
+                yield put({
+                    type: 'changeModal',
+                    payload: {
+                        pondList: Array.isArray(response.data) ? response.data : [],
+                        pagination2: {
+                            total: response.realSize,
+                        }
+                    }
+                });
+            }
+            yield put({
+                type: 'changeLoading',
+                payload: false,
+            });
+        },
         *addPond({ payload }, { call, put }) {
             const response = yield call(addPond, payload);
             if (response.code == '0') {
@@ -51,6 +80,7 @@ export default {
             }
         },
         *modifyPond({ payload }, { call, put }) {
+
             const response = yield call(modifyPond, payload.data);
             if (response.code == '0') {
                 yield put({
@@ -58,6 +88,17 @@ export default {
                     payload: {
                         index: payload.index,
                         data: response.data,
+                    },
+                });
+                yield put({
+                    type: 'changeModal',
+                    payload: {
+                        address: {
+                            address: response.data.address, location: {
+                                lat: response.data.latitude,
+                                lng: response.data.longitude
+                            }
+                        },
                     },
                 });
             }
@@ -90,10 +131,7 @@ export default {
             return {
                 ...state,
                 list: list,
-                pagination: {
-                    total: state.pagination.length + 1,
-                    pageSize: 10
-                }
+                pagination: { ...state.pagination, total: state.pagination.total + 1 }
             };
         },
         modifyList(state, action) {
@@ -109,7 +147,7 @@ export default {
             };
         },
         changeModal(state, action) {
-            console.log(state, action)
+            console.log(action)
             return { ...state, ...action.payload };
         },
     },

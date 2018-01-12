@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
+import org.apache.http.util.TextUtils;
+
 public class CommonUtils {
 
 	public static final Random RANDOM;
@@ -116,10 +118,33 @@ public class CommonUtils {
 	public static byte arrayMerge(byte[] source,int start,int num) {
 		byte target=0;
 		while(num!=0) {
-			target=source[start];
+			target+=source[start];
 			start++;
 			num--;
 		}
 		return target;
+	}
+	
+	public static byte[] addSuffix(byte[] temp,int start) {
+		temp[start]=(byte)0x0D;
+		temp[start+1]=(byte)0x0A;
+		temp[start+2]=(byte)0x0A;
+		temp[start+3]=(byte)0x0D;
+		return temp;
+	}
+	public static byte[] toByteArray(String hexString) {
+	    if (TextUtils.isEmpty(hexString))
+	        throw new IllegalArgumentException("this hexString must not be empty");
+
+	    hexString = hexString.toLowerCase();
+	    final byte[] byteArray = new byte[hexString.length() / 2];
+	    int k = 0;
+	    for (int i = 0; i < byteArray.length; i++) {//因为是16进制，最多只会占用4位，转换成字节需要两个16进制的字符，高位在先
+	        byte high = (byte) (Character.digit(hexString.charAt(k), 16) & 0xff);
+	        byte low = (byte) (Character.digit(hexString.charAt(k + 1), 16) & 0xff);
+	        byteArray[i] = (byte) (high << 4 | low);
+	        k += 2;
+	    }
+	    return byteArray;
 	}
 }

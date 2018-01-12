@@ -36,10 +36,7 @@ export default {
         });
       } else if (response.code) {
         message.error(response.msg, 1);
-      } else {
-
-      }
-      console.log('changeLoading');
+      } 
       yield put({
         type: 'changeLoading',
         payload: false,

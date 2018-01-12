@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.geariot.platform.fishery.dao.FishCateDao;
 import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.model.Equipment;
@@ -20,6 +21,9 @@ public class PondService {
 
 	@Autowired
 	private PondDao pondDao;
+	
+	@Autowired
+	private FishCateDao fishCateDao;
 	
 	public Map<String, Object> addPond(Pond pond){
 		if(pondDao.checkPondExistByNameAndRelation(pond.getName(), pond.getRelation())){
@@ -68,9 +72,16 @@ public class PondService {
 	
 	public Map<String,Object> pondEquipment(int pondId, int page, int number){
 		int from = (page - 1) * number;
+		Pond pond = pondDao.findPondByPondId(pondId);
 		List<Equipment> equipments = pondDao.findEquipmentByPondId(pondId, from, number);
 		long count = this.pondDao.equipmentByPondIdCount(pondId);
 		int size = (int) Math.ceil(count / (double) number);
-		return RESCODE.SUCCESS.getJSONRES(equipments,size,count);
+		Map<String,Object> obj =  RESCODE.SUCCESS.getJSONRES(equipments,size,count);
+		obj.put("pond", pond);
+		return obj;
+	}
+	
+	public void initFishCate(){
+		fishCateDao.clearFish();
 	}
 }

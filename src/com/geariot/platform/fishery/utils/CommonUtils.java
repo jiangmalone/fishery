@@ -116,10 +116,17 @@ public class CommonUtils {
 	public static byte arrayMerge(byte[] source,int start,int num) {
 		byte target=0;
 		while(num!=0) {
-			target=source[start];
+			target+=source[start];
 			start++;
 			num--;
 		}
 		return target;
+	}
+	
+	public static void addSuffix(byte[] temp,int start) {
+		temp[start]=(byte)0x0D;
+		temp[start+1]=(byte)0x0A;
+		temp[start+2]=(byte)0x0A;
+		temp[start+3]=(byte)0x0D;
 	}
 }

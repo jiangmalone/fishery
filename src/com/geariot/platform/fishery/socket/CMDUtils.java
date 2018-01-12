@@ -7,7 +7,9 @@ import java.nio.channels.SocketChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -18,19 +20,22 @@ import com.geariot.platform.fishery.entities.Alarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor_Data;
+import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
+import com.geariot.platform.fishery.utils.StringUtils;
 
 public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private static int row_count = 0;
+	private static Map<String, SocketChannel> clientMap = new HashMap<String, SocketChannel>();
 	private static	byte[] response = null;
 	private static byte[] data=null;
 	private static SocketChannel readChannel=null;
 	private static String deviceSn;
 	private static byte way;
+
 	
 	@SuppressWarnings("unchecked")
 	public static void preHandle(SelectionKey key) {
@@ -41,12 +46,14 @@ public class CMDUtils {
 		 deviceSn=(String) attachmentObject.get("deviceSn");
 		 System.out.println(deviceSn+"..........................");
 		 way=(byte) attachmentObject.get("way");
+        
 	}
 	// 自检
 	public static void selfTestCMD(SelectionKey key) throws IOException {
-		//clientMap.put(String.valueOf(id), readChannel);
-	       preHandle(key);
-	       SocketSerivce serivce =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+		  
+		preHandle(key);
+		clientMap.put(deviceSn, readChannel); 
+	       SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	       System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		    byte ac = data[7];
 			byte[] byteLongitude =new byte[4];
@@ -67,9 +74,9 @@ public class CMDUtils {
            selfTest.setLongitude(longitude);
            selfTest.setGprs(gprs);
            selfTest.setStatus(sensor);
-           row_count = serivce.save(selfTest);
-			if(row_count==1)
-				response(19);
+           selfTest.setCreateDate(new Date());
+		service.save(selfTest);
+		response(19);
 	}
 
 	// 下位机设限上传给服务器
@@ -86,22 +93,42 @@ public class CMDUtils {
 			float low= CommonUtils.byte2float(bytelow,0);
 			byte check1 = data[19];
 			String suffix1 = CommonUtils.printHexStringMerge(data,20,4);
-			SocketSerivce serivce =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-			LimitDao limitdao=(LimitDao) ApplicationUtil.getBean("limitDao");
+			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			Limit_Install limit=new Limit_Install();
 			limit.setDevice_sn(deviceSn);
 			limit.setWay(way);
 			limit.setUp_limit(up);
 			limit.setHigh_limit(high);
 			limit.setLow_limit(low);
-			limitdao.save(limit);
-			if(row_count==1)
+			service.save(limit);
 				response(20);
 	}
 
 	// 服务器设限下发给终端
-	public static void downLimitCMD() {
-
+	public static Map<String, Object> downLimitCMD(String deviceSn,Limit_Install limit) {
+		SocketChannel channel=clientMap.get(deviceSn);
+		if(channel==null) {
+        	return RESCODE.NOT_OPEN.getJSONRES();
+        }
+		if(!channel.isConnected()) {
+			return RESCODE.CONNECTION_CLOSED.getJSONRES();
+		}
+		byte[] request = new byte[24];
+		request=StringUtils.add(deviceSn, limit.getWay(), (byte)0x02)
+		.append(CommonUtils.printHexStringMerge((CommonUtils.getByteArray(limit.getHigh_limit())), 0, 4))
+		.append(CommonUtils.printHexStringMerge(CommonUtils.getByteArray(limit.getUp_limit()), 0, 4))
+		.append(CommonUtils.printHexStringMerge(CommonUtils.getByteArray(limit.getLow_limit()), 0, 4)).toString()
+		.getBytes();
+	    request[18]=CommonUtils.arrayMerge(request, 2, 17);
+	    CommonUtils.addSuffix(request, 19);
+	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
+	    try {
+			channel.write(outBuffer);
+		} catch (IOException e) {
+			return RESCODE.SEND_FAILED.getJSONRES();
+		}
+	    return RESCODE.SUCCESS.getJSONRES();
+        
 	}
 
 	// 5分钟一次上传溶氧和水温值
@@ -116,7 +143,7 @@ public class CMDUtils {
 			String receiveTime = sdf.format(new Date());
 			byte check3 = data[15];
 			String suffix3 = CommonUtils.printHexStringMerge(data,16,4);
-			Sensor_DataDao sDataDao=(Sensor_DataDao) ApplicationUtil.getBean("sensor_DataDao");
+			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			Sensor_Data sData=new Sensor_Data();
 			sData.setDevice_sn(deviceSn);
 			sData.setWay(way);
@@ -127,8 +154,8 @@ public class CMDUtils {
 			} catch (ParseException e) {
 			logger.debug("日期转换错误");
 			}
-			sDataDao.updateData(sData);
-			if(row_count==1)
+			service.update(sData);
+
 				response(16);
 	}
 
@@ -139,7 +166,8 @@ public class CMDUtils {
 			String suffix4 = CommonUtils.printHexStringMerge(data,8,4);
 			/*Dao_Alarm dao_Alarm = new Dao_Alarm();
 			row_count = dao_Alarm.insertOne(String.valueOf(id), way, 1);*/
-			AlarmDao alarmDao=(AlarmDao) ApplicationUtil.getBean("alarmDao");
+			//AlarmDao alarmDao=(AlarmDao) ApplicationUtil.getBean("alarmDao");
+			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			Alarm alarm=new Alarm();
 			alarm.setDeviceSn(deviceSn);
              alarm.setWay(way);	
@@ -149,8 +177,8 @@ public class CMDUtils {
 				logger.debug("日期转换错误");
 			}
              alarm.setAlarmType(1);
-             alarmDao.save(alarm);
-			if(row_count==1)
+             service.save(alarm);
+
 				response(8);
 	}
 
@@ -161,7 +189,8 @@ public class CMDUtils {
 			String suffix5 = CommonUtils.printHexStringMerge(data,8,4);
 			/*Dao_Alarm dao_Alarm1 = new Dao_Alarm();
 			row_count = dao_Alarm1.insertOne(String.valueOf(id), way, 2);*/
-			AlarmDao alarmDao=(AlarmDao) ApplicationUtil.getBean("alarmDao");
+			//AlarmDao alarmDao=(AlarmDao) ApplicationUtil.getBean("alarmDao");
+			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			Alarm alarm=new Alarm();
 			alarm.setDeviceSn(deviceSn);
              alarm.setWay(way);	
@@ -171,9 +200,7 @@ public class CMDUtils {
 				logger.debug("日期转换错误");
 			}
              alarm.setAlarmType(2);
-             alarmDao.save(alarm);
-			
-			if(row_count==1)
+             service.save(alarm);
 				response(8);
 	}
 
@@ -186,7 +213,8 @@ public class CMDUtils {
 			System.out.println("suffix = "+suffix9);
 			/*Dao_Alarm dao_Alarm3 = new Dao_Alarm();
 			row_count = dao_Alarm3.insertOne(String.valueOf(id), way, 3);*/
-			AlarmDao alarmDao=(AlarmDao) ApplicationUtil.getBean("alarmDao");
+			//AlarmDao alarmDao=(AlarmDao) ApplicationUtil.getBean("alarmDao");
+			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			Alarm alarm=new Alarm();
 			alarm.setDeviceSn(deviceSn);
              alarm.setWay(way);	
@@ -196,9 +224,7 @@ public class CMDUtils {
 				logger.debug("日期转换错误");
 			}
              alarm.setAlarmType(3);
-             alarmDao.save(alarm);
-			
-			if(row_count==1)
+             service.save(alarm);
 				response(8);
 	}
 
@@ -211,7 +237,8 @@ public class CMDUtils {
 			System.out.println("suffix = "+suffix10);
 			/*Dao_Alarm dao_Alarm4 = new Dao_Alarm();
 			row_count = dao_Alarm4.insertOne(String.valueOf(id), way, 4);*/
-			AlarmDao alarmDao=(AlarmDao) ApplicationUtil.getBean("alarmDao");
+			//AlarmDao alarmDao=(AlarmDao) ApplicationUtil.getBean("alarmDao");
+			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			Alarm alarm=new Alarm();
 			alarm.setDeviceSn(deviceSn);
              alarm.setWay(way);	
@@ -221,9 +248,7 @@ public class CMDUtils {
 				logger.debug("日期转换错误");
 			}
              alarm.setAlarmType(4);
-             alarmDao.save(alarm);
-			
-			if(row_count==1)
+             service.save(alarm);
 				response(8);
 	}
 
@@ -247,10 +272,6 @@ public class CMDUtils {
 		}
 		byte check6 = data[13];
 		String suffix6 = CommonUtils.printHexStringMerge(data,14,4);
-		/*Dao_AeratorStatus dao_AeratorStatus = new Dao_AeratorStatus();
-		row_count = dao_AeratorStatus.insertOne(String.valueOf(id), way,time,power6, "1");*/
-		
-		if(row_count==1)
 			response(14);
 	}
 
@@ -289,7 +310,8 @@ public class CMDUtils {
 		String receiveTime = sdf.format(new Date());
 		byte check3 = data[19];
 		String suffix3 = CommonUtils.printHexStringMerge(data,20,4);
-		Sensor_DataDao sDataDao=(Sensor_DataDao) ApplicationUtil.getBean("sensor_DataDao");
+		//Sensor_DataDao sDataDao=(Sensor_DataDao) ApplicationUtil.getBean("sensor_DataDao");
+		SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 		Sensor_Data sData=new Sensor_Data();
 		sData.setDevice_sn(deviceSn);
 		sData.setWay(way);
@@ -301,17 +323,18 @@ public class CMDUtils {
 		} catch (ParseException e) {
 		logger.debug("日期转换错误");
 		}
-		sDataDao.save(sData);
-		if(row_count==1)
+		service.save(sData);
+
 			response(16);
 	}
 	
 	public static void response(int dataStart) throws IOException {
 		response = new byte[12];
 		CommonUtils.arrayHandle(data, response, 0, 0, 7);
-		response[7]=CommonUtils.arrayMerge(response, 0, 7);
+		response[7]=CommonUtils.arrayMerge(response, 2, 5);
 		CommonUtils.arrayHandle(data, response, dataStart, 8, 4);
 		ByteBuffer outBuffer = ByteBuffer.wrap(response);
 		readChannel.write(outBuffer);// 将消息回送给客户端
+		System.out.println("cmd代码处理完");
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.catalina.tribes.util.Arrays;
 
@@ -54,11 +55,11 @@ public class DataHandle {
 				case 1:
 					CMDUtils.uploadLimitCMD(key);
 					break;
-				// case为2的时候终端发个确认的指令过来，读到这个数据不知道怎么处理，先放在这
 				case 2:
-					byte check2 = data[7];
-					String suffix2 = CommonUtils.printHexStringMerge(data, 8, 4);
+					//byte check2 = data[7];
+					//String suffix2 = CommonUtils.printHexStringMerge(data, 8, 4);
 					// System.out.println("server set limit success !!!");
+					CMDUtils.setFeedback(new AtomicBoolean(true));
 					break;
 				case 3:
 					CMDUtils.timingUploadCMD(key);

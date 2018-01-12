@@ -73,7 +73,11 @@ public class EquipmentService {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 
 		limitDao.updateLimit(limit_Install);
-		return CMDUtils.downLimitCMD(limit_Install.getDevice_sn(),limit_Install);
+		 try {
+		return	CMDUtils.downLimitCMD(limit_Install.getDevice_sn(),limit_Install);
+		} catch (RuntimeException e) {
+			return RESCODE.SEND_FAILED.getJSONRES();
+		}
 		
 	}
 

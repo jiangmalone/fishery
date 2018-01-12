@@ -5,10 +5,10 @@ private static StringBuilder sb=new StringBuilder();
 
 
 
-public static StringBuilder add(String deviceSn,int way,byte order) {
+public static StringBuilder add(String deviceSn,int way,int i) {
 	return sb.append("5AA5")
 	.append(deviceSn)
 	.append(CommonUtils.printHexString((byte)way))
-	.append(String.valueOf(order));
+	.append(CommonUtils.printHexString((byte)i));
 }
 }

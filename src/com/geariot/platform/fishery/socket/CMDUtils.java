@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
@@ -29,14 +31,21 @@ import com.geariot.platform.fishery.utils.StringUtils;
 public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private static Map<String, SocketChannel> clientMap = new HashMap<String, SocketChannel>();
+	private static Map<String, SocketChannel> clientMap = new ConcurrentHashMap<String, SocketChannel>();
 	private static	byte[] response = null;
 	private static byte[] data=null;
 	private static SocketChannel readChannel=null;
 	private static String deviceSn;
 	private static byte way;
+	private static AtomicBoolean feedback=new AtomicBoolean();
 
 	
+	public static AtomicBoolean getFeedback() {
+		return feedback;
+	}
+	public static void setFeedback(AtomicBoolean feedback) {
+		CMDUtils.feedback = feedback;
+	}
 	@SuppressWarnings("unchecked")
 	public static void preHandle(SelectionKey key) {
 		System.out.println(key.attachment());
@@ -113,20 +122,29 @@ public class CMDUtils {
 		if(!channel.isConnected()) {
 			return RESCODE.CONNECTION_CLOSED.getJSONRES();
 		}
-		byte[] request = new byte[24];
-		request=StringUtils.add(deviceSn, limit.getWay(), (byte)0x02)
-		.append(CommonUtils.printHexStringMerge((CommonUtils.getByteArray(limit.getHigh_limit())), 0, 4))
-		.append(CommonUtils.printHexStringMerge(CommonUtils.getByteArray(limit.getUp_limit()), 0, 4))
-		.append(CommonUtils.printHexStringMerge(CommonUtils.getByteArray(limit.getLow_limit()), 0, 4)).toString()
-		.getBytes();
-	    request[18]=CommonUtils.arrayMerge(request, 2, 17);
-	    CommonUtils.addSuffix(request, 19);
+		byte[] request = null;
+		String temp=StringUtils.add(deviceSn, limit.getWay(), 2)
+				.append(Integer.toHexString(Float.floatToIntBits(limit.getHigh_limit())))
+				.append(Integer.toHexString(Float.floatToIntBits(limit.getUp_limit())))
+				.append(Integer.toHexString(Float.floatToIntBits(limit.getLow_limit())))
+                .append("          ")
+				.toString();
+		request=CommonUtils.toByteArray(temp);
+		request[19]=CommonUtils.arrayMerge(request, 2, 17);
+		CommonUtils.addSuffix(request, 20);
 	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
 	    try {
 			channel.write(outBuffer);
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
+	    try {
+			Thread.sleep(1000);//异步化
+		} catch (InterruptedException e) {
+		}
+	    if(!getFeedback().getAndSet(false)) {
+	    	throw new RuntimeException("未收到写指令的反馈消息");
+	    }
 	    return RESCODE.SUCCESS.getJSONRES();
         
 	}

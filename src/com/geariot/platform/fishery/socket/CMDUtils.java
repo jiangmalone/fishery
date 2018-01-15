@@ -22,10 +22,12 @@ import com.geariot.platform.fishery.entities.Alarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor_Data;
+import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
+import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.StringUtils;
 
 public class CMDUtils {
@@ -37,14 +39,18 @@ public class CMDUtils {
 	private static SocketChannel readChannel=null;
 	private static String deviceSn;
 	private static byte way;
-	private static AtomicBoolean feedback=new AtomicBoolean();
+	/*private static  AtomicBoolean feedback=new AtomicBoolean();
 
 	
-	public static AtomicBoolean getFeedback() {
+	public static  AtomicBoolean getFeedback() {
 		return feedback;
 	}
 	public static void setFeedback(AtomicBoolean feedback) {
 		CMDUtils.feedback = feedback;
+	}*/
+	public static Map<String, SocketChannel> getclientMap()
+	{
+		return clientMap;
 	}
 	@SuppressWarnings("unchecked")
 	public static void preHandle(SelectionKey key) {
@@ -114,8 +120,8 @@ public class CMDUtils {
 	}
 
 	// 服务器设限下发给终端
-	public static Map<String, Object> downLimitCMD(String deviceSn,Limit_Install limit) {
-		SocketChannel channel=clientMap.get(deviceSn);
+	public static Map<String, Object> downLimitCMD(Limit_Install limit) {
+		SocketChannel channel=clientMap.get(limit.getDevice_sn());
 		if(channel==null) {
         	return RESCODE.NOT_OPEN.getJSONRES();
         }
@@ -123,7 +129,7 @@ public class CMDUtils {
 			return RESCODE.CONNECTION_CLOSED.getJSONRES();
 		}
 		byte[] request = null;
-		String temp=StringUtils.add(deviceSn, limit.getWay(), 2)
+		String temp=StringUtils.add(limit.getDevice_sn(), limit.getWay(), 2)
 				.append(Integer.toHexString(Float.floatToIntBits(limit.getHigh_limit())))
 				.append(Integer.toHexString(Float.floatToIntBits(limit.getUp_limit())))
 				.append(Integer.toHexString(Float.floatToIntBits(limit.getLow_limit())))
@@ -138,13 +144,11 @@ public class CMDUtils {
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-	    try {
-			Thread.sleep(1000);//异步化
-		} catch (InterruptedException e) {
-		}
-	    if(!getFeedback().getAndSet(false)) {
-	    	throw new RuntimeException("未收到写指令的反馈消息");
-	    }
+/*
+	    	if(!getFeedback().getAndSet(false)) {
+	    		return RESCODE.SEND_FAILED.getJSONRES();
+	    	}*/
+	
 	    return RESCODE.SUCCESS.getJSONRES();
         
 	}
@@ -273,7 +277,7 @@ public class CMDUtils {
 	// 增氧机打开和关闭时间记录
 	public static void oxygenTimeCMD(SelectionKey key) throws IOException {
 		 preHandle(key);
-		byte power6 = data[7];
+		/*byte power6 = data[7];
 		byte[] byteTime = new byte[5];
 		CommonUtils.arrayHandle(data, byteTime, 8, 0, 5);
 		String time = "20"+Integer.toString(byteTime[0]& 0xFF)+Integer.toString(byteTime[1]& 0xFF)+Integer.toString(byteTime[2]& 0xFF)+Integer.toString(byteTime[3]& 0xFF)+Integer.toString(byteTime[4]& 0xFF);
@@ -289,28 +293,119 @@ public class CMDUtils {
 			return;
 		}
 		byte check6 = data[13];
-		String suffix6 = CommonUtils.printHexStringMerge(data,14,4);
+		String suffix6 = CommonUtils.printHexStringMerge(data,14,4);*/
 			response(14);
 	}
 
 	// 服务器开关增氧机
-	public static void serverOnOffOxygenCMD() {
+	public static Map<String, Object> serverOnOffOxygenCMD(Timer timer,int operation) {
+		SocketChannel channel=clientMap.get(timer.getDevice_sn());
+		if(channel==null) {
+        	return RESCODE.NOT_OPEN.getJSONRES();
+        }
+		if(!channel.isConnected()) {
+			return RESCODE.CONNECTION_CLOSED.getJSONRES();
+		}
+		byte[] request = null;
+		if(operation==1) {
+		String open=StringUtils.add(timer.getDevice_sn(), way, 7)
+				.append("01")
+                .append("          ")
+				.toString();
+		request=CommonUtils.toByteArray(open);
+		request[8]=CommonUtils.arrayMerge(request, 2, 6);
+		CommonUtils.addSuffix(request, 9);
+		}else {
+			request[7]=(byte)0x00;
+		}
+	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
+	    try {
+			channel.write(outBuffer);
+		} catch (IOException e) {
+			return RESCODE.SEND_FAILED.getJSONRES();
+		}
+	
+	    return RESCODE.SUCCESS.getJSONRES();
+        
 
 	}
 
 	// 服务器设置一键自动
-	public static void serverSetAutoCMD() {
-
+	public static Map<String, Object> serverSetAutoCMD(String deviceSn) {
+		SocketChannel channel=clientMap.get(deviceSn);
+		if(channel==null) {
+        	return RESCODE.NOT_OPEN.getJSONRES();
+        }
+		if(!channel.isConnected()) {
+			return RESCODE.CONNECTION_CLOSED.getJSONRES();
+		}
+		byte[] request = null;
+		String temp=StringUtils.add(deviceSn, way, 8)
+                .append("          ")
+				.toString();
+		request=CommonUtils.toByteArray(temp);
+		request[7]=CommonUtils.arrayMerge(request, 2, 5);
+		CommonUtils.addSuffix(request, 8);
+	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
+	    try {
+			channel.write(outBuffer);
+		} catch (IOException e) {
+			return RESCODE.SEND_FAILED.getJSONRES();
+		}
+	
+	    return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 服务器设置设备使用哪路传感器
-	public static void serverSetpathCMD() {
-
+	public static Map<String, Object> serverSetpathCMD(String deviceSn) {
+		SocketChannel channel=clientMap.get(deviceSn);
+		if(channel==null) {
+        	return RESCODE.NOT_OPEN.getJSONRES();
+        }
+		if(!channel.isConnected()) {
+			return RESCODE.CONNECTION_CLOSED.getJSONRES();
+		}
+		byte[] request = null;
+		String temp=StringUtils.add(deviceSn, way, 12)
+                .append("          ")
+				.toString();
+		request=CommonUtils.toByteArray(temp);
+		request[8]=CommonUtils.arrayMerge(request, 2, 6);
+		CommonUtils.addSuffix(request, 9);
+	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
+	    try {
+			channel.write(outBuffer);
+		} catch (IOException e) {
+			return RESCODE.SEND_FAILED.getJSONRES();
+		}
+	
+	    return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 服务器校准命令
-	public static void serverCheckCMD() {
-
+	public static Map<String, Object> serverCheckCMD(String deviceSn) {
+		SocketChannel channel=clientMap.get(deviceSn);
+		if(channel==null) {
+        	return RESCODE.NOT_OPEN.getJSONRES();
+        }
+		if(!channel.isConnected()) {
+			return RESCODE.CONNECTION_CLOSED.getJSONRES();
+		}
+		byte[] request = null;
+		String temp=StringUtils.add(deviceSn, way, 13)
+                .append("          ")
+				.toString();
+		request=CommonUtils.toByteArray(temp);
+		request[7]=CommonUtils.arrayMerge(request, 2, 5);
+		CommonUtils.addSuffix(request, 8);
+	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
+	    try {
+			channel.write(outBuffer);
+		} catch (IOException e) {
+			return RESCODE.SEND_FAILED.getJSONRES();
+		}
+	
+	    return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 五分钟上传一次溶氧，水温和PH值信息

@@ -17,22 +17,19 @@ export default {
         selectedFishes: []
     },
 
-    subscriptions: {
-        setup({ dispatch, history }) {  // eslint-disable-line
-            history.listen((location) => {
-                const pathname = location.pathname;
-                if (pathname == '/MyPond') {
-                    dispatch({ type: 'query', payload: { relation: 'wx3', page: 1, number: 99 } })
-                } else if (pathname == '/addFish') {
-                    dispatch({ type: 'queryFish' })
-                }
-            });
-        },
-    },
+    // subscriptions: {
+    //     setup({ dispatch, history }) {  // eslint-disable-line
+    //         history.listen((location) => {
+    //             const pathname = location.pathname;
+    //            if (pathname == '/addFish') {
+    //                 dispatch({ type: 'queryFish' })
+    //             }
+    //         });
+    //     },
+    // },
 
     effects: {
         *query({ payload }, { call, put }) {
-            console.log(payload)
             const data = yield call(pondQuery, payload)
             if (data) {
                 yield put({
@@ -59,17 +56,18 @@ export default {
                 yield put({ type: 'errorShow', error: false });
             } else {
                 yield put(routerRedux.push('/MyPond'))
+                yield put({
+                    type: 'changeState', payload: {
+                        formData: {
+                            fields: {}
+                        },
+                        selectedFishes:[],
+                        address: ''
+                    }
+                })
                 yield put({ type: 'errorShow', error: false });
             }
-            yield put({
-                type: 'changeState', payload: {
-                    formData: {
-                        fields: {}
-                    },
-                    selectedFishes: '',
-                    address: ''
-                }
-            })
+
             yield put({ type: 'hideLoginLoading' })
         },
         *modifyPond({ payload }, { call, put }) {

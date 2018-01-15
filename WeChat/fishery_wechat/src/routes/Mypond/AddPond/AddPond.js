@@ -123,7 +123,7 @@ class AddPond extends PureComponent {
                                 transitionName: 'left'
                             }
                         })
-                    }} extra={<span>{this.props.selectedFishes.join(',')}</span>} >
+                    }} extra={<span>{this.props.selectedFishes?this.props.selectedFishes.join(','):''}</span>} >
                         品种
                     </Item>
                     <Item extra={<span>{this.props.address}<img src={require('../../../img/earth.png')} /></span>} onClick={() => {

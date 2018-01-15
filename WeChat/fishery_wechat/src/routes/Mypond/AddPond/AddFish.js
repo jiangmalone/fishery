@@ -15,19 +15,23 @@ class AddFish extends Component {
     }
 
     componentDidMount() {
+        this.props.dispatch({
+            type: 'pond/queryFish'
+        })
         let indexArray = []
         for (let item of this.state.selectedFish) {
             indexArray.push(this.props.fishes.findIndex((value) => {
                 return value.fish_name == item
             }))
         }
-        console.log(indexArray)
-        for(let item of indexArray) {
+        for (let item of indexArray) {
             this[`span${item}`].className = "fish-name-selected active"
         }
     }
 
+
     selectFish(item, index) {
+        console.log(this.state.selectedFish)
         let existIndex = this.state.selectedFish.findIndex((value) => {
             return value == item.fish_name;
         });

@@ -15,6 +15,13 @@ class MyPond extends PureComponent {
         }
     }
 
+    componentDidMount(){
+        this.props.dispatch({
+            type:'pond/query',
+            payload: { relation: 'wx3', page: 1, number: 99 }
+        })
+    }
+
     componentWillReceiveProps(newProps) {
         if (newProps.list.length !== this.props.list.length) {
             this.setState({
@@ -52,17 +59,27 @@ class MyPond extends PureComponent {
 
     addPond = () => {
         this.props.dispatch({
+            type: 'changeState', 
+            payload: {
+                formData: {
+                    fields: {}
+                },
+                selectedFishes: [],
+                address: ''
+            }
+        })
+        this.props.dispatch({
             type: 'global/changeState',
             payload: {
                 transitionName: 'fade'
             }
         })
-        this.props.dispatch({
-            type: 'pond/changeState',
-            payload: {
-                formData: { fields: formData }
-            }
-        })
+        // this.props.dispatch({
+        //     type: 'pond/changeState',
+        //     payload: {
+        //         formData: { fields: formData }
+        //     }
+        // })
         this.props.history.push('/addPond');
     }
 

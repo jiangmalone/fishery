@@ -135,9 +135,4 @@ public class PondDaoImpl implements PondDao {
 		return query.list();
 	}
 
-	@Override
-	public void save(Fish_Category category) {
-		getSession().save(category);
-	}
-
 }

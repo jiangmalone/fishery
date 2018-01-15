@@ -88,15 +88,16 @@ public class PondService {
 	}
 	
 	public void initFishCate(){
-		Fish_Category category = new Fish_Category();
+		Fish_Category category = null;
 		fishCateDao.clearFish();
 		logger.debug("数据库鱼种清空,并准备重新导入");
 		List<String> fish_cate = FishCateList.getFishNames();
 		logger.debug("从配置文件中读取到鱼种共"+fish_cate.size()+"种");
 		for(String string : fish_cate){
+			category = new Fish_Category();
 			category.setFish_name(string);
 			logger.debug("鱼种名称:"+string);
-			pondDao.save(category);
+			fishCateDao.save(category);
 		}
 	}
 

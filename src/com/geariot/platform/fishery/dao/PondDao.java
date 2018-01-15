@@ -35,5 +35,4 @@ public interface PondDao {
 	
 	List<Fish_Category> list();
 	
-	void save(Fish_Category category);
 }

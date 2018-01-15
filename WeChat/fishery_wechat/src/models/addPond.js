@@ -14,7 +14,7 @@ export default {
         longitude: '',
         latitude: '',
         fishes: [],
-        selectedFishes:[]
+        selectedFishes: []
     },
 
     subscriptions: {
@@ -61,6 +61,15 @@ export default {
                 yield put(routerRedux.push('/MyPond'))
                 yield put({ type: 'errorShow', error: false });
             }
+            yield put({
+                type: 'changeState', payload: {
+                    formData: {
+                        fields: {}
+                    },
+                    selectedFishes: '',
+                    address: ''
+                }
+            })
             yield put({ type: 'hideLoginLoading' })
         },
         *modifyPond({ payload }, { call, put }) {

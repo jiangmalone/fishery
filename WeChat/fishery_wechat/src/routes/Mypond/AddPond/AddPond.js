@@ -38,6 +38,7 @@ class AddPond extends PureComponent {
             value.address = this.props.address;
             value.longitude = this.props.longitude;
             value.latitude = this.props.latitude;
+            value.fish_categorys = this.props.selectedFishes
             if (this.props.match.params.id) {
                 value.id = this.props.match.params.id;
                 this.props.dispatch({
@@ -122,7 +123,7 @@ class AddPond extends PureComponent {
                                 transitionName: 'left'
                             }
                         })
-                    }} extra={<span>鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼鲤鱼，鲫鱼</span>} >
+                    }} extra={<span>{this.props.selectedFishes.join(',')}</span>} >
                         品种
                     </Item>
                     <Item extra={<span>{this.props.address}<img src={require('../../../img/earth.png')} /></span>} onClick={() => {
@@ -162,13 +163,13 @@ const AddPondForm = createForm({
     }
 })(AddPond);
 export default connect((state => {
-    console.log(state.pond.address)
     return ({
         loading: state.pond.loading,
         error: state.pond.error,
         formData: state.pond.formData,
         address: state.pond.address,
         latitude: state.pond.latitude,
-        longitude: state.pond.longitude
+        longitude: state.pond.longitude,
+        selectedFishes:state.pond.selectedFishes
     })
 }))(AddPondForm);

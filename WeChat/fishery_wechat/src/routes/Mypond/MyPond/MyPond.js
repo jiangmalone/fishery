@@ -10,7 +10,6 @@ class MyPond extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
-
             edit: this.props.list.length == 0 ? false : true,
             loading: this.props.loading
         }

@@ -6,6 +6,7 @@ import { withRouter } from "react-router-dom";
 import addImg from '../../img/add.png'
 import question from '../../img/question.png'
 import './autoOxygenationSetting.less';
+import { delSensorOrAIOBind, delBind } from '../../services/bind.js'; //接口
 const Item = List.Item;
 
 class AutoOxygenationSetting extends React.Component {
@@ -19,6 +20,9 @@ class AutoOxygenationSetting extends React.Component {
         this.props.form.validateFields({ force: true }, (error) => {
             if (!error) {
                 console.log(this.props.form.getFieldsValue());
+
+
+
             } else {
                 alert('Validation failed');
             }
@@ -41,7 +45,6 @@ class AutoOxygenationSetting extends React.Component {
         const times = timeSections.map((item, index) => {
 
             return <Item className='timeItem' key={index} extra={<div className='time' >
-
                 <DatePicker
                     mode="time"
                     minuteStep={5}
@@ -61,7 +64,6 @@ class AutoOxygenationSetting extends React.Component {
                 >
                     <span>&nbsp;结束时间</span>
                 </DatePicker>
-
             </div>}>定时增氧</Item>
         })
         return (<form className='oxygen-set-bg' >

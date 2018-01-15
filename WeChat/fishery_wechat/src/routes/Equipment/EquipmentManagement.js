@@ -1,40 +1,80 @@
 import React from 'react';
 import './equipmentManagement.less'
-import { ActionSheet } from 'antd-mobile'
+import { ActionSheet, Toast, ActivityIndicator } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
 import { connect } from 'dva';
 import NavBar from '../../components/NavBar';
 import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
+import { delSensorOrAIOBind, delBind } from '../../services/bind.js'; //接口
+import { queryEquipment } from '../../services/equipment.js';         //接口
 
 class EquipmentManagement extends React.Component {
 
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            isEdit: false
+            animating: false
         }
     }
 
     componentDidMount() {
-        console.log( this.props.match.params.storeId)
+        // console.log( this.props.match.params.storeId)
+        queryEquipment({
+            device_sn: this.props.match.params.storeId,
+            page: 1,
+            number: 1,
+            // relation: 14,
+        }).then((res) => {
+            console.log(res);
+            this.setState({animating: false})
+            if (res.data && res.data.code == 0) {
+                
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+
+        }).catch((error) => {
+            this.setState({animating: false});
+            Toast.fail('请求失败!', 1);
+            console.log(error) 
+        });
     }
 
-    unlockEquipment = () => {
+    unlockEquipment = (port) => {
         const BUTTONS = ['解绑', '取消'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
             cancelButtonIndex: BUTTONS.length - 1,
             destructiveButtonIndex: BUTTONS.length - 2,
-            // title: 'title',
             message: '您是否确定解绑该端口？',
             maskClosable: true,
-            'data-seed': 'mypond',
+            'data-seed': 'myEquipment',
             // wrapProps,
-        },
-        (buttonIndex) => {
-            console.log(buttonIndex)
-            this.setState({ clicked: BUTTONS[buttonIndex] });
+        }, (buttonIndex) => {
+            if (buttonIndex == 0) {
+                this.doUnbindEquipment(port);
+            }
+        });
+    }
+
+    doUnbindEquipment = (port) => {
+        this.setState({animating: true});
+        delSensorOrAIOBind({
+            sensorId: this.props.match.params.storeId,
+            sensor_port: port
+        }).then(res => {
+            this.setState({animating: false});
+            if (res.data && res.data.code == 0) {
+                Toast.success('解绑成功！', 1);
+
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch((error) => {
+            this.setState({animating: false});
+            Toast.fail('解绑失败，请重试！', 1);
+            console.log(error); 
         });
     }
 
@@ -46,7 +86,7 @@ class EquipmentManagement extends React.Component {
                 transitionName: 'left'
             }
         })
-        this.props.history.push('/bindEquipment');
+        this.props.history.push(`/bindEquipment/${this.props.match.params.storeId}`);
     }
 
     render() {
@@ -75,7 +115,7 @@ class EquipmentManagement extends React.Component {
             <div className='port-content' >
                 <div className='prot-name-line' >
                     <div className='left '>端口名称：端口2（已绑定）</div>
-                    <div className='right unbinded' onClick={this.unlockEquipment} >
+                    <div className='right unbinded' onClick={() => this.unlockEquipment(2)} >
                     解绑
                     </div>
                 </div>
@@ -90,6 +130,11 @@ class EquipmentManagement extends React.Component {
                     </div>
                 </div>
             </div>
+            <ActivityIndicator
+                toast
+                text="Loading..."
+                animating={this.state.animating}
+              />
         </div>
     }
 }

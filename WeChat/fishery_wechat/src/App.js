@@ -58,12 +58,12 @@ const App = (props) => {
             <Route location={props.location} path="/addPond/:id" component={addPond} />
             <Route location={props.location} path="/addFish" component={addFish} />
             <Route location={props.location} path="/MyPond" component={MyPond} />
-            <Route location={props.location} path="/autoOrxygenationSetting" component={AutoOrxygenationSetting} />
+            <Route location={props.location} path="/autoOrxygenationSetting/:id" component={AutoOrxygenationSetting} />
             <Route location={props.location} path="/addEquipment" component={AddEquipment} />
-            <Route location={props.location} path="/addEquipmentDetail" component={AddEquipmentDetail} />
+            <Route location={props.location} path="/addEquipmentDetail/:equipmentCode" component={AddEquipmentDetail} />
             <Route location={props.location} path="/myEquipment" component={MyEquipment} />
             <Route location={props.location} exact path="/equipmentManagement/:storeId" component={EquipmentManagement} />
-            <Route location={props.location} exact path="/bindEquipment" component={BindEquipment} />
+            <Route location={props.location} exact path="/bindEquipment/:id" component={BindEquipment} />
             <Route location={props.location} exact path="/sensorDetail" component={SensorDetail} />
 
             <Route location={props.location} exact path="/address" component={AddAddress} />

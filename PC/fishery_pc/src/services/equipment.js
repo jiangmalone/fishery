@@ -6,10 +6,7 @@ export async function queryEquipment(params) {
 }
 
 export async function addEquipment(params) {
-    return request(`/api/equipment/add`, {
-        method: 'POST',
-        body: params
-    });
+    return request(`/api/equipment/add?${stringify(params)}`);
 }
 
 export async function modifyEquipment(params) {

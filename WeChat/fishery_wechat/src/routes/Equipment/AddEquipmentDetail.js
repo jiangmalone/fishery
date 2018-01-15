@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, InputItem } from 'antd-mobile';
+import { List, InputItem, Toast } from 'antd-mobile';
 import './addEquipmentDetail.less'
 import { connect } from 'dva';
 import { withRouter, Link } from "react-router-dom";
@@ -17,12 +17,30 @@ class BindEquipment extends React.Component {
     }
 
     doAddEquipment = () => {
-        console.log(this.state.name)
         addEquipment({
             name: this.state.name,
-            device_sn: this.props.match.device_sn,
-            
-        })  
+            device_sn: this.props.match.params.equipmentCode,
+            relation: 14   //TODO 应该是获得本人的id，酱紫
+        }).then((res) => {
+            console.log(res);
+            if (res.data.code == 0) {
+                Toast.success('新增设备成功', 1);
+                setTimeout(() => {
+                    this.props.dispatch({
+                        type: 'global/changeState',
+                        payload: {
+                            transitionName: 'right'
+                        }
+                    })
+                    this.props.history.push('/myEquipment');
+                }, 1000);
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch((error) => {
+            Toast.fail('新增设备失败', 1);
+            console.log(error); 
+        });
     }
 
     inputChange = (value) => {
@@ -38,7 +56,7 @@ class BindEquipment extends React.Component {
                     设备编号
                 </div>
                 <div className='value'>
-                    8832323
+                    {this.props.match.params.equipmentCode ? this.props.match.params.equipmentCode : ''}
                 </div>
             </div>
             <div className='row' >

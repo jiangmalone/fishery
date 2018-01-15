@@ -13,7 +13,7 @@ const formItemLayout = {
         sm: { span: 16 },
     },
 };
-function AddUser({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
+function AddCompany({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
     const { getFieldDecorator, validateFieldsAndScroll } = form;
 
     return <Modal title={modifyId?"新增企业":'修改企业'}
@@ -92,13 +92,13 @@ let CompanyForm = Form.create({
             }),
         }
     },
-    onFieldsChange: (props, fields) => {
+    onFieldsChange: (props, fields) => { 
         props.dispatch({
             type: 'companyUser/changeModal',
             payload: { formData: { fields: { ...props.formData.fields, ...fields } } }
         })
     }
-})(AddUser)
+})(AddCompany)
 export default connect((state => {
     return ({
         loading: state.companyUser.loading,

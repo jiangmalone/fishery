@@ -15,7 +15,7 @@ export default {
             history.listen((location) => {
                 const pathname = location.pathname;
                 if (pathname == '/MyEquipment') {
-                    dispatch({ type: 'query', payload: { relation: 'wx3', page: 1, number: 99 } })
+                    dispatch({ type: 'query', payload: { relation: '1', page: 1, number: 99 } })
                 }
             });
         },

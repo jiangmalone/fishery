@@ -7,6 +7,7 @@ import Accordion from '../../components/Accordion';
 import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
 import fetch from 'dva/fetch';
+import { connect } from 'dva';
 import { pondQuery, pondEquipment } from '../../services/pondManage.js'; //接口
 import { getWeather } from '../../services/weather.js'; //接口
 
@@ -84,7 +85,7 @@ class Main extends React.Component {
     }
 
 
-    showActionSheet = () => {
+    showActionSheet = (id) => {
         const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
@@ -95,8 +96,16 @@ class Main extends React.Component {
             'data-seed': 'logId',
         },
             (buttonIndex) => {
-                console.log(buttonIndex);
-                this.setState({ clicked: BUTTONS[buttonIndex] });
+                if (buttonIndex == 2) {
+                    console.log('222')
+                    this.props.dispatch({
+                        type: 'global/changeState',
+                        payload: {
+                            transitionName: 'left'
+                        }
+                    })
+                    this.props.history.push(`/autoOrxygenationSetting/${id}`);
+                }
             });
     }
 
@@ -144,7 +153,7 @@ class Main extends React.Component {
                         <div className='name' >
                             控制器1
                     </div>
-                        <button className='auto-button do-auto' onClick={this.showActionSheet} >自动</button>
+                        <button className='auto-button do-auto' onClick={() => this.showActionSheet(2)} >自动</button>
                         <Switch
                             nanme='watertem'
                             checked={this.state.waterCheck1}
@@ -187,4 +196,4 @@ class Main extends React.Component {
     }
 }
 
-export default withRouter(Main);
+export default connect()(Main);

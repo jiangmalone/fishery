@@ -1,10 +1,10 @@
 import React from 'react';
 import './myEquipment.less'
-import { Flex, Toast, List, Button, Modal, ActionSheet } from 'antd-mobile'
+import { Flex, Toast, ActivityIndicator, List, Button, Modal, ActionSheet } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
 import { connect } from 'dva';
 import Accordion from '../../components/Accordion';
-import { query } from '../../services/equipment.js'; //接口
+import { queryEquipment } from '../../services/equipment.js'; //接口
 const alert = Modal.alert;
 const sensors = [{
     name: '传感器一号',
@@ -27,8 +27,31 @@ class MyEquipment extends React.Component {
         super(props)
         this.state = {
             list: this.props.list,
-            isEdit: false
+            isEdit: false,
+            animating: false
         }
+    }
+
+    componentDidMount() {
+        this.setState({animating: true})
+        queryEquipment({
+            page: 1,
+            number: 99,
+            relation: 14,
+        }).then((res) => {
+            console.log(res);
+            this.setState({animating: false})
+            if (res.data && res.data.code == 0) {
+
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+
+        }).catch((error) => {
+            this.setState({animating: false});
+            Toast.fail('请求失败', 1);
+            console.log(error) 
+        });
     }
 
     edit = () => {
@@ -273,6 +296,11 @@ class MyEquipment extends React.Component {
             </div>
             <div className='add-button' onClick={this.addEquipment} >
             </div>
+            <ActivityIndicator
+                toast
+                text="Loading..."
+                animating={this.state.animating}
+              />
         </div>
     }
 }

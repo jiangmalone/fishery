@@ -94,7 +94,9 @@ export default {
     },
     addList(state, action) {
       let list = state.list;
-      list.unshift(action.payload);
+      const item = action.payload;
+      item.key = item.id;
+      list.unshift(item);
       return {
         ...state,
         list: list,

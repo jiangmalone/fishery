@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,9 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.geariot.platform.fishery.dao.FishCateDao;
 import com.geariot.platform.fishery.dao.PondDao;
+import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.utils.FishCateList;
 
 @Service
 @Transactional
@@ -24,6 +28,8 @@ public class PondService {
 	
 	@Autowired
 	private FishCateDao fishCateDao;
+	
+	private Logger logger = LogManager.getLogger(PondService.class);
 	
 	public Map<String, Object> addPond(Pond pond){
 		if(pondDao.checkPondExistByNameAndRelation(pond.getName(), pond.getRelation())){
@@ -82,6 +88,21 @@ public class PondService {
 	}
 	
 	public void initFishCate(){
+		Fish_Category category = null;
 		fishCateDao.clearFish();
+		logger.debug("数据库鱼种清空,并准备重新导入");
+		List<String> fish_cate = FishCateList.getFishNames();
+		logger.debug("从配置文件中读取到鱼种共"+fish_cate.size()+"种");
+		for(String string : fish_cate){
+			category = new Fish_Category();
+			category.setFish_name(string);
+			logger.debug("鱼种名称:"+string);
+			fishCateDao.save(category);
+		}
+	}
+
+	public Map<String, Object> fishCateList() {
+		List<Fish_Category> list = pondDao.list();
+		return RESCODE.SUCCESS.getJSONRES(list);
 	}
 }

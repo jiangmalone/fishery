@@ -5,6 +5,7 @@ package com.geariot.platform.fishery.dao;
 
 import java.util.List;
 
+import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.model.Equipment;
 
@@ -31,4 +32,7 @@ public interface PondDao {
 	List<Equipment> findEquipmentByPondId(int pondId, int from, int pageSize);
 	
 	long equipmentByPondIdCount(int pondId);
+	
+	List<Fish_Category> list();
+	
 }

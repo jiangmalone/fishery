@@ -7,6 +7,12 @@
     font-size: .36rem;
     color: #1e1e1e;
     background: #fff;
+    .fish-title {
+        width: 2.7rem;
+    }
+    .fish-name{
+        width: 4.2rem;
+    }
 }
 .fish-type {
     padding: 0 .3rem;
@@ -24,6 +30,10 @@
             float: right;
             font-size: .5rem;
             color: #35b4e8;
+            display: none;
+            &.active {
+                display: inline-block;
+            }
         }
     }
     &.active {

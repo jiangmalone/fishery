@@ -1,4 +1,4 @@
-import { pondQuery, addPond ,delPonds,modifyPond} from '../services/pondManage.js'
+import { pondQuery, addPond, delPonds, modifyPond, fishType } from '../services/pondManage.js'
 import update from 'immutability-helper'
 import { routerRedux } from 'dva/router'
 const delay = timeout => new Promise(resolve => setTimeout(resolve, timeout));
@@ -9,26 +9,27 @@ export default {
     state: {
         list: [],
         loading: false,
-        formData:{fields:{}},
-        address:'',
-        longitude:'',
-        latitude:''
+        formData: { fields: {} },
+        address: '',
+        longitude: '',
+        latitude: '',
+        fishes: [],
+        selectedFishes: []
     },
 
-    subscriptions: {
-        setup({ dispatch, history }) {  // eslint-disable-line
-            history.listen((location) => {
-                const pathname = location.pathname;
-                if (pathname == '/MyPond') {
-                    dispatch({ type: 'query', payload: { relation: 'wx3', page: 1, number: 99 } })
-                }
-            });
-        },
-    },
+    // subscriptions: {
+    //     setup({ dispatch, history }) {  // eslint-disable-line
+    //         history.listen((location) => {
+    //             const pathname = location.pathname;
+    //            if (pathname == '/addFish') {
+    //                 dispatch({ type: 'queryFish' })
+    //             }
+    //         });
+    //     },
+    // },
 
     effects: {
         *query({ payload }, { call, put }) {
-            console.log(payload)
             const data = yield call(pondQuery, payload)
             if (data) {
                 yield put({
@@ -39,45 +40,61 @@ export default {
                 })
             }
         },
+        *queryFish({ payload }, { call, put }) {
+            const fishes = yield call(fishType);
+            if (fishes.data.code == '0') {
+                yield put({ type: 'changeState', payload: { fishes: fishes.data.data } })
+            }
+        },
         *addPond({ payload }, { call, put }) {
             yield put({ type: 'showLoginLoading' });
             let data = yield call(addPond, payload);
             yield call(delay, 1000);
-            if(data.data.code !='0') {
-                yield put({ type: 'errorShow',error:data.data.msg });
+            if (data.data.code != '0') {
+                yield put({ type: 'errorShow', error: data.data.msg });
                 yield call(delay, 1000);
-                yield put({ type: 'errorShow',error:false });
+                yield put({ type: 'errorShow', error: false });
             } else {
                 yield put(routerRedux.push('/MyPond'))
-                yield put({ type: 'errorShow',error:false });
+                yield put({
+                    type: 'changeState', payload: {
+                        formData: {
+                            fields: {}
+                        },
+                        selectedFishes:[],
+                        address: ''
+                    }
+                })
+                yield put({ type: 'errorShow', error: false });
             }
+
             yield put({ type: 'hideLoginLoading' })
         },
         *modifyPond({ payload }, { call, put }) {
             yield put({ type: 'showLoginLoading' });
             let data = yield call(modifyPond, payload);
             yield call(delay, 1000);
-            if(data.data.code !='0') {
-                yield put({ type: 'errorShow',error:data.data.msg });
+            if (data.data.code != '0') {
+                yield put({ type: 'errorShow', error: data.data.msg });
                 yield call(delay, 1000);
-                yield put({ type: 'errorShow',error:false });
+                yield put({ type: 'errorShow', error: false });
             } else {
                 yield put(routerRedux.push('/MyPond'))
-                yield put({ type: 'errorShow',error:false });
+                yield put({ type: 'errorShow', error: false });
             }
             yield put({ type: 'hideLoginLoading' })
         },
-        *deletePond({ payload },{ call,put}) {
-            yield put({type: 'showLoginLoading'})
-            let data = yield call(delPonds, {pondIds:[payload.id]});
+        *deletePond({ payload }, { call, put }) {
+            yield put({ type: 'showLoginLoading' })
+            let data = yield call(delPonds, { pondIds: [payload.id] });
             yield call(delay, 1000);
-            if(data.data.code !='0') {
-                yield put({ type: 'errorShow',error:data.data.msg })
+            if (data.data.code != '0') {
+                yield put({ type: 'errorShow', error: data.data.msg })
                 yield call(delay, 1000);
-                yield put({ type: 'errorShow',error:false })
+                yield put({ type: 'errorShow', error: false })
             } else {
-                yield put({ type: 'updatePond',index:payload.index })
-                yield put({ type: 'errorShow',error:false })
+                yield put({ type: 'updatePond', index: payload.index })
+                yield put({ type: 'errorShow', error: false })
             }
             yield put({ type: 'hideLoginLoading' })
         }
@@ -90,23 +107,23 @@ export default {
         },
         hideLoginLoading(state, action) {
             return {
-                ...state, 
+                ...state,
                 loading: false,
             }
         },
-        updatePond(state,action){
-            return { ...state,list:update(state.list,{$splice:[[action.index,1]]})}
+        updatePond(state, action) {
+            return { ...state, list: update(state.list, { $splice: [[action.index, 1]] }) }
         },
         showLoginLoading(state, action) {
             return {
-                ...state, 
+                ...state,
                 loading: true
             }
         },
-        errorShow(state,action) {
+        errorShow(state, action) {
             return {
-                ...state, 
-                error:action.error
+                ...state,
+                error: action.error
             }
         }
     },

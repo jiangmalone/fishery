@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.PondDao;
+import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.utils.QueryUtils;
@@ -124,6 +125,14 @@ public class PondDaoImpl implements PondDao {
 		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString())
 				.setInteger("pondId", pondId).uniqueResult();
 		return big.longValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Fish_Category> list() {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Fish_Category");
+		Query query = queryUtils.getQuery();
+		return query.list();
 	}
 
 }

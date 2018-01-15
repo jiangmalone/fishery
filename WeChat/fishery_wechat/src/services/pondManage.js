@@ -16,5 +16,8 @@ export default {
     },
     modifyPond:(params)=>{
         return post('api/pond/modifyPond',params)
+    },
+    fishType:()=>{
+        return get('api/pond/fish')
     }
 }

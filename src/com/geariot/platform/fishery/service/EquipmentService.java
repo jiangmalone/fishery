@@ -27,6 +27,7 @@ import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.ExcelData;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.socket.CMDUtils;
+import com.geariot.platform.fishery.socket.TimerTask;
 import com.geariot.platform.fishery.utils.DataExportExcel;
 
 
@@ -58,6 +59,9 @@ public class EquipmentService {
 		String deviceSn;
 		try {
 			deviceSn = limit_Install.getDevice_sn().substring(0, 2);
+			Map<String, Object> map=CMDUtils.downLimitCMD(limit_Install);
+			if(!map.containsKey("0"))
+				return map;
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
@@ -73,11 +77,9 @@ public class EquipmentService {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 
 		limitDao.updateLimit(limit_Install);
-		 try {
-		return	CMDUtils.downLimitCMD(limit_Install.getDevice_sn(),limit_Install);
-		} catch (RuntimeException e) {
-			return RESCODE.SEND_FAILED.getJSONRES();
-		}
+		
+		return	RESCODE.SUCCESS.getJSONRES();
+		
 		
 	}
 
@@ -108,6 +110,7 @@ public class EquipmentService {
 		String deviceSn;
 		try {
 			deviceSn = timer.getDevice_sn().substring(0, 2);
+			new TimerTask().timerOpen(timer);
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}

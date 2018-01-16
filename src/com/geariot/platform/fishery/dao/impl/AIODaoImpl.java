@@ -14,15 +14,17 @@ import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.utils.QueryUtils;
+
 @Repository
 public class AIODaoImpl implements AIODao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
-	private Session getSession(){
+
+	private Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
+
 	@Override
 	public void save(AIO aio) {
 		getSession().save(aio);
@@ -47,28 +49,25 @@ public class AIODaoImpl implements AIODao {
 	@Override
 	public List<AIO> queryAIOByNameAndRelation(String relation, String name, int page, int number) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from AIO");
-		Query query = queryUtils.addStringLike("name", name)
-						.addString("relationId",relation)
-						.setFirstResult(page)
-						.setMaxResults(number)
-						.getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).setFirstResult(page)
+				.setMaxResults(number).getQuery();
 		return query.list();
 	}
 
 	@Override
 	public long queryAIOByNameAndRelationCount(String relation, String name) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "select count(*) from AIO");
-		Query query = queryUtils.addStringLike("name", name)
-						.addString("relationId",relation)
-						.getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
 		return (long) query.uniqueResult();
 	}
+
 	@Override
 	public AIO findAIOByDeviceSns(String deviceSns) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from AIO");
 		Query query = queryUtils.addString("device_sn", deviceSns).getQuery();
 		return (AIO) query.uniqueResult();
 	}
+
 	@Override
 	public int delete(String deviceSns) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from AIO");
@@ -76,5 +75,12 @@ public class AIODaoImpl implements AIODao {
 		return query.executeUpdate();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AIO> findAIOsByPondId(int pondId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from AIO");
+		Query query = queryUtils.addInteger("pondId", pondId).getQuery();
+		return query.list();
+	}
 
 }

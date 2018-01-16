@@ -38,7 +38,6 @@ public class PondController {
 	public Map<String,Object> queryPond(String relation, String name, int page, int number){
 		return pondService.queryPond(relation, name, page, number);
 	}
-	 
 	
 	@RequestMapping(value = "/pondEquipment" , method = RequestMethod.GET)
 	public Map<String,Object> pondEquipment(int pondId, int page, int number){
@@ -48,5 +47,10 @@ public class PondController {
 	@RequestMapping(value = "/fish" , method = RequestMethod.GET)
 	public Map<String,Object> fishCateList(){
 		return pondService.fishCateList();
+	}
+	
+	@RequestMapping(value = "/wxQuery" , method = RequestMethod.GET)
+	public Map<String,Object> WXqueryPond(String relation){
+		return pondService.WXqueryPond(relation);
 	}
 }

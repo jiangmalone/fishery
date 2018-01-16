@@ -18,15 +18,17 @@ import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.utils.QueryUtils;
+
 @Repository
 public class SensorDaoImpl implements SensorDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
-	private Session getSession(){
+
+	private Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
+
 	@Override
 	public void save(Sensor sensor) {
 		getSession().save(sensor);
@@ -50,28 +52,25 @@ public class SensorDaoImpl implements SensorDao {
 	@Override
 	public List<Sensor> querySensorByNameAndRelation(String relation, String name, int from, int pageSize) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
-		Query query = queryUtils.addStringLike("name", name)
-						.addString("relationId",relation)
-						.setFirstResult(from)
-						.setMaxResults(pageSize)
-						.getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).setFirstResult(from)
+				.setMaxResults(pageSize).getQuery();
 		return query.list();
 	}
 
 	@Override
 	public long querySensorByNameAndRelationCount(String relation, String name) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "select count(*) from Sensor");
-		Query query = queryUtils.addStringLike("name", name)
-						.addString("relationId",relation)
-						.getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
 		return (long) query.uniqueResult();
 	}
+
 	@Override
 	public int delete(String deviceSns) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from sensor");
 		Query query = queryUtils.addString("device_sn", deviceSns).getQuery();
 		return query.executeUpdate();
 	}
+
 	@Override
 	public Sensor findSensorByDeviceSns(String deviceSns) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
@@ -79,5 +78,11 @@ public class SensorDaoImpl implements SensorDao {
 		return (Sensor) query.uniqueResult();
 	}
 
+	@Override
+	public List<Sensor> findSensorsByPondId(int pondId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
+		Query query = queryUtils.addInteger("pondId", pondId).getQuery();
+		return query.list();
+	}
 
 }

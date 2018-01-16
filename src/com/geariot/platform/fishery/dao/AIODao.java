@@ -17,6 +17,8 @@ public interface AIODao {
 	AIO findAIOByDeviceSns(String deviceSns);
 
 	List<AIO> queryAIOByNameAndRelation(String relation, String name, int from, int pageSize);
+	
+	List<AIO> findAIOsByPondId(int pondId);
 
 	long queryAIOByNameAndRelationCount(String relation, String name);
 

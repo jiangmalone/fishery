@@ -23,7 +23,7 @@ public class SocketServiceLoader implements ServletContextListener{
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 
-		 NIOServer server = new NIOServer();
+		final NIOServer server = new NIOServer();
 		    new Thread(new Runnable() {
 
 			@Override

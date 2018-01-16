@@ -11,12 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.FishCateDao;
 import com.geariot.platform.fishery.dao.PondDao;
+import com.geariot.platform.fishery.dao.SensorDao;
+import com.geariot.platform.fishery.dao.Sensor_DataDao;
+import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
+import com.geariot.platform.fishery.entities.Sensor;
+import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.utils.EightInteger;
 import com.geariot.platform.fishery.utils.FishCateList;
 
 @Service
@@ -28,6 +35,15 @@ public class PondService {
 	
 	@Autowired
 	private FishCateDao fishCateDao;
+	
+	@Autowired
+	private SensorDao sensorDao;
+	
+	@Autowired
+	private AIODao aioDao;
+	
+	@Autowired
+	private Sensor_DataDao sensor_DataDao;
 	
 	private Logger logger = LogManager.getLogger(PondService.class);
 	
@@ -105,4 +121,53 @@ public class PondService {
 		List<Fish_Category> list = pondDao.list();
 		return RESCODE.SUCCESS.getJSONRES(list);
 	}
+
+	public Map<String, Object> WXqueryPond(String relation) {
+		Sensor_Data sensor_Data = null;
+		AIO aioTemp = null;
+		List<AIO> temp = new ArrayList<>();
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, null);
+		for(Pond pond : ponds){
+			//塘口内添加sensor的list
+			List<Sensor> sensors = sensorDao.findSensorsByPondId(pond.getId());
+			for(Sensor sensor : sensors){
+				sensor_Data = sensor_DataDao.findDataByDeviceSns(sensor.getDevice_sn());
+				sensor.setOxygen(sensor_Data.getOxygen());
+				sensor.setpH_value(sensor_Data.getpH_value());
+				sensor.setWater_temperature(sensor_Data.getWater_temperature());
+			}
+			pond.setSensors(sensors);
+			List<AIO> aios = aioDao.findAIOsByPondId(pond.getId());
+			for(AIO aio : aios){
+				sensor_Data = sensor_DataDao.findDataByDeviceSns(aio.getDevice_sn());
+				if(sensor_Data.getWay() == 2){
+					aioTemp = new AIO();
+					aioTemp.setId(EightInteger.eightInteger());
+					aioTemp.setDevice_sn(aio.getDevice_sn());
+					aioTemp.setName(aio.getName());
+					aioTemp.setPondId(aio.getPondId());
+					aioTemp.setRelationId(aio.getRelationId());
+					aioTemp.setType(aio.getType());
+					aioTemp.setStatus(aio.getStatus());
+					if(aio.getType() == 2){
+						aioTemp.setpH_value(sensor_Data.getpH_value());
+					}
+					aioTemp.setOxygen(sensor_Data.getOxygen());
+					aioTemp.setWater_temperature(sensor_Data.getWater_temperature());
+					temp.add(aioTemp);
+				}else{
+					aio.setWater_temperature(sensor_Data.getWater_temperature());
+					aio.setOxygen(sensor_Data.getOxygen());
+					if(aio.getType() == 2){
+						aioTemp.setpH_value(sensor_Data.getpH_value());
+					}
+				}
+			}
+			aios.addAll(temp);
+			pond.setAios(aios);
+		}
+		return RESCODE.SUCCESS.getJSONRES(ponds);
+	}
+	
+	
 }

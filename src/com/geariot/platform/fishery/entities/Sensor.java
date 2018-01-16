@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class Sensor {
@@ -20,6 +21,11 @@ public class Sensor {
 	private String name;					//传感器名称,可自己定义
 	private String relationId;				//绑定的用户relationId
 	private String port_status;				//表示传感器两路绑定状态, 如01 00 10 11等
+	
+	private float oxygen;						//溶氧量
+	private float water_temperature;			//水温
+	private float pH_value;						//ph值
+	
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,5 +70,26 @@ public class Sensor {
 	}
 	public void setPort_status(String port_status) {
 		this.port_status = port_status;
+	}
+	@Transient
+	public float getOxygen() {
+		return oxygen;
+	}
+	public void setOxygen(float oxygen) {
+		this.oxygen = oxygen;
+	}
+	@Transient
+	public float getWater_temperature() {
+		return water_temperature;
+	}
+	public void setWater_temperature(float water_temperature) {
+		this.water_temperature = water_temperature;
+	}
+	@Transient
+	public float getpH_value() {
+		return pH_value;
+	}
+	public void setpH_value(float pH_value) {
+		this.pH_value = pH_value;
 	}
 }

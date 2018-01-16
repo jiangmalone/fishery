@@ -135,4 +135,14 @@ public class PondDaoImpl implements PondDao {
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pond> queryPondByNameAndRelation(String relation, String name) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Pond");
+		Query query = queryUtils.addStringLike("name", name)
+						.addString("relation",relation)
+						.getQuery();
+		return query.list();
+	}
+
 }

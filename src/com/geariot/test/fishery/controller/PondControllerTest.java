@@ -114,5 +114,14 @@ public class PondControllerTest {
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 	
+	@Test
+	public void wxQueryTest() throws Exception{
+		mockMvc.perform(get("/pond/wxQuery").
+				contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("relation", "wx4")
+				)
+		.andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+	
 }
 

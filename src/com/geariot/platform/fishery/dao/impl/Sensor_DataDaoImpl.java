@@ -26,10 +26,9 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 	
 	@Override
 	public Sensor_Data findDataByDeviceSns(String deviceSns) {
-		
-			QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor_Data");
-			Query query = queryUtils.addString("device_sn", deviceSns).getQuery();
-			return (Sensor_Data) query.uniqueResult();
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor_Data");
+		Query query = queryUtils.addString("device_sn", deviceSns).addOrderByDesc("receiveTime").setMaxResults(1).getQuery();
+		return (Sensor_Data) query.uniqueResult();
 		
 	}
 

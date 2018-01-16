@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class AIO {
@@ -20,6 +21,10 @@ public class AIO {
 	private int status;					//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
 	private int pondId;					//绑定的塘口Id
 	private String relationId;			//绑定的用户relationId
+	
+	private float oxygen;						//溶氧量
+	private float water_temperature;			//水温
+	private float pH_value;						//ph值
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,5 +69,26 @@ public class AIO {
 	}
 	public void setRelationId(String relationId) {
 		this.relationId = relationId;
+	}
+	@Transient
+	public float getOxygen() {
+		return oxygen;
+	}
+	public void setOxygen(float oxygen) {
+		this.oxygen = oxygen;
+	}
+	@Transient
+	public float getWater_temperature() {
+		return water_temperature;
+	}
+	public void setWater_temperature(float water_temperature) {
+		this.water_temperature = water_temperature;
+	}
+	@Transient
+	public float getpH_value() {
+		return pH_value;
+	}
+	public void setpH_value(float pH_value) {
+		this.pH_value = pH_value;
 	}
 }

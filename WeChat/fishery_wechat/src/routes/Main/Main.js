@@ -17,16 +17,20 @@ class Main extends React.Component {
         super(props)
         this.state = {
             waterCheck1: false,
-            waterCheck2: false,
-            ponds: [],
-            temp: '** ~ ** ℃',
-            weatherIcon: ''
+            waterCheck2: false,     
+            ponds: [],            //池塘列表
+            temp: '** ~ ** ℃',   //天气的温度区间
+            weatherIcon: '',      //天气的icon名称
         }
     }
 
     componentDidMount() {
+        this.getLocation(); //获得当前地理位置
         this.queryPonds();
-        this.getWeather();
+    }
+
+    getLocation = () => {
+        this.getWeather('320100');
     }
 
     queryPonds = () => {
@@ -34,33 +38,32 @@ class Main extends React.Component {
             page: 1,
             number: 99
         }).then((res) => {
-            console.log(res);
             if (res.data.code == '0') {
                 this.setState({ ponds: res.data.data })
             }
         }).catch((error) => { console.log(error) });
     }
 
-    getWeather = () => {
+    getWeather = (city) => {
         getWeather({
-            city:'320100'
+            city: city
         }).then((res) => {
-            if(res.status = 1) {
+            if (res.status = 1) {
                 let data = res.data;
-                if( data.forecasts && data.forecasts.length >= 1 && data.forecasts[0].casts && data.forecasts[0].casts.length >= 1) {
-                    console.log('2');
+                if (data.forecasts && data.forecasts.length >= 1 && data.forecasts[0].casts && data.forecasts[0].casts.length >= 1) {
+
                     let today = data.forecasts[0].casts[0];
                     let temp = today.nighttemp + ' ~ ' + today.daytemp + ' ℃';
                     let dayweather = this.getWeatherIconName(today.dayweather);
-                    this.setState({temp : temp, weatherIcon: dayweather});
+                    this.setState({ temp: temp, weatherIcon: dayweather });
                 }
             }
         }).catch((error) => { console.log(error) });
     }
 
     getWeatherIconName = (dayweather) => {
-        if(dayweather) {
-            if(dayweather.indexOf('晴') >= 0) {
+        if (dayweather) {
+            if (dayweather.indexOf('晴') >= 0) {
                 return 'icon-tianqi1';
             } else if (dayweather.indexOf('云') >= 0) {
                 return 'icon-tianqi2';
@@ -74,16 +77,13 @@ class Main extends React.Component {
                 return 'icon-tianqi1';
             }
         } else {
-            return ''
+            return '';
         }
     }
-
-
 
     queryEquipment = () => {
 
     }
-
 
     showActionSheet = (id) => {
         const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
@@ -94,10 +94,8 @@ class Main extends React.Component {
             title: '你是否确定关闭自动增氧？',
             maskClosable: true,
             'data-seed': 'logId',
-        },
-            (buttonIndex) => {
+        }, (buttonIndex) => {
                 if (buttonIndex == 2) {
-                    console.log('222')
                     this.props.dispatch({
                         type: 'global/changeState',
                         payload: {
@@ -106,86 +104,88 @@ class Main extends React.Component {
                     })
                     this.props.history.push(`/autoOrxygenationSetting/${id}`);
                 }
-            });
+        });
+    }
+
+    getEquipment = () => {
+        return <div className='equipment'>
+            <div className='line border-line' >
+                <div className='name' >
+                    传感器1
+                </div>
+                <div className='right-text normal-state'>
+                    正常
+                </div>
+            </div>
+            <div className='line' >
+                <div className='name' >
+                    溶氧
+                </div>
+                <div className='right-text'>
+                    10.25
+                </div>
+            </div>
+            <div className='line' >
+                <div className='name' >
+                    水温
+                </div>
+                <div className='right-text'>
+                    25.6℃
+                </div>
+            </div>
+
+            <div className='line' >
+                <div className='name' >
+                    PH值
+                </div>
+                <div className='right-text'>
+                    7
+                </div>
+            </div>
+
+            <div className='line' >
+                <div className='name' >
+                    控制器1
+                </div>
+                <button className='auto-button do-auto' onClick={() => this.showActionSheet(2)} >自动</button>
+                <Switch
+                    nanme='watertem'
+                    checked={this.state.waterCheck1}
+                    onClick={(checked) => { this.setState({ waterCheck1: !this.state.waterCheck1 }) }}
+                    className='state-switch'
+                />
+            </div>
+
+            <div className='line' >
+                <div className='name' >
+                    控制器2
+                </div>
+                <button className='auto-button no-auto'>自动</button>
+                <Switch
+                    nanme='watertem'
+                    checked={this.state.waterCheck2}
+                    onClick={(checked) => { this.setState({ waterCheck2: !this.state.waterCheck2 }) }}
+                    className='state-switch'
+                />
+            </div>
+        </div>
     }
 
     getPondsAccordion = () => {
-        console.log('here')
         const ponds = this.state.ponds;
+        let equipemnts = this.getEquipment();
         return ponds.map((pond, index) => {
             return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} >
-                <div className='equipment'>
-                    <div className='line border-line' >
-                        <div className='name' >
-                            传感器1
-                    </div>
-                        <div className='right-text normal-state'>
-                            正常
-                    </div>
-                    </div>
-                    <div className='line' >
-                        <div className='name' >
-                            溶氧
-                    </div>
-                        <div className='right-text'>
-                            10.25
-                    </div>
-                    </div>
-                    <div className='line' >
-                        <div className='name' >
-                            水温
-                    </div>
-                        <div className='right-text'>
-                            25.6℃
-                    </div>
-                    </div>
-
-                    <div className='line' >
-                        <div className='name' >
-                            PH值
-                    </div>
-                        <div className='right-text'>
-                            7
-                    </div>
-                    </div>
-
-                    <div className='line' >
-                        <div className='name' >
-                            控制器1
-                    </div>
-                        <button className='auto-button do-auto' onClick={() => this.showActionSheet(2)} >自动</button>
-                        <Switch
-                            nanme='watertem'
-                            checked={this.state.waterCheck1}
-                            onClick={(checked) => { console.log(checked); this.setState({ waterCheck1: !this.state.waterCheck1 }) }}
-                            className='state-switch'
-                        />
-                    </div>
-
-                    <div className='line' >
-                        <div className='name' >
-                            控制器2
-                    </div>
-                        <button className='auto-button no-auto'>自动</button>
-                        {/* <Switch className='state-switch'></Switch> */}
-                        <Switch
-                            nanme='watertem'
-                            checked={this.state.waterCheck2}
-                            onClick={(checked) => { console.log(checked); this.setState({ waterCheck2: !this.state.waterCheck2 }) }}
-                            className='state-switch'
-                        />
-                    </div>
-                </div>
+                {equipemnts}
             </Accordion>)
         })
     }
 
     render() {
-
         const ponds = this.getPondsAccordion();
         return <div className='main-bg' style={{ minHeight: window.document.body.clientHeight }}>
             <div className='weather-div'>
-                <i className={`weather-icon iconfont ${this.state.weatherIcon}`}> </i> 
+                <i className={`weather-icon iconfont ${this.state.weatherIcon}`}> </i>
                 {this.state.temp}
             </div>
             <div className='fishpond-item'>

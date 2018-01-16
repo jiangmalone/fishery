@@ -40,6 +40,7 @@ styles.content = {
 };
 
 const App = (props) => {
+    
     return (true ? <div><CSSTransitionGroup
         transitionName={props.transitionName}
         style={styles.content}

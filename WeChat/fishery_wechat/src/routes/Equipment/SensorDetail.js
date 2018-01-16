@@ -1,7 +1,8 @@
 import React from 'react';
 import './sensorDetail.less'
-import { Popover, Icon, NavBar, List } from 'antd-mobile'
+import { Popover, Icon, NavBar, List, ActivityIndicator, Toast } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
+import moment from 'moment';
 import offline from '../../img/equ_offline.png'
 import online from '../../img/equ_online.png'
 const Item = Popover.Item;
@@ -9,6 +10,7 @@ const Item = Popover.Item;
 import correct from '../../img/btn_correct.png';
 import back_img from '../../img/back.png';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
+import { getData, getRealTimeData } from '../../services/equipment.js'; //接口
 
 const dayPHData = [
     { time: "9:00", ph: 3 },
@@ -72,26 +74,26 @@ const dayWaterData = [
     { time: "17:00", '温度': 13 }
 ];
 const monthWaterData = [
-    { time: "星期一",  '温度': 9 },
-    { time: "星期二",  '温度': 9.9 },
-    { time: "星期三",  '温度': 9.5 },
-    { time: "星期四",  '温度': 7 },
-    { time: "星期五",  '温度': 8 },
-    { time: "星期六",  '温度': 9 },
-    { time: "星期日",  '温度': 7 },
+    { time: "星期一", '温度': 9 },
+    { time: "星期二", '温度': 9.9 },
+    { time: "星期三", '温度': 9.5 },
+    { time: "星期四", '温度': 7 },
+    { time: "星期五", '温度': 8 },
+    { time: "星期六", '温度': 9 },
+    { time: "星期日", '温度': 7 },
 ];
 const waterCols = {
     '温度': { min: 0 },
     'time': { range: [0, 1] }
 };
 
-
-
 class SensorDetail extends React.Component {
-
+    
     constructor(props) {
         super(props)
         this.state = {
+            animating: false,
+            realTimeData: {},
             title: '小渔塘-传感器1',
             visible: false,
             isShowMore: false,
@@ -104,15 +106,79 @@ class SensorDetail extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.getData(this.getTime(0));
+        this.getRealTimeData();
+    }
+
+    getTime = (type) => {       //0 今天   1近七天
+        let today = new Date(), startTime, endTime = moment(today).format('YYYY-MM-DD HH:mm');
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        today.setMilliseconds(0);
+        if (type == 0) {
+            startTime = moment(today).format('YYYY-MM-DD HH:mm');
+        } else {
+            let times = (Date.parse(today) / 1000) - (24 * 60 * 60 * 6);
+            let newDate = new Date();
+            startTime =  moment(newDate.setTime(times * 1000)).format('YYYY-MM-DD HH:mm');
+        }
+        return {startTime, endTime}   
+    }
+
+    getData = ({startTime, endTime}) => {    //获得历史数据
+        this.setState({ animating: true })
+        getData({
+            device_sn: '0300001',
+            startTime: startTime,
+            endTime: endTime,
+        }).then((res) => {
+            console.log(res);
+            this.setState({ animating: false })
+            if (res.data && res.data.code == 0) {
+
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch((error) => {
+            this.setState({ animating: false });
+            Toast.fail('请求失败', 1);
+            console.log(error)
+        });
+    }
+
+    getRealTimeData = () => {
+        this.setState({ animating: true })
+        getRealTimeData({
+            device_sn: '0300001',
+        }).then((res) => {
+            console.log(res);
+            this.setState({ animating: false })
+            if (res.data && res.data.code == 0) {
+                const data = res.data.data;
+                if (data) {
+                    this.setState({form: data});
+                } 
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch((error) => {
+            this.setState({ animating: false });
+            Toast.fail('请求失败', 1);
+            console.log(error)
+        });
+    }
+
     onSelect = (opt) => {
         console.log(opt.props.value);
-
         this.setState({
             isShowMore: false,
             selected: opt.props.value,
             title: '小渔塘-' + opt.props.value
         });
     };
+
     handleVisibleChange = (isShowMore) => {
         this.setState({
             isShowMore,
@@ -132,14 +198,16 @@ class SensorDetail extends React.Component {
             let phData = [];
             let oData = [];
             let waterData = [];
-            if(!this.state.isSelectToday) {
+            if (!this.state.isSelectToday) {
                 phData = dayPHData;
                 oData = dayOData;
                 waterData = dayWaterData;
+                this.getData(this.getTime(0));
             } else {
                 phData = monthPHData;
                 oData = monthOData;
                 waterData = monthWaterData;
+                this.getData(this.getTime(1));
             }
             this.setState({
                 isSelectToday: !this.state.isSelectToday,
@@ -159,7 +227,6 @@ class SensorDetail extends React.Component {
             overlayAry.push(item);
         }
         return (<div className='sensorDetail-bg' >
-
             <div className="nav-bar-title">
                 <i className="back" onClick={() => {
                     history.back();
@@ -180,7 +247,7 @@ class SensorDetail extends React.Component {
                 overlayClassName="fortest"
                 overlayStyle={{ color: 'currentColor' }}
                 visible={this.state.isShowMore}
-                overlay={ overlayAry }
+                overlay={overlayAry}
                 align={{
                     overflow: { adjustY: 0, adjustX: 0 },
                     offset: [-26, 50],
@@ -249,6 +316,11 @@ class SensorDetail extends React.Component {
                     <Geom type='point' position="time*温度" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
             </div>
+            <ActivityIndicator
+                toast
+                text="Loading..."
+                animating={this.state.animating}
+            />
         </div>);
     }
 }

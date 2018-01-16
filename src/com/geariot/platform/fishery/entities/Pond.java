@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -33,6 +34,8 @@ public class Pond {
 	private float depth;				//塘口深度
 	private float density;				//塘口密度
 	private String relation;			//普通用户或企业用户的relationId;
+	private List<Sensor> sensors;		//查询时的传感器
+	private List<AIO> aios;				//查询时的一体机
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -109,6 +112,20 @@ public class Pond {
 	}
 	public void setFish_categorys(List<String> fish_categorys) {
 		this.fish_categorys = fish_categorys;
+	}
+	@Transient
+	public List<Sensor> getSensors() {
+		return sensors;
+	}
+	public void setSensors(List<Sensor> sensors) {
+		this.sensors = sensors;
+	}
+	@Transient
+	public List<AIO> getAios() {
+		return aios;
+	}
+	public void setAios(List<AIO> aios) {
+		this.aios = aios;
 	}
 	
 }

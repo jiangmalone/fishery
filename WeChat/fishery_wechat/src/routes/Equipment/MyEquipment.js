@@ -5,7 +5,6 @@ import { withRouter } from "react-router-dom";
 import { connect } from 'dva';
 import Accordion from '../../components/Accordion';
 import { queryEquipment } from '../../services/equipment.js'; //接口
-const alert = Modal.alert;
 const sensors = [{
     name: '传感器一号',
     id: 1
@@ -33,39 +32,28 @@ class MyEquipment extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({animating: true})
+        this.setState({ animating: true })
         queryEquipment({
             page: 1,
             number: 99,
             relation: 14,
         }).then((res) => {
             console.log(res);
-            this.setState({animating: false})
+            this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
 
             } else {
                 Toast.fail(res.data.msg, 1);
             }
-
         }).catch((error) => {
-            this.setState({animating: false});
+            this.setState({ animating: false });
             Toast.fail('请求失败', 1);
-            console.log(error) 
+            console.log(error)
         });
     }
 
-    edit = () => {
-        this.setState({ isEdit: !this.state.isEdit })
-    }
-
-    showActionSheet = () => {
-
-    }
-
-    wouldDelete = (e,id) => {
-
+    wouldDelete = (e, id) => {
         const BUTTONS = ['删除', '取消'];
-
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
             cancelButtonIndex: BUTTONS.length - 1,
@@ -82,15 +70,11 @@ class MyEquipment extends React.Component {
             console.log(buttonIndex)
             this.setState({ clicked: BUTTONS[buttonIndex] });
         });
-
-        console.log(event)
-        console.log('wouldDelete')
         event.stopPropagation();
         event.stopImmediatePropagation();
     }
 
     doDelete = (id) => {
-        console.log('doDelete');
         console.log(id);
     }
 
@@ -105,8 +89,6 @@ class MyEquipment extends React.Component {
     }
 
     checkDetail = (id) => {
-        event.preventDefault();
-        console.log('checkDetail')
         this.props.dispatch({
             type: 'global/changeState',
             payload: {
@@ -114,13 +96,12 @@ class MyEquipment extends React.Component {
             }
         })
         this.props.history.push(`/equipmentManagement/${id}`);
-
     }
 
     getController = (controllers) => {
         let cl = controllers.map((controller, index) => {
             return (<div className='line' key={controller.id} onClick={() => this.checkDetail(controller.id)} >
-                {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e,controller.id)} >
+                {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e, controller.id)} >
                 </div>}
                 <div className='name' >
                     {controller.name}
@@ -175,6 +156,7 @@ class MyEquipment extends React.Component {
         })
         return aio;
     }
+    
     render() {
         //todo   把list分类成不同种的设备
         let controller = this.getController(controllers);
@@ -192,104 +174,24 @@ class MyEquipment extends React.Component {
                     })
                 }}></i>
                 我的设备
-                <i className={this.state.isEdit ? 'right-item-none' : "edit"} onClick={this.edit} >{this.state.isEdit && "取消"}</i>
+                <i  className={this.state.isEdit ? 'right-item-none' : "edit"}
+                    onClick={() => this.setState({ isEdit: !this.state.isEdit })} >
+                    {this.state.isEdit && "取消"}
+                </i>
             </div>
             <div className='equipment-type'>
                 <Accordion title='传感器' isShowState={false} isShow={true} >
                     <div className='equipment'>
-                        {/* <div className='line' >
-                            {this.state.isEdit && <div className='delete-button' onClick={this.wouldDelete} >
-                            </div>}
-                            <div className='name' >
-                                传感器01
-                            </div>
-                            <div className='right-imgs'>
-                                <div className='online' >1
-                                </div>
-                                <div className='offline' >2
-                                </div>
-                            </div>
-                        </div>
-                        <div className='line' >
-                            {this.state.isEdit && <div className='delete-button' onClick={this.wouldDelete} >
-                            </div>}
-                            <div className='name' >
-                                传感器02
-                            </div>
-                            <div className='right-imgs'>
-                                <div className='online' >1
-                                </div>
-                                <div className='offline' >2
-                                </div>
-                            </div>
-                        </div> */}
                         {sensor}
                     </div>
                 </Accordion>
                 <Accordion title='控制器' isShowState={false} isShow={true} >
                     <div className='equipment'>
-                        {/* <div className='line' >
-                            {this.state.isEdit && <div className='delete-button' onClick={this.wouldDelete} >
-                            </div>}
-                            <div className='name' >
-                                控制器01
-                            </div>
-                            <div className='right-imgs'>
-                                <div className='online' >1
-                                </div>
-                                <div className='offline' >2
-                                </div>
-                                <div className='offline' >3
-                                </div>
-                                <div className='offline' >4
-                                </div>
-                            </div>
-                        </div>
-                        <div className='line' >
-                            {this.state.isEdit && <div className='delete-button' onClick={this.wouldDelete} >
-                            </div>}
-                            <div className='name' >
-                                控制器02
-                            </div>
-                            <div className='right-imgs'>
-                                <div className='online' >1
-                                </div>
-                                <div className='offline' >2
-                                </div>
-                                <div className='offline' >3
-                                </div>
-                                <div className='offline' >4
-                                </div>
-
-                            </div>
-                        </div> */}
                         {controller}
                     </div>
                 </Accordion>
                 <Accordion title='一体机' isShowState={false} isShow={true} >
                     <div className='equipment'>
-                        {/* <div className='line' >
-                            {this.state.isEdit && <div className='delete-button' onClick={this.wouldDelete} >
-                            </div>}
-                            <div className='name' >
-                                一体机01
-                            </div>
-                            <div className='right-imgs'>
-                                <div className='online' >
-                                </div>
-                            </div>
-                        </div>
-                        <div className='line' >
-                            {this.state.isEdit && <div className='delete-button' onClick={this.wouldDelete} >
-                            </div>}
-                            <div className='name' >
-                                一体机02
-                            </div>
-                            <div className='right-imgs'>
-                                <div className='offline' >
-                                </div>
-                            </div>
-                        </div> */}
                         {allInOne}
                     </div>
                 </Accordion>
@@ -300,7 +202,7 @@ class MyEquipment extends React.Component {
                 toast
                 text="Loading..."
                 animating={this.state.animating}
-              />
+            />
         </div>
     }
 }

@@ -36,7 +36,7 @@ public class FishCateList {
 	                	try
 	                	{
 		                    InputStreamReader read = new InputStreamReader(
-		                    new FileInputStream(file),"utf-8");
+		                    new FileInputStream(file));
 		                    BufferedReader bufferedReader = new BufferedReader(read);
 		                    String lineTxt = null;
 		                    while((lineTxt = bufferedReader.readLine()) != null){

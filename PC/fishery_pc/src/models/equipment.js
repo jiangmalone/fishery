@@ -20,7 +20,6 @@ export default {
         payload: true,
       });
       const response = yield call(queryEquipment, payload);
-      
       if (response.code == "0") {
         for (let item of response.data) {
           item.key = item.id
@@ -46,6 +45,7 @@ export default {
       const response = yield call(addEquipment, payload);
       if (response.code == '0') {
         message.success('新增设备成功', 1);
+        console.log(response)
         yield put({
           type: 'addList',
           payload: response.data,
@@ -96,13 +96,18 @@ export default {
     },
     addList(state, action) {
       let list = state.list;
-      list.unshift(action.payload);
-      return {
-        ...state,
-        list: list,
-        pagination: { ...state.pagination, total: state.pagination.total + 1 },
-        formData: { fields: {} }
-      };
+      if(action.payload) {
+        const item = action.payload;
+        item.key = item.id;
+        list.unshift(item);
+        return {
+          ...state,
+          list: list,
+          pagination: { ...state.pagination, total: state.pagination.total + 1 },
+          formData: { fields: {} }
+        };
+      }
+      
     },
     modifyList(state, action) {
       return {

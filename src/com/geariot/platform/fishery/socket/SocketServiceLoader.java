@@ -17,28 +17,23 @@ public class SocketServiceLoader implements ServletContextListener{
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		/*if (null != socketThread && !socketThread.isInterrupted()) {
-			socketThread.closeSocketServer();
-			socketThread.interrupt();
-		}*/
+		
 	}
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
-		// TODO Auto-generated method stub
-		NIOServer server = new NIOServer();
-		//看看这边执行了几次
+
+		 NIOServer server = new NIOServer();
 		    new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
+				
 				try {
 					server.initServer(5678);
 					server.listen();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					// e.printStackTrace();
+					
 					log.debug("nio服务器启动失败");
 				}
 

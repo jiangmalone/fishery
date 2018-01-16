@@ -3,9 +3,11 @@ import { List, InputItem, Button, DatePicker, Modal } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import NavBar from '../../components/NavBar';
 import { withRouter } from "react-router-dom";
+import { connect } from 'dva';
 import addImg from '../../img/add.png'
 import question from '../../img/question.png'
 import './autoOxygenationSetting.less';
+import { delSensorOrAIOBind, delBind } from '../../services/bind.js'; //接口
 const Item = List.Item;
 
 class AutoOxygenationSetting extends React.Component {
@@ -15,6 +17,7 @@ class AutoOxygenationSetting extends React.Component {
         timeSections: [['', '']],
         isShowDeclare: false
     }
+
     onSubmit = () => {
         this.props.form.validateFields({ force: true }, (error) => {
             if (!error) {
@@ -24,9 +27,11 @@ class AutoOxygenationSetting extends React.Component {
             }
         });
     }
+
     onReset = () => {
         this.props.form.resetFields();
     }
+
     addTimeSection = () => {
         console.log('add')
         const timeSections = this.state.timeSections;
@@ -35,13 +40,12 @@ class AutoOxygenationSetting extends React.Component {
             timeSections: timeSections
         })
     }
+
     render() {
         const { getFieldProps, getFieldError } = this.props.form;
         const timeSections = this.state.timeSections;
         const times = timeSections.map((item, index) => {
-
             return <Item className='timeItem' key={index} extra={<div className='time' >
-
                 <DatePicker
                     mode="time"
                     minuteStep={5}
@@ -61,12 +65,19 @@ class AutoOxygenationSetting extends React.Component {
                 >
                     <span>&nbsp;结束时间</span>
                 </DatePicker>
-
             </div>}>定时增氧</Item>
         })
         return (<form className='oxygen-set-bg' >
             <div className="nav-bar-title">
-                <i className="back" onClick={() => { history.back() }}></i>
+                <i className="back" onClick={() => {
+                    this.props.dispatch({
+                        type: 'global/changeState',
+                        payload: {
+                            transitionName: 'right'
+                        }
+                    });
+                    history.back();
+                }}></i>
                 设置自动增氧
                 <i className="right-item-none" onClick={() => { this.setState({ isShowDeclare: true }) }} ><img src={question} style={{ width: '.44rem', verticalAlign: 'middle' }} /></i>
             </div>
@@ -74,11 +85,11 @@ class AutoOxygenationSetting extends React.Component {
                 visible={this.state.isShowDeclare}
                 transparent
                 maskClosable={true}
-                onClose={() => {this.setState({isShowDeclare: false})}}
+                onClose={() => { this.setState({ isShowDeclare: false }) }}
                 title="说明"
-                footer={[{ text: '知道了', onPress: () => { this.setState({isShowDeclare: false}) }}]}
+                footer={[{ text: '知道了', onPress: () => { this.setState({ isShowDeclare: false }) } }]}
             >
-                <div style={{ height: 100, textAlign: 'left'}}>
+                <div style={{ height: 100, textAlign: 'left' }}>
                     1.下限（低于下限自动开启增氧）；<br />
                     2.上限（达到上限停止增氧）；<br />
                     3.高限（高于高限时增氧2小时）；<br />
@@ -117,7 +128,6 @@ class AutoOxygenationSetting extends React.Component {
                     error={!!getFieldError('upperLimit')}
                     extra={<span>mg/L</span>}
                 >增氧高限</InputItem>
-
                 {times}
             </List>
             <div className='add-block' onClick={this.addTimeSection} >
@@ -136,4 +146,4 @@ class AutoOxygenationSetting extends React.Component {
 }
 
 const AutoOxygenationSettingForm = createForm()(AutoOxygenationSetting);
-export default AutoOxygenationSettingForm;
+export default connect()(AutoOxygenationSettingForm);

@@ -12,8 +12,8 @@ import java.util.concurrent.Executors;
  */
 public class RequestProcessor {
 //1
-    //构造线程池 这边线程池应该放到外面，一个单例
-    private  ExecutorService  executorService  = Executors.newFixedThreadPool(10);
+ 
+   // private  ExecutorService  executorService  = Executors.newFixedThreadPool(10);
    
    
 	public  void ProcessorRequest( SelectionKey key){
@@ -40,13 +40,14 @@ public class RequestProcessor {
 				}    
             }
         });*/
-    }
+    } 
 
 	public void read(SelectionKey key) throws IOException {
 		// 服务器可读取消息:得到事件发生的Socket通道
 				SocketChannel readChannel = (SocketChannel) key.channel();
 				// 创建读取的缓冲区
 				ByteBuffer buffer = ByteBuffer.allocate(1024);
+
 				try
 				{
 					readChannel.read(buffer);

@@ -18,8 +18,8 @@ export default class EquipmentManagement extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: '',
-            code: '',   //查询用
+            name: '',   //查询用
+            device_sn: '',   //查询用
             selectedRows: [],
             selectedRowKeys: [],
             showAddModal: false,
@@ -59,13 +59,13 @@ export default class EquipmentManagement extends React.Component {
 
     onDelete = (idArray) => {
         if (idArray.length <= 0) {
-            message.warn('请选择需要删除的企业！');
+            message.warn('请选择需要删除的设备！');
             return;
         }
         this.props.dispatch({
-            type: 'equipment/delCompany',
+            type: 'equipment/delEquipments',
             payload: {
-                companyIds: idArray,
+                equipmentIds: idArray,
                 pagination: this.props.pagination
             },
         });
@@ -95,13 +95,13 @@ export default class EquipmentManagement extends React.Component {
     onOk = (values) => {
         if (isNaN(this.state.index)) {
             this.props.dispatch({
-                type: 'equipment/addCompany',
+                type: 'equipment/addEquipment',
                 payload: values,
             });
         } else {
             values.id = this.state.modifyId
             this.props.dispatch({
-                type: 'equipment/modifyCompany',
+                type: 'equipment/modifyEquipment',
                 payload: {
                     index: this.state.index,
                     data: values
@@ -122,15 +122,41 @@ export default class EquipmentManagement extends React.Component {
     handleInputChange = (type, value) => {
         if (type) {
             if (type == 'name') {
-                this.setState({name: value});
-            } else if (type == 'code') {
-                this.setState({code: value});
+                this.setState({ name: value });
+            } else if (type == 'device_sn') {
+                this.setState({ device_sn: value });
             }
         }
     }
 
     doSearch = () => {
-        console.log('search ' + this.state.name + this.state.code);
+        this.props.dispatch({
+            type: 'equipment/fetch',
+            payload: {
+                device_sn: this.state.device_sn,
+                name: this.state.name,
+                page: 1,
+                number: 10,
+                relation: this.props.match.params.id
+            },
+        });
+    }
+
+
+    handleTableChange = (pagination) => {
+        const pager = { ...this.props.pagination };
+        pager.current = pagination.current;
+        this.props.dispatch({
+            type: 'equipment/fetch',
+            payload: {
+                number: 10,
+                page: pagination.current,
+            },
+        });
+        this.props.dispatch({
+            type: 'equipment/changeModal',
+            payload: { pagination: pager }
+        })
     }
 
     render() {
@@ -216,9 +242,11 @@ export default class EquipmentManagement extends React.Component {
                 dataIndex: 'keyword',
                 render: (text, record, index) => {
                     return <span>
-
-                        <span onClick={() => { this.modifyInfo(record, index) }}> <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a></span>
-                        <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.account])}>
+                        <span
+                            onClick={() => { this.modifyInfo(record, index) }}>
+                            <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a>
+                        </span>
+                        <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
                     </span>
@@ -234,8 +262,8 @@ export default class EquipmentManagement extends React.Component {
                                 设备编号：&nbsp;
                                 <Input
                                     style={{ width: '200px' }}
-                                    value={this.state.code}
-                                    onChange={e => this.handleInputChange('code', e.target.value)}
+                                    value={this.state.device_sn}
+                                    onChange={e => this.handleInputChange('device_sn', e.target.value)}
                                 />
                             </div>
                         </Col>

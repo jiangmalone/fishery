@@ -83,4 +83,12 @@ public class AIODaoImpl implements AIODao {
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AIO> queryAIOByNameAndRelation(String relation, String name) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from AIO");
+		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
+		return query.list();
+	}
+
 }

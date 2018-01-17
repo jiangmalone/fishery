@@ -242,5 +242,16 @@ public class EquipmentService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public Map<String, Object> myEquipment(String relation){
+		List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(relation, null);
+		List<AIO> aios = aioDao.queryAIOByNameAndRelation(relation, null);
+		List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(relation, null);
+		Map<String, Object> result = RESCODE.SUCCESS.getJSONRES();
+		result.put("sensor", sensors);
+		result.put("controller", controllers);
+		result.put("aio", aios);
+		return result;
+	}
 
 }

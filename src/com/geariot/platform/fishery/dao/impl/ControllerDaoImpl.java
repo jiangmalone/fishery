@@ -16,15 +16,17 @@ import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.utils.QueryUtils;
+
 @Repository
 public class ControllerDaoImpl implements ControllerDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
-	private Session getSession(){
+
+	private Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
+
 	@Override
 	public void save(Controller controller) {
 		getSession().save(controller);
@@ -45,31 +47,29 @@ public class ControllerDaoImpl implements ControllerDao {
 		return (Controller) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Controller> queryControllerByNameAndRelation(String relation, String name, int from, int pageSize) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
-		Query query = queryUtils.addStringLike("name", name)
-						.addString("relationId",relation)
-						.setFirstResult(from)
-						.setMaxResults(pageSize)
-						.getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).setFirstResult(from)
+				.setMaxResults(pageSize).getQuery();
 		return query.list();
 	}
 
 	@Override
 	public long queryControllerByNameAndRelationCount(String relation, String name) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "select count(*) from Controller");
-		Query query = queryUtils.addStringLike("name", name)
-						.addString("relationId",relation)
-						.getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
 		return (long) query.uniqueResult();
 	}
+
 	@Override
 	public int delete(String deviceSns) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from Controller");
 		Query query = queryUtils.addString("device_sn", deviceSns).getQuery();
 		return query.executeUpdate();
 	}
+
 	@Override
 	public Controller findControllerByDeviceSns(String deviceSns) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
@@ -77,5 +77,12 @@ public class ControllerDaoImpl implements ControllerDao {
 		return (Controller) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Controller> queryControllerByNameAndRelation(String relation, String name) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
+		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
+		return query.list();
+	}
 
 }

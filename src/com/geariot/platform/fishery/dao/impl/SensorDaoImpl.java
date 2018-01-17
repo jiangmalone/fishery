@@ -49,6 +49,7 @@ public class SensorDaoImpl implements SensorDao {
 		return (Sensor) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Sensor> querySensorByNameAndRelation(String relation, String name, int from, int pageSize) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
@@ -78,10 +79,19 @@ public class SensorDaoImpl implements SensorDao {
 		return (Sensor) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Sensor> findSensorsByPondId(int pondId) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
 		Query query = queryUtils.addInteger("pondId", pondId).getQuery();
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Sensor> querySensorByNameAndRelation(String relation, String name) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
+		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
 		return query.list();
 	}
 

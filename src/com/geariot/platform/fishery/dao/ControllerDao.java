@@ -20,6 +20,8 @@ public interface ControllerDao {
 	Controller findControllerByDeviceSns(String deviceSns);
 
 	List<Controller> queryControllerByNameAndRelation(String relation, String name, int from, int pageSize);
+	
+	List<Controller> queryControllerByNameAndRelation(String relation, String name);
 
 	long queryControllerByNameAndRelationCount(String relation, String name);
 

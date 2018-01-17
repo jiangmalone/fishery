@@ -7,14 +7,29 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class NIOServer {
 	private static final Logger log = LogManager.getLogger(NIOServer.class);
-	// 通道管理器
-	private  Selector selector=null;
+	
+	  //存储SelectionKey的队列
+    private static List<SelectionKey> Queen = new ArrayList<SelectionKey>();
+    private static Selector selector = null;
+
+    //添加SelectionKey到队列
+    public static void addQueen(SelectionKey key){
+        synchronized (Queen) {
+        	Queen.add(key);
+            //唤醒主线程
+            selector.wakeup();
+        }
+    }
+
 
 	/**
 	 * 获得一个ServerSocket通道，并对该通道做一些初始化的工作
@@ -69,7 +84,7 @@ public class NIOServer {
 									continue;
 								}
 								String ip = channel.socket().getInetAddress().getHostAddress();
-								log.debug("# " + ip + " connect to server!!!");
+						 		log.debug("# " + ip + " connect to server!!!");
 								// 设置成非阻塞，所以设置非阻塞也没用
 								channel.configureBlocking(false);
 								// 在这里可以给客户端发送信息哦
@@ -80,12 +95,13 @@ public class NIOServer {
 							
 							// 获得了可读的事件
 						} else if (key.isReadable()) {
-							// 取消读事件的监控 
-							//key.cancel();
+							// 取消读事件的监控 并在后面重新注册读，不然下一次读会阻塞
+							key.cancel();
 							// 调用读操作
-							new RequestProcessor().ProcessorRequest(key);
-                             System.out.println("读完");
-                  
+								RequestProcessor.ProcessorRequest(key,selector);
+							
+							
+                 
 						}
 						// 删除已选的key,以防重复处理
 						ite.remove();
@@ -93,9 +109,20 @@ public class NIOServer {
 						log.debug("cancelledKeyException");
 					}
 					
-					System.out.println("一次事件结束");
+					
 				}
-			}
+			}else{
+				//因为前面取消了key的监听，下一次读会阻塞，所以一旦num=0就会跳转到这里重新注册读事件
+                synchronized (Queen) {
+                    while(Queen.size() > 0){
+                        SelectionKey key = Queen.remove(0);
+                        //注册读事件
+                        SocketChannel channel = (SocketChannel) key.channel();
+                       
+                        channel.register(selector, SelectionKey.OP_READ);
+                    }
+                }
+            }
 		}
 		
 	}

@@ -28,6 +28,7 @@ public enum RESCODE {
 	NOT_OPEN(16,"设备尚未开机"),
 	CONNECTION_CLOSED(17,"与终端的连接已断开"),
 	SEND_FAILED(18,"服务器下发命令失败"),
+	NOT_RECEIVED(19,"长时间未收到设备反馈"),
 	FOR_EXCEPTION
 	;
 	

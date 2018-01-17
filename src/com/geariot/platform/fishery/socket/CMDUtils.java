@@ -39,7 +39,7 @@ public class CMDUtils {
 	private static SocketChannel readChannel=null;
 	private static String deviceSn;
 	private static byte way;
-	/*private static  AtomicBoolean feedback=new AtomicBoolean();
+	private static  AtomicBoolean feedback=new AtomicBoolean();
 
 	
 	public static  AtomicBoolean getFeedback() {
@@ -47,7 +47,7 @@ public class CMDUtils {
 	}
 	public static void setFeedback(AtomicBoolean feedback) {
 		CMDUtils.feedback = feedback;
-	}*/
+	}
 	public static Map<String, SocketChannel> getclientMap()
 	{
 		return clientMap;
@@ -144,12 +144,8 @@ public class CMDUtils {
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-/*
-	    	if(!getFeedback().getAndSet(false)) {
-	    		return RESCODE.SEND_FAILED.getJSONRES();
-	    	}*/
-	
-	    return RESCODE.SUCCESS.getJSONRES();
+	   
+	    return responseToBrowser();
         
 	}
 
@@ -325,7 +321,7 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 	
-	    return RESCODE.SUCCESS.getJSONRES();
+	    return responseToBrowser();
         
 
 	}
@@ -353,7 +349,7 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 	
-	    return RESCODE.SUCCESS.getJSONRES();
+	    return responseToBrowser();
 	}
 
 	// 服务器设置设备使用哪路传感器
@@ -379,7 +375,7 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 	
-	    return RESCODE.SUCCESS.getJSONRES();
+	    return responseToBrowser();
 	}
 
 	// 服务器校准命令
@@ -405,7 +401,7 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 	
-	    return RESCODE.SUCCESS.getJSONRES();
+	    return responseToBrowser();
 	}
 
 	// 五分钟上传一次溶氧，水温和PH值信息
@@ -449,5 +445,21 @@ public class CMDUtils {
 		ByteBuffer outBuffer = ByteBuffer.wrap(response);
 		readChannel.write(outBuffer);// 将消息回送给客户端
 		System.out.println("cmd代码处理完");
+	}
+	
+	//while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
+	public static Map<String, Object> responseToBrowser(){
+		 long start=System.currentTimeMillis();
+		    long end=0;
+		    while(true) {
+		    	if(getFeedback().getAndSet(false)) {
+		    		return RESCODE.SUCCESS.getJSONRES();
+		    	}
+		    	
+		    	end=System.currentTimeMillis();
+		    	if(end-start>=10000) {
+		    		return RESCODE.NOT_RECEIVED.getJSONRES();
+		    	}
+		    }
 	}
 }

@@ -11,15 +11,12 @@ import org.apache.catalina.tribes.util.Arrays;
 import com.geariot.platform.fishery.utils.CommonUtils;
 
 public class DataHandle {
-	public void handle(SelectionKey key) {
+	public static void handle(SelectionKey key) {
 		Map<String, Object> attachmentObject = (Map<String, Object>) key.attachment();
 		byte[] data = (byte[]) attachmentObject.get("data");
-		System.out.println(Arrays.toString(data));
-		SocketChannel readChannel = (SocketChannel) attachmentObject.get("readChannel");
-		
+		System.out.println(new String(data));
+		SocketChannel readChannel = (SocketChannel) attachmentObject.get("readChannel");	
 		String prefix = CommonUtils.printHexStringMerge(data, 0, 2);
-		
-		
 		if (prefix.equals("5AA5")) {
 			System.out.println("进来了");
 			byte[] byteID = new byte[3];
@@ -41,7 +38,7 @@ public class DataHandle {
 					CMDUtils.uploadLimitCMD(key);
 					break;
 				case 2:
-					//CMDUtils.setFeedback(new AtomicBoolean(true));
+					CMDUtils.setFeedback(new AtomicBoolean(true));
 					break;
 				case 3:
 					CMDUtils.timingUploadCMD(key);

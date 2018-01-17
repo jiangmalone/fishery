@@ -6,19 +6,25 @@ import { Table, Card, Row, Col, Input, Button } from 'antd'
 import { Link } from 'react-router-dom'
 
 @connect(state => ({
-    list: state.commonUser.list,
-    loading: state.commonUser.loading,
-    pagination: state.commonUser.pagination
+    list: state.equipment.list,
+    loading: state.equipment.loading,
+    pagination: state.equipment.pagination
 }))
 
-class UserList extends PureComponent {
+class EquipmentQuery extends PureComponent {
     componentDidMount() {
+        this.onSearch()
+    }
+
+    onSearch = (value) => {
         this.props.dispatch({
-            type: 'commonUser/fetch',
+            type: 'equipment/fetch',
             payload: {
-                count: 10,
+                relation:'wx4',
+                number: 10,
+                page: 1
             },
-        });
+        })
     }
 
     render() {
@@ -79,4 +85,4 @@ class UserList extends PureComponent {
 }
 
 
-export default UserList
+export default EquipmentQuery

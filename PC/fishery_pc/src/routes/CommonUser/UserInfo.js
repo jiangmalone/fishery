@@ -6,19 +6,26 @@ import { Table, Card, Row, Col, Input, Button } from 'antd'
 
 const Search = Input.Search;
 @connect(state => ({
-    list: state.commonUser.list,
-    loading: state.commonUser.loading,
-    pagination: state.commonUser.pagination
+    list: state.userDetail.list,
+    loading: state.userDetail.loading,
+    pagination: state.userDetail.pagination
 }))
 
 class UserInfo extends PureComponent {
     componentDidMount() {
+        this.onSearch()
+    }
+
+    onSearch = (value) => {
         this.props.dispatch({
-            type: 'commonUser/fetch',
+            type: 'userDetail/fetch',
             payload: {
-                count: 10,
+                name: value,
+                number: 10,
+                page: 1,
+                // relation:'wx4'
             },
-        });
+        })
     }
 
     render() {

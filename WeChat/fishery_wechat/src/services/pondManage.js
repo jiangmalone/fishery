@@ -5,6 +5,9 @@ export default {
     pondQuery: (params) => {
         return get('api/pond/query', params)
     },
+    wxQuery: (params) => {
+        return get('api/pond/wxQuery', params)
+    },
     addPond:(params)=>{
         return post('api/pond/addPond',params)
     },

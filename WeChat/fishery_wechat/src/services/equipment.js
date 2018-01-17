@@ -32,6 +32,10 @@ export default {
 
     setLimit: (params) => {
         return get('api/equipment/limit', params);
+    },
+
+    myEquipment: (params) => {
+        return get('api/equipment/myEquipment', params);
     }
 
 

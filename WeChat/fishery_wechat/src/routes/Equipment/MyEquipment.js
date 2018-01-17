@@ -4,28 +4,17 @@ import { Flex, Toast, ActivityIndicator, List, Button, Modal, ActionSheet } from
 import { withRouter } from "react-router-dom";
 import { connect } from 'dva';
 import Accordion from '../../components/Accordion';
-import { queryEquipment } from '../../services/equipment.js'; //接口
-const sensors = [{
-    name: '传感器一号',
-    id: 1
-}]
-const controllers = [{
-    name: '控制器一号',
-    id: 2
-}, {
-    name: '控制器二号',
-    id: 4
-}]
-const allInOnes = [{
-    name: '一体机一号',
-    id: 3
-}]
+import { myEquipment, deleteEquipment } from '../../services/equipment.js'; //接口
+
 class MyEquipment extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
             list: this.props.list,
+            aios: [],
+            controllers: [],
+            sensors: [],
             isEdit: false,
             animating: false
         }
@@ -33,15 +22,22 @@ class MyEquipment extends React.Component {
 
     componentDidMount() {
         this.setState({ animating: true })
-        queryEquipment({
-            page: 1,
-            number: 99,
-            relation: 14,
+        myEquipment({
+            relation: 'WX4',
         }).then((res) => {
-            console.log(res);
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
-
+                const data = res.data;
+                console.log(data);
+                if (data.aio && data.aio.length > 0) {
+                    this.setState({ aios: data.aio })
+                }
+                if (data.controller && data.controller.length > 0) {
+                    this.setState({ controllers: data.controller })
+                }
+                if (data.sensor && data.sensor.length > 0) {
+                    this.setState({ sensors: data.sensor })
+                }
             } else {
                 Toast.fail(res.data.msg, 1);
             }
@@ -52,30 +48,41 @@ class MyEquipment extends React.Component {
         });
     }
 
-    wouldDelete = (e, id) => {
+    wouldDelete = (e, device_sn) => {
         const BUTTONS = ['删除', '取消'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
             cancelButtonIndex: BUTTONS.length - 1,
             destructiveButtonIndex: BUTTONS.length - 2,
-            // title: 'title',
             message: '您是否确定删除该设备？',
             maskClosable: true,
-            'data-seed': 'mypond',
-            // wrapProps,
         }, (buttonIndex) => {
             if (buttonIndex == 0) {
-                this.doDelete(id)
+                this.doDelete(device_sn)
             }
-            console.log(buttonIndex)
-            this.setState({ clicked: BUTTONS[buttonIndex] });
         });
         event.stopPropagation();
         event.stopImmediatePropagation();
     }
 
-    doDelete = (id) => {
-        console.log(id);
+    doDelete = (device_sn) => {
+        console.log(device_sn);
+        this.setState({ animating: true });
+        deleteEquipment({
+            device_sns: [device_sn]
+        }).then(res => {
+
+            this.setState({ animating: false });
+            if(res.data && res.data.code == 0) {
+                Toast.success('删除设备成功', 1);
+            } else {
+                Toast.fail(res.msg, 1);
+            }
+        }).catch(error => {
+            console.log(error);
+            this.setState({ animating: false });
+            Toast.success('删除设备失败', 1);
+        })
     }
 
     addEquipment = () => {
@@ -88,80 +95,95 @@ class MyEquipment extends React.Component {
         this.props.history.push('/addEquipment');
     }
 
-    checkDetail = (id) => {
+    checkDetail = (device_sn) => {
         this.props.dispatch({
             type: 'global/changeState',
             payload: {
                 transitionName: 'left'
             }
         })
-        this.props.history.push(`/equipmentManagement/${id}`);
+        this.props.history.push(`/equipmentManagement/${device_sn}`);
     }
 
     getController = (controllers) => {
         let cl = controllers.map((controller, index) => {
-            return (<div className='line' key={controller.id} onClick={() => this.checkDetail(controller.id)} >
-                {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e, controller.id)} >
-                </div>}
-                <div className='name' >
-                    {controller.name}
+            // const ports = controller.port_status.split("");
+            const ports = [0, 1, 1, 0];
+            return (
+                <div>
+                    {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e, controller.device_sn)} >
+                        </div>}
+                    <div className={this.state.isEdit ? 'line editLine' : 'line'} key={controller.id} onClick={() => this.checkDetail(controller.device_sn)} >
+                        <div className='name' >
+                            {controller.name}
+                        </div>
+                        <div className='right-imgs'>
+                            <div className={ports[0] ? 'online' : 'offline'} >1
+                    </div>
+                            <div className={ports[1] ? 'online' : 'offline'} >2
+                    </div>
+                            <div className={ports[2] ? 'online' : 'offline'} >3
+                    </div>
+                            <div className={ports[3] ? 'online' : 'offline'} >4
+                    </div>
+                        </div>
+                    </div>
                 </div>
-                <div className='right-imgs'>
-                    <div className='online' >1
-                    </div>
-                    <div className='offline' >2
-                    </div>
-                    <div className='offline' >3
-                    </div>
-                    <div className='offline' >4
-                    </div>
-                </div>
-            </div>)
+            )
         })
         return cl
     }
 
     getSensor = (sensors) => {
         let ss = sensors.map((sensor, index) => {
-            return (<div className='line' key={sensor.id} onClick={() => this.checkDetail(sensor.id)} >
-                {this.state.isEdit && <div className='delete-button' onClick={() => this.wouldDelete(sensor.id)} >
-                </div>}
-                <div className='name' >
-                    {sensor.name}
-                </div>
-                <div className='right-imgs'>
-                    <div className='online' >1
-                </div>
-                    <div className='offline' >2
-                </div>
-                </div>
-            </div>)
+            // const ports = sensor.port_status.split("");
+            const ports = [0, 1];
+            return (
+                <div>
+                    {this.state.isEdit && <div className='delete-button' onClick={() => this.wouldDelete(sensor.device_sn)} >
+                    </div>}
+                    <div className={this.state.isEdit ? 'line editLine' : 'line'} key={sensor.id} onClick={() => this.checkDetail(sensor.device_sn)} >
+
+                        <div className='name' >
+                            {sensor.name}
+                        </div>
+                        <div className='right-imgs'>
+                            <div className={ports[0] ? 'online' : 'offline'} >1
+                            </div>
+                            <div className={ports[1] ? 'online' : 'offline'} >2
+                            </div>
+                        </div>
+                    </div></div>)
         })
         return ss;
     }
 
     getAllInOne = (allInOnes) => {
         let aio = allInOnes.map((allInOne, index) => {
-            return (<div className='line' key={allInOne.id} onClick={() => this.checkDetail(allInOne.id)} >
-                {this.state.isEdit && <div className='delete-button' onClick={() => this.wouldDelete(allInOne.id)} >
-                </div>}
-                <div className='name' >
-                    {allInOne.name}
-                </div>
-                <div className='right-imgs'>
-                    <div className='online' >
+            return (
+                <div>
+                    {this.state.isEdit && <div className='delete-button' onClick={() => this.wouldDelete(allInOne.device_sn)} >
+                    </div>}
+                    <div className={this.state.isEdit ? 'line editLine' : 'line'} key={allInOne.id} onClick={() => this.checkDetail(allInOne.device_sn)} >
+
+                        <div className='name' >
+                            {allInOne.name}
+                        </div>
+                        <div className='right-imgs'>
+                            <div className={allInOne.status ? 'online' : 'offline'} >
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>)
+            )
         })
         return aio;
     }
-    
+
     render() {
-        //todo   把list分类成不同种的设备
-        let controller = this.getController(controllers);
-        let sensor = this.getSensor(sensors);
-        let allInOne = this.getAllInOne(allInOnes);
+        let controller = this.getController(this.state.controllers);
+        let sensor = this.getSensor(this.state.sensors);
+        let allInOne = this.getAllInOne(this.state.aios);
         return <div className='my-equipment-bg' style={{ minHeight: window.document.body.clientHeight }}>
             <div className="nav-bar-title">
                 <i className="back" onClick={() => {
@@ -174,7 +196,7 @@ class MyEquipment extends React.Component {
                     })
                 }}></i>
                 我的设备
-                <i  className={this.state.isEdit ? 'right-item-none' : "edit"}
+                <i className={this.state.isEdit ? 'right-item-none' : "edit"}
                     onClick={() => this.setState({ isEdit: !this.state.isEdit })} >
                     {this.state.isEdit && "取消"}
                 </i>

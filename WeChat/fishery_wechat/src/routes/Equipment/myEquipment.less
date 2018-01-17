@@ -13,22 +13,25 @@
             background-color: #eef7f9;
             margin-bottom: .3rem;
             padding: .3rem .3rem .6rem .3rem;
+            .delete-button {
+                display: inline-block;
+                width: .5rem;
+                height: .5rem;
+                margin-right: .1rem;
+                background: url(../../img/btn_remove.png);
+                background-size: 100% 100%;
+                vertical-align: middle;
+                margin-top: -.15rem;
+            }
             .line{
+                display: inline-block;
+                width: 100%;
                 height: .6rem;
                 position: relative;
-
+                margin: 0 0;
                 padding-top: .4rem;
+                width: 100%;
                 border-bottom: #b9b8b8 .01rem solid;
-                .delete-button {
-                    display: inline-block;
-                    width: .5rem;
-                    height: .5rem;
-                    margin-right: .1rem;
-                    background: url(../../img/btn_remove.png);
-                    background-size: 100% 100%;
-                    vertical-align: middle;
-                    margin-top: -.15rem;
-                }
                 .name{
                     display: inline-block;
                     margin-left: .1rem;
@@ -52,16 +55,17 @@
                         line-height: .1rem;
                     }
                     .online{
-                        background-image: url(../../img/equ_link_on.png);
-                        
+                        background-image: url(../../img/equ_link_on.png);  
                     }
 
                     .offline{
                         background-image: url(../../img/equ_link_off.png);
-                        
                     }
                     
                 }
+            }
+            .editLine {
+                width: 90.4%;
             }
         }
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import './main.less'
-import { Flex, Toast, List, Switch, Button, ActionSheet } from 'antd-mobile'
+import { Flex, Toast, List, Switch, Button, ActionSheet, ActivityIndicator } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
 import BottomTabBar from '../../components/TabBar';
 import Accordion from '../../components/Accordion';
@@ -16,8 +16,9 @@ class Main extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            animating: false,
             waterCheck1: false,
-            waterCheck2: false,     
+            waterCheck2: false,
             ponds: [],            //池塘列表
             temp: '** ~ ** ℃',   //天气的温度区间
             weatherIcon: '',      //天气的icon名称
@@ -34,14 +35,22 @@ class Main extends React.Component {
     }
 
     queryPonds = () => {
+        this.setState({animating: true});
         pondQuery({
             page: 1,
-            number: 99
+            number: 99,
+            relation: 'wx4',
         }).then((res) => {
+
+            this.setState({animating: false});
+            console.log(res)
             if (res.data.code == '0') {
                 this.setState({ ponds: res.data.data })
             }
-        }).catch((error) => { console.log(error) });
+        }).catch((error) => { 
+            this.setState({animating: false});
+            console.log(error) 
+        });
     }
 
     getWeather = (city) => {
@@ -50,8 +59,10 @@ class Main extends React.Component {
         }).then((res) => {
             if (res.status = 1) {
                 let data = res.data;
-                if (data.forecasts && data.forecasts.length >= 1 && data.forecasts[0].casts && data.forecasts[0].casts.length >= 1) {
-
+                if (data.forecasts &&
+                    data.forecasts.length >= 1 &&
+                    data.forecasts[0].casts &&
+                    data.forecasts[0].casts.length >= 1) {
                     let today = data.forecasts[0].casts[0];
                     let temp = today.nighttemp + ' ~ ' + today.daytemp + ' ℃';
                     let dayweather = this.getWeatherIconName(today.dayweather);
@@ -81,8 +92,14 @@ class Main extends React.Component {
         }
     }
 
-    queryEquipment = () => {
-
+    checkEquipment = (device_sn) => {
+        this.props.dispatch({
+            type: 'global/changeState',
+            payload: {
+                transitionName: 'left'
+            }
+        })
+        this.props.history.push(`/sensorDetail/${device_sn}`);
     }
 
     showActionSheet = (id) => {
@@ -95,51 +112,53 @@ class Main extends React.Component {
             maskClosable: true,
             'data-seed': 'logId',
         }, (buttonIndex) => {
-                if (buttonIndex == 2) {
-                    this.props.dispatch({
-                        type: 'global/changeState',
-                        payload: {
-                            transitionName: 'left'
-                        }
-                    })
-                    this.props.history.push(`/autoOrxygenationSetting/${id}`);
-                }
+            if (buttonIndex == 2) {
+                this.props.dispatch({
+                    type: 'global/changeState',
+                    payload: {
+                        transitionName: 'left'
+                    }
+                })
+                this.props.history.push(`/autoOrxygenationSetting/${id}`);
+            }
         });
     }
 
-    getEquipment = () => {
-        return <div className='equipment'>
-            <div className='line border-line' >
-                <div className='name' >
-                    传感器1
+    getEquipment = (sensor) => {
+        return <div className='equipment' key={sensor.id}  >
+            <div onClick={() => this.checkEquipment(1)} >
+                <div className='line border-line' >
+                    <div className='name' >
+                        {sensor.name}
+                    </div>
+                    <div className={sensor.status ? 'right-text normal-state' : 'right-text unnormal-state'}>
+                        {sensor.status ? '正常' : '异常'}
+                    </div>
                 </div>
-                <div className='right-text normal-state'>
-                    正常
+                <div className='line' >
+                    <div className='name' >
+                        溶氧
                 </div>
-            </div>
-            <div className='line' >
-                <div className='name' >
-                    溶氧
+                    <div className='right-text'>
+                        {sensor.oxygen}
+                    </div>
                 </div>
-                <div className='right-text'>
-                    10.25
+                <div className='line' >
+                    <div className='name' >
+                        水温
                 </div>
-            </div>
-            <div className='line' >
-                <div className='name' >
-                    水温
+                    <div className='right-text'>
+                        {sensor.water_temperature}℃
                 </div>
-                <div className='right-text'>
-                    25.6℃
                 </div>
-            </div>
 
-            <div className='line' >
-                <div className='name' >
-                    PH值
+                <div className='line' >
+                    <div className='name' >
+                        PH值
                 </div>
-                <div className='right-text'>
-                    7
+                    <div className='right-text'>
+                        {sensor.pH_value}
+                    </div>
                 </div>
             </div>
 
@@ -173,10 +192,25 @@ class Main extends React.Component {
 
     getPondsAccordion = () => {
         const ponds = this.state.ponds;
-        let equipemnts = this.getEquipment();
         return ponds.map((pond, index) => {
+            // let equipemnts = this.getEquipment();
+            let sensors = pond.sensor ? pond.sensor : [{
+                name: '传感器一号',
+                status: 0,
+                oxygen: 100,
+                water_temperature: 33,
+                pH_value: 6.9
+            }, {
+                name: '传感器一号',
+                status: 1,
+                oxygen: 100,
+                water_temperature: 33,
+                pH_value: 6.9
+            }];
             return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} >
-                {equipemnts}
+                {sensors.map((sensor, index) => {
+                    return this.getEquipment(sensor);
+                })}
             </Accordion>)
         })
     }
@@ -192,6 +226,11 @@ class Main extends React.Component {
                 {ponds}
             </div>
             <BottomTabBar nowTab={1} />
+            <ActivityIndicator
+                toast
+                text="Loading..."
+                animating={this.state.animating}
+            />
         </div>
     }
 }

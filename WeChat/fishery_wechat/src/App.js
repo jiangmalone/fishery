@@ -48,7 +48,6 @@ const App = (props) => {
         transitionLeaveTimeout={400}
     // transitionAppear = {true}
     >
-        {/* <Switch> */}
         <div key={props.location.pathname} style={styles.content} >
             <Route location={props.location} path="/alarm" component={Alarm} />
             <Route location={props.location} path="/main" component={Main} />
@@ -63,13 +62,11 @@ const App = (props) => {
             <Route location={props.location} path="/addEquipment" component={AddEquipment} />
             <Route location={props.location} path="/addEquipmentDetail/:equipmentCode" component={AddEquipmentDetail} />
             <Route location={props.location} path="/myEquipment" component={MyEquipment} />
-            <Route location={props.location} exact path="/equipmentManagement/:storeId" component={EquipmentManagement} />
+            <Route location={props.location} exact path="/equipmentManagement/:equipmentId" component={EquipmentManagement} />
             <Route location={props.location} exact path="/bindEquipment/:id" component={BindEquipment} />
-            <Route location={props.location} exact path="/sensorDetail" component={SensorDetail} />
-
+            <Route location={props.location} exact path="/sensorDetail/:device_sn" component={SensorDetail} />
             <Route location={props.location} exact path="/address" component={AddAddress} />
             {/* <Route component={NotFound}/> */}
-            {/* </Switch> */}
         </div>
     </CSSTransitionGroup>
     </div> : <Redirect to={{

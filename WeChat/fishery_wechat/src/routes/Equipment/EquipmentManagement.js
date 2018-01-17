@@ -14,31 +14,51 @@ class EquipmentManagement extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            animating: false
+            animating: false,
+            
         }
     }
 
     componentDidMount() {
-        // console.log( this.props.match.params.storeId)
+        if (this.props.match.params.equipmentId) {
+            this.queryEquipment();
+        } else {
+            Toast.fail('系统错误，请退出重试', 1);
+            setTimeout(() => {
+                history.back();
+                this.props.dispatch({
+                    type: 'global/changeState',
+                    payload: {
+                        transitionName: 'right'
+                    }
+                })
+            }, 1000)
+        }
+    }
+
+    queryEquipment = () => {
         queryEquipment({
-            device_sn: this.props.match.params.storeId,
+            device_sn: this.props.match.params.equipmentId,
             page: 1,
             number: 1,
             // relation: 14,
         }).then((res) => {
             console.log(res);
-            this.setState({animating: false})
+            this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
-                
+
             } else {
                 Toast.fail(res.data.msg, 1);
             }
-
         }).catch((error) => {
-            this.setState({animating: false});
+            this.setState({ animating: false });
             Toast.fail('请求失败!', 1);
-            console.log(error) 
+            console.log(error)
         });
+    }
+
+    getBindedPort = () => {
+
     }
 
     unlockEquipment = (port) => {
@@ -59,22 +79,21 @@ class EquipmentManagement extends React.Component {
     }
 
     doUnbindEquipment = (port) => {
-        this.setState({animating: true});
+        this.setState({ animating: true });
         delSensorOrAIOBind({
-            sensorId: this.props.match.params.storeId,
+            sensorId: this.props.match.params.equipmentId,
             sensor_port: port
         }).then(res => {
-            this.setState({animating: false});
+            this.setState({ animating: false });
             if (res.data && res.data.code == 0) {
                 Toast.success('解绑成功！', 1);
-
             } else {
                 Toast.fail(res.data.msg, 1);
             }
         }).catch((error) => {
-            this.setState({animating: false});
+            this.setState({ animating: false });
             Toast.fail('解绑失败，请重试！', 1);
-            console.log(error); 
+            console.log(error);
         });
     }
 
@@ -86,7 +105,7 @@ class EquipmentManagement extends React.Component {
                 transitionName: 'left'
             }
         })
-        this.props.history.push(`/bindEquipment/${this.props.match.params.storeId}`);
+        this.props.history.push(`/bindEquipment/${this.props.match.params.equipmentId}`);
     }
 
     render() {
@@ -98,7 +117,7 @@ class EquipmentManagement extends React.Component {
                 </div>
                 <div className='state' >
                     <img src={offline} />
-                    <span  className='offline'  >
+                    <span className='offline'  >
                         离线
                     </span>
                 </div>
@@ -107,7 +126,7 @@ class EquipmentManagement extends React.Component {
                 <div className='prot-name-line' >
                     <div className='left'>端口名称：端口1（未绑定）</div>
                     <div className='right binded'>
-                    绑定
+                        绑定
                     </div>
                 </div>
             </div>
@@ -116,7 +135,7 @@ class EquipmentManagement extends React.Component {
                 <div className='prot-name-line' >
                     <div className='left '>端口名称：端口2（已绑定）</div>
                     <div className='right unbinded' onClick={() => this.unlockEquipment(2)} >
-                    解绑
+                        解绑
                     </div>
                 </div>
                 <div className='prot-info' >
@@ -125,8 +144,8 @@ class EquipmentManagement extends React.Component {
                 </div>
                 <div className='prot-name-line' >
                     <div className='left '>端口名称：端口2（未绑定）</div>
-                    <div className='right binded' onClick={() => {this.bindEquipment()}} >
-                    绑定
+                    <div className='right binded' onClick={() => { this.bindEquipment() }} >
+                        绑定
                     </div>
                 </div>
             </div>
@@ -134,7 +153,7 @@ class EquipmentManagement extends React.Component {
                 toast
                 text="Loading..."
                 animating={this.state.animating}
-              />
+            />
         </div>
     }
 }

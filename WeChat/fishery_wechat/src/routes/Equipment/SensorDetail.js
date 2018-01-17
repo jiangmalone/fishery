@@ -4,6 +4,7 @@ import { Popover, Icon, NavBar, List, ActivityIndicator, Toast } from 'antd-mobi
 import { withRouter } from "react-router-dom";
 import moment from 'moment';
 import offline from '../../img/equ_offline.png'
+import { connect } from 'dva'
 import online from '../../img/equ_online.png'
 const Item = Popover.Item;
 // import btn_list from '../../img/btn_list.png';
@@ -88,7 +89,7 @@ const waterCols = {
 };
 
 class SensorDetail extends React.Component {
-    
+
     constructor(props) {
         super(props)
         this.state = {
@@ -122,12 +123,12 @@ class SensorDetail extends React.Component {
         } else {
             let times = (Date.parse(today) / 1000) - (24 * 60 * 60 * 6);
             let newDate = new Date();
-            startTime =  moment(newDate.setTime(times * 1000)).format('YYYY-MM-DD HH:mm');
+            startTime = moment(newDate.setTime(times * 1000)).format('YYYY-MM-DD HH:mm');
         }
-        return {startTime, endTime}   
+        return { startTime, endTime }
     }
 
-    getData = ({startTime, endTime}) => {    //获得历史数据
+    getData = ({ startTime, endTime }) => {    //获得历史数据
         this.setState({ animating: true })
         getData({
             device_sn: '0300001',
@@ -158,8 +159,8 @@ class SensorDetail extends React.Component {
             if (res.data && res.data.code == 0) {
                 const data = res.data.data;
                 if (data) {
-                    this.setState({form: data});
-                } 
+                    this.setState({ form: data });
+                }
             } else {
                 Toast.fail(res.data.msg, 1);
             }
@@ -218,6 +219,11 @@ class SensorDetail extends React.Component {
         }
     }
 
+    calibration = (device_sn) => {
+        console.log('calibration');
+        console.log(device_sn);
+    }
+
     render() {
         const overlayAry = [];
         for (let i = 0; i < 3; i++) {
@@ -265,12 +271,13 @@ class SensorDetail extends React.Component {
                 >
                 </div>
             </Popover>
-            <div className='state-head' onClick={this.changeDetailShowState} >
-
-                <img src={offline} style={{ marginLeft: 0 }} />
-                <span>当前状态</span>
-                <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
-                <img src={correct} className='correct' />
+            <div className='state-head'  >
+                <div className='state-div' onClick={this.changeDetailShowState}>
+                    <img src={offline} style={{ marginLeft: 0 }} />
+                    <span>当前状态</span>
+                    <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
+                </div>
+                <img src={correct} className='correct' onClick={() => {this.calibration(this.props.match.params.device_sn)}} />
             </div>
             {this.state.isShowDetail && <div className='detail'>
                 <div>实时溶氧：&nbsp;&nbsp; 10.25</div>
@@ -325,4 +332,4 @@ class SensorDetail extends React.Component {
     }
 }
 
-export default withRouter(SensorDetail);
+export default connect()(SensorDetail);

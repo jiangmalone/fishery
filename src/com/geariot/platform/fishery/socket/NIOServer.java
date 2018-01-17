@@ -98,7 +98,7 @@ public class NIOServer {
 							// 取消读事件的监控 并在后面重新注册读，不然下一次读会阻塞
 							key.cancel();
 							// 调用读操作
-								RequestProcessor.ProcessorRequest(key,selector);
+								RequestProcessor.ProcessorRequest(key);
 							
 							
                  

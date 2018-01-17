@@ -2,7 +2,6 @@ package com.geariot.platform.fishery.socket;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class RequestProcessor {
     private static ExecutorService  executorService  = Executors.newFixedThreadPool(10);
    
    
-	public static void ProcessorRequest(final SelectionKey key,final Selector selector){
+	public static void ProcessorRequest(final SelectionKey key){
 		/*try {
 			
         	read(key);
@@ -36,9 +35,9 @@ public class RequestProcessor {
             public void run(){
                 try {
 					
-                	read(key, selector);
+                	read(key);
                 	
-                	System.out.println("read wan");
+                	
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					log.debug("IO异常");
@@ -47,7 +46,7 @@ public class RequestProcessor {
         });
     } 
 
-	public static void read(final SelectionKey key,final Selector selector) throws IOException {
+	public static void read(final SelectionKey key) throws IOException {
 		// 服务器可读取消息:得到事件发生的Socket通道
 				SocketChannel readChannel = (SocketChannel) key.channel();
 				// 创建读取的缓冲区
@@ -70,7 +69,7 @@ public class RequestProcessor {
 		DataHandle.handle(key); 
            //将下一个读放进队列里面，并在主线程里面注册下一次读
 		NIOServer.addQueen(key);
-           System.out.println("handle代码处理完");
+          
           
 		}
 	}

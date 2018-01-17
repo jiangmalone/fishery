@@ -27,108 +27,84 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations={"classpath:application.xml","classpath:springMVC.xml"})
+@ContextConfiguration(locations = { "classpath:application.xml", "classpath:springMVC.xml" })
 public class EquipmentControllerTest {
-	
+
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	private WebApplicationContext context;
-	
+
 	@Before
-	public void setup(){
+	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context).build();
 	}
-	
+
 	@Test
-	public void delTest() throws Exception{
-		mockMvc.perform(post("/equipment/delEquipments").
-				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sns", "0102030405")
-				.param("device_sns", "0202030405")
-				
-				)
-		.andDo(print()).andExpect(status().is2xxSuccessful());
-	}
-	
-	@Test
-	public void setLimitTest() throws Exception{
-		mockMvc.perform(post("/equipment/limit").
-				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sn", "1507375")
-				.param("low_limit", "1.1")
-				.param("up_limit", "9.1")
-				.param("high_limit", "11.1")
-				
-				)
-		.andDo(print()).andExpect(status().is2xxSuccessful());
-	}
-	
-	@Test
-	public void setTimerTest() throws Exception{
-		mockMvc.perform(post("/equipment/timer").
-				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sn", "032222220")
-				.param("startTime", "8:30")
-				.param("endTime", "16:30")
-				
-				
-				)
-		.andDo(print()).andExpect(status().is2xxSuccessful());
-	}
-	
-	@Test
-	public void excelExportTest() throws Exception{
-		mockMvc.perform(get("/equipment/exportData").
-				contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.param("device_sn", "032222220")
-				.param("startTime", "2017-12-27 14:03:13")
-				.param("endTime", "2017-12-27 14:03:14")
-				
-				
-				)
-		.andDo(print()).andExpect(status().is2xxSuccessful());
-	}
-	
-	@Test
-	public void realTimeData() throws Exception{
-		mockMvc.perform(get("/equipment/realTimeData").
-				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sn", "032222220")
-				
-				
-				
-				)
-		.andDo(print()).andExpect(status().is2xxSuccessful());
-	}
-	@Test
-	public void queryTest() throws Exception{
-		mockMvc.perform(get("/equipment/query").
-				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sn", "0402030405")
-				.param("relation", "1")
-				.param("name", "1")
-				.param("page", "0")
-				.param("number", "3")
-				
-				)
-		.andDo(print()).andExpect(status().is2xxSuccessful());
+	public void delTest() throws Exception {
+		mockMvc.perform(post("/equipment/delEquipments").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sns", "0102030405").param("device_sns", "0202030405")
+
+		).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 
 	@Test
-	public void addTest() throws Exception{
-		int i=0;
-		while(i<10) {
-		mockMvc.perform(post("/equipment/add").
-				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sn", String.format("0",i ))
-				.param("name", "1")
-				.param("relation", "1")
-				)
-		.andDo(print()).andExpect(status().is2xxSuccessful());
-		i++;
+	public void setLimitTest() throws Exception {
+		mockMvc.perform(post("/equipment/limit").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sn", "1507375").param("low_limit", "1.1").param("up_limit", "9.1")
+				.param("high_limit", "11.1")
+
+		).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
+
+	@Test
+	public void setTimerTest() throws Exception {
+		mockMvc.perform(post("/equipment/timer").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sn", "032222220").param("startTime", "8:30").param("endTime", "16:30")
+
+		).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+
+	@Test
+	public void excelExportTest() throws Exception {
+		mockMvc.perform(get("/equipment/exportData").contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
+				.param("device_sn", "032222220").param("startTime", "2017-12-27 14:03:13")
+				.param("endTime", "2017-12-27 14:03:14")
+
+		).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+
+	@Test
+	public void realTimeData() throws Exception {
+		mockMvc.perform(get("/equipment/realTimeData").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sn", "032222220")
+
+		).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+
+	@Test
+	public void queryTest() throws Exception {
+		mockMvc.perform(get("/equipment/query").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sn", "0402030405").param("relation", "1").param("name", "1").param("page", "0")
+				.param("number", "3")
+
+		).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+
+	@Test
+	public void addTest() throws Exception {
+		int i = 0;
+		while (i < 10) {
+			mockMvc.perform(post("/equipment/add").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.param("device_sn", String.format("0", i)).param("name", "1").param("relation", "1")).andDo(print())
+					.andExpect(status().is2xxSuccessful());
+			i++;
+		}
+	}
+	
+	@Test
+	public void myEquipmentTest() throws Exception {
+		mockMvc.perform(get("/equipment/myEquipment").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("relation", "WX4")).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 }
-

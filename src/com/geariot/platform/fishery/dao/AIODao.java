@@ -19,6 +19,8 @@ public interface AIODao {
 	List<AIO> queryAIOByNameAndRelation(String relation, String name, int from, int pageSize);
 	
 	List<AIO> findAIOsByPondId(int pondId);
+	
+	List<AIO> queryAIOByNameAndRelation(String relation, String name);
 
 	long queryAIOByNameAndRelationCount(String relation, String name);
 

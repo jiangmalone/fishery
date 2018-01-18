@@ -13,17 +13,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.geariot.platform.fishery.dao.AIODao;
+import com.geariot.platform.fishery.dao.CompanyDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.dao.LimitDao;
+import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.SensorDao;
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.ExcelData;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.socket.CMDUtils;
@@ -53,7 +57,18 @@ public class EquipmentService {
 	@Autowired
 	private Sensor_DataDao sensor_DataDao;
 	
+	@Autowired
+	private PondDao pondDao;
 	
+	@Autowired
+	private CompanyDao companyDao;
+	
+	private String type = "";
+	private String relation = "";
+	private Company company = null;
+	private AIO aio = null;
+	private Sensor sensor = null;
+	private Controller controller = null;
 
 	public Map<String, Object> setLimit(Limit_Install limit_Install) {
 		String deviceSn;
@@ -130,6 +145,14 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> queryEquipment(String device_sn, String relation, String name, int page, int number) {
+		
+		
+		
+		
+		
+		
+		
+		
 		String deviceSn;
 		try {
 			deviceSn = device_sn.trim().substring(0, 2);
@@ -254,4 +277,112 @@ public class EquipmentService {
 		return result;
 	}
 
+	public Map<String, Object> adminFindEquipment(String device_sn, String companyName, int page, int number) {
+		int from = (page - 1) * number;
+		if((device_sn == null || device_sn.length() < 0) && 
+				(companyName == null || companyName.length() < 0)){
+			return noConditionsQuery(from, number);
+		}
+		if((device_sn == null || device_sn.length() < 0) && 
+				(companyName != null && !companyName.isEmpty() && !companyName.trim().isEmpty())){
+			return companyConditionQuery(companyName, from, number);
+		}
+		if((device_sn != null && !device_sn.isEmpty() && !device_sn.trim().isEmpty()) &&
+				(companyName == null || companyName.length() <0)){
+			return deviceSnConditionQuery(device_sn, from, number);
+		}
+		return doubleConditionQuery(device_sn, companyName, from, number);
+	}
+
+	private Map<String, Object> doubleConditionQuery(String device_sn, String companyName, int from, int number) {
+		List<Company> companies = companyDao.companies(companyName);
+		List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, companies, from, number);
+		shareDealMethod(equipments);
+		long count = pondDao.adminFindEquipmentCountDouble(device_sn, companies);
+		int size = (int) Math.ceil(count / (double) number);
+		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+	}
+
+	private Map<String, Object> deviceSnConditionQuery(String device_sn, int from, int number) {
+		List<Equipment> equipments = pondDao.adminFindEquipmentBySn(device_sn);
+		shareDealMethod(equipments);
+		long count = pondDao.adminFindEquipmentCountSn(device_sn);
+		int size = (int) Math.ceil(count / (double) number);
+		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+	}
+
+	private Map<String, Object> companyConditionQuery(String companyName, int from, int number) {
+		List<Company> companies = companyDao.companies(companyName);
+		List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, from, number);
+		shareDealMethod(equipments);
+		long count = pondDao.adminFindEquipmentCountCo(companies);
+		int size = (int) Math.ceil(count / (double) number);
+		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+	}
+
+	private List<Equipment> shareDealMethod(List<Equipment> equipments){
+		for(Equipment equipment : equipments){
+			type = equipment.getDevice_sn().substring(0, 2);
+			switch(type){
+				case "01" : 
+					aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
+					relation = aio.getRelationId();
+					if(relation.contains("CO")){
+						company = companyDao.findCompanyByRelationId(relation);
+						equipment.setCompanyName(company.getName());
+						equipment.setCompanyId(company.getId());
+					}else{
+						equipment.setCompanyName("");
+						equipment.setCompanyId(0);
+					}
+					break;
+				case "02" : 
+					aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
+					relation = aio.getRelationId();
+					if(relation.contains("CO")){
+						company = companyDao.findCompanyByRelationId(relation);
+						equipment.setCompanyName(company.getName());
+						equipment.setCompanyId(company.getId());
+					}else{
+						equipment.setCompanyName("");
+						equipment.setCompanyId(0);
+					}
+					break;
+				case "03" : 
+					sensor = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn());
+					relation = sensor.getRelationId();
+					if(relation.contains("CO")){
+						company = companyDao.findCompanyByRelationId(relation);
+						equipment.setCompanyName(company.getName());
+						equipment.setCompanyId(company.getId());
+					}else{
+						equipment.setCompanyName("");
+						equipment.setCompanyId(0);
+					}
+					break;
+				case "04" : 
+					controller = controllerDao.findControllerByDeviceSns(equipment.getDevice_sn());
+					relation = controller.getRelationId();
+					if(relation.contains("CO")){
+						company = companyDao.findCompanyByRelationId(relation);
+						equipment.setCompanyName(company.getName());
+						equipment.setCompanyId(company.getId());
+					}else{
+						equipment.setCompanyName("");
+						equipment.setCompanyId(0);
+					}
+					break;
+				default : break;
+			}
+		}
+		return equipments;
+	}
+	
+	private Map<String, Object> noConditionsQuery(int from,  int number){
+		List<Equipment> equipments = pondDao.adminFindEquipmentAll(from, number);
+		shareDealMethod(equipments);
+		long count = pondDao.adminFindEquipmentCountAll();
+		int size = (int) Math.ceil(count / (double) number);
+		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+	}
 }

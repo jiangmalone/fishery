@@ -107,4 +107,10 @@ public class EquipmentControllerTest {
 		mockMvc.perform(get("/equipment/myEquipment").contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param("relation", "WX4")).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
+	
+	@Test
+	public void adminEquipmentTest() throws Exception {
+		mockMvc.perform(get("/equipment/adminFindEquipment").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("page", "1").param("number", "2").param("device_sn", "0001").param("companyName", "小易")).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
 }

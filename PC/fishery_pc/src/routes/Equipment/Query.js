@@ -12,15 +12,26 @@ import { Link } from 'react-router-dom'
 }))
 
 class EquipmentQuery extends PureComponent {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            device_sn: '',
+            name: '',
+        }
+    }
+
     componentDidMount() {
         this.onSearch()
     }
 
-    onSearch = (value) => {
+    onSearch = (device_sn, name, relation) => {
         this.props.dispatch({
             type: 'equipment/fetch',
             payload: {
-                relation:'wx4',
+                device_sn: device_sn,
+                name: name,
+                relation: relation,
                 number: 10,
                 page: 1
             },
@@ -44,10 +55,6 @@ class EquipmentQuery extends PureComponent {
                 },
             },
             {
-                title: '设备类型',
-                dataIndex: 'type',
-            },
-            {
                 title: '设备名称',
                 dataIndex: 'name',
             },
@@ -58,19 +65,23 @@ class EquipmentQuery extends PureComponent {
             {
                 title: '设备状态',
                 dataIndex: 'state',
-            },
-            {
-                title: '创建时间',
-                dataIndex: 'createTime',
             }
         ];
         return (
             <PageHeaderLayout>
                 <Card bordered={false}>
                     <Row style={{ marginBottom: '48px' }}>
-                        <Col span={8}>设备编号：<Input style={{ width: 200 }} /></Col>
-                        <Col span={8}>企业名称：<Input style={{ width: 200 }} /></Col>
-                        <Button type="primary" onClick={this.showAddModal}>查询</Button>
+                        <Col span={8}>设备编号：<Input style={{ width: 200 }} onChange={(e) => {
+                            this.setState({
+                                device_sn: e.target.value
+                            })
+                        }} /></Col>
+                        <Col span={8}>企业名称：<Input style={{ width: 200 }} onChange={(e) => {
+                            this.setState({
+                                name: e.target.value
+                            })
+                        }} /></Col>
+                        <Button type="primary" onClick={() => { this.onSearch(this.state.device_sn, this.state.name) }}>查询</Button>
                     </Row>
                     <Table loading={loading}
                         dataSource={this.props.list}

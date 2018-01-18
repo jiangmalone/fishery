@@ -13,7 +13,7 @@ import com.geariot.platform.fishery.entities.Timer;
 public class TimerTask {
 	 
 
-	public void timerOpen(Timer timer) {  
+	public void timerOpen(final Timer timer) {  
 	        Runnable runnableOpen = new Runnable() { 
 	            public void run() {  
 	                CMDUtils.serverOnOffOxygenCMD(timer, 1);

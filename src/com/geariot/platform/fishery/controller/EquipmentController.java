@@ -70,4 +70,9 @@ public class EquipmentController {
 	public Map<String, Object> adminFindEquipment(String device_sn, String companyName, int page, int number){
 		return equipmentService.adminFindEquipment(device_sn,companyName,page,number);
 	}
+	
+	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
+	public Map<String, Object> companyFindEquipment(String device_sn, String relationId, int page, int number){
+		return equipmentService.companyFindEquipment(device_sn, relationId, page, number);
+	}
 }

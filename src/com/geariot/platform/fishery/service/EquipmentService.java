@@ -2,6 +2,7 @@ package com.geariot.platform.fishery.service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -384,5 +385,27 @@ public class EquipmentService {
 		long count = pondDao.adminFindEquipmentCountAll();
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+	}
+
+	public Map<String, Object> companyFindEquipment(String device_sn, String relationId, int page, int number) {
+		int from = (page - 1) * number;
+		Company company = companyDao.findCompanyByRelationId(relationId);
+		if(company == null){
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else{
+			List<Company> companies = new ArrayList<>();
+			companies.add(company);
+			if(device_sn == null || device_sn.length()<0){
+				List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, from, number);
+				long count = pondDao.adminFindEquipmentCountCo(companies);
+				int size = (int) Math.ceil(count / (double) number);
+				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+			}else{
+				List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, companies, from, number);
+				long count = pondDao.adminFindEquipmentCountDouble(device_sn, companies);
+				int size = (int) Math.ceil(count / (double) number);
+				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+			}
+		}
 	}
 }

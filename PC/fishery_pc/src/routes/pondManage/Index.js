@@ -14,7 +14,8 @@ const Search = Input.Search;
     pagination: state.pond.pagination,
     modalVisible: state.pond.modalVisible,
     mapVisible: state.pond.mapVisible,
-    address: state.pond.address
+    address: state.pond.address,
+    fishCategories: state.pond.fishCategories
 }))
 
 class PondList extends PureComponent {
@@ -32,6 +33,9 @@ class PondList extends PureComponent {
 
     componentDidMount() {
         this.onSearch()
+        this.props.dispatch({
+            type: 'pond/fetchFishList'
+        })
     }
 
 
@@ -85,7 +89,7 @@ class PondList extends PureComponent {
         this.setState({
             mode: mode,
             index: index,
-            modifyId: record.id || ''
+            modifyId: record ? record.id : ''
         })
     }
 
@@ -112,11 +116,12 @@ class PondList extends PureComponent {
     }
 
     render() {
-        const { list, loading } = this.props;
+        const { list, loading, fishCategories, modalVisible, address } = this.props;
         const modalProps = {
-            visible: this.props.modalVisible,
+            visible: modalVisible,
             wrapClassName: 'vertical-center-modal',
-            address: this.props.address,
+            address: address,
+            fishCategories: fishCategories,
             onCancel: () => {
                 this.props.dispatch({
                     type: 'pond/changeModal',

@@ -31,3 +31,7 @@ export async function delPonds(params) {
     str = str.slice(0, -1)
     return request(`/api/pond/delPonds?${str}`)
 }
+
+export async function pondFish() {
+    return request(`/api/pond/fish`)
+}

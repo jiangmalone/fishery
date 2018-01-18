@@ -37,7 +37,7 @@ export const getNavData = app => [
               },
               {
                 path: ':id',
-                component: dynamicWrapper(app, ['commonuser'], () => import('../routes/CommonUser/UserInfo')),
+                component: dynamicWrapper(app, ['userDetail'], () => import('../routes/CommonUser/UserInfo')),
               },
             ]
           },
@@ -55,9 +55,14 @@ export const getNavData = app => [
                 path: ':id',
                 component: dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail')),
               },
+              {
+                // name: '企业用户',
+                path: '/equipment',
+                component: dynamicWrapper(app, [], () => import('../routes/Equipment/Query')),
+              },
             ],
           },
-          
+
           {
             // name: '企业用户',
             path: 'company-user-detail',
@@ -66,12 +71,12 @@ export const getNavData = app => [
           {
             name: '塘口管理',
             path: 'pondManage',
-            
+
             children: [
               {
                 path: '',
                 component: dynamicWrapper(app, ['pond'], () => import('../routes/pondManage/Index')),
-              },{
+              }, {
                 path: ':id',
                 component: dynamicWrapper(app, ['pond'], () => import('../routes/pondManage/Detail')),
               }
@@ -81,9 +86,9 @@ export const getNavData = app => [
       },
       {
         name: '设备查询',
-        path: 'basic',
+        path: 'equipmentsQuery',
         icon: 'bars',
-        component: dynamicWrapper(app, ['commonuser'], () => import('../routes/Equipment/Query')),
+        component: dynamicWrapper(app, ['equipment'], () => import('../routes/Equipment/Query')),
 
       },
       {
@@ -102,7 +107,7 @@ export const getNavData = app => [
             path: ':id',
             component: dynamicWrapper(app, ['equipment'], () => import('../routes/Equipment/EquipmentManagement')),
           },
-          
+
           {
             // name: '设备详情',
             path: 'detail',

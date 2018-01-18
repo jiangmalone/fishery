@@ -8,7 +8,7 @@ import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
 import fetch from 'dva/fetch';
 import { connect } from 'dva';
-import { pondQuery, pondEquipment } from '../../services/pondManage.js'; //接口
+import { pondQuery, pondEquipment, wxQuery } from '../../services/pondManage.js'; //接口
 import { getWeather } from '../../services/weather.js'; //接口
 
 class Main extends React.Component {
@@ -36,12 +36,9 @@ class Main extends React.Component {
 
     queryPonds = () => {
         this.setState({animating: true});
-        pondQuery({
-            page: 1,
-            number: 99,
-            relation: 'wx4',
+        wxQuery({
+            relation: 'WX4',
         }).then((res) => {
-
             this.setState({animating: false});
             console.log(res)
             if (res.data.code == '0') {
@@ -49,7 +46,7 @@ class Main extends React.Component {
             }
         }).catch((error) => { 
             this.setState({animating: false});
-            console.log(error) 
+            console.log(error);
         });
     }
 
@@ -103,6 +100,7 @@ class Main extends React.Component {
     }
 
     showActionSheet = (id) => {
+        const BUTTONS2 = ['确认打开', '取消', '自动增氧设置'];
         const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
@@ -194,7 +192,7 @@ class Main extends React.Component {
         const ponds = this.state.ponds;
         return ponds.map((pond, index) => {
             // let equipemnts = this.getEquipment();
-            let sensors = pond.sensor ? pond.sensor : [{
+            let sensors = pond.sensors ? pond.sensors : [{
                 name: '传感器一号',
                 status: 0,
                 oxygen: 100,

@@ -59,7 +59,6 @@ class UserList extends PureComponent {
                 name: key
             }
         }
-        console.log(formData)
         this.props.dispatch({
             type: 'commonUser/changeModal',
             payload: {

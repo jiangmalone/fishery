@@ -6,32 +6,35 @@ import { connect } from 'dva';
 import NavBar from '../../components/NavBar';
 import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
-import { delSensorOrAIOBind, delBind } from '../../services/bind.js'; //接口
+import { delBind } from '../../services/bind.js'; //接口
 import { queryEquipment } from '../../services/equipment.js';         //接口
 
 class EquipmentManagement extends React.Component {
 
     constructor(props) {
         super(props);
+        let type = this.props.match.params.device_sn.substring(0,2) ;
+        console.log(type);
         this.state = {
             animating: false,
-            
+            type: type,
+            equipmentData: {}
         }
     }
 
     componentDidMount() {
-        if (this.props.match.params.equipmentId) {
+        if (this.props.match.params.device_sn) {
             this.queryEquipment();
         } else {
             Toast.fail('系统错误，请退出重试', 1);
             setTimeout(() => {
-                history.back();
                 this.props.dispatch({
                     type: 'global/changeState',
                     payload: {
                         transitionName: 'right'
                     }
                 })
+                history.back();
             }, 1000)
         }
     }
@@ -57,8 +60,38 @@ class EquipmentManagement extends React.Component {
         });
     }
 
-    getBindedPort = () => {
+    getPorts = (portsData) => {
+        return portsData.map((port, index) => {
+            if (port.state) {
+                return getBindedPort(port);
+            } else {
+                return getUnbindPort(port);
+            }
+        })
+    }
 
+    getBindedPort = (portData) => {
+        return <div className='port-content' >
+            <div className='prot-name-line' >
+                <div className='left '>端口名称：端口2（已绑定）</div>
+                {(this.state.type == '03') && <div className='right unbinded' onClick={() => this.unlockEquipment(2)} >
+                    解绑
+                </div>}
+            </div>
+            <div className='prot-info' >
+                <div>设备绑定：控制器2</div>
+                <div>设备端口：端口2</div>
+            </div>
+        </div>
+    }
+
+    getUnbindPort = (portData) => {
+        return <div className='prot-name-line' >
+            <div className='left '>端口名称：端口2（未绑定）</div>
+            {(this.state.type == '03') && <div className='right binded' onClick={() => { this.bindEquipment({}) }} >
+                绑定
+            </div>}
+        </div>
     }
 
     unlockEquipment = (port) => {
@@ -97,15 +130,17 @@ class EquipmentManagement extends React.Component {
         });
     }
 
-    bindEquipment = () => {
-        console.log('lockEquipment');
+    bindEquipment = (port) => {
         this.props.dispatch({
             type: 'global/changeState',
             payload: {
                 transitionName: 'left'
             }
         })
-        this.props.history.push(`/bindEquipment/${this.props.match.params.equipmentId}`);
+        //传多个数据过去
+        let data = {equipmentId: this.props.match.params.equipmentId, port: port};
+        data = JSON.stringify(data);
+        this.props.history.push(`/bindEquipment/${data}`);
     }
 
     render() {
@@ -122,21 +157,19 @@ class EquipmentManagement extends React.Component {
                     </span>
                 </div>
             </div>
-            <div className='port-content' >
-                <div className='prot-name-line' >
-                    <div className='left'>端口名称：端口1（未绑定）</div>
-                    <div className='right binded'>
-                        绑定
-                    </div>
-                </div>
-            </div>
 
             <div className='port-content' >
                 <div className='prot-name-line' >
+                    <div className='left'>端口名称：端口1（未绑定）</div>
+                    {(this.state.type == '03') && <div className='right binded'>
+                        绑定
+                    </div>}
+                </div>
+                <div className='prot-name-line' >
                     <div className='left '>端口名称：端口2（已绑定）</div>
-                    <div className='right unbinded' onClick={() => this.unlockEquipment(2)} >
+                    {(this.state.type == '03') && <div className='right unbinded' onClick={() => this.unlockEquipment(2)} >
                         解绑
-                    </div>
+                    </div>}
                 </div>
                 <div className='prot-info' >
                     <div>设备绑定：控制器2</div>
@@ -144,9 +177,9 @@ class EquipmentManagement extends React.Component {
                 </div>
                 <div className='prot-name-line' >
                     <div className='left '>端口名称：端口2（未绑定）</div>
-                    <div className='right binded' onClick={() => { this.bindEquipment() }} >
+                    {(this.state.type == '03') && <div className='right binded' onClick={() => { this.bindEquipment() }} >
                         绑定
-                    </div>
+                    </div>}
                 </div>
             </div>
             <ActivityIndicator

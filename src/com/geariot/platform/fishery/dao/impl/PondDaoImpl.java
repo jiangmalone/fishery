@@ -6,6 +6,7 @@ package com.geariot.platform.fishery.dao.impl;
 
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.PondDao;
+import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.model.Equipment;
@@ -143,6 +145,167 @@ public class PondDaoImpl implements PondDao {
 						.addString("relation",relation)
 						.getQuery();
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Equipment> adminFindEquipmentAll(int from, int pageSize) {
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c");
+		return getSession().createSQLQuery(sb.toString())
+				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
+				.setFirstResult(from)
+				.setMaxResults(pageSize).list();
+	}
+
+	@Override
+	public long adminFindEquipmentCountAll() {
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select count(*) from (");
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c) ");
+		sb.append("as total");
+		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString()).uniqueResult();
+		return big.longValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Equipment> adminFindEquipmentByCo(List<Company> companies, int from, int pageSize) {
+		List<String> strings = new ArrayList<>();
+		for(Company company : companies){
+			strings.add(company.getRelationId());
+		}
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a where relationId in :relationIds ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b where relationId in :relationIds ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c where relationId in :relationIds ");
+		return getSession().createSQLQuery(sb.toString())
+				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
+				.setParameterList("relationIds", strings)
+				.setFirstResult(from)
+				.setMaxResults(pageSize).list();
+	}
+
+	@Override
+	public long adminFindEquipmentCountCo(List<Company> companies) {
+		List<String> strings = new ArrayList<>();
+		for(Company company : companies){
+			strings.add(company.getRelationId());
+		}
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select count(*) from (");
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a where relationId in :relationIds ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b where relationId in :relationIds ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c where relationId in :relationIds) ");
+		sb.append("as total");
+		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString()).setParameterList("relationIds", strings).uniqueResult();
+		return big.longValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Equipment> adminFindEquipmentBySn(String device_sn) {
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a where device_sn like :device_sn ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b where device_sn like :device_sn ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c where device_sn like :device_sn ");
+		return getSession().createSQLQuery(sb.toString()).setResultTransformer(Transformers.aliasToBean(Equipment.class))
+				.setString("device_sn", "%"+device_sn+"%").list();
+	}
+
+	@Override
+	public long adminFindEquipmentCountSn(String device_sn) {
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select count(*) from (");
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a where device_sn like :device_sn ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b where device_sn like :device_sn ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c where device_sn like :device_sn) ");
+		sb.append("as total");
+		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString()).setString("device_sn", "%"+device_sn+"%").uniqueResult();
+		return big.longValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Equipment> adminFindEquipmentDouble(String device_sn, List<Company> companies, int from, int pageSize) {
+		List<String> strings = new ArrayList<>();
+		for(Company company : companies){
+			strings.add(company.getRelationId());
+		}
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a where device_sn like :device_sn and relationId in :relationIds ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b where device_sn like :device_sn and relationId in :relationIds ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c where device_sn like :device_sn and relationId in :relationIds ");
+		return getSession().createSQLQuery(sb.toString())
+				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
+				.setString("device_sn", "%"+device_sn+"%")
+				.setParameterList("relationIds", strings)
+				.setFirstResult(from)
+				.setMaxResults(pageSize)
+				.list();
+	}
+
+	@Override
+	public long adminFindEquipmentCountDouble(String device_sn, List<Company> companies) {
+		List<String> strings = new ArrayList<>();
+		for(Company company : companies){
+			strings.add(company.getRelationId());
+		}
+		StringBuilder sb = new StringBuilder(2048);
+		sb.append("select count(*) from (");
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("from AIO a where device_sn like :device_sn and relationId in :relationIds ");
+		sb.append("UNION ALL ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("from Sensor b where device_sn like :device_sn and relationId in :relationIds ");
+		sb.append("UNION ALL ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("from Controller c where device_sn like :device_sn and relationId in :relationIds) ");
+		sb.append("as total");
+		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString())
+				.setString("device_sn", "%"+device_sn+"%")
+				.setParameterList("relationIds", strings)
+				.uniqueResult();
+		return big.longValue();
 	}
 
 }

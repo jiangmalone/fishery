@@ -76,5 +76,20 @@ public class CompanyDaoImpl implements CompanyDao {
 		return (long) query.uniqueResult();
 	}
 
+	@Override
+	public Company findCompanyByRelationId(String relationId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Company");
+		Query query = queryUtils.addString("relationId", relationId).getQuery();
+		return (Company) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Company> companies(String name) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Company");
+		Query query = queryUtils.addStringLike("name", name).getQuery();
+		return query.list();
+	}
+
 
 }

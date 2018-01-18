@@ -14,7 +14,6 @@ class EquipmentManagement extends React.Component {
     constructor(props) {
         super(props);
         let type = this.props.match.params.device_sn.substring(0,2) ;
-        console.log(type);
         this.state = {
             animating: false,
             type: type,
@@ -41,7 +40,7 @@ class EquipmentManagement extends React.Component {
 
     queryEquipment = () => {
         queryEquipment({
-            device_sn: this.props.match.params.equipmentId,
+            device_sn: this.props.match.params.device_sn,
             page: 1,
             number: 1,
             // relation: 14,

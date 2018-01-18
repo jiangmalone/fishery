@@ -35,17 +35,16 @@ class Main extends React.Component {
     }
 
     queryPonds = () => {
-        this.setState({animating: true});
+        this.setState({ animating: true });
         wxQuery({
             relation: 'WX4',
         }).then((res) => {
-            this.setState({animating: false});
-            console.log(res)
+            this.setState({ animating: false });
             if (res.data.code == '0') {
                 this.setState({ ponds: res.data.data })
             }
-        }).catch((error) => { 
-            this.setState({animating: false});
+        }).catch((error) => {
+            this.setState({ animating: false });
             console.log(error);
         });
     }
@@ -66,7 +65,9 @@ class Main extends React.Component {
                     this.setState({ temp: temp, weatherIcon: dayweather });
                 }
             }
-        }).catch((error) => { console.log(error) });
+        }).catch((error) => {
+            console.log(error)
+        });
     }
 
     getWeatherIconName = (dayweather) => {
@@ -124,7 +125,7 @@ class Main extends React.Component {
 
     getEquipment = (sensor) => {
         return <div className='equipment' key={sensor.id}  >
-            <div onClick={() => this.checkEquipment(1)} >
+            <div onClick={() => this.checkEquipment(sensor.device_sn)} >
                 <div className='line border-line' >
                     <div className='name' >
                         {sensor.name}
@@ -136,7 +137,7 @@ class Main extends React.Component {
                 <div className='line' >
                     <div className='name' >
                         溶氧
-                </div>
+                    </div>
                     <div className='right-text'>
                         {sensor.oxygen}
                     </div>
@@ -144,16 +145,16 @@ class Main extends React.Component {
                 <div className='line' >
                     <div className='name' >
                         水温
-                </div>
+                    </div>
                     <div className='right-text'>
                         {sensor.water_temperature}℃
-                </div>
+                    </div>
                 </div>
 
                 <div className='line' >
                     <div className='name' >
                         PH值
-                </div>
+                    </div>
                     <div className='right-text'>
                         {sensor.pH_value}
                     </div>
@@ -192,19 +193,7 @@ class Main extends React.Component {
         const ponds = this.state.ponds;
         return ponds.map((pond, index) => {
             // let equipemnts = this.getEquipment();
-            let sensors = pond.sensors ? pond.sensors : [{
-                name: '传感器一号',
-                status: 0,
-                oxygen: 100,
-                water_temperature: 33,
-                pH_value: 6.9
-            }, {
-                name: '传感器一号',
-                status: 1,
-                oxygen: 100,
-                water_temperature: 33,
-                pH_value: 6.9
-            }];
+            let sensors = pond.sensors ? pond.sensors : [];
             return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} >
                 {sensors.map((sensor, index) => {
                     return this.getEquipment(sensor);

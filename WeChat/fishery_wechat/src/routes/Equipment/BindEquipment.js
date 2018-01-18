@@ -56,7 +56,6 @@ class BindEquipment extends React.Component {
     doBindEquipment = () => {
         let data = this.props.match.params.data;
         data = JSON.parse(data); //{{equipmentId: this.props.match.params.equipmentId, port: data.port}}
-
         sensorWithController({
             sensorId: 0,
             sensor_port: 0,
@@ -81,7 +80,6 @@ class BindEquipment extends React.Component {
                 </div>
             </div>
             <div className='bind-info' >
-               
                 <List>
                     <Picker 
                     data={testData} 
@@ -105,11 +103,9 @@ class BindEquipment extends React.Component {
                     </Picker>
                 </List>
             </div>
-
             <div className='save-button' onClick={() => { this.doBindEquipment() }} >
                 保  存
             </div>
-
             <ActivityIndicator
                 toast
                 text="Loading..."

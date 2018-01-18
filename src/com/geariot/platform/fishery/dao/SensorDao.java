@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Sensor;
+import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.model.Equipment;
 
 public interface SensorDao {
@@ -25,4 +26,5 @@ public interface SensorDao {
 	long querySensorByNameAndRelationCount(String relation, String name);
 
 	List<Sensor> findSensorsByPondId(int pondId);
+	
 }

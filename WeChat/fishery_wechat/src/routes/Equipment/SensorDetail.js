@@ -94,7 +94,11 @@ class SensorDetail extends React.Component {
         super(props)
         this.state = {
             animating: false,
-            realTimeData: {},
+            realTimeData: {
+                oxygen: '',
+                water_temperature: '',
+                pH_value: ''
+            },
             title: '小渔塘-传感器1',
             visible: false,
             isShowMore: false,
@@ -131,7 +135,7 @@ class SensorDetail extends React.Component {
     getData = ({ startTime, endTime }) => {    //获得历史数据
         this.setState({ animating: true })
         getData({
-            device_sn: '0300001',
+            device_sn: this.props.match.params.device_sn,
             startTime: startTime,
             endTime: endTime,
         }).then((res) => {
@@ -152,14 +156,13 @@ class SensorDetail extends React.Component {
     getRealTimeData = () => {
         this.setState({ animating: true })
         getRealTimeData({
-            device_sn: '0300001',
+            device_sn: this.props.match.params.device_sn,
         }).then((res) => {
-            console.log(res);
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
                 const data = res.data.data;
                 if (data) {
-                    this.setState({ form: data });
+                    this.setState({ realTimeData: data });
                 }
             } else {
                 Toast.fail(res.data.msg, 1);
@@ -219,7 +222,7 @@ class SensorDetail extends React.Component {
         }
     }
 
-    calibration = (device_sn) => {
+    calibration = (device_sn) => {   //校准
         console.log('calibration');
         console.log(device_sn);
     }
@@ -280,9 +283,9 @@ class SensorDetail extends React.Component {
                 <img src={correct} className='correct' onClick={() => {this.calibration(this.props.match.params.device_sn)}} />
             </div>
             {this.state.isShowDetail && <div className='detail'>
-                <div>实时溶氧：&nbsp;&nbsp; 10.25</div>
-                <div>实时水温：&nbsp;&nbsp; 25℃</div>
-                <div>实时PH值：&nbsp;&nbsp; 7</div>
+                <div>实时溶氧：&nbsp;&nbsp; {this.state.realTimeData.oxygen}</div>
+                <div>实时水温：&nbsp;&nbsp; {this.state.realTimeData.water_temperature}℃</div>
+                <div>实时PH值：&nbsp;&nbsp; {this.state.realTimeData.pH_value}</div>
             </div>}
 
             <div className='button-line' >

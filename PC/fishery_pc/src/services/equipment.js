@@ -5,6 +5,11 @@ export async function queryEquipment(params) {
     return request(`/api/equipment/query?${stringify(params)}`);
 }
 
+export async function queryAdminEquipment(params) {
+    return request(`/api/equipment/adminFindEquipment?${stringify(params)}`);
+}
+
+
 export async function addEquipment(params) {
     return request(`/api/equipment/add?${stringify(params)}`);
 }

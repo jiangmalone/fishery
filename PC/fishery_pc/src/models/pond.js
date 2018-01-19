@@ -1,5 +1,5 @@
 import { queryFakeList, addUser } from '../services/api';
-import { queryPond, addPond, modifyPond, delPonds, pondEquipment ,pondFish} from '../services/pond'
+import { queryPond, addPond, modifyPond, delPonds, pondEquipment, pondFish } from '../services/pond'
 import update from 'immutability-helper'
 
 export default {
@@ -15,23 +15,23 @@ export default {
         formData: { fields: {} },
         pondList: [],
         pagination2: { current: 1 },
-        fishCategories:[]
+        fishCategories: []
     },
 
     effects: {
-        *fetchFishList({payload},{call,put}) {
+        *fetchFishList({ payload }, { call, put }) {
             const response = yield call(pondFish);
             console.log(response)
-            if(response.code =='0') {
+            if (response.code == '0') {
                 yield put({
-                    type:'changeModal',
-                    payload:{
-                        fishCategories:response.data||[] 
+                    type: 'changeModal',
+                    payload: {
+                        fishCategories: response.data || []
                     }
                 })
             }
             yield put({
-                type:'changeModal',
+                type: 'changeModal',
 
 
             })

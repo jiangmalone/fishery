@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd'
 import { Link } from 'react-router-dom'
+import { delSensorOrAIOBind } from '../../services/bind.js'
 
 const Search = Input.Search;
 @connect(state => ({
@@ -23,6 +24,37 @@ class PondDetail extends PureComponent {
                 number: 10
             },
         });
+    }
+
+    disconnect = (device_sn,type) => {
+        switch (type) {
+            case '01': this.yitiQuery(device_sn,2); break;
+            case '02': this.yitiQuery(device_sn,2); break;
+            case '03': this.yitiQuery(device_sn,1); break;
+            case '04': this.kongQuery(); break;
+        }
+    }
+
+    yitiQuery = (device_sn,type) => {
+        delSensorOrAIOBind({
+            device_sn:device_sn,
+            type:type,
+            pondId:this.props.match.params.id
+        }).then(
+            (res)=>{
+                console.log(res)
+                if(res.code == '0') {
+                    this.props.dispatch({
+                        type: 'pond/fetchEquipment',
+                        payload: {
+                            pondId: this.props.match.params.id,
+                            page: 1,
+                            number: 10
+                        },
+                    });
+                }
+            }
+        ).catch((error)=>{console.error()});
     }
 
     render() {
@@ -55,7 +87,7 @@ class PondDetail extends PureComponent {
             dataIndex: 'keyword',
             render: (text, record, index) => {
                 return <span>
-                    <Popconfirm title="确认要解绑嘛?" onConfirm={() => this.onDelete([record.account])}>
+                    <Popconfirm title="确认要解绑嘛?" onConfirm={() => this.disconnect(record.device_sn,record.device_sn.slice(0, 2))}>
                         <a href="javascript:void(0);">解绑</a>
                     </Popconfirm>
                 </span>

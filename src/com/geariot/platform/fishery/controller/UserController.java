@@ -67,4 +67,8 @@ public class UserController {
 		return userService.CompanyDetail(id);
 	}
 	
+	@RequestMapping(value = "/relationDetail" , method = RequestMethod.GET)
+	public Map<String,Object> relationDetail(String relationId){
+		return userService.relationDetail(relationId);
+	}
 }

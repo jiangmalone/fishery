@@ -141,4 +141,13 @@ public class UserService {
 		}
 		return RESCODE.SUCCESS.getJSONRES(company);
 	}
+
+	public Map<String, Object> relationDetail(String relationId) {
+		String type = relationId.substring(0, 2);
+		switch(type){
+			case "WX" : return WXUserDetail(Integer.parseInt(relationId.substring(2)));
+			case "CO" :	return CompanyDetail(Integer.parseInt(relationId.substring(2)));
+			default : return RESCODE.WRONG_PARAM.getJSONRES();
+		}
+	}
 }

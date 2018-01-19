@@ -169,6 +169,15 @@ public class PondService {
 		}
 		return RESCODE.SUCCESS.getJSONRES(ponds);
 	}
+
+	public Map<String, Object> pondDetail(int pondId) {
+		Pond pond = pondDao.findPondByPondId(pondId);
+		if(pond == null){
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else{
+			return RESCODE.SUCCESS.getJSONRES(pond);
+		}
+	}
 	
 	
 }

@@ -146,5 +146,13 @@ public class CompanyControllerTest {
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 
+	@Test
+	public void relationTest() throws Exception{
+		mockMvc.perform(get("/usermanagement/relationDetail").
+				contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("relationId", "CO14")
+				)
+		.andDo(print()).andExpect(status().is2xxSuccessful());
+	}
 	
 }

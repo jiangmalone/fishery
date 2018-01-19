@@ -50,8 +50,8 @@ public class PondController {
 	}
 	
 	@RequestMapping(value = "/wxQuery" , method = RequestMethod.GET)
-	public Map<String,Object> WXqueryPond(String relation){
-		return pondService.WXqueryPond(relation);
+	public Map<String,Object> WXqueryPond(String relationId){
+		return pondService.WXqueryPond(relationId);
 	}
 	
 	@RequestMapping(value = "/pondDetail" , method = RequestMethod.GET)

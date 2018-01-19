@@ -123,11 +123,11 @@ public class PondService {
 		return RESCODE.SUCCESS.getJSONRES(list);
 	}
 
-	public Map<String, Object> WXqueryPond(String relation) {
+	public Map<String, Object> WXqueryPond(String relationId) {
 		Sensor_Data sensor_Data = null;
 		AIO aioTemp = null;
 		List<AIO> temp = new ArrayList<>();
-		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, null);
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relationId, null);
 		for(Pond pond : ponds){
 			//塘口内添加sensor的list
 			List<Sensor> sensors = sensorDao.findSensorsByPondId(pond.getId());

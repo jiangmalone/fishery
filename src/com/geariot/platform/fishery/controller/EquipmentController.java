@@ -47,8 +47,8 @@ public class EquipmentController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
-	public Map<String, Object> addEquipment(String device_sn, String name, String relation) {
-		return equipmentService.addEquipment(device_sn, name, relation);
+	public Map<String, Object> addEquipment(String device_sn, String name, String relationId) {
+		return equipmentService.addEquipment(device_sn, name, relationId);
 	}
 
 	@RequestMapping(value = "/realTimeData", method = RequestMethod.GET)
@@ -62,8 +62,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value = "/myEquipment", method = RequestMethod.GET)
-	public Map<String, Object> myEquipment(String relation){
-		return equipmentService.myEquipment(relation);
+	public Map<String, Object> myEquipment(String relationId){
+		return equipmentService.myEquipment(relationId);
 	}
 	
 	@RequestMapping(value ="/adminFindEquipment", method = RequestMethod.GET)

@@ -189,7 +189,7 @@ public class EquipmentService {
 		}
 	}
 
-	public Map<String, Object> addEquipment(String device_sn ,String name, String relation) {
+	public Map<String, Object> addEquipment(String device_sn ,String name, String relationId) {
 		String deviceSn;
 		try {
 			deviceSn = device_sn.trim().substring(0, 2);
@@ -203,7 +203,7 @@ public class EquipmentService {
 				AIO aio=new AIO();
 				aio.setDevice_sn(device_sn);
 				aio.setName(name);
-				aio.setRelationId(relation);
+				aio.setRelationId(relationId);
 			aioDao.save(aio);
 			return RESCODE.SUCCESS.getJSONRES();
 		} else if (deviceSn.equals("03")) {
@@ -213,7 +213,7 @@ public class EquipmentService {
 			Sensor sensor=new Sensor();
 			sensor.setDevice_sn(device_sn);
 			sensor.setName(name);
-			sensor.setRelationId(relation);
+			sensor.setRelationId(relationId);
 			sensor.setPort_status("00");
 			sensorDao.save(sensor);
 			return RESCODE.SUCCESS.getJSONRES();
@@ -224,7 +224,7 @@ public class EquipmentService {
 			Controller controller=new Controller();
 			controller.setDevice_sn(device_sn);
 			controller.setName(name);
-			controller.setRelationId(relation);
+			controller.setRelationId(relationId);
 			controller.setPort_status("0000");
 			controllerDao.save(controller);
 			return RESCODE.SUCCESS.getJSONRES();
@@ -261,10 +261,10 @@ public class EquipmentService {
 		return null;
 	}
 	
-	public Map<String, Object> myEquipment(String relation){
-		List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(relation, null);
-		List<AIO> aios = aioDao.queryAIOByNameAndRelation(relation, null);
-		List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(relation, null);
+	public Map<String, Object> myEquipment(String relationId){
+		List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(relationId, null);
+		List<AIO> aios = aioDao.queryAIOByNameAndRelation(relationId, null);
+		List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(relationId, null);
 		Map<String, Object> result = RESCODE.SUCCESS.getJSONRES();
 		result.put("sensor", sensors);
 		result.put("controller", controllers);

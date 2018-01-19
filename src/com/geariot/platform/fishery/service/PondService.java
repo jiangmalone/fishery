@@ -85,10 +85,10 @@ public class PondService {
 		}
 	}
 	
-	public Map<String, Object> queryPond(String relation, String name, int page, int number){
+	public Map<String, Object> queryPond(String relationId, String name, int page, int number){
 		int from = (page - 1) * number;
-		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, name, from, number);
-		long count = this.pondDao.queryPondByNameAndRelationCount(relation, name);
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relationId, name, from, number);
+		long count = this.pondDao.queryPondByNameAndRelationCount(relationId, name);
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(ponds,size,count);
 	}

@@ -35,8 +35,8 @@ public class PondController {
 	}
 	
 	@RequestMapping(value = "/query" , method = RequestMethod.GET)
-	public Map<String,Object> queryPond(String relation, String name, int page, int number){
-		return pondService.queryPond(relation, name, page, number);
+	public Map<String,Object> queryPond(String relationId, String name, int page, int number){
+		return pondService.queryPond(relationId, name, page, number);
 	}
 	
 	@RequestMapping(value = "/pondEquipment" , method = RequestMethod.GET)

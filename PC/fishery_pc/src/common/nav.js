@@ -88,7 +88,7 @@ export const getNavData = app => [
         name: '设备查询',
         path: 'equipmentsQuery',
         icon: 'bars',
-        component: dynamicWrapper(app, ['equipment'], () => import('../routes/Equipment/Query')),
+        component: dynamicWrapper(app, ['allEquipment'], () => import('../routes/Equipment/AllEquipment')),
 
       },
       {

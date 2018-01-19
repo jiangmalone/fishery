@@ -145,15 +145,7 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	public Map<String, Object> queryEquipment(String device_sn, String relation, String name, int page, int number) {
-		
-		
-		
-		
-		
-		
-		
-		
+	/*public Map<String, Object> queryEquipment(String device_sn, String relation, String name, int page, int number) {
 		String deviceSn;
 		try {
 			deviceSn = device_sn.trim().substring(0, 2);
@@ -179,7 +171,7 @@ public class EquipmentService {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
 
-	}
+	}*/
 
 	public boolean exportData(String device_sn, String startTime, String endTime,HttpServletResponse response) {
 		DateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -222,6 +214,7 @@ public class EquipmentService {
 			sensor.setDevice_sn(device_sn);
 			sensor.setName(name);
 			sensor.setRelationId(relation);
+			sensor.setPort_status("00");
 			sensorDao.save(sensor);
 			return RESCODE.SUCCESS.getJSONRES();
 		} else if (deviceSn.equals("04")) {
@@ -232,6 +225,7 @@ public class EquipmentService {
 			controller.setDevice_sn(device_sn);
 			controller.setName(name);
 			controller.setRelationId(relation);
+			controller.setPort_status("0000");
 			controllerDao.save(controller);
 			return RESCODE.SUCCESS.getJSONRES();
 		} else {

@@ -42,4 +42,13 @@ public class BindController {
 		}
 	}
 	
+	@RequestMapping(value = "/delSensorControllerBind", method = RequestMethod.GET)
+	public Map<String, Object> delSensorControllerBind(int sensorId, int sensor_port){
+		return bindService.delSensorControllerBind(sensorId, sensor_port);
+	}
+	
+	@RequestMapping(value = "/bindSensorController", method = RequestMethod.GET)
+	public Map<String, Object> bindSensorController(int sensorId, int sensor_port, int controllerId, int controller_port){
+		return bindService.bindSensorController(sensorId, sensor_port, controllerId, controller_port);
+	}
 }

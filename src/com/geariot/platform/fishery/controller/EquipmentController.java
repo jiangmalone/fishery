@@ -36,10 +36,10 @@ public class EquipmentController {
 		return equipmentService.setTimer(timer);
 	}
 
-	@RequestMapping(value = "/query", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/query", method = RequestMethod.GET)
 	public Map<String, Object> queryEquipment(String device_sn, String relation, String name, int page, int number) {
 		return equipmentService.queryEquipment(device_sn, relation, name, page, number);
-	}
+	}*/
 
 	@RequestMapping(value = "/exportData", method = RequestMethod.GET)
 	public void exportData(String device_sn, String startTime, String endTime, HttpServletResponse response) {

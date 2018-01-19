@@ -36,10 +36,10 @@ public class EquipmentController {
 		return equipmentService.setTimer(timer);
 	}
 
-	@RequestMapping(value = "/query", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/query", method = RequestMethod.GET)
 	public Map<String, Object> queryEquipment(String device_sn, String relation, String name, int page, int number) {
 		return equipmentService.queryEquipment(device_sn, relation, name, page, number);
-	}
+	}*/
 
 	@RequestMapping(value = "/exportData", method = RequestMethod.GET)
 	public void exportData(String device_sn, String startTime, String endTime, HttpServletResponse response) {
@@ -47,8 +47,8 @@ public class EquipmentController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
-	public Map<String, Object> addEquipment(String device_sn, String name, String relation) {
-		return equipmentService.addEquipment(device_sn, name, relation);
+	public Map<String, Object> addEquipment(String device_sn, String name, String relationId) {
+		return equipmentService.addEquipment(device_sn, name, relationId);
 	}
 
 	@RequestMapping(value = "/realTimeData", method = RequestMethod.GET)
@@ -62,12 +62,17 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value = "/myEquipment", method = RequestMethod.GET)
-	public Map<String, Object> myEquipment(String relation){
-		return equipmentService.myEquipment(relation);
+	public Map<String, Object> myEquipment(String relationId){
+		return equipmentService.myEquipment(relationId);
 	}
 	
 	@RequestMapping(value ="/adminFindEquipment", method = RequestMethod.GET)
 	public Map<String, Object> adminFindEquipment(String device_sn, String companyName, int page, int number){
 		return equipmentService.adminFindEquipment(device_sn,companyName,page,number);
+	}
+	
+	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
+	public Map<String, Object> companyFindEquipment(String device_sn, String relationId, int page, int number){
+		return equipmentService.companyFindEquipment(device_sn, relationId, page, number);
 	}
 }

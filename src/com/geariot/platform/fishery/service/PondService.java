@@ -85,10 +85,10 @@ public class PondService {
 		}
 	}
 	
-	public Map<String, Object> queryPond(String relation, String name, int page, int number){
+	public Map<String, Object> queryPond(String relationId, String name, int page, int number){
 		int from = (page - 1) * number;
-		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, name, from, number);
-		long count = this.pondDao.queryPondByNameAndRelationCount(relation, name);
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relationId, name, from, number);
+		long count = this.pondDao.queryPondByNameAndRelationCount(relationId, name);
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(ponds,size,count);
 	}
@@ -123,11 +123,11 @@ public class PondService {
 		return RESCODE.SUCCESS.getJSONRES(list);
 	}
 
-	public Map<String, Object> WXqueryPond(String relation) {
+	public Map<String, Object> WXqueryPond(String relationId) {
 		Sensor_Data sensor_Data = null;
 		AIO aioTemp = null;
 		List<AIO> temp = new ArrayList<>();
-		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, null);
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relationId, null);
 		for(Pond pond : ponds){
 			//塘口内添加sensor的list
 			List<Sensor> sensors = sensorDao.findSensorsByPondId(pond.getId());
@@ -168,6 +168,23 @@ public class PondService {
 			pond.setAios(aios);
 		}
 		return RESCODE.SUCCESS.getJSONRES(ponds);
+	}
+
+	public Map<String, Object> pondDetail(int pondId) {
+		Pond pond = pondDao.findPondByPondId(pondId);
+		if(pond == null){
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else{
+			return RESCODE.SUCCESS.getJSONRES(pond);
+		}
+	}
+
+	public Map<String, Object> relationEquipment(String relationId, int page, int number) {
+		int from = ( page - 1 ) * number;
+		List<Equipment> equipments = pondDao.equipmentRelation(relationId, from, number);
+		long count = pondDao.equipmentRelationCount(relationId);
+		int size = (int) Math.ceil(count / (double) number);
+		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}
 	
 	

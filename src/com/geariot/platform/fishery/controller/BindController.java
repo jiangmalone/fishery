@@ -25,21 +25,30 @@ public class BindController {
 	private BindService bindService;
 	
 	@RequestMapping(value = "/pondWithSensorOrAIO", method = RequestMethod.GET)
-	public Map<String, Object> bindPondWithSensorOrAIO(String device_sn, int pondId, int type){
+	public Map<String, Object> bindPondWithSensorOrAIO(int id, int pondId, int type){
 		switch(type){
-			case 1 : return bindService.bindPondWithSensor(device_sn, pondId);
-			case 2 : return bindService.bindPondWithAIO(device_sn, pondId);
+			case 1 : return bindService.bindPondWithSensor(id, pondId);
+			case 2 : return bindService.bindPondWithAIO(id, pondId);
 			default : return RESCODE.WRONG_PARAM.getJSONRES();
 		}
 	}
 	
 	@RequestMapping(value = "/delSensorOrAIOBind", method = RequestMethod.GET)
-	public Map<String, Object> delPondWithSensorOrAIOBind(String device_sn, int type){
+	public Map<String, Object> delPondWithSensorOrAIOBind(int id, int type){
 		switch(type){
-			case 1 : return bindService.delPondWithSensorBind(device_sn);
-			case 2 : return bindService.delPondWithAIOBind(device_sn);
+			case 1 : return bindService.delPondWithSensorBind(id);
+			case 2 : return bindService.delPondWithAIOBind(id);
 			default : return RESCODE.WRONG_PARAM.getJSONRES();
 		}
 	}
 	
+	@RequestMapping(value = "/delSensorControllerBind", method = RequestMethod.GET)
+	public Map<String, Object> delSensorControllerBind(int sensorId, int sensor_port){
+		return bindService.delSensorControllerBind(sensorId, sensor_port);
+	}
+	
+	@RequestMapping(value = "/bindSensorController", method = RequestMethod.GET)
+	public Map<String, Object> bindSensorController(int sensorId, int sensor_port, int controllerId, int controller_port){
+		return bindService.bindSensorController(sensorId, sensor_port, controllerId, controller_port);
+	}
 }

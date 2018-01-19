@@ -32,6 +32,7 @@ public enum RESCODE {
 	NOT_BINDED(20,"所选设备与塘口并无绑定关系"),
 	NO_BIND_RELATION(21,"所选传感器与控制器无绑定关系"),
 	ALREADY_BIND_SENSOR_WITH_CONTROLLER(22,"所选控制器及端口已经存在绑定关系"),
+	EQUIPMENT_ALREADY_BIND_WITH_ONE_POND(23,"所选设备已经与塘口绑定了,请勿重复绑定"),
 	FOR_EXCEPTION
 	;
 	

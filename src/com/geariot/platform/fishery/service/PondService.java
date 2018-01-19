@@ -178,6 +178,14 @@ public class PondService {
 			return RESCODE.SUCCESS.getJSONRES(pond);
 		}
 	}
+
+	public Map<String, Object> relationEquipment(String relationId, int page, int number) {
+		int from = ( page - 1 ) * number;
+		List<Equipment> equipments = pondDao.equipmentRelation(relationId, from, number);
+		long count = pondDao.equipmentRelationCount(relationId);
+		int size = (int) Math.ceil(count / (double) number);
+		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+	}
 	
 	
 }

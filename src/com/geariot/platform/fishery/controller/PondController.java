@@ -58,4 +58,9 @@ public class PondController {
 	public Map<String, Object> pondDetail(int pondId){
 		return pondService.pondDetail(pondId);
 	}
+	
+	@RequestMapping(value = "/relationEquipment" , method = RequestMethod.GET)
+	public Map<String, Object> relationEquipment(String relationId, int page, int number){
+		return pondService.relationEquipment(relationId, page, number);
+	}
 }

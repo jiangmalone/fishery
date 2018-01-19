@@ -18,7 +18,7 @@ class MyPond extends PureComponent {
     componentDidMount(){
         this.props.dispatch({
             type:'pond/query',
-            payload: { relation: 'wx3', page: 1, number: 99 }
+            payload: { relationId: 'wx3', page: 1, number: 99 }
         })
     }
 

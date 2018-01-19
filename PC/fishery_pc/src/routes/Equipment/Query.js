@@ -31,7 +31,7 @@ class EquipmentQuery extends PureComponent {
             payload: {
                 device_sn: device_sn,
                 name: name,
-                relation: relation,
+                relationId: relation,
                 number: 10,
                 page: 1
             },

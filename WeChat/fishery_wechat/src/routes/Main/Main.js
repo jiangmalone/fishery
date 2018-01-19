@@ -8,7 +8,7 @@ import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
 import fetch from 'dva/fetch';
 import { connect } from 'dva';
-import { pondQuery, pondEquipment, wxQuery } from '../../services/pondManage.js'; //接口
+import {  wxQuery } from '../../services/pondManage.js'; //接口
 import { getWeather } from '../../services/weather.js'; //接口
 
 class Main extends React.Component {
@@ -37,7 +37,7 @@ class Main extends React.Component {
     queryPonds = () => {
         this.setState({ animating: true });
         wxQuery({
-            relation: 'WX4',
+             relationId: 'WX4',
         }).then((res) => {
             this.setState({ animating: false });
             if (res.data.code == '0') {

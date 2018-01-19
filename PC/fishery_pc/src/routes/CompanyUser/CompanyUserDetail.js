@@ -116,7 +116,6 @@ export default class CompanyUserDetail extends React.Component {
                             <Map plugins={['ToolBar']} >
                                 <Markers
                                     markers={this.state.markers}
-                                    
                                 />
                             </Map>
                         </div> : <Table

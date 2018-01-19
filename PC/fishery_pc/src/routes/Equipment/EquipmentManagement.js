@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Table, Row, Col, Card, Input, Button, Popconfirm } from 'antd';
+import { Table, Row, Col, Card, Input, Button, Popconfirm, message } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from "./equipmentManagement.less"
 import update from 'immutability-helper'
 import AddEquipment from './AddEquipment';
+import Switch from 'antd/lib/switch';
 
 @connect(state => ({
     list: state.equipment.list,
@@ -14,7 +15,7 @@ import AddEquipment from './AddEquipment';
 }))
 
 export default class EquipmentManagement extends React.Component {
-
+ 
     constructor(props) {
         super(props);
         this.state = {
@@ -31,11 +32,12 @@ export default class EquipmentManagement extends React.Component {
 
     componentDidMount() {
         this.props.dispatch({
-            type: 'equipment/fetch',
+            type: 'equipment/companyFindEquipment',
             payload: {
                 number: 10,
                 page: 1,
-                relation: this.props.match.params.id
+                // relationId: this.props.match.params.relation
+                relationId: 'CO1'
             },
         });
     }
@@ -65,8 +67,9 @@ export default class EquipmentManagement extends React.Component {
         this.props.dispatch({
             type: 'equipment/delEquipments',
             payload: {
-                equipmentIds: idArray,
-                pagination: this.props.pagination
+                device_sns: idArray,
+                pagination: this.props.pagination,
+                relationId:'CO1'
             },
         });
         this.setState({
@@ -89,11 +92,13 @@ export default class EquipmentManagement extends React.Component {
                 formData: { fields: formData }
             }
         })
-        this.showAddModal('modify', index, record.id)
+        this.showAddModal('modify', index, record.device_sn)
     }
 
     onOk = (values) => {
         if (isNaN(this.state.index)) {
+            values.current = this.props.pagination.current
+            values.relation = 'CO1';
             this.props.dispatch({
                 type: 'equipment/addEquipment',
                 payload: values,
@@ -131,13 +136,13 @@ export default class EquipmentManagement extends React.Component {
 
     doSearch = () => {
         this.props.dispatch({
-            type: 'equipment/fetch',
+            type: 'equipment/companyFindEquipment',
             payload: {
                 device_sn: this.state.device_sn,
                 name: this.state.name,
                 page: 1,
                 number: 10,
-                relation: this.props.match.params.id
+                relationId: 'CO1'
             },
         });
     }
@@ -147,10 +152,11 @@ export default class EquipmentManagement extends React.Component {
         const pager = { ...this.props.pagination };
         pager.current = pagination.current;
         this.props.dispatch({
-            type: 'equipment/fetch',
+            type: 'equipment/companyFindEquipment',
             payload: {
                 number: 10,
                 page: pagination.current,
+                relationId: 'CO1'
             },
         });
         this.props.dispatch({
@@ -168,7 +174,7 @@ export default class EquipmentManagement extends React.Component {
                 if (selected) {
                     origRows = [...origRows, ...changeRows];
                     for (let item of changeRows) {
-                        origKeys.push(item.id);
+                        origKeys.push(item.device_sn);
                     }
                 } else {
                     for (let change of changeRows) {
@@ -212,41 +218,88 @@ export default class EquipmentManagement extends React.Component {
         const columns = [
             {
                 title: '序号',
-                dataIndex: 'index'
+                dataIndex: 'index',
+                key: 'index',
+                render: (text, record, index) => {
+                    // console.log(record);
+                    return <span>{index + 1}</span>
+                }
             },
             {
                 title: '设备编号',
-                dataIndex: 'number',
+                dataIndex: 'device_sn',
                 render: (text, record, index) => {
-                    return <Link to={`equipment/${record.id}`}>{text}</Link>
+                    return <Link to={`/equipment/detail/${record.device_sn}`}>{text}</Link>
                 },
             },
             {
                 title: '设备类型',
-                dataIndex: 'type',
+                // dataIndex: 'type',
+                render: (text, record, index) => {
+                    let str = '';
+                    if (record.device_sn != undefined) {
+                        const type = record.device_sn.substring(0,2);
+                        switch (type) {
+                            case '01': 
+                            case '02': 
+                                str = '一体机';
+                                break;
+                            case '03':
+                                str = '传感器';
+                                break;
+                            case '04': 
+                                str = '控制器';
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    return (<span>{str}</span>)
+                }
             },
             {
                 title: '设备名称',
-                dataIndex: 'name',
+                dataIndex: 'name'
             },
             {
                 title: '设备状态',
-                dataIndex: 'state',
-            },
-            {
-                title: '创建时间',
-                dataIndex: 'createTime',
+                // dataIndex: 'status',
+                render: (text, record, index) => {
+                    let str = '';
+                    if (record.status != undefined) {
+                        switch (record.status) {
+                            case 0: 
+                                str = '正常';
+                                break;
+                            case 1: 
+                                str = '离线';
+                                break;
+                            case 2:
+                                str = '断电';
+                                break;
+                            case 3: 
+                                str = '缺相';
+                                break;
+                            case 4:
+                                str = '数据异常';
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    return (<span>{str}</span>)
+                }
             },
             {
                 title: '操作',
-                dataIndex: 'keyword',
+                // dataIndex: 'keyword',
                 render: (text, record, index) => {
                     return <span>
                         <span
                             onClick={() => { this.modifyInfo(record, index) }}>
                             <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a>
                         </span>
-                        <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
+                        <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.device_sn + ''])}>
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
                     </span>
@@ -297,9 +350,9 @@ export default class EquipmentManagement extends React.Component {
                         </div>
                         <Table
                             loading={this.props.loading}
-                            rowSelection={rowSelection}
                             dataSource={this.props.list}
                             columns={columns}
+                            rowSelection={rowSelection}
                             className={styles.table}
                             pagination={this.props.pagination}
                             onChange={this.handleTableChange}

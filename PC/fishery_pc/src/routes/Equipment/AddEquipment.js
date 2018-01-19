@@ -16,7 +16,7 @@ const formItemLayout = {
 function AddEquipment({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
     const { getFieldDecorator, validateFieldsAndScroll } = form;
 
-    return <Modal title={modifyId?"新增设备":'修改设备'}
+    return <Modal title={modifyId ? '修改设备' : "新增设备"}
         visible={visible}
         onOk={() => {
             let obj = {}
@@ -45,7 +45,7 @@ function AddEquipment({ visible, form, onOk, onCancel, wrapClassName,modifyId })
                     rules: [
                         { required: true, message: '请填写设备编号' },
                     ],
-                })(<Input style={{ width: 200 }} />)}
+                })(modifyId ? <Input style={{ width: 200 }} disabled /> : <Input style={{ width: 200 }}  />)}
             </FormItem>
         </Form>
     </Modal >

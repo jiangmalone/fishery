@@ -23,7 +23,7 @@ class MyEquipment extends React.Component {
     componentDidMount() {
         this.setState({ animating: true })
         myEquipment({
-            relation: 'WX4',
+            relationId: 'WX4',
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
@@ -93,14 +93,15 @@ class MyEquipment extends React.Component {
         this.props.history.push('/addEquipment');
     }
 
-    checkDetail = (device_sn) => {
+    checkDetail = (data) => {
         this.props.dispatch({
             type: 'global/changeState',
             payload: {
                 transitionName: 'left'
             }
         })
-        this.props.history.push(`/equipmentManagement/${device_sn}`);
+        const str = JSON.stringify(data);
+        this.props.history.push(`/equipmentManagement/${str}`);
     }
 
     getController = (controllers) => {
@@ -111,7 +112,7 @@ class MyEquipment extends React.Component {
                 <div key={controller.id}>
                     {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e, controller.device_sn)} >
                     </div>}
-                    <div className={this.state.isEdit ? 'line editLine' : 'line'} onClick={() => this.checkDetail(controller.device_sn)} >
+                    <div className={this.state.isEdit ? 'line editLine' : 'line'} onClick={() => this.checkDetail({device_sn : controller.device_sn, id: controller.id})} >
                         <div className='name' >
                             {controller.name}
                         </div>
@@ -142,7 +143,7 @@ class MyEquipment extends React.Component {
                     </div>}
                     <div
                         className={this.state.isEdit ? 'line editLine' : 'line'}
-                        onClick={() => this.checkDetail(sensor.device_sn)}
+                        onClick={() => this.checkDetail({device_sn : sensor.device_sn, id: sensor.id})}
                     >
                         <div className='name' >
                             {sensor.name}
@@ -171,7 +172,7 @@ class MyEquipment extends React.Component {
                     }
                     <div
                         className={this.state.isEdit ? 'line editLine' : 'line'}
-                        onClick={() => this.checkDetail(allInOne.device_sn)}
+                        onClick={() => this.checkDetail({device_sn : allInOne.device_sn, id: allInOne.id})}
                     >
                         <div className='name' >
                             {allInOne.name}

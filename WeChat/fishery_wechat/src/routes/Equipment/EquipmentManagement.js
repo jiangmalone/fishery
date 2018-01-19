@@ -1,29 +1,54 @@
 import React from 'react';
 import './equipmentManagement.less'
-import { ActionSheet, Toast, ActivityIndicator } from 'antd-mobile'
+import { ActionSheet, Toast, ActivityIndicator, Picker } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
 import { connect } from 'dva';
 import NavBar from '../../components/NavBar';
 import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
-import { delBind } from '../../services/bind.js'; //接口
 import { queryEquipment } from '../../services/equipment.js';         //接口
+import { wxQuery } from '../../services/pondManage.js'; //接口
+import { delBind, pondWithSensorOrAIO, delSensorOrAIOBind } from '../../services/bind.js';         //接口
+//delBind   传感器与控制器的 解绑 oxo
+//pondWithSensorOrAIO 一体机或传感器与塘口间的 绑定 o-o
+//delSensorOrAIOBind 一体机或传感器与塘口间的 解绑 oxo
+
+// 如果不是使用 List.Item 作为 children
+const CustomChildren = props => (
+    <div
+        onClick={props.onClick}
+        style={{ backgroundColor: '#fff', paddingLeft: 15 }}
+    >
+        <div className="test" style={{ display: 'flex', height: '45px', lineHeight: '45px' }}>
+            {/* <div style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{props.children}</div> */}
+            <div style={{ textAlign: 'right', color: '#888', marginRight: 15 }}>{props.extra}</div>
+        </div>
+    </div>
+);
 
 class EquipmentManagement extends React.Component {
 
     constructor(props) {
         super(props);
-        let type = this.props.match.params.device_sn.substring(0,2) ;
+        let equipmentData = JSON.parse(this.props.match.params.data)
+        let type = equipmentData.device_sn.substring(0, 2);
+        let device_sn = equipmentData.device_sn;
+        let id = equipmentData.id;
         this.state = {
             animating: false,
             type: type,
-            equipmentData: {}
+            id: id,
+            device_sn: device_sn,
+            equipmentData: {},
+            ponds: [],
+            pickerValue:[],
         }
     }
 
     componentDidMount() {
-        if (this.props.match.params.device_sn) {
+        if (this.state.id) {
             this.queryEquipment();
+            this.queryPond();
         } else {
             Toast.fail('系统错误，请退出重试', 1);
             setTimeout(() => {
@@ -38,13 +63,35 @@ class EquipmentManagement extends React.Component {
         }
     }
 
+    queryPond = () => {
+        this.setState({ animating: true });
+        wxQuery({
+            relationId: 'WX4',
+        }).then((res) => {
+            this.setState({ animating: false });
+            if (res.data.code == '0') {
+                const pond = res.data.data;
+                let ponds = []
+                pond.map((item, index) => {
+                    ponds.push({ label: item.name, value: item.id });
+                })
+                this.setState({ ponds: ponds });
+            }
+        }).catch((error) => {
+            this.setState({ animating: false });
+            console.log(error);
+        });
+    }
+
     queryEquipment = () => {
+        this.setState({ animating: true });
         queryEquipment({
-            device_sn: this.props.match.params.device_sn,
+            device_sn: this.state.device_sn,
             page: 1,
             number: 1,
             // relation: 14,
         }).then((res) => {
+            this.setState({ animating: false });
             console.log(res);
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
@@ -93,6 +140,34 @@ class EquipmentManagement extends React.Component {
         </div>
     }
 
+    getPond = () => {
+        return <div className='port-content' >
+            <div className='prot-name-line' >
+                <div className='pondLeft'>绑定塘口</div>
+
+                <div className='pondName' >
+                    
+                    <Picker
+                        title="选择地区"
+                        extra="请选择(可选)"
+                        data={this.state.ponds}
+                        cols={1}
+                        value={this.state.pickerValue}
+                        onChange={v => this.setState({ pickerValue: v })}
+                        onOk={v => this.setState({ pickerValue: v })}
+                    >
+                        <CustomChildren></CustomChildren>
+                    </Picker>
+                </div>
+
+
+                <div className='right unbinded' onClick={() => this.unBindPond(2)} >
+                    解绑
+                </div>
+            </div>
+        </div>
+    }
+
     unlockEquipment = (port) => {
         const BUTTONS = ['解绑', '取消'];
         ActionSheet.showActionSheetWithOptions({
@@ -112,7 +187,7 @@ class EquipmentManagement extends React.Component {
 
     doUnbindEquipment = (port) => {
         this.setState({ animating: true });
-        delSensorOrAIOBind({
+        delBind({
             sensorId: this.props.match.params.equipmentId,
             sensor_port: port
         }).then(res => {
@@ -137,12 +212,50 @@ class EquipmentManagement extends React.Component {
             }
         })
         //传多个数据过去
-        let data = {equipmentId: this.props.match.params.equipmentId, port: port};
+        let data = { equipmentId: this.props.match.params.equipmentId, port: port };
         data = JSON.stringify(data);
         this.props.history.push(`/bindEquipment/${data}`);
     }
 
+    unBindPond = () => {
+        const BUTTONS = ['解绑', '取消'];
+        ActionSheet.showActionSheetWithOptions({
+            options: BUTTONS,
+            cancelButtonIndex: BUTTONS.length - 1,
+            destructiveButtonIndex: BUTTONS.length - 2,
+            message: '您是否确定解绑该渔塘？',
+            maskClosable: true,
+            'data-seed': 'myEquipment',
+            // wrapProps,
+        }, (buttonIndex) => {
+            if (buttonIndex == 0) {
+                this.doUnbindPond();
+            }
+        });
+    }
+
+    doUnbindPond = () => {
+        this.setState({ animating: true });
+        delSensorOrAIOBind({
+            device_sn: this.props.match.params.equipmentId,
+            type: (this.state.type == '03' ? 1 : 2)
+        }).then(res => {
+            this.setState({ animating: false });
+            if (res.data && res.data.code == 0) {
+                Toast.success('解绑成功！', 1);
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch((error) => {
+            this.setState({ animating: false });
+            Toast.fail('解绑失败，请重试！', 1);
+            console.log(error);
+        });
+    }
+
+
     render() {
+        const pondLine = this.getPond();
         return <div className='equipment-management-bg' style={{ minHeight: window.document.body.clientHeight }}>
             <NavBar title={"设备管理"} />
             <div className='header-line' >
@@ -157,7 +270,8 @@ class EquipmentManagement extends React.Component {
                 </div>
             </div>
 
-            <div className='port-content' >
+            {pondLine}
+            {(this.state.type != '01' && this.state.type != '02') && <div className='port-content' >
                 <div className='prot-name-line' >
                     <div className='left'>端口名称：端口1（未绑定）</div>
                     {(this.state.type == '03') && <div className='right binded'>
@@ -180,7 +294,7 @@ class EquipmentManagement extends React.Component {
                         绑定
                     </div>}
                 </div>
-            </div>
+            </div>}
             <ActivityIndicator
                 toast
                 text="Loading..."

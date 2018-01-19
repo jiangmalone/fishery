@@ -104,7 +104,7 @@ export const getNavData = app => [
         children: [
           {
             // name: '设备管理',
-            path: ':id',
+            path: ':relation',
             component: dynamicWrapper(app, ['equipment'], () => import('../routes/Equipment/EquipmentManagement')),
           },
 

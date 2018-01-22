@@ -155,14 +155,14 @@ class BasicLayout extends React.PureComponent {
                 {icon}<span>{item.name}</span>
               </a>
             ) : (
-              <Link
-                to={itemPath}
-                target={item.target}
-                replace={itemPath === this.props.location.pathname}
-              >
-                {icon}<span>{item.name}</span>
-              </Link>
-            )
+                <Link
+                  to={itemPath}
+                  target={item.target}
+                  replace={itemPath === this.props.location.pathname}
+                >
+                  {icon}<span>{item.name}</span>
+                </Link>
+              )
           }
         </Menu.Item>
       );
@@ -273,8 +273,8 @@ class BasicLayout extends React.PureComponent {
           className={styles.sider}
         >
           <div className={styles.logo}>
-              <img src={logo} alt="logo" />
-              <h1> 渔&nbsp;&nbsp;  管&nbsp;&nbsp;  在&nbsp;&nbsp;  线 </h1>
+            <img src={logo} alt="logo" />
+            <h1> 渔&nbsp;&nbsp;  管&nbsp;&nbsp;  在&nbsp;&nbsp;  线 </h1>
           </div>
           <Menu
             theme="dark"
@@ -295,13 +295,13 @@ class BasicLayout extends React.PureComponent {
               onClick={this.toggle}
             />
             <div className={styles.right}>
-              
-              
-              {currentUser.name ? (
+
+
+              {localStorage.getItem('account') ? (
                 <Dropdown overlay={menu}>
                   <span className={`${styles.action} ${styles.account}`}>
-                    <Avatar size="small" className={styles.avatar} src={currentUser.avatar} />
-                    {currentUser.name}
+                    <Avatar size="small" className={styles.avatar} />
+                    {localStorage.getItem('account')}
                   </span>
                 </Dropdown>
               ) : <Spin size="small" style={{ marginLeft: 8 }} />}
@@ -327,7 +327,7 @@ class BasicLayout extends React.PureComponent {
               </Switch>
             </div>
             <GlobalFooter
-              
+
               copyright={
                 <div>
                   Copyright <Icon type="copyright" /> 2017 渔管在线

@@ -70,7 +70,11 @@ export default class CompanyUserList extends React.Component {
                 formData2: { fields: formData }
             }
         })
-        this.showAddModal2('add', index, record.id)
+        if(record.has) {
+            this.showAddModal2('add', index, record.id)
+        } else {
+            this.showAddModal2('modify', index, record.id)
+        }
     }
 
     showAddModal2 = (mode = 'add', index, id) => {
@@ -305,7 +309,7 @@ export default class CompanyUserList extends React.Component {
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
                         <span onClick={() => { this.openAccount(record, index) }}>
-                            <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>开户</a>
+                            <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>{record.has?'更户':'开户'}</a>
                         </span>
                     </span>
                 }

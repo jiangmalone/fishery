@@ -6,6 +6,8 @@ const Search = Input.Search;
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from "./companyUserList.less"
 import AddCompanyUser from './AddCompanyUser';
+import AddAccount from './AddAccount';
+import index from '../../../node_modules/_antd@3.0.1@antd/lib/col';
 
 @connect(state => ({
     list: state.companyUser.list,
@@ -21,6 +23,7 @@ export default class CompanyUserList extends React.Component {
             selectedRowKeys: [],
             showAddModal: false,
             modifyId: '',
+            modifyId2: '',
             mode: 'add',
             index: '',
         }
@@ -52,6 +55,45 @@ export default class CompanyUserList extends React.Component {
             modifyId: id
         })
     }
+
+    openAccount = (record, index) => {
+        let formData = {}
+        for (let key in record) {
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
+        }
+        this.props.dispatch({
+            type: 'companyUser/changeModal',
+            payload: {
+                formData2: { fields: formData }
+            }
+        })
+        if(record.has) {
+            this.showAddModal2('add', index, record.id)
+        } else {
+            this.showAddModal2('modify', index, record.id)
+        }
+    }
+
+    showAddModal2 = (mode = 'add', index, id) => {
+        if (!id && id != 0) {    //新增的话，清空之前可能有的数据
+            this.props.dispatch({
+                type: 'companyUser/changeModal',
+                payload: {
+                    formData2: { fields: {} }
+                }
+            })
+        }
+        this.setState({
+            showAddModal2: true,
+            mode2: mode,
+            index2: index,
+            modifyId2: id
+        })
+    }
+
 
     onDelete = (idArray) => {
         if (idArray.length <= 0) {
@@ -109,12 +151,38 @@ export default class CompanyUserList extends React.Component {
         })
     }
 
+    onOk2 = (values) => {
+        if (isNaN(this.state.index)) {
+            this.props.dispatch({
+                type: 'companyUser/addAccount',
+                payload: values,
+            });
+        } else {
+            values.id = this.state.modifyId
+            this.props.dispatch({
+                type: 'companyUser/modifyAccount',
+                payload: {
+                    index: this.state.index,
+                    data: values
+                },
+            });
+        }
+        this.setState({
+            showAddModal2: false
+        })
+    }
+
     onCancel = () => {
         this.setState({
             showAddModal: false
         })
     }
 
+    onCancel2 = () => {
+        this.setState({
+            showAddModal2: false
+        })
+    }
     handleTableChange = (pagination) => {
         const pager = { ...this.props.pagination };
         pager.current = pagination.current;
@@ -141,6 +209,8 @@ export default class CompanyUserList extends React.Component {
             },
         });
     }
+
+
 
     render() {
         const rowSelection = {
@@ -204,7 +274,7 @@ export default class CompanyUserList extends React.Component {
                 title: '名称',
                 dataIndex: 'name',
                 render: (text, redcord, index) => {
-                    return <Link to={`company-user/${redcord.id}`}>{text}</Link>
+                    return <Link to={`company-user/${redcord.id}/${redcord.relationId}`}>{text}</Link>
                 },
             },
             {
@@ -238,10 +308,28 @@ export default class CompanyUserList extends React.Component {
                         <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
+                        <span onClick={() => { this.openAccount(record, index) }}>
+                            <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>{record.has?'更户':'开户'}</a>
+                        </span>
                     </span>
                 }
             },
         ];
+
+        const modalProps1 = {
+            modifyId: this.state.modifyId,
+            visible: this.state.showAddModal,
+            onOk: this.onOk,
+            wrapClassName: 'vertical-center-modal',
+            onCancel: this.onCancel
+        }
+        const modalProps2 = {
+            modifyId: this.state.modifyId2,
+            visible: this.state.showAddModal2,
+            onOk: this.onOk2,
+            wrapClassName: 'vertical-center-modal',
+            onCancel: this.onCancel2
+        }
         return (
             <PageHeaderLayout >
                 <Card bordered={false}>
@@ -282,12 +370,9 @@ export default class CompanyUserList extends React.Component {
                     </div>
                 </Card>
                 <AddCompanyUser
-                    modifyId={this.state.modifyId}
-                    visible={this.state.showAddModal}
-                    onOk={this.onOk}
-                    wrapClassName='vertical-center-modal'
-                    onCancel={this.onCancel}
+                    {...modalProps1}
                 />
+                <AddAccount {...modalProps2} />
             </PageHeaderLayout>
         );
     }

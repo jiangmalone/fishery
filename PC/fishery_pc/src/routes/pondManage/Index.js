@@ -6,6 +6,7 @@ import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd';
 import { Link } from 'react-router-dom';
 import Addmodal from './Addmodal.js';
 import Mapmoal from './MapModal.js';
+import index from '../../../node_modules/_antd@3.0.1@antd/lib/col';
 
 const Search = Input.Search;
 @connect(state => ({
@@ -98,6 +99,7 @@ class PondList extends PureComponent {
             type: 'pond/fetch',
             payload: {
                 name: value,
+                relationId:this.props.match.params?this.props.match.params.relation:'',
                 number: 10,
                 page: 1
             },
@@ -110,9 +112,27 @@ class PondList extends PureComponent {
             type: 'pond/deletePond',
             payload: {
                 pondIds: idArray,
+                relationId:this.props.match.params?this.props.match.params.relation:'',
                 pagination: this.props.pagination
             },
         });
+    }
+
+    handleTableChange = (pagination) => {
+        const pager = { ...this.props.pagination };
+        pager.current = pagination.current;
+        this.props.dispatch({
+            type: 'pond/fetch',
+            payload: {
+                number: 10,
+                relationId:this.props.match.params?this.props.match.params.relation:'',
+                page: pagination.current,
+            },
+        });
+        this.props.dispatch({
+            type: 'pond/changeModal',
+            payload: { pagination: pager }
+        })
     }
 
     render() {
@@ -141,10 +161,10 @@ class PondList extends PureComponent {
             onOk: (values) => {
                 console.log(!this.state.modifyId, this.state.modifyId !== 0)
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
-                    values.relation = 'WX18';
+                    values.relation = this.props.match.params.relation;
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
-                    values.latitude = this.props.address.location.lat;
-                    values.longitude = this.props.address.location.lng;
+                    values.latitude =this.props.address.location? this.props.address.location.lat:'';
+                    values.longitude = this.props.address.location?this.props.address.location.lng:'';
                     this.props.dispatch({
                         type: 'pond/addPond',
                         payload: values,
@@ -252,7 +272,7 @@ class PondList extends PureComponent {
             dataIndex: 'name',
             key: 'name',
             render: (text, record, index) => {
-                return <Link to={`pondManage/${record.id}`}>{text}</Link>
+                return <Link to={`detail/${record.id}`}>{text}</Link>
             }
         }, {
             title: '面积（亩）',
@@ -266,6 +286,9 @@ class PondList extends PureComponent {
             title: '品种',
             dataIndex: 'fish_categorys',
             key: 'fish_categorys',
+            render:(text,record,index)=>{
+                return <span>{text?text.join(','):''}</span>
+            }
         }, {
             title: '池塘水源',
             dataIndex: 'water_source',
@@ -306,6 +329,7 @@ class PondList extends PureComponent {
                         dataSource={list}
                         columns={columns}
                         pagination={this.props.pagination}
+                        onChange={this.handleTableChange}
                         bordered
                     />
                     <Mapmoal {...mapModalProps} />

@@ -105,7 +105,7 @@ export default class CompanyUserDetail extends React.Component {
                         </Col>
 
                         <Col span={3} offset={10}>
-                            <Link to=""><Button type="primary">管理塘口</Button></Link>
+                            <Link to={`/userManage/pondManage/${this.props.match.params.relation}`}><Button type="primary">管理塘口</Button></Link>
                         </Col>
                         <Col span={3}>
                             <Link to={`/equipment/${this.props.match.params.id}`}><Button type="primary">管理设备</Button></Link>

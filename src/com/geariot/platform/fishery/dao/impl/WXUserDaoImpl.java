@@ -26,28 +26,24 @@ public class WXUserDaoImpl implements WXUserDao {
 	@Override
 	public WXUser findUserByOpenId(String openId) {
 		String hql = "from WXUser where openId= :openId ";
-		WXUser wxuser= (WXUser)getSession().createQuery(hql).setString("openId", openId).setCacheable(Constants.SELECT_CACHE).uniqueResult();
-		return wxuser;
+		return (WXUser)getSession().createQuery(hql).setString("openId", openId).setCacheable(Constants.SELECT_CACHE).uniqueResult();
 	}
 
 	@Override
 	public WXUser findUserByPhone(String phone) {
 		String hql = "from WXUser where phone= :phone ";
-		WXUser wxuser= (WXUser) getSession().createQuery(hql).setString("phone", phone).setCacheable(Constants.SELECT_CACHE).uniqueResult();
-		return wxuser;
+		return (WXUser) getSession().createQuery(hql).setString("phone", phone).setCacheable(Constants.SELECT_CACHE).uniqueResult();
 	}
 
 	@Override
 	public void deleteUser(int WXUserId) {
-		String hql = "delete from WXUser where Id in :Id";
-		this.getSession().createQuery(hql).setInteger("Id",WXUserId).executeUpdate();
-
+		String hql = "delete from WXUser where id = :id";
+		this.getSession().createQuery(hql).setInteger("id",WXUserId).executeUpdate();
 	}
 
 	@Override
 	public void updateUser(WXUser oldWXUser) {
 		this.getSession().merge(oldWXUser);
-
 	}
 
 	@Override
@@ -58,11 +54,12 @@ public class WXUserDaoImpl implements WXUserDao {
 
 	@Override
 	public WXUser findUserById(int Id) {
-		String hql = "from WXUser where Id= :Id ";
-		WXUser wxuser= (WXUser) getSession().createQuery(hql).setInteger("Id", Id).setCacheable(Constants.SELECT_CACHE).uniqueResult();
+		String hql = "from WXUser where id= :id ";
+		WXUser wxuser= (WXUser) getSession().createQuery(hql).setInteger("id", Id).setCacheable(Constants.SELECT_CACHE).uniqueResult();
 		return wxuser;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<WXUser> queryList(String name, int page, int number) {
 		QueryUtils qutils = new QueryUtils(getSession(), "from WXUser");

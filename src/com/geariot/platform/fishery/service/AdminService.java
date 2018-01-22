@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.geariot.platform.fishery.dao.AdminDao;
+import com.geariot.platform.fishery.dao.CompanyDao;
 import com.geariot.platform.fishery.entities.Admin;
+import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.utils.MD5;
 
@@ -27,6 +29,9 @@ public class AdminService {
 	@Autowired
 	private AdminDao adminDao;
 	
+	@Autowired
+	private CompanyDao companyDao;
+	
 	public Map<String, Object> add(Admin admin) {
 		Admin exist = adminDao.findAdminByAccount(admin.getAccount());
 		if(exist != null){
@@ -34,6 +39,13 @@ public class AdminService {
 		}
 		else {
 			admin.setPassword(MD5.compute(admin.getPassword()));
+			if(admin.getCompanyId()>0){
+				Company com = companyDao.findCompanyById(admin.getCompanyId());
+				com.setAccount(admin.getAccount());
+				com.setPassword(admin.getPassword());
+				com.setComment(admin.getCommment());
+				com.setHasAccount(true);
+			}
 			adminDao.save(admin);
 			return RESCODE.SUCCESS.getJSONRES(admin);
 		}
@@ -62,6 +74,12 @@ public class AdminService {
 			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
 		}else{
 			exist.setPassword(MD5.compute(password));
+			if(exist.getCompanyId()>0){
+				Company com = companyDao.findCompanyById(exist.getCompanyId());
+				com.setAccount(exist.getAccount());
+				com.setPassword(exist.getPassword());
+				com.setComment(exist.getCommment());
+			}
 			return RESCODE.SUCCESS.getJSONRES();
 		}
 	}

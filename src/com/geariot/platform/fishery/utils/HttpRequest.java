@@ -50,6 +50,8 @@ import org.json.JSONObject;
  */
 public class HttpRequest {
 	
+	public static String userId;
+	
 	private static Logger log = LogManager.getLogger(HttpRequest.class);
 	
 	private static SSLConnectionSocketFactory sslsf;

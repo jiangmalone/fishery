@@ -1,6 +1,7 @@
 import { queryFakeList, addUser } from '../services/api';
 import { queryPond, addPond, modifyPond, delPonds, pondEquipment, pondFish } from '../services/pond'
 import update from 'immutability-helper'
+import { pondDetail } from '../services/pond.js'
 
 export default {
     namespace: 'pond',
@@ -15,7 +16,8 @@ export default {
         formData: { fields: {} },
         pondList: [],
         pagination2: { current: 1 },
-        fishCategories: []
+        fishCategories: [],
+        pondInfo:{}
     },
 
     effects: {
@@ -61,6 +63,18 @@ export default {
                 type: 'changeLoading',
                 payload: false,
             });
+        },
+        *fetchDetail({payload},{call,put}) {
+            const response = yield call (pondDetail,payload);
+            console.log(response)
+            if(response.code=="0") {
+                yield put({
+                    type:'changeModal',
+                    payload:{
+                        pondInfo:response.data
+                    }
+                })
+            }
         },
         *fetchEquipment({ payload }, { call, put }) {
             yield put({
@@ -128,6 +142,7 @@ export default {
                     type: 'fetch',
                     payload: {
                         page: payload.pagination.current,
+                        relationId:payload.relationId,
                         number: 10
                     }
                 })

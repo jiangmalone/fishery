@@ -45,8 +45,7 @@ export default class Login extends Component {
           this.props.dispatch({
             type: 'login/login',
             payload: {
-              ...values,
-              type: this.state.type,
+              ...values
             },
           });
         }
@@ -117,14 +116,12 @@ export default class Login extends Component {
             })(
               <Checkbox className={styles.autoLogin}>自动登录</Checkbox>
             )}
-            <a className={styles.forgot} href="">忘记密码</a>
             <Button size="large" loading={login.submitting} className={styles.submit} type="primary" htmlType="submit">
               登录
             </Button>
           </FormItem>
         </Form>
         <div className={styles.other}>
-          <Link className={styles.register} to="/user/register">注册账户</Link>
         </div>
       </div>
     );

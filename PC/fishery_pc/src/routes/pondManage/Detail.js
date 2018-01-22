@@ -6,16 +6,24 @@ import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd'
 import { Link } from 'react-router-dom'
 import { delSensorOrAIOBind } from '../../services/bind.js'
 
+
 const Search = Input.Search;
 @connect(state => ({
     pondList: state.pond.pondList,
     loading: state.pond.loading,
     pagination2: state.pond.pagination2,
+    pondInfo:state.pond.pondInfo
 }))
 
 class PondDetail extends PureComponent {
     componentDidMount() {
         console.log(this.props.match)
+        this.props.dispatch({
+            type:'pond/fetchDetail',
+            payload:{
+                pondId: this.props.match.params.id
+            }
+        });
         this.props.dispatch({
             type: 'pond/fetchEquipment',
             payload: {
@@ -26,24 +34,24 @@ class PondDetail extends PureComponent {
         });
     }
 
-    disconnect = (device_sn,type) => {
+    disconnect = (device_sn, type) => {
         switch (type) {
-            case '01': this.yitiQuery(device_sn,2); break;
-            case '02': this.yitiQuery(device_sn,2); break;
-            case '03': this.yitiQuery(device_sn,1); break;
+            case '01': this.yitiQuery(device_sn, 2); break;
+            case '02': this.yitiQuery(device_sn, 2); break;
+            case '03': this.yitiQuery(device_sn, 1); break;
             case '04': this.kongQuery(); break;
         }
     }
 
-    yitiQuery = (device_sn,type) => {
+    yitiQuery = (device_sn, type) => {
         delSensorOrAIOBind({
-            device_sn:device_sn,
-            type:type,
-            pondId:this.props.match.params.id
+            device_sn: device_sn,
+            type: type,
+            pondId: this.props.match.params.id
         }).then(
-            (res)=>{
+            (res) => {
                 console.log(res)
-                if(res.code == '0') {
+                if (res.code == '0') {
                     this.props.dispatch({
                         type: 'pond/fetchEquipment',
                         payload: {
@@ -54,11 +62,28 @@ class PondDetail extends PureComponent {
                     });
                 }
             }
-        ).catch((error)=>{console.error()});
+            ).catch((error) => { console.error() });
+    }
+
+    handleTableChange = (pagination) => {
+        const pager = { ...this.props.pagination2 };
+        pager.current = pagination.current;
+        this.props.dispatch({
+            type: 'pond/fetchEquipment',
+            payload: {
+                pondId: this.props.match.params.id,
+                page: pagination.current,
+                number: 10
+            },
+        });
+        this.props.dispatch({
+            type: 'pond/changeModal',
+            payload: { pagination2: pager }
+        })
     }
 
     render() {
-        const { pondList, loading, pagination2 } = this.props;
+        const { pondList, loading, pagination2 ,pondInfo} = this.props;
 
         const columns = [{
             title: '序号',
@@ -87,7 +112,7 @@ class PondDetail extends PureComponent {
             dataIndex: 'keyword',
             render: (text, record, index) => {
                 return <span>
-                    <Popconfirm title="确认要解绑嘛?" onConfirm={() => this.disconnect(record.device_sn,record.device_sn.slice(0, 2))}>
+                    <Popconfirm title="确认要解绑嘛?" onConfirm={() => this.disconnect(record.device_sn, record.device_sn.slice(0, 2))}>
                         <a href="javascript:void(0);">解绑</a>
                     </Popconfirm>
                 </span>
@@ -97,18 +122,18 @@ class PondDetail extends PureComponent {
             <PageHeaderLayout>
                 <Card title="塘口信息" bordered={false} style={{ marginBottom: '20px' }}>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>塘口名称：{'value' || ''}</Col>
-                        <Col span={4}>面积（亩）：{'value' || ''}</Col>
-                        <Col span={4}>深度（m）：{'value' || ''}</Col>
+                        <Col span={4}>塘口名称：{pondInfo.name || ''}</Col>
+                        <Col span={4}>面积（亩）：{pondInfo.area || ''}</Col>
+                        <Col span={4}>深度（m）：{pondInfo.depth || ''}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        {/* <Col span={4}>养殖品种：{formData.fields.fish_categorys}</Col> */}
-                        <Col span={4}>池塘水源：{'value' || ''}</Col>
-                        <Col span={4}>底泥厚度(cm)：{'value' || ''}</Col>
+                        <Col span={4}>养殖品种：{pondInfo.fish_categorys?pondInfo.fish_categorys.join(','):''}</Col>
+                        <Col span={4}>池塘水源：{pondInfo.water_source || ''}</Col>
+                        <Col span={4}>底泥厚度(cm)：{pondInfo.sediment_thickness || ''}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>塘口密度(㎏/㎡)：{'value' || ''}</Col>
-                        <Col span={4}>塘口位置：{'value' || ''}</Col>
+                        <Col span={4}>塘口密度(㎏/㎡)：{ pondInfo.density|| ''}</Col>
+                        <Col span={4}>塘口位置：{pondInfo.address || ''}</Col>
                         <Col span={4}></Col>
                     </Row>
                 </Card>
@@ -118,6 +143,7 @@ class PondDetail extends PureComponent {
                         columns={columns}
                         pagination={pagination2}
                         bordered
+                        onChange={this.handleTableChange}
                     />
                 </Card>
             </PageHeaderLayout>

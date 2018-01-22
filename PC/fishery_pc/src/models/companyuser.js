@@ -1,7 +1,7 @@
 import { queryCompany, addCompany, modifyCompany, delCompany } from '../services/user'
 import update from 'immutability-helper'
-
-import {message} from 'antd';
+import { addAccount, modifyAccount } from '../services/account'
+import { message } from 'antd';
 
 export default {
   namespace: 'companyUser',
@@ -11,7 +11,8 @@ export default {
     loading: false,
     pagination: { current: 1 },
     modalvisible: false,
-    formData: { fields: {} }
+    formData: { fields: {} },
+    formData2: { fields: {} }
   },
 
   effects: {
@@ -52,6 +53,36 @@ export default {
         message.error(response.msg, 1);
       }
     },
+    *addAccount({ payload }, { call, put }) {
+      const response = yield call(addAccount, payload);
+      if (response.code == '0') {
+        message.success('新增企业账户成功', 1);
+        yield put({
+          type: 'fetch',
+          payload: {
+            number: 10,
+            page: 1
+          },
+        });
+      } else {
+        message.error(response.msg, 1);
+      }
+    },
+    *modifyAccount({ payload }, { call, put }) {
+      const response = yield call(modifyAccount, payload.data);
+      if (response.code == '0') {
+        message.success('修改企业账户成功', 1);
+        yield put({
+          type: 'fetch',
+          payload: {
+            number: 10,
+            page: 1
+          },
+        });
+      } else {
+        message.error(response.msg, 1);
+      }
+    },
     *modifyCompany({ payload }, { call, put }) {
       const response = yield call(modifyCompany, payload.data);
       if (response.code == '0') {
@@ -67,7 +98,7 @@ export default {
         message.error(response.msg, 1);
       }
     },
-    *delCompany({ payload}, {call, put}) {
+    *delCompany({ payload }, { call, put }) {
       const response = yield call(delCompany, { companyIds: payload.companyIds });
       if (response.code == '0') {
         message.success('删除企业成功', 1);

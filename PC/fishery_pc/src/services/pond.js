@@ -12,6 +12,10 @@ export async function addPond(params) {
     });
 }
 
+export async function pondDetail(params) {
+    return request(`/api/pond/pondDetail?${stringify(params)}`)
+}
+
 export async function pondEquipment(params) {
     return request(`/api/pond/pondEquipment?${stringify(params)}`);
 }

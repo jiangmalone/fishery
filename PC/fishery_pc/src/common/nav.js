@@ -52,7 +52,7 @@ export const getNavData = app => [
               },
               {
                 // name: '企业用户',
-                path: ':id',
+                path: ':id/:relation',
                 component: dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail')),
               },
               {
@@ -69,15 +69,14 @@ export const getNavData = app => [
             component: dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail')),
           },
           {
-            name: '塘口管理',
+            name: '',
             path: 'pondManage',
-
             children: [
               {
-                path: '',
+                path: ':relation',
                 component: dynamicWrapper(app, ['pond'], () => import('../routes/pondManage/Index')),
               }, {
-                path: ':id',
+                path: 'detail/:id',
                 component: dynamicWrapper(app, ['pond'], () => import('../routes/pondManage/Detail')),
               }
             ],

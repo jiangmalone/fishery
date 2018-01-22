@@ -6,6 +6,8 @@ import { Table, Card, Row, Col, Input, Button } from 'antd'
 import { queryPond } from '../../services/pond.js'
 import { wxuserDetail, relationDetail } from '../../services/user.js'
 import { myEquipment } from '../../services/equipment.js'
+import { Link } from 'react-router-dom'
+import update from 'immutability-helper'
 
 const Search = Input.Search;
 @connect(state => {
@@ -45,11 +47,11 @@ class UserInfo extends PureComponent {
             console.log(error)
         })
     }
-    onSearchUserPond = () => {
+    onSearchUserPond = (page = 1) => {
         queryPond({
             relation: this.props.match.params.id,
             name: '',
-            page: 1,
+            page: page,
             number: 10
         }).then((response) => {
             if (response.code == '0') {
@@ -59,35 +61,52 @@ class UserInfo extends PureComponent {
                 }
                 this.setState({
                     pondList: response.data,
-                    pondPagination: {
-                        total: response.realSize
-                    }
+                    pondPagination:update(this.state.pondPagination, { total: { $set: response.realSize } })
                 })
             }
-        })
+        }).catch((error)=>{console.log(error)})
     }
 
 
-    onSearchUserEquipment = () => {
+    onSearchUserEquipment = (page = 1) => {
         myEquipment({
             relationId: this.props.match.params.id,
-            page:1,
-            number:10
+            page: page,
+            number: 10
         }).then((res) => {
             console.log(res)
+            for(let item of res.data) {
+                item.key= item.id
+            }
             this.setState({
                 equipmentList: res.data,
-                euipPagination:{
-                    total:res.realSize
-                }
+                euipPagination: update(this.state.euipPagination, { total: { $set: res.realSize } })
             })
         }).catch((error) => {
             console.log(error)
         })
     }
 
+    handleTableChange2 = (pagination) => {
+        const pager = { ...this.state.euipPagination };
+        pager.current = pagination.current;
+        this.onSearchUserEquipment(pagination.current);
+        this.setState({
+            equipPagination: pager
+        })
+    }
+
+    handleTableChange1 = (pagination)=>{
+        const pager = {...this.state.pondPagination};
+        pager.current = pagination.current;
+        this.onSearchUserPond(pagination.current);
+        this.setState({
+            pondPagination:pager
+        })
+    }
+
+
     render() {
-        console.log(this.props.list)
         let { list, loading } = this.props;
 
         const columns = [{
@@ -187,6 +206,7 @@ class UserInfo extends PureComponent {
                         dataSource={this.state.pondList}
                         columns={columns}
                         pagination={this.state.pondPagination}
+                        onChange={this.handleTableChange1}
                         bordered
                     />
                 </Card>
@@ -197,6 +217,7 @@ class UserInfo extends PureComponent {
                         columns={columns1}
                         pagination={this.state.euipPagination}
                         bordered
+                        onChange={this.handleTableChange2}
                     />
                 </Card>
             </PageHeaderLayout>

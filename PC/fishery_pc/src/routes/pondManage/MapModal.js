@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Modal, Input, Button, AutoComplete } from 'antd';
+import { Modal, Input, Button, AutoComplete,message } from 'antd';
 import { Map, MouseTool } from 'react-amap';
 
 class MapModal extends PureComponent {
@@ -25,10 +25,13 @@ class MapModal extends PureComponent {
                         //TODO 针对选中的poi实现自己的功能
                         placeSearch.setCity(e.poi.adcode);
                         placeSearch.search(e.poi.name);
-                        console.log(e.poi)
-                        this.setState({
-                            address:e.poi
-                        })
+                        if(e.poi.location) {
+                            this.setState({
+                                address:e.poi
+                            })
+                        } else {
+                            message.error('您输入的地点不够准确请重新输入', 1)
+                        }
                     });
                 })
                 console.log('高德地图 Map 实例创建成功；如果你要亲自对实例进行操作，可以从这里开始。比如：');

@@ -49,85 +49,85 @@ public class BindService {
 	@Autowired
 	private Sensor_ControllerDao sensor_ControllerDao;
 
-	public Map<String, Object> bindPondWithSensor(int id, int pondId) {
-		logger.debug("塘口Id:" + pondId + "尝试与传感器设备,Id为:" + id + "进行绑定...");
+	public Map<String, Object> bindPondWithSensor(String device_sn, int pondId) {
+		logger.debug("塘口Id:" + pondId + "尝试与传感器设备,设备编号为:" + device_sn + "进行绑定...");
 		Pond pond = pondDao.findPondByPondId(pondId);
 		if (pond == null) {
 			logger.debug("塘口Id:" + pondId + "在数据库中无记录!!!");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
-			Sensor sensor = sensorDao.findSensorById(id);
+			Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
 			if (sensor == null) {
-				logger.debug("传感器设备,Id:" + id + "在数据库中无记录!!!");
+				logger.debug("传感器设备,设备编号:" + device_sn + "在数据库中无记录!!!");
 				return RESCODE.NOT_FOUND.getJSONRES();
 			} else {
 				if(sensor.getPondId() != 0){
 					return RESCODE.EQUIPMENT_ALREADY_BIND_WITH_ONE_POND.getJSONRES();
 				}
 				sensor.setPondId(pondId);
-				logger.debug("塘口Id:" + pondId + "与传感器设备,Id:" + id + "绑定成功。。。");
+				logger.debug("塘口Id:" + pondId + "与传感器设备,设备编号:" + device_sn + "绑定成功。。。");
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		}
 	}
 
-	public Map<String, Object> bindPondWithAIO(int id, int pondId) {
-		logger.debug("塘口Id:" + pondId + "尝试与一体机设备,Id为:" + id + "进行绑定...");
+	public Map<String, Object> bindPondWithAIO(String device_sn, int pondId) {
+		logger.debug("塘口Id:" + pondId + "尝试与一体机设备,设备编号为:" + device_sn + "进行绑定...");
 		Pond pond = pondDao.findPondByPondId(pondId);
 		if (pond == null) {
 			logger.debug("塘口Id:" + pondId + "在数据库中无记录!!!");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
-			AIO aio = aioDao.findAIOById(id);
+			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
 			if (aio == null) {
-				logger.debug("一体机设备,Id:" + id + "在数据库中无记录!!!");
+				logger.debug("一体机设备,设备编号:" + device_sn + "在数据库中无记录!!!");
 				return RESCODE.NOT_FOUND.getJSONRES();
 			} else {
 				if(aio.getPondId() != 0){
 					return RESCODE.EQUIPMENT_ALREADY_BIND_WITH_ONE_POND.getJSONRES();
 				}
 				aio.setPondId(pondId);
-				logger.debug("塘口Id:" + pondId + "与一体机设备,Id为:" + id + "绑定成功。。。");
+				logger.debug("塘口Id:" + pondId + "与一体机设备,设备编号为:" + device_sn + "绑定成功。。。");
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		}
 	}
 
-	public Map<String, Object> delPondWithSensorBind(int id) {
-		logger.debug("传感器设备,Id:" + id + "尝试与相关塘口解除绑定...");
-		Sensor sensor = sensorDao.findSensorById(id);
+	public Map<String, Object> delPondWithSensorBind(String device_sn) {
+		logger.debug("传感器设备,设备编号:" + device_sn + "尝试与相关塘口解除绑定...");
+		Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
 		if (sensor == null) {
-			logger.debug("传感器设备,Id:" + id + "在数据库中无记录!!!");
+			logger.debug("传感器设备,设备编号:" + device_sn + "在数据库中无记录!!!");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
 			if (sensor.getPondId() == 0) {
-				logger.debug("传感器设备,Id:" + id + "并未与任何塘口有绑定");
+				logger.debug("传感器设备,设备编号:" + device_sn + "并未与任何塘口有绑定");
 				return RESCODE.NOT_BINDED.getJSONRES();
 			} else {
-				logger.debug("传感器设备,Id:" + id + "与塘口,Id:" + sensor.getPondId() + "有绑定");
+				logger.debug("传感器设备,设备编号:" + device_sn + "与塘口,Id:" + sensor.getPondId() + "有绑定");
 				sensor.setPondId(0);
 				sensor.setPort_status("00");
 				int count = sensor_ControllerDao.delete(sensor.getId());
-				logger.debug("传感器设备,Id:" + id + "已和塘口解除绑定,数据库中删除传感器与控制器绑定关系共" + count + "条。。。");
+				logger.debug("传感器设备,设备编号:" + device_sn + "已和塘口解除绑定,数据库中删除传感器与控制器绑定关系共" + count + "条。。。");
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		}
 	}
 
-	public Map<String, Object> delPondWithAIOBind(int id) {
-		logger.debug("一体机设备,Id:" + id + "尝试与相关塘口解除绑定...");
-		AIO aio = aioDao.findAIOById(id);
+	public Map<String, Object> delPondWithAIOBind(String device_sn) {
+		logger.debug("一体机设备,设备编号:" + device_sn + "尝试与相关塘口解除绑定...");
+		AIO aio = aioDao.findAIOByDeviceSns(device_sn);
 		if (aio == null) {
-			logger.debug("一体机设备,Id:" + id + "在数据库中无记录!!!");
+			logger.debug("一体机设备,设备编号:" + device_sn + "在数据库中无记录!!!");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
 			if (aio.getPondId() == 0) {
-				logger.debug("一体机设备,Id:" + id + "并未与任何塘口有绑定");
+				logger.debug("一体机设备,设备编号:" + device_sn + "并未与任何塘口有绑定");
 				return RESCODE.NOT_BINDED.getJSONRES();
 			} else {
-				logger.debug("一体机设备,Id:" + id + "与塘口,Id:" + aio.getPondId() + "有绑定");
+				logger.debug("一体机设备,设备编号:" + device_sn + "与塘口,Id:" + aio.getPondId() + "有绑定");
 				aio.setPondId(0);
-				logger.debug("一体机设备,Id:" + id + "已和塘口解除绑定。。。");
+				logger.debug("一体机设备,设备编号:" + device_sn + "已和塘口解除绑定。。。");
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		}

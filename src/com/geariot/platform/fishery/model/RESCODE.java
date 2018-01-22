@@ -33,6 +33,8 @@ public enum RESCODE {
 	NO_BIND_RELATION(21,"所选传感器与控制器无绑定关系"),
 	ALREADY_BIND_SENSOR_WITH_CONTROLLER(22,"所选控制器及端口已经存在绑定关系"),
 	EQUIPMENT_ALREADY_BIND_WITH_ONE_POND(23,"所选设备已经与塘口绑定了,请勿重复绑定"),
+	WECHAT_GET_PARAM_WRONG(24,"微信获取参数错误,请从公众号菜单重新进入"),
+	BINDED_WITH_OTHER_PHONE(25, "账号已绑定其他手机号"),
 	FOR_EXCEPTION
 	;
 	

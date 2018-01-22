@@ -23,10 +23,12 @@ export default {
       // Login successfully
     
       if (response.code == 0) {
+        window.localStorage.setItem('account',payload.account)
         yield put(routerRedux.push('/'));
       }
     },
     *logout(_, { put }) {
+      window.localStorage.setItem('account','')
       yield put({
         type: 'changeLoginStatus',
         payload: {

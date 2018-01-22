@@ -1,5 +1,7 @@
 package com.geariot.platform.fishery.dao.impl;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -54,6 +56,22 @@ public class Sensor_ControllerDaoImpl implements Sensor_ControllerDao{
 						.addInteger("controller_port", controller_port)
 						.getQuery();
 		return (Sensor_Controller) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Sensor_Controller> list(int sensorId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor_Controller");
+		Query query = queryUtils.addInteger("sensorId", sensorId).getQuery();
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Sensor_Controller> controller(int controllerId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor_Controller");
+		Query query = queryUtils.addInteger("controllerId", controllerId).getQuery();
+		return query.list();
 	}
 	
 	

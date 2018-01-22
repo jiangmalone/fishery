@@ -1,5 +1,7 @@
 package com.geariot.platform.fishery.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,17 +10,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.geariot.platform.fishery.utils.HttpRequest;
+import com.geariot.platform.fishery.wxutils.WechatLoginUse;
+import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.service.WebServiceService;
 import com.geariot.platform.fishery.utils.Constants;
 
 
 @RestController
 @RequestMapping("/webService")
 public class WebServiceController {
+	
+	@Autowired
+	private WebServiceService webServiceService;
 	
 	private String mapApiKey = "1fb41392b17b0575e03b5374cb7b029f";
 	
@@ -105,7 +114,7 @@ public class WebServiceController {
 		logger.debug("解析后结果：" + json.toString());
 		return json;
 	}
-
+	
 	private Map<String, Object> setLeancloudHead() {
 		Map<String,Object> head = new HashMap<String, Object>();
 		head.put("X-LC-Id", appid);

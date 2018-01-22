@@ -51,4 +51,9 @@ public class BindController {
 	public Map<String, Object> bindSensorController(int sensorId, int sensor_port, int controllerId, int controller_port){
 		return bindService.bindSensorController(sensorId, sensor_port, controllerId, controller_port);
 	}
+	
+	@RequestMapping(value = "/bindState", method = RequestMethod.GET)
+	public Map<String, Object> bindState(String device_sn){
+		return bindService.bindState(device_sn);
+	}
 }

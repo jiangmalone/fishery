@@ -26,7 +26,7 @@ public class Company {
 	private String account;					//企业登录账号
 	private String password;				//登录密码
 	private String comment;					//备注
-	
+	private boolean hasAccount;
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {
@@ -94,6 +94,12 @@ public class Company {
 	}
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+	public boolean isHasAccount() {
+		return hasAccount;
+	}
+	public void setHasAccount(boolean hasAccount) {
+		this.hasAccount = hasAccount;
 	}
 	
 	

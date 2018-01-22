@@ -44,6 +44,7 @@ public class AdminService {
 				com.setAccount(admin.getAccount());
 				com.setPassword(admin.getPassword());
 				com.setComment(admin.getCommment());
+				com.setHasAccount(true);
 			}
 			adminDao.save(admin);
 			return RESCODE.SUCCESS.getJSONRES(admin);

@@ -112,9 +112,27 @@ class PondList extends PureComponent {
             type: 'pond/deletePond',
             payload: {
                 pondIds: idArray,
+                relationId:this.props.match.params?this.props.match.params.relation:'',
                 pagination: this.props.pagination
             },
         });
+    }
+
+    handleTableChange = (pagination) => {
+        const pager = { ...this.props.pagination };
+        pager.current = pagination.current;
+        this.props.dispatch({
+            type: 'pond/fetch',
+            payload: {
+                number: 10,
+                relationId:this.props.match.params?this.props.match.params.relation:'',
+                page: pagination.current,
+            },
+        });
+        this.props.dispatch({
+            type: 'pond/changeModal',
+            payload: { pagination: pager }
+        })
     }
 
     render() {
@@ -145,8 +163,8 @@ class PondList extends PureComponent {
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
                     values.relation = this.props.match.params.relation;
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
-                    values.latitude = this.props.address.location.lat;
-                    values.longitude = this.props.address.location.lng;
+                    values.latitude =this.props.address.location? this.props.address.location.lat:'';
+                    values.longitude = this.props.address.location?this.props.address.location.lng:'';
                     this.props.dispatch({
                         type: 'pond/addPond',
                         payload: values,
@@ -311,6 +329,7 @@ class PondList extends PureComponent {
                         dataSource={list}
                         columns={columns}
                         pagination={this.props.pagination}
+                        onChange={this.handleTableChange}
                         bordered
                     />
                     <Mapmoal {...mapModalProps} />

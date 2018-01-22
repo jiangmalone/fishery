@@ -17,7 +17,7 @@ export default {
                 type: 'changeLoading',
                 payload: true,
             });
-            const response = yield call(queryAdminEquipment, payload);
+            let response = yield call(queryAdminEquipment, payload);
             if (response.code == "0") {
                 for (let item of response.data) {
                     item.key = item.id
@@ -26,9 +26,7 @@ export default {
                     type: 'appendList',
                     payload: {
                         list: Array.isArray(response.data) ? response.data : [],
-                        pagination: {
-                            total: response.realSize,
-                        }
+                        pagination: { total: response.realSize ,current:payload.page}
                     }
                 });
             } else if (response.code) {

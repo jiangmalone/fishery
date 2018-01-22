@@ -16,8 +16,8 @@ class AllEquipmentQuery extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            device_sn: '',
-            name: '',
+            device_sn: null,
+            name: null
         }
     }
 
@@ -25,25 +25,26 @@ class AllEquipmentQuery extends PureComponent {
         this.onSearch()
     }
 
-    onSearch = (device_sn, name, relation) => {
+    onSearch = (page = 1, device_sn, name) => {
         this.props.dispatch({
             type: 'allequipment/fetch',
             payload: {
                 device_sn: device_sn,
                 name: name,
                 number: 10,
-                page: 1
+                page: page
             },
         })
     }
+
     handleTableChange = (pagination) => {
-        const pager = { ...this.props.pagination2 };
+        const pager = { ...this.props.pagination };
         pager.current = pagination.current;
-        this.onSearch(this.state.device_sn, this.state.name)
-        this.props.dispatch({
-            type: 'allequipment/changeLoading',
-            payload: { pagination: pager }
-        })
+        this.onSearch(pagination.current, this.state.device_sn, this.state.name)
+        // this.props.dispatch({
+        //     type: 'allequipment/changeLoading',
+        //     payload: { pagination: pager }
+        // })
     }
 
 
@@ -104,7 +105,7 @@ class AllEquipmentQuery extends PureComponent {
                                 name: e.target.value
                             })
                         }} /></Col>
-                        <Button type="primary" onClick={() => { this.onSearch(this.state.device_sn, this.state.name) }}>查询</Button>
+                        <Button type="primary" onClick={() => { this.onSearch(1, this.state.device_sn, this.state.name) }}>查询</Button>
                     </Row>
                     <Table loading={loading}
                         dataSource={this.props.list}

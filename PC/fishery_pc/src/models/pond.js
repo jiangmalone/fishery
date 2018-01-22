@@ -142,6 +142,7 @@ export default {
                     type: 'fetch',
                     payload: {
                         page: payload.pagination.current,
+                        relationId:payload.relationId,
                         number: 10
                     }
                 })

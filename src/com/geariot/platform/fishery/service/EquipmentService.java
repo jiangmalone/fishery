@@ -276,16 +276,20 @@ public class EquipmentService {
 		int from = (page - 1) * number;
 		if((device_sn == null || device_sn.length() < 0) && 
 				(companyName == null || companyName.length() < 0)){
+			System.out.println(">>>>>>>>1");
 			return noConditionsQuery(from, number);
 		}
 		if((device_sn == null || device_sn.length() < 0) && 
 				(companyName != null && !companyName.isEmpty() && !companyName.trim().isEmpty())){
+			System.out.println(">>>>>>>>2");
 			return companyConditionQuery(companyName, from, number);
 		}
 		if((device_sn != null && !device_sn.isEmpty() && !device_sn.trim().isEmpty()) &&
 				(companyName == null || companyName.length() <0)){
+			System.out.println(">>>>>>>>3");
 			return deviceSnConditionQuery(device_sn, from, number);
 		}
+		System.out.println(">>>>>>>>4");
 		return doubleConditionQuery(device_sn, companyName, from, number);
 	}
 

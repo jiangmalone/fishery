@@ -23,6 +23,9 @@ public class Company {
 	private String address;					//企业用户联系地址
 	private Date createDate;				//企业用户创建时间
 	private String relationId;				//企业用户relationId(格式 = "CO" + id)
+	private String account;					//企业登录账号
+	private String password;				//登录密码
+	private String comment;					//备注
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -73,6 +76,24 @@ public class Company {
 	}
 	public void setRelationId(String relationId) {
 		this.relationId = relationId;
+	}
+	public String getAccount() {
+		return account;
+	}
+	public void setAccount(String account) {
+		this.account = account;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 	
 	

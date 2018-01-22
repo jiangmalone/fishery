@@ -1,4 +1,4 @@
-import { queryEquipment, addEquipment, modifyEquipment, delEquipments} from '../services/equipment'
+import { queryEquipment, companyFindEquipment, addEquipment, modifyEquipment, delEquipments} from '../services/equipment'
 import update from 'immutability-helper'
 import {message} from 'antd';
 
@@ -22,8 +22,36 @@ export default {
       const response = yield call(queryEquipment, payload);
       if (response.code == "0") {
         for (let item of response.data) {
-          item.key = item.id
+          item.key = item.device_sn
         }
+        yield put({
+          type: 'appendList',
+          payload: {
+            list: Array.isArray(response.data) ? response.data : [],
+            pagination: {
+              total: response.realSize,
+            }
+          }
+        });
+      } else if (response.code) {
+        message.error(response.msg, 1);
+      } 
+      yield put({
+        type: 'changeLoading',
+        payload: false,
+      });
+    },
+    *companyFindEquipment({ payload }, { call, put }) {
+      yield put({
+        type: 'changeLoading',
+        payload: true,
+      });
+      const response = yield call(companyFindEquipment, payload);
+      if (response.code == "0") {
+        for (let item of response.data) {
+          item.key = item.device_sn
+        }
+        console.log(response.data)
         yield put({
           type: 'appendList',
           payload: {
@@ -45,11 +73,14 @@ export default {
       const response = yield call(addEquipment, payload);
       if (response.code == '0') {
         message.success('新增设备成功', 1);
-        console.log(response)
         yield put({
-          type: 'addList',
-          payload: response.data,
-        });
+          type: 'companyFindEquipment',
+          payload: {
+            page: payload.current,
+            number: 10,
+            relationId: payload.relation
+          }
+        })
       } else {
         message.error(response.msg, 1);
       }
@@ -70,18 +101,19 @@ export default {
       }
     },
     *delEquipments({ payload}, {call, put}) {
-      const response = yield call(delEquipments, { equipmentIds: payload.equipmentIds });
+      const response = yield call(delEquipments, { device_sns: payload.device_sns });
       if (response.code == '0') {
         message.success('删除设备成功', 1);
         yield put({
-          type: 'fetch',
+          type: 'companyFindEquipment',
           payload: {
             page: payload.pagination.current,
-            number: 10
+            number: 10,
+            relationId: payload.relationId
           }
         })
       } else {
-        message.success(response.msg, 1);
+        message.error(response.msg ? response.msg : '删除设备发成错误！', 1);
       }
     }
   },
@@ -98,7 +130,7 @@ export default {
       let list = state.list;
       if(action.payload) {
         const item = action.payload;
-        item.key = item.id;
+        item.key = item.device_sn;
         list.unshift(item);
         return {
           ...state,

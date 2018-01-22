@@ -27,7 +27,6 @@ export async function modifyWXUser(params) {
   });
 }
 
-
 export async function delWXUser(params) {
   // params = stringify(params).replace(/\%.*?$/,'')
   // console.log(params)
@@ -37,6 +36,15 @@ export async function delWXUser(params) {
   }
   str = str.slice(0,-1)
   return request(`/api/usermanagement/delWXUser?${str}`)
+}
+
+export async function wxuserDetail(params){
+  return request(`/api/usermanagement/WXUserDetail?${stringify(params)}`)
+}
+
+export async function relationDetail(params){
+  console.log(params)
+  return request(`/api/usermanagement/relationDetail?${stringify(params)}`)
 }
 
 //企业用户相关

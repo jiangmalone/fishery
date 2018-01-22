@@ -37,7 +37,7 @@ class BindEquipment extends React.Component {
     queryEquipment = () => {
         this.setState({animating: true});
         myEquipment({
-            relation: 'WX4',
+            relationId: 'WX4',
         }).then((res) => {
             this.setState({animating: false});
             console.log(res);

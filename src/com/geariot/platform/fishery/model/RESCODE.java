@@ -35,6 +35,7 @@ public enum RESCODE {
 	EQUIPMENT_ALREADY_BIND_WITH_ONE_POND(23,"所选设备已经与塘口绑定了,请勿重复绑定"),
 	WECHAT_GET_PARAM_WRONG(24,"微信获取参数错误,请从公众号菜单重新进入"),
 	BINDED_WITH_OTHER_PHONE(25, "账号已绑定其他手机号"),
+	PHONE_BINDED_BY_OTHER(26, "手机号被其他账号绑定"),
 	FOR_EXCEPTION
 	;
 	

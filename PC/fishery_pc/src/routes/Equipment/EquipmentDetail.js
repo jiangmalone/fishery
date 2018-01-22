@@ -1,30 +1,64 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Row, Col, Card, Input, Icon, Button, Table } from 'antd';
+import { Row, Col, Card, Input, Icon, Button, Table, message } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { realTimeData } from '../../services/equipment'
 export default class EquipmentDetail extends React.Component {
 
-    state={
-        loading:false,  
+    constructor(props) {
+        super(props);
+        this.state={
+            loading:false,  
+            realTimeData: {
+                receiveTime: '',
+                oxygen: '',
+                water_temperature: '',
+                pH_value: ''
+            }
+        }
     }
+
+    componentDidMount() {
+        this.getRealTimeData();
+    }
+
+    getRealTimeData = () => {
+        this.setState({loading: true});
+        realTimeData({
+            device_sn: this.props.match.params.device_sn
+        }).then(res => {
+            this.setState({loading: false});
+            console.log(res);
+            if (res.data && res.data.code == 0) {
+                this.setState({realTimeData: res.data.data})
+            } else {
+                message(res.data.msg, 2);
+            }
+        }).catch(error => {
+            this.setState({loading: false});
+            message('请求失败，请重试！', 2);
+            console.log(error);
+        })
+    }
+   
     render() {
         const realTimeColumns = [
             {
                 title: '时间',
-                dataIndex: 'time'
+                dataIndex: 'receiveTime'
             },
             {
                 title: '溶氧(mg/L)',
-                dataIndex: 'DO'
+                dataIndex: 'oxygen'
             },
             {
                 title: '水温(℃)',
-                dataIndex: 'waterT',
+                dataIndex: 'water_temperature',
             },
             {
                 title: 'PH',
-                dataIndex: 'ph',
+                dataIndex: 'pH_value',
             }
         ];
         const realTimeData = [{
@@ -38,7 +72,7 @@ export default class EquipmentDetail extends React.Component {
             <PageHeaderLayout >
                 <Card bordered={false}>
                     <Row style={{fontSize: 17}}>
-                        <Col span={7}>设备编号: &nbsp;&nbsp; 南京鱼儿欢欢有限公司</Col>
+                        <Col span={7}>设备编号: &nbsp;&nbsp; {this.props.match.params.device_sn}</Col>
                         <Col span={5}>设备名称: &nbsp; 传感器01</Col>
                         <Col span={5}>设备状态: &nbsp; 在线</Col>
                     </Row>

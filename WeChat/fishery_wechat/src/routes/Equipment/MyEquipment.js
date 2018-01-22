@@ -106,8 +106,7 @@ class MyEquipment extends React.Component {
 
     getController = (controllers) => {
         let cl = controllers.map((controller, index) => {
-            // const ports = controller.port_status.split("");
-            const ports = [0, 1, 1, 0];
+            const ports = controller.port_status.split("");
             return (
                 <div key={controller.id}>
                     {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e, controller.device_sn)} >
@@ -117,13 +116,13 @@ class MyEquipment extends React.Component {
                             {controller.name}
                         </div>
                         <div className='right-imgs'>
-                            <div className={ports[0] ? 'online' : 'offline'} >1
+                            <div className={ports[0] == 1 ? 'online' : 'offline'} >1
                             </div>
-                            <div className={ports[1] ? 'online' : 'offline'} >2
+                            <div className={ports[1] == 1 ? 'online' : 'offline'} >2
                             </div>
-                            <div className={ports[2] ? 'online' : 'offline'} >3
+                            <div className={ports[2] == 1 ? 'online' : 'offline'} >3
                             </div>
-                            <div className={ports[3] ? 'online' : 'offline'} >4
+                            <div className={ports[3] == 1 ? 'online' : 'offline'} >4
                             </div>
                         </div>
                     </div>
@@ -135,8 +134,8 @@ class MyEquipment extends React.Component {
 
     getSensor = (sensors) => {
         let ss = sensors.map((sensor, index) => {
-            // const ports = sensor.port_status.split("");
-            const ports = [0, 1];
+            const ports = sensor.port_status.split("");
+            // const ports = sensor.portsState;
             return (
                 <div key={sensor.id}>
                     {this.state.isEdit && <div className='delete-button' onClick={() => this.wouldDelete(sensor.device_sn)} >
@@ -149,9 +148,9 @@ class MyEquipment extends React.Component {
                             {sensor.name}
                         </div>
                         <div className='right-imgs'>
-                            <div className={ports[0] ? 'online' : 'offline'} >1
+                            <div className={ports[0] == 1 ? 'online' : 'offline'} >1
                             </div>
-                            <div className={ports[1] ? 'online' : 'offline'} >2
+                            <div className={ports[1] == 1 ? 'online' : 'offline'} >2
                             </div>
                         </div>
                     </div>
@@ -178,7 +177,7 @@ class MyEquipment extends React.Component {
                             {allInOne.name}
                         </div>
                         <div className='right-imgs'>
-                            <div className={allInOne.status ? 'online' : 'offline'} >
+                            <div className={(allInOne.status == 1) ? 'online' : 'offline'} >
                             </div>
                         </div>
                     </div>

@@ -34,3 +34,7 @@ export async function delEquipments(params) {
     str = str.slice(0, -1)
     return request(`/api/equipment/delEquipments?${str}`)
 }
+
+export async function realTimeData(params) {
+    return request(`/api/equipment/realTimeData?${stringify(params)}`);
+}

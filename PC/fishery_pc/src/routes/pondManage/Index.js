@@ -99,7 +99,7 @@ class PondList extends PureComponent {
             type: 'pond/fetch',
             payload: {
                 name: value,
-                relation:this.props.match.params?this.props.match.params.relation:'',
+                relationId:this.props.match.params?this.props.match.params.relation:'',
                 number: 10,
                 page: 1
             },
@@ -143,7 +143,7 @@ class PondList extends PureComponent {
             onOk: (values) => {
                 console.log(!this.state.modifyId, this.state.modifyId !== 0)
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
-                    values.relation = 'WX18';
+                    values.relation = this.props.match.params.relation;
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location.lat;
                     values.longitude = this.props.address.location.lng;

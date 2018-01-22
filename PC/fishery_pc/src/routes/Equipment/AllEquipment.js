@@ -36,6 +36,16 @@ class AllEquipmentQuery extends PureComponent {
             },
         })
     }
+    handleTableChange = (pagination) => {
+        const pager = { ...this.props.pagination2 };
+        pager.current = pagination.current;
+        this.onSearch(this.state.device_sn, this.state.name)
+        this.props.dispatch({
+            type: 'allequipment/changeLoading',
+            payload: { pagination: pager }
+        })
+    }
+
 
     render() {
         console.log(this.props)
@@ -45,8 +55,8 @@ class AllEquipmentQuery extends PureComponent {
             {
                 title: '序号',
                 dataIndex: 'index',
-                render:(text,record,index)=>{
-                    return <span>{index+1}</span>
+                render: (text, record, index) => {
+                    return <span>{index + 1}</span>
                 }
             },
             {
@@ -67,14 +77,14 @@ class AllEquipmentQuery extends PureComponent {
             {
                 title: '设备状态',
                 dataIndex: 'status',
-                render:(text,record,index)=>{
-                     
-                    switch(text) {
-                        case 0:text='正常';break;
-                        case 1:text = '离线';break;
-                        case 2:text = '断电';break;
-                        case 3:text = '缺相';break;
-                        case 4:text = '数据异常';break;
+                render: (text, record, index) => {
+
+                    switch (text) {
+                        case 0: text = '正常'; break;
+                        case 1: text = '离线'; break;
+                        case 2: text = '断电'; break;
+                        case 3: text = '缺相'; break;
+                        case 4: text = '数据异常'; break;
                     }
                     return <span>{text}</span>
                 }
@@ -101,6 +111,7 @@ class AllEquipmentQuery extends PureComponent {
                         columns={columns}
                         pagination={this.props.pagination}
                         bordered
+                        onChange={this.handleTableChange}
                     />
                 </Card>
             </PageHeaderLayout>

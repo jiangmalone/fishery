@@ -175,22 +175,26 @@ public class BindService {
 			logger.debug("控制器Id:" + controllerId + "不存在");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
+		Sensor_Controller sensorRecord = sensor_ControllerDao.findBySensorIdAndPort(sensorId, sensor_port);
+		if (sensorRecord != null) {
+			return RESCODE.ALREADY_BIND_SENSOR_WITH_CONTROLLER.getJSONRES();
+		}
 		Sensor_Controller record = sensor_ControllerDao.findByControllerIdAndPort(controllerId, controller_port);
 		if (record != null) {
 			return RESCODE.ALREADY_BIND_SENSOR_WITH_CONTROLLER.getJSONRES();
-		} else {
-			Sensor_Controller sensor_Controller = new Sensor_Controller();
-			sensor_Controller.setSensorId(sensorId);
-			sensor_Controller.setSensor_port(sensor_port);
-			sensor_Controller.setControllerId(controllerId);
-			sensor_Controller.setController_port(controller_port);
-			sensor_ControllerDao.save(sensor_Controller);
-			logger.debug("绑定记录Id:" + sensor_Controller.getId() + "绑定状态:((传感器Id及端口:" + sensorId + "、" + sensor_port
-					+ ")&&(控制器Id及端口:" + controllerId + "、" + controller_port + "))...");
-			changeSensorPortStatusOn(sensor, sensor_port);
-			changeControllerPortStatusOn(controller, controller_port);
-			return RESCODE.SUCCESS.getJSONRES();
 		}
+		Sensor_Controller sensor_Controller = new Sensor_Controller();
+		sensor_Controller.setSensorId(sensorId);
+		sensor_Controller.setSensor_port(sensor_port);
+		sensor_Controller.setControllerId(controllerId);
+		sensor_Controller.setController_port(controller_port);
+		sensor_ControllerDao.save(sensor_Controller);
+		logger.debug("绑定记录Id:" + sensor_Controller.getId() + "绑定状态:((传感器Id及端口:" + sensorId + "、" + sensor_port
+				+ ")&&(控制器Id及端口:" + controllerId + "、" + controller_port + "))...");
+		changeSensorPortStatusOn(sensor, sensor_port);
+		changeControllerPortStatusOn(controller, controller_port);
+		return RESCODE.SUCCESS.getJSONRES();
+
 	}
 
 	private void changeSensorPortStatusClose(Sensor sensor, int port) {
@@ -250,7 +254,7 @@ public class BindService {
 						bindState.setPondId(aio2.getPondId());
 					}
 					return RESCODE.SUCCESS.getJSONRES(bindState);
-				}																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																									
+				}
 			case "03":
 				Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
 				if (sensor == null) {
@@ -261,7 +265,7 @@ public class BindService {
 					Controller controller = null;
 					List<Sensor_Controller> list = sensor_ControllerDao.list(sensor.getId());
 					Set<PortBind> portBinds = new HashSet<>();
-					for(Sensor_Controller sensor_Controller : list){
+					for (Sensor_Controller sensor_Controller : list) {
 						bind = new PortBind();
 						controller = controllerDao.findControllerById(sensor_Controller.getControllerId());
 						bind.setPort(sensor_Controller.getSensor_port());
@@ -277,6 +281,7 @@ public class BindService {
 					} else {
 						bindState.setPondId(sensor.getPondId());
 					}
+					bindState.setPortBinds(portBinds);
 					return RESCODE.SUCCESS.getJSONRES(bindState);
 				}
 			case "04":
@@ -289,7 +294,7 @@ public class BindService {
 					Sensor sensor2 = null;
 					List<Sensor_Controller> list = sensor_ControllerDao.controller(controller1.getId());
 					Set<PortBind> portBinds = new HashSet<>();
-					for(Sensor_Controller sensor_Controller : list){
+					for (Sensor_Controller sensor_Controller : list) {
 						bind = new PortBind();
 						sensor2 = sensorDao.findSensorById(sensor_Controller.getSensorId());
 						bind.setPort(sensor_Controller.getController_port());
@@ -305,9 +310,11 @@ public class BindService {
 					} else {
 						bindState.setPondId(controller1.getPondId());
 					}
+					bindState.setPortBinds(portBinds);
 					return RESCODE.SUCCESS.getJSONRES(bindState);
 				}
-				default : return RESCODE.WRONG_PARAM.getJSONRES();
+			default:
+				return RESCODE.WRONG_PARAM.getJSONRES();
 			}
 		}
 	}

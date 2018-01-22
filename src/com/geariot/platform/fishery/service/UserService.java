@@ -44,6 +44,7 @@ public class UserService {
 			return RESCODE.ACCOUNT_EXIST.getJSONRES();
 		}
 		company.setCreateDate(new Date());
+		company.setHasAccount(false);
 		companyDao.save(company);
 		company.setRelationId("CO"+company.getId());
 		return RESCODE.SUCCESS.getJSONRES(company);

@@ -39,3 +39,7 @@ export async function delPonds(params) {
 export async function pondFish() {
     return request(`/api/pond/fish`)
 }
+
+export async function queryRelationPonds(params) {
+    return request(`/api/pond/relationEquipment?${stringify(params)}`)
+}

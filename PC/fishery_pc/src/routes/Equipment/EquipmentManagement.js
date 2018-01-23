@@ -98,7 +98,7 @@ export default class EquipmentManagement extends React.Component {
     onOk = (values) => {
         if (isNaN(this.state.index)) {
             values.current = this.props.pagination.current
-            values.relation = 'CO1';
+            values.relationId = this.props.match.params.relation;
             this.props.dispatch({
                 type: 'equipment/addEquipment',
                 payload: values,

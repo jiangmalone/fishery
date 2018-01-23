@@ -7,7 +7,6 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from "./companyUserList.less"
 import AddCompanyUser from './AddCompanyUser';
 import AddAccount from './AddAccount';
-import index from '../../../node_modules/_antd@3.0.1@antd/lib/col';
 
 @connect(state => ({
     list: state.companyUser.list,
@@ -70,7 +69,11 @@ export default class CompanyUserList extends React.Component {
                 formData2: { fields: formData }
             }
         })
-        this.showAddModal2('add', index, record.id)
+        if (!record.has) {
+            this.showAddModal2('add', index, record.id)
+        } else {
+            this.showAddModal2('modify', index, record.id)
+        }
     }
 
     showAddModal2 = (mode = 'add', index, id) => {
@@ -86,7 +89,7 @@ export default class CompanyUserList extends React.Component {
             showAddModal2: true,
             mode2: mode,
             index2: index,
-            modifyId2: id
+            companyId: id
         })
     }
 
@@ -148,17 +151,24 @@ export default class CompanyUserList extends React.Component {
     }
 
     onOk2 = (values) => {
-        if (isNaN(this.state.index)) {
+        console.log(values,this.state.mode2)
+        values.companyId = this.state.companyId;
+        values.type = 1;
+        if (this.state.mode2 == 'add') {
+            console.log(111)
             this.props.dispatch({
                 type: 'companyUser/addAccount',
-                payload: values,
+                payload: {
+                    index2: this.state.index2,
+                    data: values
+                },
             });
+            console.log(22)
         } else {
-            values.id = this.state.modifyId
             this.props.dispatch({
                 type: 'companyUser/modifyAccount',
                 payload: {
-                    index: this.state.index,
+                    index2: this.state.index2,
                     data: values
                 },
             });
@@ -305,7 +315,7 @@ export default class CompanyUserList extends React.Component {
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
                         <span onClick={() => { this.openAccount(record, index) }}>
-                            <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>开户</a>
+                            <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>{record.has ? '更户' : '开户'}</a>
                         </span>
                     </span>
                 }

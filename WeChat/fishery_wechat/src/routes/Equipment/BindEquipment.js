@@ -21,9 +21,14 @@ class BindEquipment extends React.Component {
 
     constructor(props) {
         super(props)
+        let data = this.props.match.params.data;
+        data = JSON.parse(data);
+
         this.state = {
             animating: false,
-            equipments: [],   //设备列表
+            id: data.id,
+            portIndex: data.portIndex,
+            controllers: [],   //设备列表
             ports: [],      //和设备联动的端口号
             bindEquipment: '',
             bindPort: '',
@@ -42,7 +47,30 @@ class BindEquipment extends React.Component {
             this.setState({animating: false});
             console.log(res);
             if (res.data && res.data.code == 0) {
-                
+                if (res.data.controller) {
+                    const data = res.data.controller;
+                    let controllers = [];
+                    // 组装可用的端口 
+                    data.map((item, index) => {
+                        let controller = {}, usefulPorts = []
+                        const allPorts = item.port_status.split('');
+                        // console.log(allPorts);
+                        allPorts.map((post, index) => {
+                            const portNum = index + 1;
+                            if (post == 0) {
+                                let postData = {
+                                    label: ('端口' + portNum),
+                                    value: portNum,
+                                };
+                                usefulPorts.push(postData);
+                            }
+                        })
+                        // console.log(usefulPorts);
+                        controller = {label: item.name, value: item.id, ports: usefulPorts};
+                        controllers.push(controller);
+                    })
+                    this.setState({controllers : controllers})
+                }
             } else {
                 Toast.fail(res.data.msg, 1);
             }
@@ -56,15 +84,42 @@ class BindEquipment extends React.Component {
     doBindEquipment = () => {
         let data = this.props.match.params.data;
         data = JSON.parse(data); //{{equipmentId: this.props.match.params.equipmentId, port: data.port}}
+        this.setState({animating: true});
         sensorWithController({
-            sensorId: 0,
-            sensor_port: 0,
-            controllerId: 0,
-            controller_port: 0
+            sensorId: this.state.id,
+            sensor_port: this.state.portIndex,
+            controllerId: this.state.bindEquipment[0],
+            controller_port: this.state.bindPort[0]
         }).then(res => {
-
+            this.setState({animating: false});
+            if (res.data && res.data.code == 0) {
+                Toast.success('绑定成功！', 1);
+                setTimeout(() => {
+                    this.props.dispatch({
+                        type: 'global/changeState',
+                        payload: {
+                            transitionName: 'right'
+                        }
+                    })
+                    history.back();
+                }, 1000);
+            } else {
+                Toast.fail(res.data.msg, 1)
+            }
         }).catch(error => {
+            this.setState({animating: false});
+            Toast.success('绑定失败！', 1)
             console.log(error);
+        })
+    }
+
+    selectController = (id) => {
+        console.log(this.state.controllers)
+        const controllers = this.state.controllers;
+        controllers.map((controller, index) => {
+            if(controller.value == id) {
+                this.setState({ports: controller.ports})
+            }
         })
     }
 
@@ -76,23 +131,24 @@ class BindEquipment extends React.Component {
                     端口名称
                 </div>
                 <div className='name' >
-                    端口1
+                    端口{this.state.portIndex}
                 </div>
             </div>
             <div className='bind-info' >
                 <List>
                     <Picker 
-                    data={testData} 
+                    data={this.state.controllers} 
                     cols={1} 
                     className="forss" 
                     extra="请选择"
-                    onOk={e => this.setState({ bindEquipment: e })}
+                    onOk={e => {this.setState({ bindEquipment: e })}}
+                    onChange={v => {this.selectController(1)}}
                     value={this.state.bindEquipment}
                     >
                         <List.Item arrow="horizontal" key='1'>绑定设备：</List.Item>
                     </Picker>
                     <Picker 
-                    data={testData} 
+                    data={this.state.ports} 
                     cols={1} 
                     className="forss" 
                     extra="请选择"

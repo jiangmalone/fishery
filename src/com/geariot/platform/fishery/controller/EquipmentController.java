@@ -61,10 +61,10 @@ public class EquipmentController {
 		return equipmentService.dataToday(device_sn);
 	}
 	
-//	@RequestMapping(value = "/data", method = RequestMethod.GET)
-//	public Map<String, Object> dataAll(String device_sn, String startTime, String endTime) {
-//		return equipmentService.dataAll(device_sn, startTime, endTime);
-//	}
+	@RequestMapping(value = "/dataAll", method = RequestMethod.GET)
+	public Map<String, Object> dataAll(String device_sn) {
+		return equipmentService.dataAll(device_sn);
+	}
 	
 	@RequestMapping(value = "/myEquipment", method = RequestMethod.GET)
 	public Map<String, Object> myEquipment(String relationId){

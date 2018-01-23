@@ -18,4 +18,6 @@ public interface Sensor_DataDao {
 	void save(Sensor_Data sensor_Data);
 	
 	List<Sensor_Data> today(String device_sn);
+	
+	List<Sensor_Data> sevenData(String device_sn);
 }

@@ -69,9 +69,9 @@ class BasicLayout extends React.PureComponent {
     return { location, breadcrumbNameMap };
   }
   componentDidMount() {
-    this.props.dispatch({
-      type: 'user/fetchCurrent',
-    });
+    if(!window.localStorage.getItem("account")) {
+      this.props.history.push('/user/login')
+    }
   }
   componentWillUnmount() {
     this.triggerResizeEvent.cancel();
@@ -297,11 +297,11 @@ class BasicLayout extends React.PureComponent {
             <div className={styles.right}>
 
 
-              {localStorage.getItem('account') ? (
+              {window.localStorage.getItem('account') ? (
                 <Dropdown overlay={menu}>
                   <span className={`${styles.action} ${styles.account}`}>
                     <Avatar size="small" className={styles.avatar} />
-                    {localStorage.getItem('account')}
+                    {window.localStorage.getItem('account')}
                   </span>
                 </Dropdown>
               ) : <Spin size="small" style={{ marginLeft: 8 }} />}

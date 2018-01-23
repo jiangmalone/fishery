@@ -3,7 +3,7 @@ import { Button, Toast } from 'antd-mobile';
 import NavBar from '../../components/NavBar';
 import { withRouter } from "react-router-dom";
 import { connect } from 'dva';
-import './addEquipment.less';
+import './AddEquipment.less';
 import scan from '../../img/scan_QR.png'
 import { addEquipment } from '../../services/equipment.js'; //接口
 

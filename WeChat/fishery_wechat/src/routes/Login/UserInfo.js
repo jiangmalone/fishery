@@ -13,10 +13,10 @@ class UserInfo extends React.Component {
         super(props)
         this.state = {
             form: {
-                name: '',
-                sex: 0,  //0 man 1 faleman
-                phone: '',
-                years: ''
+                name: window.localStorage.getItem('name') || '',
+                sex: window.localStorage.getItem('sex') == '男' ? 0 : 1,  //0 man 1 faleman
+                phone: window.localStorage.getItem('phone') || '',
+                years: window.localStorage.getItem('years') || ''
             }
         }
     }
@@ -41,13 +41,13 @@ class UserInfo extends React.Component {
                     })
                     break;
                 case 'phone':
-                    form['phone'] = value.replace(/\D/g,'');
+                    form['phone'] = value.replace(/\D/g, '');
                     this.setState({
                         form: form
                     })
                     break;
                 case 'years':
-                    form['years'] = value.replace(/\D/g,'');
+                    form['years'] = value.replace(/\D/g, '');
                     this.setState({
                         form: form
                     })
@@ -59,21 +59,25 @@ class UserInfo extends React.Component {
 
     saveInfo = () => {
         const form = this.state.form;
-        if(form.name == '') {   //请输入名称
+        if (form.name == '') {   //请输入名称
             Toast.fail('请输入您的姓名！', 1);
         } else {
             const form = this.state.form;
             modifyWXUser({
                 // id: window.localStorage.getItem('clientId'),
-                id: 1,
+                id: window.localStorage.getItem('id'),
                 name: form.name,
                 phone: form.phone,
                 sex: form.sex,
                 life: form.years
             }).then((res) => {
                 console.log(res);
-                if(res.data.code == 0) {
-                    
+                if (res.data.code == 0) {
+                    window.localStorage.setItem("name", form.name);
+                    window.localStorage.setItem("phone", form.phone);
+                    window.localStorage.setItem("sex", form.sex);
+                    window.localStorage.setItem("life", form.life);
+                    this.props.history.push(`/main`)
                 } else {
                     Toast.fail(res.data.msg, 1);
                 }
@@ -100,7 +104,7 @@ class UserInfo extends React.Component {
                         性别
                     </div>
                     <div className='right-item'>
-                        <SexRadio handlaClick={this.handlaSexClick} ></SexRadio>
+                        <SexRadio value={this.state.form.sex} handlaClick={this.handlaSexClick} ></SexRadio>
                     </div>
                 </div>
                 <div className='input-line'>
@@ -108,7 +112,7 @@ class UserInfo extends React.Component {
                         手机号码
                     </div>
                     <div className='right-item'>
-                        <input maxLength='11' className='input' placeholder='请输入您的手机号码' value={this.state.form.phone} onChange={(e) => { this.handlaInput('phone', e.target.value) }} />
+                        <input maxLength='11' className='input' placeholder='请输入您的手机号码' value={window.localStorage.getItem('phone')} />
                     </div>
                 </div>
                 <div className='input-line'>
@@ -120,7 +124,7 @@ class UserInfo extends React.Component {
                     </div>
                 </div>
             </div>
-            <div className='save-button' onClick={() => {this.saveInfo()}} >
+            <div className='save-button' onClick={() => { this.saveInfo() }} >
                 保  存
             </div>
         </div>

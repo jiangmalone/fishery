@@ -14,8 +14,12 @@ export default {
         return post('api/equipment/delEquipments', options, params);
     },
 
-    getData: (params) => {          //获得设备数据汇总  （曲线图数据）
-        return get('api/equipment/data',  params);
+    getDataToday: (params) => {          //获得设备数据汇总  （曲线图数据）
+        return get('api/equipment/dataToday',  params);
+    },
+
+    getDataSevenday: (params) => {          //获得设备数据汇总  （曲线图数据）
+        return get('api/equipment/dataAll',  params);
     },
 
     getRealTimeData: (params) => {          //获得设备实时数据 

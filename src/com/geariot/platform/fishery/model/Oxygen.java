@@ -12,11 +12,11 @@ import java.util.Date;
 public class Oxygen {
 	
 	private float oxygen;
-	private Date receiveTime;
+	private String receiveTime;
 	public Oxygen(){
 		
 	}
-	public Oxygen(float oxygen, Date receiveTime){
+	public Oxygen(float oxygen, String receiveTime){
 		this.oxygen = oxygen;
 		this.receiveTime = receiveTime;
 	}
@@ -26,10 +26,10 @@ public class Oxygen {
 	public void setOxygen(float oxygen) {
 		this.oxygen = oxygen;
 	}
-	public Date getReceiveTime() {
+	public String getReceiveTime() {
 		return receiveTime;
 	}
-	public void setReceiveTime(Date receiveTime) {
+	public void setReceiveTime(String receiveTime) {
 		this.receiveTime = receiveTime;
 	}
 }

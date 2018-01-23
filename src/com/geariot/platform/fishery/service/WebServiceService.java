@@ -101,4 +101,9 @@ public class WebServiceService {
 			}
 		}
 	}
+
+	public Map<String, Object> deletWXUser(String phone) {
+		wxUserDao.logout(phone);
+		return RESCODE.SUCCESS.getJSONRES();
+	}
 }

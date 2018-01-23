@@ -22,35 +22,35 @@ class LoginIndex extends React.Component {
         }
     }
 
-    sendCode=()=> {
+    sendCode = () => {
         let myHeaders = new Headers({
             "Content-Type": "form-data",
         })
         if (this.state.allowSend) {
             verification({
-                    phone: this.state.phone
-                }).then((res) => {
-                    if (res.data.code == '0') {
+                phone: this.state.phone
+            }).then((res) => {
+                if (res.data.code == '0') {
+                    this.setState({
+                        allowSend: false
+                    })
+                    this.timer = setInterval(() => {
+                        let wait = this.state.wait
                         this.setState({
-                            allowSend: false
+                            wait: wait - 1
                         })
-                        this.timer = setInterval(() => {
-                            let wait = this.state.wait
+                        if (this.state.wait < 1) {
                             this.setState({
-                                wait: wait - 1
+                                allowSend: true,
+                                wait: 60
                             })
-                            if (this.state.wait < 1) {
-                                this.setState({
-                                    allowSend: true,
-                                    wait: 60
-                                })
-                                clearInterval(this.timer)
-                            }
-                        }, 1000)
-                    }
-                }).catch((error) => {
-                    console.log(error)
-                })
+                            clearInterval(this.timer)
+                        }
+                    }, 1000)
+                }
+            }).catch((error) => {
+                console.log(error)
+            })
         }
     }
 
@@ -58,46 +58,44 @@ class LoginIndex extends React.Component {
         clearInterval(this.timer)
     }
 
-    onlogin=() =>{
+    onlogin = () => {
         let myHeaders = new Headers({
             "Content-Type": "form-data",
         })
 
         verifySmsCode({
-                openId: '112221',
-                // openId: getParameterByName('openid'),
-                phone: this.state.phone,
-                smscode: this.state.smscode,
-                // headimgurl: getParameterByName('headimgurl'),
-                headimgurl: '111'
-            }).then((res) => {
-                console.log(res)
-                if (res.data.code == '0') {
-                    window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'))
-                    window.localStorage.setItem('openid', getParameterByName('openid'))
-                    window.localStorage.setItem('id', res.data.data.id)
-                    window.localStorage.setItem('relationId', res.data.data.relationId)
-                    if (res.data.data.name) {
-                        this.props.dispatch({
-                            type:'global/changeState',
-                            payload:{
-                                login:true
-                            }
-                        })
-                        this.props.history.push(`/main`)
-                    } else {
-                        this.props.dispatch({
-                            type:'global/changeState',
-                            payload:{
-                                login:true
-                            }
-                        })
-                        this.props.history.push(`/userInfo`)
+            openId: '112221',
+            // openId: getParameterByName('openid'),
+            phone: this.state.phone,
+            smscode: this.state.smscode,
+            // headimgurl: getParameterByName('headimgurl'),
+            headimgurl: '111'
+        }).then((res) => {
+            console.log(res)
+            if (res.data.code == '0') {
+                window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'))
+                window.localStorage.setItem('openid', getParameterByName('openid'))
+                window.localStorage.setItem('id', res.data.data.id)
+                window.localStorage.setItem('relationId', res.data.data.relationId)
+                this.props.dispatch({
+                    type: 'global/changeState',
+                    payload: {
+                        login: true
                     }
+                })
+                if (res.data.data.name) {
+                    window.localStorage.setItem("name", res.data.data.name);
+                    window.localStorage.setItem("phone", res.data.data.phone);
+                    window.localStorage.setItem("sex", res.data.data.sex);
+                    window.localStorage.setItem("life", res.data.data.life);
+                    this.props.history.push(`/main`)
                 } else {
-                    Toast.fail(res.data.msg, 2)
+                    this.props.history.push(`/userInfo`)
                 }
-            })
+            } else {
+                Toast.fail(res.data.msg, 2)
+            }
+        })
     }
     render() {
         return <div className='loginbg'  >

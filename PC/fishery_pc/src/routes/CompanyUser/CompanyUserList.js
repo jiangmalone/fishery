@@ -69,7 +69,7 @@ export default class CompanyUserList extends React.Component {
                 formData2: { fields: formData }
             }
         })
-        if (!record.has) {
+        if (!record.hasAccount) {
             this.showAddModal2('add', index, record.id)
         } else {
             this.showAddModal2('modify', index, record.id)
@@ -154,8 +154,11 @@ export default class CompanyUserList extends React.Component {
         console.log(values,this.state.mode2)
         values.companyId = this.state.companyId;
         values.type = 1;
+        delete values.password2
+        delete values.name
         if (this.state.mode2 == 'add') {
             console.log(111)
+     
             this.props.dispatch({
                 type: 'companyUser/addAccount',
                 payload: {
@@ -315,7 +318,7 @@ export default class CompanyUserList extends React.Component {
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
                         <span onClick={() => { this.openAccount(record, index) }}>
-                            <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>{record.has ? '更户' : '开户'}</a>
+                            <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>{record.hasAccount ? '更户' : '开户'}</a>
                         </span>
                     </span>
                 }

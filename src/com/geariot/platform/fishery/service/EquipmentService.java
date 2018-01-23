@@ -125,11 +125,12 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	public Map<String, Object> setTimer(Timer timer) {
+	public Map<String, Object> setTimer(Timer[] timerArray) {
 		String deviceSn;
+		Timer timer=timerArray[0];
 		try {
 			deviceSn = timer.getDevice_sn().substring(0, 2);
-			new TimerTask().timerOpen(timer);
+			//new TimerTask().timerOpen(timer);
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
@@ -143,8 +144,8 @@ public class EquipmentService {
 			}
 		} else 
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-		timerDao.updateTimer(timer);
+         timerDao.delete(timer.getDevice_sn());
+		timerDao.save(timer);
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
@@ -239,6 +240,8 @@ public class EquipmentService {
 
 	public Map<String, Object> realTimeData(String device_sn) {
 		String deviceSn;
+		Sensor_Data data = null;
+		Map<String,Object> map = null;
 		try {
 			deviceSn = device_sn.trim().substring(0, 2);
 		} catch (Exception e) {
@@ -248,15 +251,24 @@ public class EquipmentService {
 			if (aioDao.findAIOByDeviceSns(device_sn) == null) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
+			data = sensor_DataDao.findDataByDeviceSns(device_sn);
+			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
+			map = RESCODE.SUCCESS.getJSONRES(data);
+			map.put("status", aio.getStatus());
+			map.put("name", aio.getName());
+			return map;
 		} else if (deviceSn.equals("03")) {
 			if (sensorDao.findSensorByDeviceSns(device_sn) == null) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
+			data = sensor_DataDao.findDataByDeviceSns(device_sn);
+			Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+			map = RESCODE.SUCCESS.getJSONRES(data);
+			map.put("status", sensor.getStatus());
+			map.put("name", sensor.getName());
+			return map;
 		} else 
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-		Sensor_Data data=sensor_DataDao.findDataByDeviceSns(device_sn);
-		return RESCODE.SUCCESS.getJSONRES(data);
 	}
 	
 	public Map<String, Object> myEquipment(String relationId){
@@ -421,6 +433,6 @@ public class EquipmentService {
 		map.put("phs", phs);
 		map.put("oxygens",oxygens);
 		map.put("temperatures", temperatures);
-		return map;
+		return map;//
 	}
 }

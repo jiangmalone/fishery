@@ -17,7 +17,7 @@ import com.geariot.platform.fishery.service.EquipmentService;
 @RestController
 @RequestMapping(value = "/equipment")
 public class EquipmentController {
-
+ 
 	@Autowired
 	private EquipmentService equipmentService;
 
@@ -32,7 +32,7 @@ public class EquipmentController {
 	}
 
 	@RequestMapping(value = "/timer", method = RequestMethod.POST)
-	public Map<String, Object> setTimer(@RequestBody Timer timer) {
+	public Map<String, Object> setTimer(@RequestBody Timer... timer) {
 		return equipmentService.setTimer(timer);
 	}
 

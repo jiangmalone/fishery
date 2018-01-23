@@ -421,6 +421,6 @@ public class EquipmentService {
 		map.put("phs", phs);
 		map.put("oxygens",oxygens);
 		map.put("temperatures", temperatures);
-		return map;
+		return map;//
 	}
 }

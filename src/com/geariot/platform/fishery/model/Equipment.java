@@ -13,7 +13,7 @@ public class Equipment {
 	private int status;
 	private String companyName;
 	private int companyId;
-
+	private String relationId;
 	public Equipment() {
 
 	}
@@ -62,6 +62,14 @@ public class Equipment {
 
 	public void setCompanyId(int companyId) {
 		this.companyId = companyId;
+	}
+
+	public String getRelationId() {
+		return relationId;
+	}
+
+	public void setRelationId(String relationId) {
+		this.relationId = relationId;
 	}
 
 }

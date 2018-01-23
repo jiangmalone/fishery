@@ -87,4 +87,17 @@ public class WebServiceService {
 			return RESCODE.SUCCESS.getJSONRES(wxUser);
 		}
 	}
+
+	public Map<String, Object> checkLogin(String phone) {
+		WXUser wxUser = wxUserDao.findUserByPhone(phone);
+		if(wxUser == null){
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else{
+			if(wxUser.isLogin()){
+				return RESCODE.SUCCESS.getJSONRES();
+			}else{
+				return RESCODE.NO_LOGIN.getJSONRES();
+			}
+		}
+	}
 }

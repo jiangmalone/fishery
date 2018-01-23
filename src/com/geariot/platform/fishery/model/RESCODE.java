@@ -36,6 +36,7 @@ public enum RESCODE {
 	WECHAT_GET_PARAM_WRONG(24,"微信获取参数错误,请从公众号菜单重新进入"),
 	BINDED_WITH_OTHER_PHONE(25, "账号已绑定其他手机号"),
 	PHONE_BINDED_BY_OTHER(26, "手机号被其他账号绑定"),
+	NO_LOGIN(27, "手机号没登录"),
 	FOR_EXCEPTION
 	;
 	

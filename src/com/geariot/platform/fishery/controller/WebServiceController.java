@@ -160,6 +160,11 @@ public class WebServiceController {
 		}
 	}
 
+	@RequestMapping(value = "/checkLogin", method = RequestMethod.GET)
+	public Map<String, Object> checkLogin(String phone){
+		return webServiceService.checkLogin(phone);
+	}
+	
 	private JSONObject verifySmscode(String phone, String smscode) {
 		Map<String, Object> head = setLeancloudHead();
 		String result = HttpRequest.postCall(leancouldUrlVer + "/" + smscode + "?mobilePhoneNumber=" + phone, null,

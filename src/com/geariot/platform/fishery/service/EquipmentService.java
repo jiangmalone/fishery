@@ -125,11 +125,12 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	public Map<String, Object> setTimer(Timer timer) {
+	public Map<String, Object> setTimer(Timer[] timerArray) {
 		String deviceSn;
+		Timer timer=timerArray[0];
 		try {
 			deviceSn = timer.getDevice_sn().substring(0, 2);
-			new TimerTask().timerOpen(timer);
+			//new TimerTask().timerOpen(timer);
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
@@ -143,8 +144,8 @@ public class EquipmentService {
 			}
 		} else 
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-		timerDao.updateTimer(timer);
+         timerDao.delete(timer.getDevice_sn());
+		timerDao.save(timer);
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 

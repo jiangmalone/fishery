@@ -30,7 +30,10 @@ import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.ExcelData;
+import com.geariot.platform.fishery.model.Oxygen;
+import com.geariot.platform.fishery.model.PH;
 import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.model.Temperature;
 import com.geariot.platform.fishery.socket.CMDUtils;
 import com.geariot.platform.fishery.socket.TimerTask;
 import com.geariot.platform.fishery.utils.DataExportExcel;
@@ -255,11 +258,6 @@ public class EquipmentService {
 		Sensor_Data data=sensor_DataDao.findDataByDeviceSns(device_sn);
 		return RESCODE.SUCCESS.getJSONRES(data);
 	}
-
-	public Map<String, Object> dataAll(String device_sn, String startTime, String endTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	public Map<String, Object> myEquipment(String relationId){
 		List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(relationId, null);
@@ -401,5 +399,28 @@ public class EquipmentService {
 				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 			}
 		}
+	}
+
+	public Map<String, Object> dataToday(String device_sn) {
+		List<Sensor_Data> list = sensor_DataDao.today(device_sn);
+		List<PH> phs = new ArrayList<>();
+		List<Oxygen> oxygens = new ArrayList<>();
+		List<Temperature> temperatures = new ArrayList<>();
+		PH ph = null;
+		Oxygen oxygen = null;
+		Temperature temperature = null;
+		for(Sensor_Data sensor_Data : list){
+			ph = new PH(sensor_Data.getpH_value(), sensor_Data.getReceiveTime());
+			oxygen = new Oxygen(sensor_Data.getOxygen(), sensor_Data.getReceiveTime());
+			temperature = new Temperature(sensor_Data.getWater_temperature(), sensor_Data.getReceiveTime());
+			phs.add(ph);
+			oxygens.add(oxygen);
+			temperatures.add(temperature);
+		}
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+		map.put("phs", phs);
+		map.put("oxygens",oxygens);
+		map.put("temperatures", temperatures);
+		return map;
 	}
 }

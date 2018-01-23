@@ -16,4 +16,6 @@ public interface Sensor_DataDao {
 	void updateData(Sensor_Data sensor_Data);
 	
 	void save(Sensor_Data sensor_Data);
+	
+	List<Sensor_Data> today(String device_sn);
 }

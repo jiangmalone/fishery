@@ -206,6 +206,14 @@ class MyPond extends PureComponent {
                             transitionName: 'fade'
                         }
                     })
+                    this.props.dispatch({
+                        type: 'pond/changeState',
+                        payload: {
+                            formData: { fields: {} },
+                            address: '',
+                            selectedFishes: []
+                        }
+                    })
                 }}>
                 </div>}
                 {this.props.list.length == 0 && <div className="none-list">

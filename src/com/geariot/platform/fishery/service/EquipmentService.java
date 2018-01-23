@@ -3,6 +3,7 @@ package com.geariot.platform.fishery.service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,10 @@ import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.ExcelData;
+import com.geariot.platform.fishery.model.Oxygen;
+import com.geariot.platform.fishery.model.PH;
 import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.model.Temperature;
 import com.geariot.platform.fishery.socket.CMDUtils;
 import com.geariot.platform.fishery.socket.TimerTask;
 import com.geariot.platform.fishery.utils.DataExportExcel;
@@ -122,11 +126,12 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	public Map<String, Object> setTimer(Timer timer) {
+	public Map<String, Object> setTimer(Timer[] timerArray) {
 		String deviceSn;
+		Timer timer=timerArray[0];
 		try {
 			deviceSn = timer.getDevice_sn().substring(0, 2);
-			new TimerTask().timerOpen(timer);
+			
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
@@ -140,8 +145,10 @@ public class EquipmentService {
 			}
 		} else 
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-		timerDao.updateTimer(timer);
+         timerDao.delete(timer.getDevice_sn());
+         for(Timer timersave:timerArray) {
+		timerDao.save(timersave);
+         }
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
@@ -236,6 +243,8 @@ public class EquipmentService {
 
 	public Map<String, Object> realTimeData(String device_sn) {
 		String deviceSn;
+		Sensor_Data data = null;
+		Map<String,Object> map = null;
 		try {
 			deviceSn = device_sn.trim().substring(0, 2);
 		} catch (Exception e) {
@@ -245,20 +254,24 @@ public class EquipmentService {
 			if (aioDao.findAIOByDeviceSns(device_sn) == null) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
+			data = sensor_DataDao.findDataByDeviceSns(device_sn);
+			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
+			map = RESCODE.SUCCESS.getJSONRES(data);
+			map.put("status", aio.getStatus());
+			map.put("name", aio.getName());
+			return map;
 		} else if (deviceSn.equals("03")) {
 			if (sensorDao.findSensorByDeviceSns(device_sn) == null) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
+			data = sensor_DataDao.findDataByDeviceSns(device_sn);
+			Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+			map = RESCODE.SUCCESS.getJSONRES(data);
+			map.put("status", sensor.getStatus());
+			map.put("name", sensor.getName());
+			return map;
 		} else 
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-		Sensor_Data data=sensor_DataDao.findDataByDeviceSns(device_sn);
-		return RESCODE.SUCCESS.getJSONRES(data);
-	}
-
-	public Map<String, Object> dataAll(String device_sn, String startTime, String endTime) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	public Map<String, Object> myEquipment(String relationId){
@@ -401,5 +414,101 @@ public class EquipmentService {
 				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 			}
 		}
+	}
+
+	public Map<String, Object> dataToday(String device_sn) {
+		List<Sensor_Data> list = sensor_DataDao.today(device_sn);
+		List<PH> phs = new ArrayList<>();
+		List<Oxygen> oxygens = new ArrayList<>();
+		List<Temperature> temperatures = new ArrayList<>();
+		PH ph = null;
+		Oxygen oxygen = null;
+		Temperature temperature = null;
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+		for(Sensor_Data sensor_Data : list){
+			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			temperature = new Temperature(sensor_Data.getWater_temperature(), format.format(sensor_Data.getReceiveTime()));
+			phs.add(ph);
+			oxygens.add(oxygen);
+			temperatures.add(temperature);
+		}
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+		map.put("phs", phs);
+		map.put("oxygens",oxygens);
+		map.put("temperatures", temperatures);
+		return map;//
+	}
+
+	public Map<String, Object> dataAll(String device_sn) {
+		List<Sensor_Data> list = sensor_DataDao.sevenData(device_sn);
+		List<PH> phs = new ArrayList<>();
+		List<Oxygen> oxygens = new ArrayList<>();
+		List<Temperature> temperatures = new ArrayList<>();
+		PH ph = null;
+		Oxygen oxygen = null;
+		Temperature temperature = null;
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+		for(Sensor_Data sensor_Data : list){
+			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			temperature = new Temperature(sensor_Data.getWater_temperature(), format.format(sensor_Data.getReceiveTime()));
+			phs.add(ph);
+			oxygens.add(oxygen);
+			temperatures.add(temperature);
+		}
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+		map.put("phs", phs);
+		map.put("oxygens",oxygens);
+		map.put("temperatures", temperatures);
+		return map;//
+	}
+
+	public Map<String, Object> pcDataToday(String device_sn) {
+		List<Sensor_Data> list = sensor_DataDao.today(device_sn);
+		List<PH> phs = new ArrayList<>();
+		List<Oxygen> oxygens = new ArrayList<>();
+		List<Temperature> temperatures = new ArrayList<>();
+		PH ph = null;
+		Oxygen oxygen = null;
+		Temperature temperature = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for(Sensor_Data sensor_Data : list){
+			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			temperature = new Temperature(sensor_Data.getWater_temperature(), format.format(sensor_Data.getReceiveTime()));
+			phs.add(ph);
+			oxygens.add(oxygen);
+			temperatures.add(temperature);
+		}
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+		map.put("phs", phs);
+		map.put("oxygens",oxygens);
+		map.put("temperatures", temperatures);
+		return map;//
+	}
+
+	public Map<String, Object> pcDataAll(String device_sn) {
+		List<Sensor_Data> list = sensor_DataDao.sevenData(device_sn);
+		List<PH> phs = new ArrayList<>();
+		List<Oxygen> oxygens = new ArrayList<>();
+		List<Temperature> temperatures = new ArrayList<>();
+		PH ph = null;
+		Oxygen oxygen = null;
+		Temperature temperature = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for(Sensor_Data sensor_Data : list){
+			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			temperature = new Temperature(sensor_Data.getWater_temperature(), format.format(sensor_Data.getReceiveTime()));
+			phs.add(ph);
+			oxygens.add(oxygen);
+			temperatures.add(temperature);
+		}
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+		map.put("phs", phs);
+		map.put("oxygens",oxygens);
+		map.put("temperatures", temperatures);
+		return map;//
 	}
 }

@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.service.EquipmentService;
+import com.geariot.platform.fishery.socket.CMDUtils;
 
 @RestController
 @RequestMapping(value = "/equipment")
 public class EquipmentController {
-
+ 
 	@Autowired
 	private EquipmentService equipmentService;
 
@@ -32,7 +33,7 @@ public class EquipmentController {
 	}
 
 	@RequestMapping(value = "/timer", method = RequestMethod.POST)
-	public Map<String, Object> setTimer(@RequestBody Timer timer) {
+	public Map<String, Object> setTimer(@RequestBody Timer... timer) {
 		return equipmentService.setTimer(timer);
 	}
 
@@ -56,9 +57,24 @@ public class EquipmentController {
 		return equipmentService.realTimeData(device_sn);
 	}
 
-	@RequestMapping(value = "/data", method = RequestMethod.GET)
-	public Map<String, Object> dataAll(String device_sn, String startTime, String endTime) {
-		return equipmentService.dataAll(device_sn, startTime, endTime);
+	@RequestMapping(value = "/dataToday", method = RequestMethod.GET)
+	public Map<String, Object> dataToday(String device_sn) {
+		return equipmentService.dataToday(device_sn);
+	}
+	
+	@RequestMapping(value = "/dataAll", method = RequestMethod.GET)
+	public Map<String, Object> dataAll(String device_sn) {
+		return equipmentService.dataAll(device_sn);
+	}
+	
+	@RequestMapping(value = "/pc/dataToday", method = RequestMethod.GET)
+	public Map<String, Object> pcDataToday(String device_sn) {
+		return equipmentService.pcDataToday(device_sn);
+	}
+	
+	@RequestMapping(value = "/pc/dataAll", method = RequestMethod.GET)
+	public Map<String, Object> pcDataAll(String device_sn) {
+		return equipmentService.pcDataAll(device_sn);
 	}
 	
 	@RequestMapping(value = "/myEquipment", method = RequestMethod.GET)
@@ -74,5 +90,11 @@ public class EquipmentController {
 	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
 	public Map<String, Object> companyFindEquipment(String device_sn, String relationId, int page, int number){
 		return equipmentService.companyFindEquipment(device_sn, relationId, page, number);
+	}
+	
+	//服务器设置校准
+	@RequestMapping(value="/serverCheck",method=RequestMethod.GET)
+	public Map<String,Object> serverCheck(String device_sn){
+		return CMDUtils.serverCheckCMD(device_sn);
 	}
 }

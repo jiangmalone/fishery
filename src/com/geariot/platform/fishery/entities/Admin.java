@@ -18,7 +18,7 @@ public class Admin {
 	private	String password;				//管理员登录密码,MD5加密
 	private int type;						//管理员账户类型,0为管理员(可查看所有信息),1为企业账户(可查看自己相关的)
 	private int companyId;					//关联企业用户的Id(管理员默认为0),可支持多个登录账户绑定同一个企业用户
-	private String commment;				//备注
+	private String comment;				//备注
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -52,11 +52,11 @@ public class Admin {
 	public void setCompanyId(int companyId) {
 		this.companyId = companyId;
 	}
-	public String getCommment() {
-		return commment;
+	public String getComment() {
+		return comment;
 	}
-	public void setCommment(String commment) {
-		this.commment = commment;
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 	
 	

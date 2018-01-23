@@ -95,4 +95,10 @@ public class SensorDaoImpl implements SensorDao {
 		return query.list();
 	}
 
+	@Override
+	public void updateSensor(Sensor sensor) {
+		// TODO Auto-generated method stub
+		this.getSession().merge(sensor);
+	}
+
 }

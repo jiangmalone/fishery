@@ -18,7 +18,7 @@ class MyPond extends PureComponent {
     componentDidMount(){
         this.props.dispatch({
             type:'pond/query',
-            payload: { relationId: 'wx3', page: 1, number: 99 }
+            payload: { relationId: window.localStorage.getItem('relationId'), page: 1, number: 99 }
         })
     }
 
@@ -204,6 +204,14 @@ class MyPond extends PureComponent {
                         type: 'global/changeState',
                         payload: {
                             transitionName: 'fade'
+                        }
+                    })
+                    this.props.dispatch({
+                        type: 'pond/changeState',
+                        payload: {
+                            formData: { fields: {} },
+                            address: '',
+                            selectedFishes: []
                         }
                     })
                 }}>

@@ -23,17 +23,17 @@ public class WechatConfig {
 	// 自定义的token
 	public static final String TOKEN = "fishery2018";
 
-	public static final String APP_ID = "wx89ac1808e298928d";
+	public static final String APP_ID = "wx9871d8699143d59e";
 
-	public static final String MCH_ID = "1493352962";
+	//public static final String MCH_ID = "1493352962";
 
-	public static final String APP_SECRET = "1a809edcde16ab876245a1189e9f099b";
+	public static final String APP_SECRET = "0872554cedfb5082b359e32c655a7039";
 
 	public static final String APP_DOMAIN = "www.freelycar.com/freelycar_wechat";// url域名
 
-	public static final String KEY = "3E0JZPZTEZQHKC96GMQZJ0EVBT92JBIF"; // 签名秘钥，在微信商户平台里面设置z`z`
+	//public static final String KEY = "3E0JZPZTEZQHKC96GMQZJ0EVBT92JBIF"; // 签名秘钥，在微信商户平台里面设置z`z`
 
-	public static final String ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+	//public static final String ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
 	// 设置token 和 jsapi_ticket的过期时间 为一个半小时
 	private final static int TIME_OUT = 5400 * 1000;
@@ -42,7 +42,7 @@ public class WechatConfig {
 
 	private final static String WECHAT_USER_INFO = "https://api.weixin.qq.com/sns/userinfo";
 
-	public final static String REFUND_URL = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+	//public final static String REFUND_URL = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
 	public final static String WECHAT_TEMPLATE_MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=";
 

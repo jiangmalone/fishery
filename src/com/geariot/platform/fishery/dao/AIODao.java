@@ -7,6 +7,8 @@ import com.geariot.platform.fishery.entities.AIO;
 public interface AIODao {
 
 	void save(AIO aio);
+	
+	void update(AIO aio);
 
 	int delete(int AIOid);
 	

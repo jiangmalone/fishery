@@ -25,6 +25,7 @@ public class WXUser {
 	private String address;						//普通用户的联系地址
 	private Date createDate;					//普通用户的创建时间
 	private String relationId;					//普通用户的relationId(格式  = "WX" + id)
+	private boolean isLogin;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -87,6 +88,12 @@ public class WXUser {
 	}
 	public void setRelationId(String relationId) {
 		this.relationId = relationId;
+	}
+	public boolean isLogin() {
+		return isLogin;
+	}
+	public void setLogin(boolean isLogin) {
+		this.isLogin = isLogin;
 	}
 	
 }

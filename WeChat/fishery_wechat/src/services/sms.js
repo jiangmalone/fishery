@@ -1,17 +1,17 @@
 import request from '../utils/request';
-
+import get from '../utils/get';
 export default {
   //短信验证接口
-  identifyCode: (params) => {
-    return post('api/sms/request', params);
+  verification:(params)=>{
+    return get('api/webService/verification',params)
   },
-  loginBind: (params) => {
-    return post('api/sms/bind', params)
+  verifySmsCode:(params)=>{
+    return get('api/webService/verifySmsCode', params)
   },
-  verification:(options,params)=>{
-    return request('api/sms/verification', options,params)
+  verifyIsLogin:(params)=>{
+    return get('api/webService/checkLogin', params)
   },
-  verifySmsCode:(options,params)=>{
-    return request('api/sms/verifySmsCode', options,params)
+  LogOut:(params)=>{
+    return get('api/webService/logout', params)
   }
 }

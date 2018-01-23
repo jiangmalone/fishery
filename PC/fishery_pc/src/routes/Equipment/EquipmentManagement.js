@@ -36,8 +36,8 @@ export default class EquipmentManagement extends React.Component {
             payload: {
                 number: 10,
                 page: 1,
-                // relationId: this.props.match.params.relation
-                relationId: 'CO1'
+                relationId: this.props.match.params.relation
+                // relationId: 'CO1'
             },
         });
     }
@@ -142,7 +142,7 @@ export default class EquipmentManagement extends React.Component {
                 name: this.state.name,
                 page: 1,
                 number: 10,
-                relationId: 'CO1'
+                relationId: this.props.match.params.relation
             },
         });
     }
@@ -156,7 +156,7 @@ export default class EquipmentManagement extends React.Component {
             payload: {
                 number: 10,
                 page: pagination.current,
-                relationId: 'CO1'
+                relationId: this.props.match.params.relation
             },
         });
         this.props.dispatch({
@@ -229,7 +229,7 @@ export default class EquipmentManagement extends React.Component {
                 title: '设备编号',
                 dataIndex: 'device_sn',
                 render: (text, record, index) => {
-                    return <Link to={`/equipment/detail/${record.device_sn}`}>{text}</Link>
+                    return <Link to={`/equipment/detail/${record.device_sn}/${this.props.match.params.relation}`}>{text}</Link>
                 },
             },
             {

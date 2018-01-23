@@ -13,6 +13,8 @@ public interface ControllerDao {
 
 	int delete(int controllerId);
 	
+	void updateController(Controller controller);
+	
 	int delete(String deviceSns);
 
 	Controller findControllerById(int controllerId);

@@ -55,7 +55,7 @@ function AddAccount({ visible, form, onOk, onCancel, wrapClassName, modifyId }) 
                     rules: [
                         { required: true, message: '请输入密码' },
                     ],
-                })(<Input style={{ width: 200 }} />)}
+                })(<Input  type="password" style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="密码确认" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('password2', {
@@ -63,10 +63,10 @@ function AddAccount({ visible, form, onOk, onCancel, wrapClassName, modifyId }) 
                         { required: true, message: '请确认密码' },
                         { validator: checkPassword }
                     ],
-                })(<Input style={{ width: 200 }} />)}
+                })(<Input type="password" style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="备注" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('content')(<Input style={{ width: 200 }} />)}
+                {getFieldDecorator('comment')(<Input style={{ width: 200 }} />)}
             </FormItem>
         </Form>
     </Modal >
@@ -87,8 +87,8 @@ let AccountForm = Form.create({
             password2: Form.createFormField({
                 ...props.formData2.fields.password2
             }),
-            content: Form.createFormField({
-                ...props.formData2.fields.content
+            comment: Form.createFormField({
+                ...props.formData2.fields.comment
             }),
         }
     },

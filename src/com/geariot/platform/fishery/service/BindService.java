@@ -233,6 +233,8 @@ public class BindService {
 					return RESCODE.NOT_FOUND.getJSONRES();
 				} else {
 					BindState bindState = new BindState();
+					bindState.setDeviceName(aio.getName());
+					bindState.setStatus(aio.getStatus());
 					if (aio.getPondId() > 0) {
 						bindState.setPondId(aio.getPondId());
 						bindState.setPondName(pondDao.findPondByPondId(aio.getPondId()).getName());
@@ -247,6 +249,8 @@ public class BindService {
 					return RESCODE.NOT_FOUND.getJSONRES();
 				} else {
 					BindState bindState = new BindState();
+					bindState.setDeviceName(aio2.getName());
+					bindState.setStatus(aio2.getStatus());
 					if (aio2.getPondId() > 0) {
 						bindState.setPondId(aio2.getPondId());
 						bindState.setPondName(pondDao.findPondByPondId(aio2.getPondId()).getName());
@@ -261,6 +265,8 @@ public class BindService {
 					return RESCODE.NOT_FOUND.getJSONRES();
 				} else {
 					BindState bindState = new BindState();
+					bindState.setDeviceName(sensor.getName());
+					bindState.setStatus(sensor.getStatus());
 					PortBind bind = null;
 					Controller controller = null;
 					List<Sensor_Controller> list = sensor_ControllerDao.list(sensor.getId());
@@ -290,6 +296,8 @@ public class BindService {
 					return RESCODE.NOT_FOUND.getJSONRES();
 				} else {
 					BindState bindState = new BindState();
+					bindState.setDeviceName(controller1.getName());
+					bindState.setStatus(controller1.getStatus());
 					PortBind bind = null;
 					Sensor sensor2 = null;
 					List<Sensor_Controller> list = sensor_ControllerDao.controller(controller1.getId());

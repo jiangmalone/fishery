@@ -21,6 +21,7 @@ public class Constants {
 	public static final int PORT = 5678;
 	public static final int POOL_SIZE = 20;
 
+
 	private static final String RELOAD_FISH_KEY = "reload_fish";
 	public static boolean RELOAD_FISH;
 	/*是否开启查询缓存*/

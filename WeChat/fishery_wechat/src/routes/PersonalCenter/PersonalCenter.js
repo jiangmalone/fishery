@@ -1,8 +1,9 @@
 import React from 'react';
 import './personalCenter.less';
-import { List, Toast ,Modal} from 'antd-mobile';
+import { List, Toast, Modal } from 'antd-mobile';
 import BottomTabBar from '../../components/TabBar';
 import { connect } from 'dva';
+import { LogOut } from '../../services/sms'
 const Item = List.Item;
 const Brief = Item.Brief;
 const alert = Modal.alert;
@@ -19,7 +20,19 @@ class PersonalCenter extends React.Component {
       { text: '取消', onPress: () => console.log('cancel') },
       {
         text: '确定',
-        onPress: () => console.log('退出登录')
+        onPress: () => {
+
+          LogOut({ phone: window.localStorage.getItem('phone') }).then((res) => {
+            console.log(res)
+            if (res.data.code == '0') {
+              this.props.history.push('/login')
+              this.props.dispatch({
+                type: 'global/changeState',
+                payload: { login: false }
+              }); console.log('退出登录')
+            }
+          })
+        }
       },
     ])
   }
@@ -36,8 +49,8 @@ class PersonalCenter extends React.Component {
           <img src={require('../../img/avatar.jpg')} />
         </div>
         <div className="name">
-          张蕾西
-            {/* 登录/注册 */}
+          {window.localStorage.getItem('name')}
+          {/* 登录/注册 */}
         </div>
       </div>
 
@@ -95,5 +108,6 @@ class PersonalCenter extends React.Component {
 
 
 export default connect((state) => ({
-  transitionName: global.transitionName
+  transitionName: global.transitionName,
+  login: global.login
 }))(PersonalCenter);

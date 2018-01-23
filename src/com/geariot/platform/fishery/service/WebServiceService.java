@@ -62,15 +62,48 @@ public class WebServiceService {
 		return RESCODE.SUCCESS.getJSONRES(userOpenId);
 	}
 
-	public WXUser wechatLogin(String openId, String headimgurl) {
-		WXUser wxUser = wxUserDao.findUserByOpenId(openId);
-    	if(wxUser == null)
-    	{
-    		wxUser = new WXUser();
-    		wxUser.setOpenId(openId);
-    		wxUser.setHeadimgurl(headimgurl);
-    		wxUserDao.save(wxUser);
-    	}
-    	return wxUser;
+	public boolean isExistUserOpenId(String openId) {
+		if(openId == null || openId.length() < 0){
+			return false;
+		}else{
+			WXUser wxUser = wxUserDao.findUserByOpenId(openId);
+			return wxUser != null;
+		}
+	}
+
+	public Map<String, Object> login(String phone, String openId, String headimgurl) {
+		WXUser wxUser = wxUserDao.findUserByPhone(phone);
+		if (wxUser == null) {
+			WXUser wxUserNew = new WXUser();
+			wxUserNew.setPhone(phone);
+			wxUserNew.setHeadimgurl(headimgurl);
+			wxUserNew.setOpenId(openId);
+			wxUserNew.setLogin(true);
+			wxUserDao.save(wxUserNew);
+			wxUserNew.setRelationId("WX"+wxUserNew.getId());
+			return RESCODE.SUCCESS.getJSONRES(wxUserNew);
+		} else {
+			wxUser.setHeadimgurl(headimgurl);
+			wxUser.setOpenId(openId);
+			return RESCODE.SUCCESS.getJSONRES(wxUser);
+		}
+	}
+
+	public Map<String, Object> checkLogin(String phone) {
+		WXUser wxUser = wxUserDao.findUserByPhone(phone);
+		if(wxUser == null){
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else{
+			if(wxUser.isLogin()){
+				return RESCODE.SUCCESS.getJSONRES();
+			}else{
+				return RESCODE.NO_LOGIN.getJSONRES();
+			}
+		}
+	}
+
+	public Map<String, Object> deletWXUser(String phone) {
+		wxUserDao.logout(phone);
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 }

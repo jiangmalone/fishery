@@ -43,7 +43,7 @@ public class AdminService {
 				Company com = companyDao.findCompanyById(admin.getCompanyId());
 				com.setAccount(admin.getAccount());
 				com.setPassword(admin.getPassword());
-				com.setComment(admin.getCommment());
+				com.setComment(admin.getComment());
 				com.setHasAccount(true);
 			}
 			adminDao.save(admin);
@@ -78,7 +78,7 @@ public class AdminService {
 				Company com = companyDao.findCompanyById(exist.getCompanyId());
 				com.setAccount(exist.getAccount());
 				com.setPassword(exist.getPassword());
-				com.setComment(exist.getCommment());
+				com.setComment(exist.getComment());
 			}
 			return RESCODE.SUCCESS.getJSONRES();
 		}

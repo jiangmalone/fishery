@@ -7,16 +7,19 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.model.ExcelData;
+import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.QueryUtils;
 
 @Repository
 public class Sensor_DataDaoImpl implements Sensor_DataDao {
+	
 	@Autowired
 	private SessionFactory sessionFactory;
 	
@@ -60,14 +63,26 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 
 	@Override
 	public void updateData(Sensor_Data sensor_Data) {
-		// TODO Auto-generated method stub
 		this.getSession().merge(sensor_Data);
 	}
 
 	@Override
 	public void save(Sensor_Data sensor_Data) {
-		// TODO Auto-generated method stub
 		this.getSession().save(sensor_Data);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Sensor_Data> today(String device_sn) {
+		String hql = "from Sensor_Data where device_sn = :device_sn and date(receiveTime) = curdate() order by receiveTime";
+		return getSession().createQuery(hql).setString("device_sn", device_sn).setCacheable(Constants.SELECT_CACHE).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Sensor_Data> sevenData(String device_sn) {
+		String hql = "select * from sensor_data where device_sn = :device_sn and DATE_SUB(CURDATE(),INTERVAL 7 Day) <= date(receiveTime)";
+		return getSession().createSQLQuery(hql).setString("device_sn", device_sn).setResultTransformer(Transformers.aliasToBean(Sensor_Data.class)).setCacheable(Constants.SELECT_CACHE).list();
 	}
 
 }

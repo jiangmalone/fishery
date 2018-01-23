@@ -78,6 +78,12 @@ public class WXUserDaoImpl implements WXUserDao {
 		return (long) query.uniqueResult();
 	}
 
+	@Override
+	public void logout(String phone) {
+		String sql = "update wxuser set openId='',headimgurl='' where phone= :phone";
+		this.getSession().createSQLQuery(sql).setString("phone", phone).setCacheable(Constants.SELECT_CACHE).executeUpdate();
+	}
+
 
 
 }

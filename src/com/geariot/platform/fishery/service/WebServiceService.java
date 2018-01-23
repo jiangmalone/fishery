@@ -79,6 +79,7 @@ public class WebServiceService {
 			wxUserNew.setHeadimgurl(headimgurl);
 			wxUserNew.setOpenId(openId);
 			wxUserDao.save(wxUserNew);
+			wxUserNew.setRelationId("WX"+wxUserNew.getId());
 		} else {
 			wxUser.setHeadimgurl(headimgurl);
 			wxUser.setOpenId(openId);

@@ -1,6 +1,6 @@
 import { queryCompany, addCompany, modifyCompany, delCompany } from '../services/user'
 import update from 'immutability-helper'
-import { addAccount, modifyAccount } from '../services/account'
+import { addAccount2, modifyAccount } from '../services/account'
 import { message } from 'antd';
 
 export default {
@@ -54,7 +54,8 @@ export default {
       }
     },
     *addAccount({ payload }, { call, put }) {
-      const response = yield call(addAccount, payload);
+      console.log(222)
+      const response = yield call(addAccount2, payload.data);
       if (response.code == '0') {
         message.success('新增企业账户成功', 1);
         yield put({

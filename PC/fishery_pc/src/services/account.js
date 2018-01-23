@@ -1,8 +1,11 @@
 import request from '../utils/request';
 import { stringify } from 'qs';
 
-export async function addAccount(params) {
-    return request(`/api/admin/add?${stringify(params)}`);
+export async function addAccount2(params) {
+    return request('/api/admin/add', {
+        method: 'POST',
+        body: params
+    });
 }
 
 export async function modifyAccount(params) {

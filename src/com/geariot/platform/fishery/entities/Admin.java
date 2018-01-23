@@ -55,8 +55,8 @@ public class Admin {
 	public String getCommment() {
 		return comment;
 	}
-	public void setCommment(String commment) {
-		this.comment = commment;
+	public void setCommment(String comment) {
+		this.comment = comment;
 	}
 	
 	

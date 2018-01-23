@@ -132,6 +132,9 @@ class UserInfo extends PureComponent {
             title: '品种',
             dataIndex: 'fish_categorys',
             key: 'fish_categorys',
+            render:(text,record,index)=>{
+                return <div>{text?text.join(','):''}</div>
+            }
         }, {
             title: '池塘水源',
             dataIndex: 'water_source',
@@ -165,10 +168,6 @@ class UserInfo extends PureComponent {
             {
                 title: '设备名称',
                 dataIndex: 'name',
-            },
-            {
-                title: '所属企业',
-                dataIndex: 'companyName',
             },
             {
                 title: '设备状态',

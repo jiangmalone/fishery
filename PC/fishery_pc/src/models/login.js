@@ -35,6 +35,7 @@ export default {
           status: false,
         },
       });
+      window.localStorage.setItem('account','')
       yield put(routerRedux.push('/user/login'));
     },
   },

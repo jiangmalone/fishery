@@ -67,6 +67,16 @@ public class EquipmentController {
 		return equipmentService.dataAll(device_sn);
 	}
 	
+	@RequestMapping(value = "/pc/dataToday", method = RequestMethod.GET)
+	public Map<String, Object> pcDataToday(String device_sn) {
+		return equipmentService.pcDataToday(device_sn);
+	}
+	
+	@RequestMapping(value = "/pc/dataAll", method = RequestMethod.GET)
+	public Map<String, Object> pcDataAll(String device_sn) {
+		return equipmentService.pcDataAll(device_sn);
+	}
+	
 	@RequestMapping(value = "/myEquipment", method = RequestMethod.GET)
 	public Map<String, Object> myEquipment(String relationId){
 		return equipmentService.myEquipment(relationId);

@@ -1,5 +1,6 @@
 package com.geariot.platform.fishery.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.geariot.platform.fishery.dao.CompanyDao;
+import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.Company;
+import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.WXUser;
+import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
 
 
@@ -26,6 +30,9 @@ public class UserService {
     
     @Autowired
     private WXUserDao wxuserDao;
+    
+    @Autowired
+    private PondDao pondDao;
     
 	public Map<String, Object> addWXUser(WXUser wxuser) {
 		WXUser exist = wxuserDao.findUserByOpenId(wxuser.getOpenId());
@@ -140,7 +147,20 @@ public class UserService {
 		if (company == null) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
-		return RESCODE.SUCCESS.getJSONRES(company);
+		int count = 0;
+		List<Company> companies = new ArrayList<>();
+		companies.add(company);
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(company);
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(company.getRelationId(), null);
+		List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, 0, 2000);
+		for(Equipment equipment :equipments){
+			if(equipment.getStatus()==0){
+				count++;
+			}
+		}
+		map.put("pondCount", ponds.size());
+		map.put("equip", count+"/"+equipments.size());
+		return map;
 	}
 
 	public Map<String, Object> relationDetail(String relationId) {

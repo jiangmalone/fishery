@@ -52,10 +52,10 @@ public class Admin {
 	public void setCompanyId(int companyId) {
 		this.companyId = companyId;
 	}
-	public String getCommment() {
+	public String getComment() {
 		return comment;
 	}
-	public void setCommment(String comment) {
+	public void setComment(String comment) {
 		this.comment = comment;
 	}
 	

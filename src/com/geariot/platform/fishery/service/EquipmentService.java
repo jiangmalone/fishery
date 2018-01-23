@@ -3,6 +3,7 @@ package com.geariot.platform.fishery.service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -130,7 +131,7 @@ public class EquipmentService {
 		Timer timer=timerArray[0];
 		try {
 			deviceSn = timer.getDevice_sn().substring(0, 2);
-			//new TimerTask().timerOpen(timer);
+			
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
@@ -145,7 +146,9 @@ public class EquipmentService {
 		} else 
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
          timerDao.delete(timer.getDevice_sn());
-		timerDao.save(timer);
+         for(Timer timersave:timerArray) {
+		timerDao.save(timersave);
+         }
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
@@ -421,10 +424,11 @@ public class EquipmentService {
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
 		for(Sensor_Data sensor_Data : list){
-			ph = new PH(sensor_Data.getpH_value(), sensor_Data.getReceiveTime());
-			oxygen = new Oxygen(sensor_Data.getOxygen(), sensor_Data.getReceiveTime());
-			temperature = new Temperature(sensor_Data.getWater_temperature(), sensor_Data.getReceiveTime());
+			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			temperature = new Temperature(sensor_Data.getWater_temperature(), format.format(sensor_Data.getReceiveTime()));
 			phs.add(ph);
 			oxygens.add(oxygen);
 			temperatures.add(temperature);

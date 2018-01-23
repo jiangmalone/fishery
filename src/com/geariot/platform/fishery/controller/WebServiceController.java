@@ -181,6 +181,11 @@ public class WebServiceController {
 		return json;
 	}
 
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public Map<String, Object> logout(String phone) {
+		return webServiceService.deletWXUser(phone);
+	}
+	
 	private Map<String, Object> setLeancloudHead() {
 		Map<String, Object> head = new HashMap<String, Object>();
 		head.put("X-LC-Id", appid);

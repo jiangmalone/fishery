@@ -12,19 +12,19 @@ import java.util.Date;
 public class Temperature {
 	
 	private float temperature;
-	private Date receiveTime;
+	private String receiveTime;
 	public Temperature(){
 		
 	}
-	public Temperature(float temperature, Date receiveTime){
+	public Temperature(float temperature, String receiveTime){
 		this.setTemperature(temperature);
 		this.receiveTime = receiveTime;
 	}
 	
-	public Date getReceiveTime() {
+	public String getReceiveTime() {
 		return receiveTime;
 	}
-	public void setReceiveTime(Date receiveTime) {
+	public void setReceiveTime(String receiveTime) {
 		this.receiveTime = receiveTime;
 	}
 	public float getTemperature() {

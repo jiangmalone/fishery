@@ -12,19 +12,19 @@ import java.util.Date;
 public class PH {
 	
 	private float ph;
-	private Date receiveTime;
+	private String receiveTime;
 	public PH(){
 		
 	}
-	public PH(float ph, Date receiveTime){
+	public PH(float ph, String receiveTime){
 		this.setPh(ph);
 		this.receiveTime = receiveTime;
 	}
 	
-	public Date getReceiveTime() {
+	public String getReceiveTime() {
 		return receiveTime;
 	}
-	public void setReceiveTime(Date receiveTime) {
+	public void setReceiveTime(String receiveTime) {
 		this.receiveTime = receiveTime;
 	}
 	public float getPh() {

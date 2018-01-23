@@ -34,7 +34,7 @@ class AddPond extends PureComponent {
             if (!error) {
                 console.log(value)
             }
-            value.relation = 'wx3';
+            value.relation =window.localStorage.getItem('relationId');
             value.address = this.props.address;
             value.longitude = this.props.longitude;
             value.latitude = this.props.latitude;

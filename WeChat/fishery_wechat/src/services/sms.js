@@ -10,5 +10,8 @@ export default {
   },
   verifyIsLogin:(params)=>{
     return get('api/webService/checkLogin', params)
+  },
+  LogOut:(params)=>{
+    return get('api/webService/logout', params)
   }
 }

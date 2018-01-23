@@ -8,6 +8,7 @@ import update from 'immutability-helper'
 import login_logo from '../../img/logo.png';
 import login_password_logo from '../../img/password-logo.png';
 import login_user_logo from '../../img/user-logo.png';
+import { connect } from 'dva';
 
 class LoginIndex extends React.Component {
 
@@ -63,11 +64,6 @@ class LoginIndex extends React.Component {
         })
 
         verifySmsCode({
-            method: 'post',
-            headers: myHeaders,
-            mode: 'cors',
-            cache: 'default'
-        }, {
                 openId: '112221',
                 // openId: getParameterByName('openid'),
                 phone: this.state.phone,
@@ -79,9 +75,10 @@ class LoginIndex extends React.Component {
                 if (res.data.code == '0') {
                     window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'))
                     window.localStorage.setItem('openid', getParameterByName('openid'))
+                    window.localStorage.setItem('id', res.data.data.id)
                     window.localStorage.setItem('relationId', res.data.data.relationId)
                     if (res.data.data.name) {
-                        this.props.dispath({
+                        this.props.dispatch({
                             type:'global/changeState',
                             payload:{
                                 login:true
@@ -89,7 +86,7 @@ class LoginIndex extends React.Component {
                         })
                         this.props.history.push(`/main`)
                     } else {
-                        this.props.dispath({
+                        this.props.dispatch({
                             type:'global/changeState',
                             payload:{
                                 login:true
@@ -149,5 +146,9 @@ class LoginIndex extends React.Component {
         </div>
     }
 }
-
-export default LoginIndex;
+export default connect((state) => {
+    return ({
+        login: state.global.login,
+        transitionName: state.global.transitionName
+    })
+})(LoginIndex);

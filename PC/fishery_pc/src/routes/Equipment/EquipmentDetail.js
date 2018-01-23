@@ -103,7 +103,7 @@ export default class EquipmentDetail extends React.Component {
                 pondId: v,
                 type: type
             }).then((res) => {
-                if (res.code !== '0') {
+                if (res.code !== 0) {
                     message.error(res.msg, 2);
                 } else {
                     message.success(res.msg, 2)

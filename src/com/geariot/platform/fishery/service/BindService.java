@@ -275,6 +275,10 @@ public class BindService {
 						bind.setBindPort(sensor_Controller.getController_port());
 						portBinds.add(bind);
 					}
+					while(portBinds.size() < 2){
+						bind = new PortBind();
+						
+					}
 					if (sensor.getPondId() > 0) {
 						bindState.setPondId(sensor.getPondId());
 						bindState.setPondName(pondDao.findPondByPondId(sensor.getPondId()).getName());

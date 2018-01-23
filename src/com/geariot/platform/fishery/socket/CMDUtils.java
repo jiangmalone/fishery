@@ -451,13 +451,27 @@ public class CMDUtils {
 			return RESCODE.CONNECTION_CLOSED.getJSONRES();
 		}
 		byte[] request = null;
-		String temp=StringUtils.add(deviceSn, way, 13)
+		//第一路开始校准
+		String firstpath=StringUtils.add(deviceSn, 1, 13)
                 .append("          ")
 				.toString();
-		request=CommonUtils.toByteArray(temp);
+		request=CommonUtils.toByteArray(firstpath);
 		request[7]=CommonUtils.arrayMerge(request, 2, 5);
 		CommonUtils.addSuffix(request, 8);
 	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
+	    try {
+			channel.write(outBuffer);
+		} catch (IOException e) {
+			return RESCODE.SEND_FAILED.getJSONRES();
+		}
+	    //第二路开始校准
+	    String secondpath=StringUtils.add(deviceSn, 2, 13)
+                .append("          ")
+				.toString();
+	    request=CommonUtils.toByteArray(secondpath);
+		request[7]=CommonUtils.arrayMerge(request, 2, 5);
+		CommonUtils.addSuffix(request, 8);
+	     outBuffer = ByteBuffer.wrap(request);
 	    try {
 			channel.write(outBuffer);
 		} catch (IOException e) {

@@ -3,7 +3,7 @@ export default {
     namespace: 'global',
     state: {
         transitionName: 'right',
-        login: false
+        login: true
     },
     reducers: {
         changeState(state, action) {

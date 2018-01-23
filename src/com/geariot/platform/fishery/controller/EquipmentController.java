@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.service.EquipmentService;
+import com.geariot.platform.fishery.socket.CMDUtils;
 
 @RestController
 @RequestMapping(value = "/equipment")
@@ -79,5 +80,11 @@ public class EquipmentController {
 	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
 	public Map<String, Object> companyFindEquipment(String device_sn, String relationId, int page, int number){
 		return equipmentService.companyFindEquipment(device_sn, relationId, page, number);
+	}
+	
+	//服务器设置校准
+	@RequestMapping(value="/serverCheck",method=RequestMethod.GET)
+	public Map<String,Object> serverCheck(String device_sn){
+		return CMDUtils.serverCheckCMD(device_sn);
 	}
 }

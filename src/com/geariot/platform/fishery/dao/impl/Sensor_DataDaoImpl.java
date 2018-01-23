@@ -72,7 +72,7 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Sensor_Data> today(String device_sn) {
-		String hql = "from Sensor_Date where device_sn = :device_sn and date(receiveTime) = curdate() order by receiveTime desc";
+		String hql = "from Sensor_Data where device_sn = :device_sn and date(receiveTime) = curdate() order by receiveTime desc";
 		return getSession().createQuery(hql).setString("device_sn", device_sn).setCacheable(Constants.SELECT_CACHE).list();
 	}
 

@@ -78,6 +78,7 @@ public class WebServiceService {
 			wxUserNew.setPhone(phone);
 			wxUserNew.setHeadimgurl(headimgurl);
 			wxUserNew.setOpenId(openId);
+			wxUserNew.setLogin(true);
 			wxUserDao.save(wxUserNew);
 			wxUserNew.setRelationId("WX"+wxUserNew.getId());
 			return RESCODE.SUCCESS.getJSONRES(wxUserNew);

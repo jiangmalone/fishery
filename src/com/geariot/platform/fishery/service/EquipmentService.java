@@ -463,4 +463,52 @@ public class EquipmentService {
 		map.put("temperatures", temperatures);
 		return map;//
 	}
+
+	public Map<String, Object> pcDataToday(String device_sn) {
+		List<Sensor_Data> list = sensor_DataDao.today(device_sn);
+		List<PH> phs = new ArrayList<>();
+		List<Oxygen> oxygens = new ArrayList<>();
+		List<Temperature> temperatures = new ArrayList<>();
+		PH ph = null;
+		Oxygen oxygen = null;
+		Temperature temperature = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for(Sensor_Data sensor_Data : list){
+			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			temperature = new Temperature(sensor_Data.getWater_temperature(), format.format(sensor_Data.getReceiveTime()));
+			phs.add(ph);
+			oxygens.add(oxygen);
+			temperatures.add(temperature);
+		}
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+		map.put("phs", phs);
+		map.put("oxygens",oxygens);
+		map.put("temperatures", temperatures);
+		return map;//
+	}
+
+	public Map<String, Object> pcDataAll(String device_sn) {
+		List<Sensor_Data> list = sensor_DataDao.sevenData(device_sn);
+		List<PH> phs = new ArrayList<>();
+		List<Oxygen> oxygens = new ArrayList<>();
+		List<Temperature> temperatures = new ArrayList<>();
+		PH ph = null;
+		Oxygen oxygen = null;
+		Temperature temperature = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for(Sensor_Data sensor_Data : list){
+			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			temperature = new Temperature(sensor_Data.getWater_temperature(), format.format(sensor_Data.getReceiveTime()));
+			phs.add(ph);
+			oxygens.add(oxygen);
+			temperatures.add(temperature);
+		}
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+		map.put("phs", phs);
+		map.put("oxygens",oxygens);
+		map.put("temperatures", temperatures);
+		return map;//
+	}
 }

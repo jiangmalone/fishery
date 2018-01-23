@@ -45,15 +45,15 @@ public class TimerDaoImpl implements TimerDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Timer> findAllTimer() {
-		QueryUtils qutils = new QueryUtils(getSession(), "Timer");
-		Query query = qutils.getQuery();
-		return query.list();
+		String hql="from Timer";
+		
+		return this.getSession().createQuery(hql).list();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Timer> queryTimerByDeviceSn(String device_sn, int from, int pageSize) {
-		QueryUtils qutils = new QueryUtils(getSession(), "Timer");
+		QueryUtils qutils = new QueryUtils(getSession(), " from Timer");
 		Query query = qutils.addStringLike("device_sn", device_sn)
 		.setFirstResult(from)
 		.setMaxResults(pageSize)

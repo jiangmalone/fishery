@@ -335,6 +335,7 @@ public class EquipmentService {
 				case "01" : 
 					aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
 					relation = aio.getRelationId();
+					equipment.setRelationId(relation);
 					if(relation != null && relation.contains("CO")){
 						company = companyDao.findCompanyByRelationId(relation);
 						equipment.setCompanyName(company.getName());
@@ -347,6 +348,7 @@ public class EquipmentService {
 				case "02" : 
 					aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
 					relation = aio.getRelationId();
+					equipment.setRelationId(relation);
 					if(relation != null && relation.contains("CO")){
 						company = companyDao.findCompanyByRelationId(relation);
 						equipment.setCompanyName(company.getName());
@@ -359,6 +361,7 @@ public class EquipmentService {
 				case "03" : 
 					sensor = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn());
 					relation = sensor.getRelationId();
+					equipment.setRelationId(relation);
 					if(relation != null && relation.contains("CO")){
 						company = companyDao.findCompanyByRelationId(relation);
 						equipment.setCompanyName(company.getName());
@@ -371,6 +374,7 @@ public class EquipmentService {
 				case "04" : 
 					controller = controllerDao.findControllerByDeviceSns(equipment.getDevice_sn());
 					relation = controller.getRelationId();
+					equipment.setRelationId(relation);
 					if(relation != null && relation.contains("CO")){
 						company = companyDao.findCompanyByRelationId(relation);
 						equipment.setCompanyName(company.getName());

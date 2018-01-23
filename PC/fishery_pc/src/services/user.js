@@ -79,3 +79,7 @@ export async function delCompany(params) {
   return request(`/api/usermanagement/delCompany?${str}`)
 }
 
+export async function CompanyDetail(params) {
+  return request(`/api/usermanagement/CompanyDetail?${stringify(params)}`);
+}
+

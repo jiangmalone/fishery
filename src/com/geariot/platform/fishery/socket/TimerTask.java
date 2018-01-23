@@ -20,19 +20,25 @@ public class TimerTask {
 	public static void judgeTime() {
 
 		SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-         System.out.println("-------定时任务执行了");
+         
 		List<Timer> lt = service.findAllTimer();
+		
 		if (!lt.isEmpty()) {
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 			String now = sdf.format(new Date());
 			for (Timer timer : lt) {
-				if (now.compareTo(timer.getStartTime()) <= 5) {
+			
+				if (now.compareTo(timer.getStartTime()) <= 5&&now.compareTo(timer.getStartTime()) >= 0) {
 					logger.debug("检测到数据中有待执行的定时任务，准备向终端发送打开增氧机的命令");
+					
 					CMDUtils.serverOnOffOxygenCMD(timer, 1);
+					
 				}
-				if (now.compareTo(timer.getEndTime()) <= 5) {
+				if (now.compareTo(timer.getEndTime())<=5&&now.compareTo(timer.getEndTime())>=0) {
 					logger.debug("检测到数据中有待执行的定时任务，准备向终端发送关闭增氧机的命令");
+					
 					CMDUtils.serverOnOffOxygenCMD(timer, 0);
+					
 				}
 			}
 		}

@@ -93,6 +93,14 @@ public class SocketSerivce {
 		return sensorDao.findSensorByDeviceSns(deviceSn);
 	}
 	
+	public AIO findAIOByDeviceSn(String deviceSn) {
+		return aioDao.findAIOByDeviceSns(deviceSn);
+	}
+	
+	public Controller findControllerByDeviceSn(String deviceSn) {
+		return controllerDao.findControllerByDeviceSns(deviceSn);
+	}
+	
 	public WXUser findWXUserById(String relation) {
 		return wxuserDao.findUserById(Integer.parseInt(relation.substring(2)));
 	}

@@ -49,7 +49,9 @@ class EquipmentManagement extends React.Component {
             ponds: [],      // 所有的塘口
             pickerValue:[], // 选择需要绑定的塘口
             bindPond: {},   // 现在绑定的塘口
-            portsData: []
+            portsData: [],
+            name: '',
+            state: ''
         }
     }
 
@@ -79,8 +81,6 @@ class EquipmentManagement extends React.Component {
             this.setState({ animating: false });
             console.log(res);
             if (res.data && res.data.code == 0) {
-
-                console.log('111');
                 let portBinds = res.data.data.portBinds;
                 let standardPorts = [];
                 let bindPorts = [];
@@ -92,17 +92,17 @@ class EquipmentManagement extends React.Component {
                 portBinds.map((item, index) => {
                     bindPorts.push(item.port);
                 })
-
                 console.log(bindPorts)
                 let difference = standardPorts.filter(x => bindPorts.indexOf(x) == -1).concat(bindPorts.filter(x => standardPorts.indexOf(x) == -1));
                 console.log(difference)
                 difference.map((item, index) => {
                     portBinds.push({port: item});
                 })
-                console.log(portBinds)
                 res.data.data.portBinds = portBinds;
-
-                this.setState({portsData : res.data.data.portBinds});
+                this.setState({portsData : res.data.data.portBinds,
+                    name: res.data.data.deviceName,
+                    state: res.data.data.status,
+                });
                 if (res.data.data.pondName && res.data.data.pondId) {
                     this.setState({
                         bindPond: {
@@ -111,6 +111,8 @@ class EquipmentManagement extends React.Component {
                         }
                     })
                 }
+
+                this.setState({pickerValue: []})
             } else {
                 Toast.fail(res.data.msg, 1);
             }
@@ -152,7 +154,7 @@ class EquipmentManagement extends React.Component {
     }
 
     getBindedPort = (portData) => {
-        return <div >
+        return <div key={portData.port}>
             <div className='prot-name-line' >
                 <div className='left '>端口名称：端口{portData.port}（已绑定）</div>
                 {(this.state.type == 1) && <div className='right unbinded' onClick={() => this.unlockEquipment(portData.port)} >
@@ -167,7 +169,7 @@ class EquipmentManagement extends React.Component {
     }
 
     getUnbindPort = (portData) => {
-        return <div className='prot-name-line' >
+        return <div className='prot-name-line' key={portData.port}>
             <div className='left '>端口名称：端口{portData.port}（未绑定）</div>
             {(this.state.type == 1) && <div className='right binded' onClick={() => { this.bindEquipment(portData.port) }} >
                 绑定
@@ -201,7 +203,6 @@ class EquipmentManagement extends React.Component {
             this.setState({ animating: false });
             if (res.data && res.data.code == 0) {
                 Toast.success('解绑成功！', 1);
-                this.setState({pickerValue: []})
                 setTimeout(() => {
                     this.bindState();
                 }, 1000);
@@ -270,7 +271,7 @@ class EquipmentManagement extends React.Component {
                 this.setState({ animating: false });
                 if (res.data && res.data.code == 0) {
                     Toast.success('绑定成功！', 1);
-                    this.setState({pickerValue: []})
+                    
                     setTimeout(() => {
                         this.bindState();
                     }, 1000);
@@ -331,12 +332,12 @@ class EquipmentManagement extends React.Component {
             <NavBar title={"设备管理"} />
             <div className='header-line' >
                 <div className='name'>
-                    传感器1(编号:88888888)
+                    {this.state.name}(编号:{this.state.device_sn})
                 </div>
                 <div className='state' >
-                    <img src={offline} />
-                    <span className='offline'>
-                        离线
+                    <img src={this.state.state == 0 ? offline : online} />
+                    <span className={this.state.state == 0 ? 'offline' : 'online'} >
+                        {this.state.state == 0 ? '离线' : '在线'}
                     </span>
                 </div>
             </div>

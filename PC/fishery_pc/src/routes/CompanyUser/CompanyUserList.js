@@ -7,7 +7,6 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from "./companyUserList.less"
 import AddCompanyUser from './AddCompanyUser';
 import AddAccount from './AddAccount';
-import index from '../../../node_modules/_antd@3.0.1@antd/lib/col';
 
 @connect(state => ({
     list: state.companyUser.list,

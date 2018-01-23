@@ -161,7 +161,7 @@ class EquipmentManagement extends React.Component {
             </div>
             <div className='prot-info' >
                 <div>设备绑定：{portData.bindName}</div>
-                <div>设备端口：端口{portData.port}</div>
+                <div>设备端口：端口{portData.bindPort}</div>
             </div>
         </div>
     }

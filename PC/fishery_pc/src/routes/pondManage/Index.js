@@ -6,7 +6,6 @@ import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd';
 import { Link } from 'react-router-dom';
 import Addmodal from './Addmodal.js';
 import Mapmoal from './MapModal.js';
-import index from '../../../node_modules/_antd@3.0.1@antd/lib/col';
 
 const Search = Input.Search;
 @connect(state => ({

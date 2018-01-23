@@ -127,55 +127,36 @@ public class WebServiceController {
 		try {
 			resultJson = new JSONObject(wechatInfo);
 			if (resultJson.get("message").equals("success")) {
-				String openid = resultJson.getString("openid");
+				String openId = resultJson.getString("openid");
 				String headimgurl = resultJson.getString("headimgurl");
 				headimgurl = URLEncoder.encode(headimgurl, "utf-8");
 				String ret = BASEURL + htmlPage;
-				// 是否重新授权
-				if (isAuth) {
-					ret = BASEURL + "login?openid=" + openid + "&nickname=" + nickname + "&headimgurl=" + headimgurl
-							+ "&directUrl=" + htmlPage;
-				} else {
-					boolean wxUser = wxUserService.isExistUserOpenId(openid);
-					log.error(wxUser);
-					if (!wxUser) {
-						ret = BASEURL + "login?openid=" + openid + "&nickname=" + nickname + "&headimgurl=" + headimgurl
-								+ "&directUrl=" + htmlPage;
-					} else {
-						if ("personalInfo".equals(htmlPage)) {
-							ret = BASEURL + "indexPage";
-						}
-					}
-				}
-				log.error(ret);
+				boolean wxUser = webServiceService.isExistUserOpenId(openId);
+				if (!wxUser) {
+					ret = BASEURL + "login?openid=" + openId + "&headimgurl=" + headimgurl+ "&directUrl=" + htmlPage;
+					} 
 				return "redirect:" + ret;
+				}
+			}catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		// 重新授权
-		// return
-		// "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.com%2ffreelycar%2fapi%2fwechat%2ftlogin&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
-		// //重定向到失败页面
 		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.com%2ffreelycar_wechat%2fapi%2fuser%2fwechatlogin%3FhtmlPage%3DpersonalInfo&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
-
-	}
+		}
 
 	// 注册验证结果请求
 	@RequestMapping(value = "/verifySmsCode", method = RequestMethod.GET)
-	public String verifySmsCode(String phone, String smscode) {
+	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl) {
 		JSONObject json = this.verifySmscode(phone, smscode);
 		if (json.getString("error") != null) {
 			logger.debug(phone + ";code:" + smscode + " 验证失败。。。");
-			json.put(Constants.RESPONSE_CODE_KEY, json.getInt("code"));
-			json.put(Constants.RESPONSE_MSG_KEY, json.getString("error"));
-			return json.toString();
+			Map<String, Object> obj = new HashMap<>();
+			obj.put(Constants.RESPONSE_CODE_KEY, json.getInt("code"));
+			obj.put(Constants.RESPONSE_MSG_KEY, json.getInt("error"));
+			return obj;
 		} else {
-			json.put(Constants.RESPONSE_CODE_KEY, RESCODE.SUCCESS);
-			json.put(Constants.RESPONSE_MSG_KEY, RESCODE.SUCCESS.getMsg());
-			return json.toString();
+			return webServiceService.login(phone,openId,headimgurl);
 		}
 	}
 

@@ -1,11 +1,18 @@
 package com.geariot.platform.fishery.entities;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.ForeignKey;
 
 @Entity
 public class SelfTest {
@@ -15,7 +22,7 @@ public class SelfTest {
 	private int ac;                 //有无220v交流电
 	private double latitude;        //纬度
 	private double longitude;       //经度
-	private int  status;       //传感器是否正常，00不正常，01正常
+	private List<Broken> broken;       //传感器及水泵状态
 	private int gprs;           //gprs强度
 	private String device_sn;			//设备编号
 	public String getDevice_sn() {
@@ -88,11 +95,17 @@ public class SelfTest {
 		this.createDate = createDate;
 	}
 
-	public int getStatus() {
-		return status;
+	@ElementCollection(fetch=FetchType.EAGER, targetClass = Broken.class)
+	@CollectionTable(name = "SelfTest_Broken")
+	public List<Broken> getBroken() {
+		return broken;
 	}
 
-	public void setStatus(int status) {
-		this.status = status;
+	public void setBroken(List<Broken> broken) {
+		this.broken = broken;
 	}
+
+	
+
+	
 }

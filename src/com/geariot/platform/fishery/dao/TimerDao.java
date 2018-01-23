@@ -7,13 +7,13 @@ import com.geariot.platform.fishery.entities.Timer;
 
 
 public interface TimerDao {
-    void save(Timer timer);
+    void save(Timer... timer);
 	
 	void delete(String device_sn);
 
 	Timer findTimerById(int timerId);
 	
-	Timer findTimerByDeviceSns(String device_sn);
+	List<Timer> findAllTimer();
 
 	List<Timer> queryTimerByDeviceSn(String device_sn, int from, int pageSize);
 

@@ -91,4 +91,10 @@ public class AIODaoImpl implements AIODao {
 		return query.list();
 	}
 
+	@Override
+	public void update(AIO aio) {
+		// TODO Auto-generated method stub
+		this.getSession().merge(aio);
+	}
+
 }

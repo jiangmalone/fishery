@@ -23,7 +23,7 @@ public class TimerDaoImpl implements TimerDao {
 		return sessionFactory.getCurrentSession();
 	}
 	@Override
-	public void save(Timer timer) {
+	public void save(Timer... timer) {
 		this.getSession().save(timer);
 
 	}
@@ -42,11 +42,12 @@ public class TimerDaoImpl implements TimerDao {
 			return timer;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Timer findTimerByDeviceSns(String device_sn) {
-		String hql = "from Timer where device_sn= :device_sn ";
-		Timer timer= (Timer) getSession().createQuery(hql).setString("device_sn",device_sn).setCacheable(Constants.SELECT_CACHE).uniqueResult();
-			return timer;
+	public List<Timer> findAllTimer() {
+		QueryUtils qutils = new QueryUtils(getSession(), "Timer");
+		Query query = qutils.getQuery();
+		return query.list();
 	}
 
 	@SuppressWarnings("unchecked")

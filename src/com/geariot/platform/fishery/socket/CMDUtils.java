@@ -6,24 +6,34 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.catalina.tribes.util.Arrays;
 import org.apache.log4j.Logger;
 
+import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Alarm;
+import com.geariot.platform.fishery.entities.Broken;
+import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.SelfTest;
+import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.entities.WXUser;
+import com.geariot.platform.fishery.model.BrokenMSG;
+import com.geariot.platform.fishery.model.EntityModel;
+import com.geariot.platform.fishery.model.EntityType;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
 import com.geariot.platform.fishery.utils.StringUtils;
+import com.geariot.platform.fishery.wxutils.WechatTemplateMessage;
 
 public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
@@ -35,7 +45,7 @@ public class CMDUtils {
 	private static String deviceSn;
 	private static byte way;
 	private static  AtomicBoolean feedback=new AtomicBoolean();
-
+    private static SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	
 	public static  AtomicBoolean getFeedback() {
 		return feedback;
@@ -63,7 +73,7 @@ public class CMDUtils {
 		  
 		preHandle(key);
 		clientMap.put(deviceSn, readChannel); 
-	       SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+	      
 	       //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		    byte ac = data[7];
 			byte[] byteLongitude =new byte[4];
@@ -72,8 +82,13 @@ public class CMDUtils {
 			byte[] byteLatitude = new byte[4];
 			CommonUtils.arrayHandle(data, byteLatitude, 12, 0, 4);
 			float latitude= CommonUtils.byte2float(byteLatitude,0);
-			byte sensor = data[16];//传感器是否正常
-			byte gprs = data[17];
+			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+			byte[] status = new byte[2];
+			status[0]=data[16];//传感器和水泵状态
+			status[1]=data[17];
+			List<Broken> brokenlist=new ArrayList<Broken>();
+			statusHandle(status,brokenlist);
+			byte gprs = data[18];
 			//byte check = data[18];
 			//String suffix0 = CommonUtils.printHexStringMerge(data,19,4);
            SelfTest selfTest=new SelfTest();
@@ -83,8 +98,9 @@ public class CMDUtils {
            selfTest.setLatitude(latitude);
            selfTest.setLongitude(longitude);
            selfTest.setGprs(gprs);
-           selfTest.setStatus(sensor);
+           selfTest.setBroken(brokenlist);
            selfTest.setCreateDate(new Date());
+           
 		service.save(selfTest);
 		response(19);
 	}
@@ -103,7 +119,7 @@ public class CMDUtils {
 			float low= CommonUtils.byte2float(bytelow,0);
 			//byte check1 = data[19];
 			//String suffix1 = CommonUtils.printHexStringMerge(data,20,4);
-			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			Limit_Install limit=new Limit_Install();
 			limit.setDevice_sn(deviceSn);
 			limit.setWay(way);
@@ -158,7 +174,7 @@ public class CMDUtils {
 			String receiveTime = sdf.format(new Date());
 			//byte check3 = data[15];
 			//String suffix3 = CommonUtils.printHexStringMerge(data,16,4);
-			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			Sensor_Data sData=new Sensor_Data();
 			sData.setDevice_sn(deviceSn);
 			sData.setWay(way);
@@ -180,8 +196,22 @@ public class CMDUtils {
 		//byte check4 = data[7];
 			//String suffix4 = CommonUtils.printHexStringMerge(data,8,4);
 			
-			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-			Alarm alarm=new Alarm();
+			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+		 String judge=deviceSn.substring(0, 2);
+			if(judge.equals("01")||judge.equals("02")) {
+				AIO aio=new AIO();
+				aio.setStatus(3);
+				service.updateAIO(aio);
+			}else if(judge.equals("03")) {
+				Sensor sensor=new Sensor();
+				sensor.setStatus(3);
+				service.updateSensor(sensor);
+			}else if(judge.equals("04")) {
+				Controller controller =new Controller();
+				controller.setStatus(3);
+				service.updateController(controller);
+			}
+		 Alarm alarm=new Alarm();
 			alarm.setDeviceSn(deviceSn);
              alarm.setWay(way);	
              try {
@@ -201,8 +231,22 @@ public class CMDUtils {
 		//byte check5 = data[7];
 			//String suffix5 = CommonUtils.printHexStringMerge(data,8,4);
 			
-			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-			Alarm alarm=new Alarm();
+			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+		 String judge=deviceSn.substring(0, 2);
+			if(judge.equals("01")||judge.equals("02")) {
+				AIO aio=new AIO();
+				aio.setStatus(2);
+				service.updateAIO(aio);
+			}else if(judge.equals("03")) {
+				Sensor sensor=new Sensor();
+				sensor.setStatus(2);
+				service.updateSensor(sensor);
+			}else if(judge.equals("04")) {
+				Controller controller =new Controller();
+				controller.setStatus(2);
+				service.updateController(controller);
+			}	
+		 Alarm alarm=new Alarm();
 			alarm.setDeviceSn(deviceSn);
              alarm.setWay(way);	
              try {
@@ -223,8 +267,23 @@ public class CMDUtils {
 			//String suffix9 = CommonUtils.printHexStringMerge(data,8,4);
 			//System.out.println("suffix = "+suffix9);
 			
-			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-			Alarm alarm=new Alarm();
+			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+			
+		 String judge=deviceSn.substring(0, 2);
+			if(judge.equals("01")||judge.equals("02")) {
+				AIO aio=new AIO();
+				aio.setStatus(4);
+				service.updateAIO(aio);
+			}else if(judge.equals("03")) {
+				Sensor sensor=new Sensor();
+				sensor.setStatus(4);
+				service.updateSensor(sensor);
+			}else if(judge.equals("04")) {
+				Controller controller =new Controller();
+				controller.setStatus(4);
+				service.updateController(controller);
+			}
+		 Alarm alarm=new Alarm();
 			alarm.setDeviceSn(deviceSn);
              alarm.setWay(way);	
              try {
@@ -245,8 +304,22 @@ public class CMDUtils {
 			//String suffix10 = CommonUtils.printHexStringMerge(data,8,4);
 			//System.out.println("suffix = "+suffix10);
 			
-			SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-			Alarm alarm=new Alarm();
+			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+		 String judge=deviceSn.substring(0, 2);
+			if(judge.equals("01")||judge.equals("02")) {
+				AIO aio=new AIO();
+				aio.setStatus(0);
+				service.updateAIO(aio);
+			}else if(judge.equals("03")) {
+				Sensor sensor=new Sensor();
+				sensor.setStatus(0);
+				service.updateSensor(sensor);
+			}else if(judge.equals("04")) {
+				Controller controller =new Controller();
+				controller.setStatus(0);
+				service.updateController(controller);
+			}	
+		 Alarm alarm=new Alarm();
 			alarm.setDeviceSn(deviceSn);
              alarm.setWay(way);	
              try {
@@ -410,7 +483,7 @@ public class CMDUtils {
 		//byte check3 = data[19];
 		//String suffix3 = CommonUtils.printHexStringMerge(data,20,4);
 		
-		SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+		//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 		Sensor_Data sData=new Sensor_Data();
 		sData.setDevice_sn(deviceSn);
 		sData.setWay(way);
@@ -437,6 +510,111 @@ public class CMDUtils {
 		System.out.println("cmd代码处理完");
 	}
 	
+	public static void statusHandle(byte[] status,List<Broken> brokenlist) {
+		
+		String statusStr=CommonUtils.printHexStringMerge(status, 0, 2);
+		Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+		String relation=sensor.getRelationId();
+		switch (statusStr.substring(0,1)) {
+		case "0":
+			//水泵关闭故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_OFF_BROKEN,"水泵关闭故障",brokenlist);
+			break;
+		case "1":
+			//水泵打开故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_ON_BROKEN,"水泵打开故障",brokenlist);
+			break;
+		case "2":
+			//水泵低电流故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_LOWCURRENT_BROKEN,"水泵低电流故障",brokenlist);
+			break;
+		case "3":
+			//水泵高电流故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.HIGH_LIMIT_BROKEN,"水泵高电流故障",brokenlist);
+			break;
+		default:
+			break;
+		}
+		
+		switch (statusStr.substring(1,2)) {
+		case "0":
+			//PH故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.BROKEN,"PH故障",brokenlist);
+			break;
+		case "1":
+			//PH低限故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.LOW_LIMIT_BROKEN,"PH低限故障",brokenlist);
+			break;
+		case "2":
+			//PH高限故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.HIGH_LIMIT_BROKEN,"PH高限故障",brokenlist);
+			break;
+		default:
+			break;
+		}
+		
+		switch (statusStr.substring(2,3)) {
+		case "0":
+			//溶氧值故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.BROKEN,"溶氧值故障",brokenlist);
+			break;
+		case "1":
+			//溶氧值低限故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.LOW_LIMIT_BROKEN,"溶氧值低限故障",brokenlist);
+			break;
+		case "2":
+			//溶氧值高限故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.HIGH_LIMIT_BROKEN,"溶氧值高限故障",brokenlist);
+			break;
+		default:
+			break;
+		}
+		
+		switch (statusStr.substring(3,4)) {
+		case "0":
+			//温度故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.BROKEN,"温度故障",brokenlist);
+			break;
+		case "1":
+			//温度低限故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN,"温度低限故障",brokenlist);
+			break;
+		case "2":
+			//温度高限故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.HIGH_LIMIT_BROKEN,"温度高限故障",brokenlist);
+			break;
+		case "4":
+			//温度断开故障
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.TEMPORETURE_CLOSED_BROKEN,"温度断开故障",brokenlist);
+			break;
+		default:
+			break;
+		}
+		WXUser wxuser=new WXUser();
+		wxuser=service.findWXUserById(relation);
+		BrokenMSG bs=new BrokenMSG();
+		WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());
+		bs.clear();//把所有故障信息拼接完毕推送给前台
+	}
+	
+	public static void selfTestBrokenHandle(String relation,int entityModel,int entityType,String brokenmsg,List<Broken> brokenlist) {
+		if(relation!=null) {
+			if(relation.contains("WX")) {
+				//是微信用户就推送给前台
+				BrokenMSG bs=new BrokenMSG();
+				bs.setMSG("brokenmsg");
+			}
+			 Broken  broken=new Broken();
+				broken.setCreateDate(new Date());
+				broken.setEntityModel(entityModel);
+				broken.setEntityType(entityType);
+				broken.setDeviceSn(deviceSn);
+				brokenlist.add(broken);
+				service.save(broken);
+			
+		}
+		
+	}
 	//while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
 	public static Map<String, Object> responseToBrowser(){
 		 long start=System.currentTimeMillis();

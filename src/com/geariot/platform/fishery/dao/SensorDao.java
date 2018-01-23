@@ -13,6 +13,8 @@ public interface SensorDao {
 
 	int delete(int sensorid);
 	
+	void updateSensor(Sensor sensor);
+	
 	int delete(String deviceSns);
 
 	Sensor findSensorById(int sensorId);

@@ -85,4 +85,10 @@ public class ControllerDaoImpl implements ControllerDao {
 		return query.list();
 	}
 
-}
+	@Override
+	public void updateController(Controller controller) {
+		// TODO Auto-generated method stub
+		this.getSession().merge(controller);
+	}
+
+} 

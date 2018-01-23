@@ -13,14 +13,18 @@ public class BindState {
 	
 	private int pondId;
 	private String pondName;
+	private int status;
+	private String deviceName;
 	private Set<PortBind> portBinds;
 	public BindState(){
 		
 	}
-	public BindState(int pondId, String pondName, Set<PortBind> portBinds){
+	public BindState(int pondId, String pondName, Set<PortBind> portBinds, int status, String deviceName){
 		this.pondId = pondId;
 		this.pondName = pondName;
 		this.portBinds = portBinds;
+		this.deviceName = deviceName;
+		this.status = status;
 	}
 	public int getPondId() {
 		return pondId;
@@ -39,6 +43,18 @@ public class BindState {
 	}
 	public void setPortBinds(Set<PortBind> portBinds) {
 		this.portBinds = portBinds;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public String getDeviceName() {
+		return deviceName;
+	}
+	public void setDeviceName(String deviceName) {
+		this.deviceName = deviceName;
 	}
 	
 }

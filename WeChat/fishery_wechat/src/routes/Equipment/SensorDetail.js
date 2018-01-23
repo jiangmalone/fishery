@@ -11,87 +11,27 @@ const Item = Popover.Item;
 import correct from '../../img/btn_correct.png';
 import back_img from '../../img/back.png';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
-import { getData, getRealTimeData } from '../../services/equipment.js'; //接口
+import { getDataToday, getRealTimeData, myEquipment, getDataSevenday } from '../../services/equipment.js'; //接口
 
-const dayPHData = [
-    { time: "9:00", ph: 3 },
-    { time: "10:00", ph: 4 },
-    { time: "11:00", ph: 3.5 },
-    { time: "12:00", ph: 5 },
-    { time: "13:00", ph: 4.9 },
-    { time: "14:00", ph: 6 },
-    { time: "15:00", ph: 7 },
-    { time: "16:00", ph: 9 },
-    { time: "17:00", ph: 13 }
-];
-const monthPHData = [
-    { time: "星期一", ph: 9 },
-    { time: "星期二", ph: 9.9 },
-    { time: "星期三", ph: 9.5 },
-    { time: "星期四", ph: 7 },
-    { time: "星期五", ph: 8 },
-    { time: "星期六", ph: 9 },
-    { time: "星期日", ph: 7 },
-];
 const cols = {
     'ph': { min: 0 },
-    'time': { range: [0, 1] }
+    'receiveTime': { }
 };
-
-const dayOData = [
-    { time: "9:00", o: 7 },
-    { time: "10:00", o: 3 },
-    { time: "11:00", o: 3 },
-    { time: "12:00", o: 9 },
-    { time: "13:00", o: 7 },
-    { time: "14:00", o: 0 },
-    { time: "15:00", o: 4 },
-    { time: "16:00", o: 9 },
-    { time: "17:00", o: 7 }
-];
-const monthOData = [
-    { time: "星期一", o: 9 },
-    { time: "星期二", o: 9.9 },
-    { time: "星期三", o: 9.5 },
-    { time: "星期四", o: 7 },
-    { time: "星期五", o: 8 },
-    { time: "星期六", o: 9 },
-    { time: "星期日", o: 7 },
-];
 const oCols = {
     'o': { min: 0 },
-    'time': { range: [0, 1] }
+    'receiveTime': {}
 };
 
-const dayWaterData = [
-    { time: "9:00", '温度': 3 },
-    { time: "10:00", '温度': 4 },
-    { time: "11:00", '温度': 3.5 },
-    { time: "12:00", '温度': 5 },
-    { time: "13:00", '温度': 4.9 },
-    { time: "14:00", '温度': 6 },
-    { time: "15:00", '温度': 7 },
-    { time: "16:00", '温度': 9 },
-    { time: "17:00", '温度': 13 }
-];
-const monthWaterData = [
-    { time: "星期一", '温度': 9 },
-    { time: "星期二", '温度': 9.9 },
-    { time: "星期三", '温度': 9.5 },
-    { time: "星期四", '温度': 7 },
-    { time: "星期五", '温度': 8 },
-    { time: "星期六", '温度': 9 },
-    { time: "星期日", '温度': 7 },
-];
 const waterCols = {
     '温度': { min: 0 },
-    'time': { range: [0, 1] }
+    'receiveTime': { }
 };
 
 class SensorDetail extends React.Component {
 
     constructor(props) {
         super(props)
+        const device_sn = this.props.match.params.device_sn;
         this.state = {
             animating: false,
             realTimeData: {
@@ -99,50 +39,80 @@ class SensorDetail extends React.Component {
                 water_temperature: '',
                 pH_value: ''
             },
-            title: '小渔塘-传感器1',
             visible: false,
             isShowMore: false,
-            selected: '',
             isShowDetail: false,
             isSelectToday: true,
-            phData: dayPHData,
-            oData: dayOData,
-            waterData: dayWaterData
+            phData: [],
+            oData: [],
+            waterData: [],
+            sensors: [],
+            //以下是设备的一些信息
+            device_sn: device_sn,
+            name: '传感器',
+            status: '',
         }
     }
 
     componentDidMount() {
-        this.getData(this.getTime(0));
+        this.getDataToday();
         this.getRealTimeData();
+        this.getAllEquipment();
     }
 
-    getTime = (type) => {       //0 今天   1近七天
-        let today = new Date(), startTime, endTime = moment(today).format('YYYY-MM-DD HH:mm');
-        today.setHours(0);
-        today.setMinutes(0);
-        today.setSeconds(0);
-        today.setMilliseconds(0);
-        if (type == 0) {
-            startTime = moment(today).format('YYYY-MM-DD HH:mm');
-        } else {
-            let times = (Date.parse(today) / 1000) - (24 * 60 * 60 * 6);
-            let newDate = new Date();
-            startTime = moment(newDate.setTime(times * 1000)).format('YYYY-MM-DD HH:mm');
-        }
-        return { startTime, endTime }
-    }
+    // getTime = (type) => {       //0 今天   1近七天
+    //     let today = new Date(), startTime, endTime = moment(today).format('YYYY-MM-DD HH:mm');
+    //     today.setHours(0);
+    //     today.setMinutes(0);
+    //     today.setSeconds(0);
+    //     today.setMilliseconds(0);
+    //     if (type == 0) {
+    //         startTime = moment(today).format('YYYY-MM-DD HH:mm');
+    //     } else {
+    //         let times = (Date.parse(today) / 1000) - (24 * 60 * 60 * 6);
+    //         let newDate = new Date();
+    //         startTime = moment(newDate.setTime(times * 1000)).format('YYYY-MM-DD HH:mm');
+    //     }
+    //     return { startTime, endTime }
+    // }
 
-    getData = ({ startTime, endTime }) => {    //获得历史数据
+
+    getDataToday = () => {
         this.setState({ animating: true })
-        getData({
-            device_sn: this.props.match.params.device_sn,
-            startTime: startTime,
-            endTime: endTime,
+        getDataToday({
+            device_sn: this.state.device_sn,
         }).then((res) => {
             console.log(res);
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
+                this.setState({
+                    oData : res.data.oxygens,
+                    phData : res.data.phs,
+                    waterData: res.data.temperatures
+                })
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch((error) => {
+            this.setState({ animating: false });
+            Toast.fail('请求失败', 1);
+            console.log(error)
+        });
+    }
 
+    getDataSevenday = () => {
+        this.setState({ animating: true })
+        getDataToday({
+            device_sn: this.state.device_sn,
+        }).then((res) => {
+            console.log(res);
+            this.setState({ animating: false })
+            if (res.data && res.data.code == 0) {
+                this.setState({
+                    oData : res.data.oxygens,
+                    phData : res.data.phs,
+                    waterData: res.data.temperatures
+                })
             } else {
                 Toast.fail(res.data.msg, 1);
             }
@@ -156,7 +126,7 @@ class SensorDetail extends React.Component {
     getRealTimeData = () => {
         this.setState({ animating: true })
         getRealTimeData({
-            device_sn: this.props.match.params.device_sn,
+            device_sn: this.state.device_sn,
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
@@ -164,6 +134,10 @@ class SensorDetail extends React.Component {
                 if (data) {
                     this.setState({ realTimeData: data });
                 }
+                this.setState({
+                    name: res.data.name,
+                    status: res.data.status
+                })
             } else {
                 Toast.fail(res.data.msg, 1);
             }
@@ -174,12 +148,43 @@ class SensorDetail extends React.Component {
         });
     }
 
+    getAllEquipment = () => {
+        this.setState({ animating: true })
+        myEquipment({
+            relationId: 'WX4',
+        }).then((res) => {
+            this.setState({ animating: false })
+            if (res.data && res.data.code == 0) {
+                const data = res.data;
+                if (data.sensor && data.sensor.length > 0) {
+                    let sensors = [];
+                    data.sensor.map((item, index) => {
+                        sensors.push({
+                            name: item.name,
+                            device_sn: item.device_sn
+                        })
+                    })
+                    this.setState({ sensors: sensors })
+                }
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch((error) => {
+            this.setState({ animating: false });
+            Toast.fail('请求失败', 1);
+            console.log(error);
+        });
+    }
+
     onSelect = (opt) => {
         console.log(opt.props.value);
         this.setState({
+            device_sn: opt.props.value,
             isShowMore: false,
-            selected: opt.props.value,
-            title: '小渔塘-' + opt.props.value
+            isSelectToday: true,
+        }, () => {
+            this.getDataToday();
+            this.getRealTimeData();
         });
     };
 
@@ -199,42 +204,33 @@ class SensorDetail extends React.Component {
         if (state == this.state.isSelectToday) {
             return;
         } else {
-            let phData = [];
-            let oData = [];
-            let waterData = [];
             if (!this.state.isSelectToday) {
-                phData = dayPHData;
-                oData = dayOData;
-                waterData = dayWaterData;
-                this.getData(this.getTime(0));
+                // this.getData(this.getTime(0));
+                this.getDataToday();
             } else {
-                phData = monthPHData;
-                oData = monthOData;
-                waterData = monthWaterData;
-                this.getData(this.getTime(1));
+                // this.getData(this.getTime(1));
+                this.getDataSevenday();
             }
             this.setState({
                 isSelectToday: !this.state.isSelectToday,
-                phData: phData,
-                oData: oData,
-                waterData: waterData
             })
         }
     }
 
-    calibration = (device_sn) => {   //校准
+    calibration = () => {   //校准
         console.log('calibration');
-        console.log(device_sn);
+        console.log(this.state.device_sn);
     }
 
     render() {
         const overlayAry = [];
-        for (let i = 0; i < 3; i++) {
-            let item = <Item key={i + 1} value={'传感器' + (i + 1)} >
-                传感器{i + 1}
+        const sensors = this.state.sensors;
+        sensors.map((sensor, index) => {
+            let item = <Item key={sensor.device_sn} value={sensor.device_sn} >
+                {sensor.name}
             </Item>
             overlayAry.push(item);
-        }
+        })
         return (<div className='sensorDetail-bg' >
             <div className="nav-bar-title">
                 <i className="back" onClick={() => {
@@ -246,7 +242,7 @@ class SensorDetail extends React.Component {
                         }
                     })
                 }}></i>
-                {this.state.title}
+                {this.state.name}
                 <i className="right-item-none list" onClick={() => {
                     this.setState({ isShowMore: !this.state.isShowMore })
                 }} ></i>
@@ -276,11 +272,11 @@ class SensorDetail extends React.Component {
             </Popover>
             <div className='state-head'  >
                 <div className='state-div' onClick={this.changeDetailShowState}>
-                    <img src={offline} style={{ marginLeft: 0 }} />
+                    <img src={this.state.status == 0 ? offline : online} style={{ marginLeft: 0 }} />
                     <span>当前状态</span>
                     <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
                 </div>
-                <img src={correct} className='correct' onClick={() => {this.calibration(this.props.match.params.device_sn)}} />
+                <img src={correct} className='correct' onClick={() => {this.calibration()}} />
             </div>
             {this.state.isShowDetail && <div className='detail'>
                 <div>实时溶氧：&nbsp;&nbsp; {this.state.realTimeData.oxygen}</div>
@@ -302,8 +298,8 @@ class SensorDetail extends React.Component {
                     <Axis name="time" />
                     <Axis name="ph" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="time*ph" size={2} />
-                    <Geom type='point' position="time*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                    <Geom type="line" position="receiveTime*ph" size={2} />
+                    <Geom type='point' position="receiveTime*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
             </div>
             <div className='chart-div'>
@@ -312,8 +308,8 @@ class SensorDetail extends React.Component {
                     <Axis name="time" />
                     <Axis name="o" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="time*o" size={2} />
-                    <Geom type='point' position="time*o" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                    <Geom type="line" position="receiveTime*oxygen" size={2} />
+                    <Geom type='point' position="receiveTime*oxygen" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
             </div>
             <div className='chart-div'>
@@ -322,8 +318,8 @@ class SensorDetail extends React.Component {
                     <Axis name="time" />
                     <Axis name="温度" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="time*温度" size={2} />
-                    <Geom type='point' position="time*温度" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                    <Geom type="line" position="receiveTime*temperature" size={2} />
+                    <Geom type='point' position="receiveTime*temperature" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
             </div>
             <ActivityIndicator

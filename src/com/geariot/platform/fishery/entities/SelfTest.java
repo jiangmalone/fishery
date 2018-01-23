@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.persistence.ForeignKey;
 
 @Entity
@@ -95,8 +96,7 @@ public class SelfTest {
 		this.createDate = createDate;
 	}
 
-	@ElementCollection(fetch=FetchType.EAGER, targetClass = Broken.class)
-	@CollectionTable(name = "SelfTest_Broken")
+	@Transient
 	public List<Broken> getBroken() {
 		return broken;
 	}

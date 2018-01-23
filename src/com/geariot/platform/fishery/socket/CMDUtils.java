@@ -59,12 +59,12 @@ public class CMDUtils {
 	}
 	@SuppressWarnings("unchecked")
 	public static void preHandle(SelectionKey key) {
-		System.out.println(key.attachment());
+		
 		Map<String,Object> attachmentObject=(Map<String,Object>) key.attachment();
 		 data =(byte[]) attachmentObject.get("data");		
 		 readChannel=(SocketChannel) attachmentObject.get("readChannel");
 		 deviceSn=(String) attachmentObject.get("deviceSn");
-		 System.out.println(deviceSn+"..........................");
+		 
 		 way=(byte) attachmentObject.get("way");
         
 	}
@@ -73,8 +73,6 @@ public class CMDUtils {
 		  
 		preHandle(key);
 		clientMap.put(deviceSn, readChannel); 
-	      
-	       //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		    byte ac = data[7];
 			byte[] byteLongitude =new byte[4];
 			CommonUtils.arrayHandle(data, byteLongitude, 8, 0, 4);
@@ -100,7 +98,7 @@ public class CMDUtils {
            selfTest.setGprs(gprs);
            selfTest.setBroken(brokenlist);
            selfTest.setCreateDate(new Date());
-           
+          
 		service.save(selfTest);
 		response(19);
 	}
@@ -366,16 +364,22 @@ public class CMDUtils {
 		}
 		byte[] request = null;
 		if(operation==1) {
-		String open=StringUtils.add(timer.getDevice_sn(), way, 7)
+			String open=StringUtils.add(timer.getDevice_sn(), way, 7)
 				.append("01")
                 .append("          ")
 				.toString();
-		request=CommonUtils.toByteArray(open);
-		request[8]=CommonUtils.arrayMerge(request, 2, 6);
-		CommonUtils.addSuffix(request, 9);
-		}else {
-			request[7]=(byte)0x00;
+			request=CommonUtils.toByteArray(open);
 			request[8]=CommonUtils.arrayMerge(request, 2, 6);
+			CommonUtils.addSuffix(request, 9);
+		}else {
+			String close=StringUtils.add(timer.getDevice_sn(), way, 7)
+					.append("00")
+	                .append("          ")
+					.toString();
+				request=CommonUtils.toByteArray(close);
+			
+			request[8]=CommonUtils.arrayMerge(request, 2, 6);
+			CommonUtils.addSuffix(request, 9);
 		}
 	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
 	    try {
@@ -527,12 +531,35 @@ public class CMDUtils {
 	public static void statusHandle(byte[] status,List<Broken> brokenlist) {
 		
 		String statusStr=CommonUtils.printHexStringMerge(status, 0, 2);
+		System.out.println("分析故障信息");
+		String relation=null;
+		String type=deviceSn.substring(0,2);
+		System.out.println(type);
+		if(type.equals("01")||type.equals("02")) {
+			AIO aio=new AIO();
+			aio=service.findAIOByDeviceSn(deviceSn);
+			if(aio!=null) {
+			relation=aio.getRelationId();
+			System.out.println(relation);
+			}
+		}else if(type.equals("03")) {
 		Sensor sensor=service.findSensorByDeviceSn(deviceSn);
-		String relation=sensor.getRelationId();
+		if(sensor!=null) {
+		relation=sensor.getRelationId();
+		}
+		}else if(type.equals("04")) {
+			Controller controller=new Controller();
+			controller=service.findControllerByDeviceSn(deviceSn);
+			if(controller!=null) {
+			relation=controller.getRelationId();
+			}
+		}
+		System.out.println(statusStr);
 		switch (statusStr.substring(0,1)) {
 		case "0":
 			//水泵关闭故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_OFF_BROKEN,"水泵关闭故障",brokenlist);
+			System.out.println("````水泵关闭故障");
 			break;
 		case "1":
 			//水泵打开故障
@@ -554,6 +581,7 @@ public class CMDUtils {
 		case "0":
 			//PH故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.BROKEN,"PH故障",brokenlist);
+			System.out.println("````ph故障");
 			break;
 		case "1":
 			//PH低限故障
@@ -571,6 +599,7 @@ public class CMDUtils {
 		case "0":
 			//溶氧值故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.BROKEN,"溶氧值故障",brokenlist);
+			System.out.println("溶氧值故障");
 			break;
 		case "1":
 			//溶氧值低限故障
@@ -592,6 +621,7 @@ public class CMDUtils {
 		case "1":
 			//温度低限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN,"温度低限故障",brokenlist);
+			System.out.println("温度低限故障");
 			break;
 		case "2":
 			//温度高限故障
@@ -604,11 +634,13 @@ public class CMDUtils {
 		default:
 			break;
 		}
+		
 		WXUser wxuser=new WXUser();
 		wxuser=service.findWXUserById(relation);
 		BrokenMSG bs=new BrokenMSG();
-		WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());
-		bs.clear();//把所有故障信息拼接完毕推送给前台
+		
+		WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
+		bs.clear();
 	}
 	
 	public static void selfTestBrokenHandle(String relation,int entityModel,int entityType,String brokenmsg,List<Broken> brokenlist) {

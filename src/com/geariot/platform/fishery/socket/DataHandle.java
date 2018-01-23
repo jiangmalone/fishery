@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,18 +50,22 @@ public class DataHandle {
 					AIO aio=new AIO();
 					aio.setStatus(1);
 					service.updateAIO(aio);
+					beatMap.remove(deviceSn);
 				}else if(judge.equals("03")) {
 					Sensor sensor=new Sensor();
 					sensor.setStatus(1);
 					service.updateSensor(sensor);
+					beatMap.remove(deviceSn);
 				}else if(judge.equals("04")) {
 					Controller controller =new Controller();
 					controller.setStatus(1);
 					service.updateController(controller);
+					beatMap.remove(deviceSn);
 				}
 					
 			}
-			ByteBuffer outBuffer = ByteBuffer.wrap(data);
+			byte[] resdata=Arrays.copyOf(data, 16);
+			ByteBuffer outBuffer = ByteBuffer.wrap(resdata);
 			try {
 				readChannel.write(outBuffer);
 			} catch (IOException e) {

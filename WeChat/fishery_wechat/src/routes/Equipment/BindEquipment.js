@@ -82,6 +82,14 @@ class BindEquipment extends React.Component {
     }
 
     doBindEquipment = () => {
+        if (this.state.bindEquipment.length <= 0) {
+            Toast.info('请选择控制器!', 1);
+            return;
+        }
+        if (this.state.bindPort.length <= 0) {
+            Toast.info('请选择端口!', 1);
+            return;
+        }
         let data = this.props.match.params.data;
         data = JSON.parse(data); //{{equipmentId: this.props.match.params.equipmentId, port: data.port}}
         this.setState({animating: true});

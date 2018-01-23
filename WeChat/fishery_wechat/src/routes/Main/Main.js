@@ -163,7 +163,7 @@ class Main extends React.Component {
 
             <div className='line' >
                 <div className='name' >
-                    控制器1
+                    增氧机1
                 </div>
                 <button className='auto-button do-auto' onClick={() => this.showActionSheet(2)} >自动</button>
                 <Switch
@@ -176,7 +176,7 @@ class Main extends React.Component {
 
             <div className='line' >
                 <div className='name' >
-                    控制器2
+                    增氧机2
                 </div>
                 <button className='auto-button no-auto'>自动</button>
                 <Switch

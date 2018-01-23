@@ -131,7 +131,7 @@ public class EquipmentService {
 		Timer timer=timerArray[0];
 		try {
 			deviceSn = timer.getDevice_sn().substring(0, 2);
-			//new TimerTask().timerOpen(timer);
+			
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
@@ -146,7 +146,9 @@ public class EquipmentService {
 		} else 
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
          timerDao.delete(timer.getDevice_sn());
-		timerDao.save(timer);
+         for(Timer timersave:timerArray) {
+		timerDao.save(timersave);
+         }
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 

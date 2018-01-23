@@ -80,10 +80,11 @@ public class WebServiceService {
 			wxUserNew.setOpenId(openId);
 			wxUserDao.save(wxUserNew);
 			wxUserNew.setRelationId("WX"+wxUserNew.getId());
+			return RESCODE.SUCCESS.getJSONRES(wxUserNew);
 		} else {
 			wxUser.setHeadimgurl(headimgurl);
 			wxUser.setOpenId(openId);
+			return RESCODE.SUCCESS.getJSONRES(wxUser);
 		}
-		return RESCODE.SUCCESS.getJSONRES(wxUser);
 	}
 }

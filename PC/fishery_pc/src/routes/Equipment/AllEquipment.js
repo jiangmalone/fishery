@@ -68,7 +68,7 @@ class AllEquipmentQuery extends PureComponent {
                 title: '设备编号',
                 dataIndex: 'device_sn',
                 render: (text, record, index) => {
-                    return <Link to={`/equipment/detail/${text}/${record.relationId}`}>{text}</Link>
+                    return <Link to={`/equipment/detail/${text}/${record.relationId}/${record.id}`}>{text}</Link>
                 },
             },
             {

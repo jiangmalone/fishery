@@ -112,7 +112,7 @@ export const getNavData = app => [
             path: 'detail',
             children: [
               {
-                path: ':device_sn/:relation',
+                path: ':device_sn/:relation/:id',
                 component: dynamicWrapper(app, ['equipment'], () => import('../routes/Equipment/EquipmentDetail')),
               }
             ]

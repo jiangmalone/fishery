@@ -95,6 +95,9 @@ export default class CompanyUserList extends React.Component {
 
 
     onDelete = (idArray) => {
+        this.setState({
+            selectedRowKeys:[]
+        })
         if (idArray.length <= 0) {
             message.warn('请选择需要删除的企业！');
             return;

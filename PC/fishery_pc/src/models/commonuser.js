@@ -1,5 +1,6 @@
-import { queryWXUser, addWXUser, delWXUser, modifyWXUser } from '../services/user'
-import update from 'immutability-helper'
+import { queryWXUser, addWXUser, delWXUser, modifyWXUser } from '../services/user';
+import update from 'immutability-helper';
+import { message } from 'antd';
 export default {
   namespace: 'commonUser',
 
@@ -31,6 +32,17 @@ export default {
             }
           }
         });
+      } else{
+        message.error(response.msg, 1);
+        yield put({
+          type: 'appendList',
+          payload: {
+            list: [],
+            pagination: {
+              total: 0,
+            }
+          }
+        });
       }
       yield put({
         type: 'changeLoading',
@@ -43,6 +55,12 @@ export default {
         yield put({
           type: 'addList',
           payload: response.data,
+        });
+      } else {   
+        message.error(response.msg, 1);
+        yield put({
+          type: 'addList',
+          payload: [],
         });
       }
     },
@@ -83,6 +101,7 @@ export default {
     },
     addList(state, action) {
       let list = state.list;
+      action.payload.key = action.payload.id
       list.unshift(action.payload);
       return {
         ...state,

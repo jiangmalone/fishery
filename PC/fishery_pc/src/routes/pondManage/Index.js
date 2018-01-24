@@ -106,6 +106,9 @@ class PondList extends PureComponent {
     }
 
     onDelete = (idArray) => {
+        this.setState({
+            selectedRowKeys:[]
+        })
         console.log(this.props.pagination)
         this.props.dispatch({
             type: 'pond/deletePond',

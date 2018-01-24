@@ -151,7 +151,7 @@ class SensorDetail extends React.Component {
     getAllEquipment = () => {
         this.setState({ animating: true })
         myEquipment({
-            relationId: 'WX4',
+            relationId: window.localStorage.getItem('relationId'),
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {

@@ -12,3 +12,11 @@ export async function  delSensorOrAIOBind(params) {
 export async function bindState(params) {
     return request(`/api/bind/bindState?${stringify(params)}`)
 }
+
+export async function sensorWithController(params) {   //控制器与传感器间的 绑定 o-o
+    return request(`/api/bind/bindSensorController?${stringify(params)}`)
+}
+
+export async function delBind(params) {   //控制器与传感器间的 绑定 o-o
+    return request(`/api/bind/delSensorControllerBind?${stringify(params)}`)
+}

@@ -164,11 +164,11 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{ padding: 30, paddingTop: 0 }}>
                         <Col span={20}>
-                            <TimelineChart
+                            {this.state.phs && this.state.phs.length > 0 ? <TimelineChart
                                 height={300}
                                 data={this.state.phs}
                                 titleMap={{ y1: 'PH值' }}
-                            />
+                            /> : <span>暂无数据</span>}
                         </Col>
                     </Row>
                     <Row style={{ fontSize: 25, paddingTop: 25 }}>
@@ -176,11 +176,11 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{ padding: 30, paddingTop: 0 }}>
                         <Col span={20}>
-                            <TimelineChart
+                            {this.state.oxygens.length > 0 ?<TimelineChart
                                 height={300}
                                 data={this.state.oxygens}
                                 titleMap={{ y1: '溶氧' }}
-                            />
+                            />: <span>暂无数据</span>}
                         </Col>
                     </Row>
                     <Row style={{ fontSize: 25, paddingTop: 25 }}>
@@ -188,11 +188,11 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{ padding: 30 }}>
                         <Col span={20}>
-                            <TimelineChart
+                            {this.state.WaterQualityCurve.length > 0 ? <TimelineChart
                                 height={300}
                                 data={this.state.temperatures}
                                 titleMap={{ y1: '水温' }}
-                            />
+                            />: <span>暂无数据</span>}
                         </Col>
                     </Row>
                 </Card>

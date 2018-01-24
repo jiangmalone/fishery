@@ -99,7 +99,8 @@ class EquipmentManagement extends React.Component {
                     portBinds.push({port: item});
                 })
                 res.data.data.portBinds = portBinds;
-                this.setState({portsData : res.data.data.portBinds,
+                this.setState({
+                    portsData : res.data.data.portBinds,
                     name: res.data.data.deviceName,
                     state: res.data.data.status,
                 });
@@ -125,7 +126,7 @@ class EquipmentManagement extends React.Component {
     queryPond = () => {
         this.setState({ animating: true });
         wxQuery({
-            relationId: 'WX4',
+            relationId: window.localStorage.getItem('relationId'),
         }).then((res) => {
             this.setState({ animating: false });
             if (res.data.code == '0') {

@@ -7,27 +7,33 @@ export default {
     },
 
     addEquipment: (params) => {
-        return get('api/equipment/add',  params);
+        return get('api/equipment/add', params);
     },
 
     deleteEquipment: (params) => {
-        return get('api/equipment/delEquipments', params);
+        let str = ''
+        for (let item of params.device_sns) {
+            str = 'device_sns=' + item + '&' + str
+        }
+        str = str.slice(0, -1)
+        return get(`/api/equipment/delEquipments?${str}`)
+        // return get('api/equipment/delEquipments', params);
     },
 
     getDataToday: (params) => {          //获得设备数据汇总  （曲线图数据）
-        return get('api/equipment/dataToday',  params);
+        return get('api/equipment/dataToday', params);
     },
 
     getDataSevenday: (params) => {          //获得设备数据汇总  （曲线图数据）
-        return get('api/equipment/dataAll',  params);
+        return get('api/equipment/dataAll', params);
     },
 
     getRealTimeData: (params) => {          //获得设备实时数据 
-        return get('api/equipment/realTimeData',  params);
+        return get('api/equipment/realTimeData', params);
     },
 
     exportData: (params) => {
-        return get('api/equipment/exportData',  params);
+        return get('api/equipment/exportData', params);
     },
 
     timer: (params) => {

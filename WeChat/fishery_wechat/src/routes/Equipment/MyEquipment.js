@@ -21,6 +21,10 @@ class MyEquipment extends React.Component {
     }
 
     componentDidMount() {
+        this.queryMyEquipment();
+    }
+
+    queryMyEquipment = () => {
         this.setState({ animating: true })
         myEquipment({
             relationId: window.localStorage.getItem('relationId'),
@@ -48,6 +52,8 @@ class MyEquipment extends React.Component {
     }
 
     wouldDelete = (e, device_sn) => {
+
+        console.log(device_sn)
         const BUTTONS = ['删除', '取消'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
@@ -73,6 +79,7 @@ class MyEquipment extends React.Component {
             this.setState({ animating: false });
             if (res.data && res.data.code == 0) {
                 Toast.success('删除设备成功', 1);
+                this.queryMyEquipment();
             } else {
                 Toast.fail(res.msg, 1);
             }
@@ -111,7 +118,7 @@ class MyEquipment extends React.Component {
                 <div key={controller.id}>
                     {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e, controller.device_sn)} >
                     </div>}
-                    <div className={this.state.isEdit ? 'line editLine' : 'line'} onClick={() => this.checkDetail({device_sn : controller.device_sn, id: controller.id})} >
+                    <div className={this.state.isEdit ? 'line editLine' : 'line'} onClick={() => this.checkDetail({ device_sn: controller.device_sn, id: controller.id })} >
                         <div className='name' >
                             {controller.name}
                         </div>
@@ -138,11 +145,11 @@ class MyEquipment extends React.Component {
             // const ports = sensor.portsState;
             return (
                 <div key={sensor.id}>
-                    {this.state.isEdit && <div className='delete-button' onClick={() => this.wouldDelete(sensor.device_sn)} >
+                    {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e, sensor.device_sn)} >
                     </div>}
                     <div
                         className={this.state.isEdit ? 'line editLine' : 'line'}
-                        onClick={() => this.checkDetail({device_sn : sensor.device_sn, id: sensor.id})}
+                        onClick={() => this.checkDetail({ device_sn: sensor.device_sn, id: sensor.id })}
                     >
                         <div className='name' >
                             {sensor.name}
@@ -161,17 +168,18 @@ class MyEquipment extends React.Component {
 
     getAllInOne = (allInOnes) => {
         let aio = allInOnes.map((allInOne, index) => {
+            console.log(allInOne)
             return (
                 <div key={allInOne.id}>
                     {this.state.isEdit &&
                         <div className='delete-button'
-                            onClick={() => this.wouldDelete(allInOne.device_sn)}
+                            onClick={(e) => this.wouldDelete(e, allInOne.device_sn)}
                         >
                         </div>
                     }
                     <div
                         className={this.state.isEdit ? 'line editLine' : 'line'}
-                        onClick={() => this.checkDetail({device_sn : allInOne.device_sn, id: allInOne.id})}
+                        onClick={() => this.checkDetail({ device_sn: allInOne.device_sn, id: allInOne.id })}
                     >
                         <div className='name' >
                             {allInOne.name}

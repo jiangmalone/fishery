@@ -210,19 +210,19 @@ class MyEquipment extends React.Component {
             </div>
             <div className='equipment-type'>
                 <Accordion title='传感器' isShowState={false} isShow={true} >
-                    <div className='equipment'>
+                    {sensor.length > 0 && <div className='equipment'>
                         {sensor}
-                    </div>
+                    </div>}
                 </Accordion>
                 <Accordion title='控制器' isShowState={false} isShow={true} >
-                    <div className='equipment'>
+                    {controller.length > 0 && <div className='equipment'>
                         {controller}
-                    </div>
+                    </div>}
                 </Accordion>
                 <Accordion title='一体机' isShowState={false} isShow={true} >
-                    <div className='equipment'>
+                    {allInOne.length > 0 && <div className='equipment'>
                         {allInOne}
-                    </div>
+                    </div>}
                 </Accordion>
             </div>
             <div className='add-button' onClick={this.addEquipment} >

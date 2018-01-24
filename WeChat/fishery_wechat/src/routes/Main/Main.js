@@ -8,7 +8,7 @@ import online from '../../img/state-online.png';
 import offline from '../../img/state-offline.png';
 import fetch from 'dva/fetch';
 import { connect } from 'dva';
-import {  wxQuery } from '../../services/pondManage.js'; //接口
+import { wxQuery } from '../../services/pondManage.js'; //接口
 import { getWeather } from '../../services/weather.js'; //接口
 
 class Main extends React.Component {
@@ -37,7 +37,7 @@ class Main extends React.Component {
     queryPonds = () => {
         this.setState({ animating: true });
         wxQuery({
-             relationId: window.localStorage.getItem('relationId'),
+            relationId: window.localStorage.getItem('relationId'),
         }).then((res) => {
             this.setState({ animating: false });
             if (res.data.code == '0') {
@@ -161,7 +161,7 @@ class Main extends React.Component {
                 </div>
             </div>
 
-            <div className='line' >
+            {/* <div className='line' >
                 <div className='name' >
                     增氧机1
                 </div>
@@ -185,6 +185,59 @@ class Main extends React.Component {
                     onClick={(checked) => { this.setState({ waterCheck2: !this.state.waterCheck2 }) }}
                     className='state-switch'
                 />
+            </div> */}
+        </div>
+    }
+
+    getAioNode = (aio) => {
+        return <div className='equipment' key={aio.id}  >
+            <div >
+                <div className='line border-line' >
+                    <div className='name' >
+                        {aio.name}
+                    </div>
+                    <div className={aio.status ? 'right-text normal-state' : 'right-text unnormal-state'}>
+                        {aio.status ? '正常' : '异常'}
+                    </div>
+                </div>
+                <div className='line' >
+                    <div className='name' >
+                        溶氧
+                    </div>
+                    <div className='right-text'>
+                        {aio.oxygen}
+                    </div>
+                </div>
+                <div className='line' >
+                    <div className='name' >
+                        水温
+                    </div>
+                    <div className='right-text'>
+                        {aio.water_temperature}℃
+                    </div>
+                </div>
+
+                <div className='line' >
+                    <div className='name' >
+                        PH值
+                    </div>
+                    <div className='right-text'>
+                        {aio.pH_value}
+                    </div>
+                </div>
+            </div>
+
+            <div className='line' >
+                <div className='name' >
+                    增氧机
+                </div>
+                <button className='auto-button do-auto' onClick={() => this.showActionSheet(2)} >自动</button>
+                <Switch
+                    nanme='watertem'
+                    checked={this.state.waterCheck1}
+                    onClick={(checked) => { this.setState({ waterCheck1: !this.state.waterCheck1 }) }}
+                    className='state-switch'
+                />
             </div>
         </div>
     }
@@ -194,10 +247,17 @@ class Main extends React.Component {
         return ponds.map((pond, index) => {
             // let equipemnts = this.getEquipment();
             let sensors = pond.sensors ? pond.sensors : [];
+            let aios = pond.aios ? pond.aios : [];
+            let sensorNode = sensors.map((sensor, index) => {
+                return this.getEquipment(sensor);
+            })
+            let aioNode = aios.map((aio, index) => {
+                return this.getAioNode(aio)
+            })
+            
             return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} >
-                {sensors.map((sensor, index) => {
-                    return this.getEquipment(sensor);
-                })}
+                {sensorNode}
+                {aioNode}
             </Accordion>)
         })
     }

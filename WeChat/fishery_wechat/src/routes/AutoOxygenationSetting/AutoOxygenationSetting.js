@@ -1,5 +1,5 @@
 
-import { List, InputItem, Button, DatePicker, Modal } from 'antd-mobile';
+import { List, InputItem, Button, DatePicker, Modal, Toast } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import NavBar from '../../components/NavBar';
 import { withRouter } from "react-router-dom";
@@ -9,7 +9,15 @@ import question from '../../img/question.png'
 import './autoOxygenationSetting.less';
 import { delSensorOrAIOBind, delBind } from '../../services/bind.js'; //接口
 const Item = List.Item;
-
+const CustomChildren = ({ extra, onClick, children }) => (
+    <div
+      onClick={onClick}
+      style={{ backgroundColor: '#fff', height: '37px', lineHeight: '37px', padding: '0 0' }}
+    >
+      {children}
+      <span style={{ float: 'right', color: '#888' }}>{extra}</span>
+    </div>
+  );
 class AutoOxygenationSetting extends React.Component {
 
     state = {
@@ -19,6 +27,25 @@ class AutoOxygenationSetting extends React.Component {
     }
 
     onSubmit = () => {
+        if(timeSections.length <= 0) {
+            Toast.fail('必须选择至少一个时间段！', 1);
+            return;
+        }
+        const timeSections = this.state.timeSections;
+        for (let i = 0; i < timeSections.length; i++) {
+            if (!timeSection[i][0] || !timeSection[i][0]) {
+                Toast.fail('有未填写完整的时间段，请填写后提交！', 1);
+                    return;
+            }
+            for (let j = i + 1; j < timeSections.length; j++) {
+                if (timeSections[i][0] < timeSections[j][0] && timeSections[i][1] > timeSections[j][0] || 
+                    timeSections[j][0] < timeSections[i][0] && timeSections[j][1] > timeSections[i][0] 
+                ) {
+                    Toast.fail('时间段不能交错，请修改后提交！', 1);
+                    return;
+                }
+           }
+        }
         this.props.form.validateFields({ force: true }, (error) => {
             if (!error) {
                 console.log(this.props.form.getFieldsValue());
@@ -34,13 +61,34 @@ class AutoOxygenationSetting extends React.Component {
 
     addTimeSection = () => {
         console.log('add')
-        const timeSections = this.state.timeSections;
         timeSections.push(['', '']);
         this.setState({
             timeSections: timeSections
         })
     }
 
+    handleTimeChange = (time, index, aryIndex) => {
+        let timeSections = this.state.timeSections;
+        let timeSection = timeSections[index];
+
+        if (aryIndex == 0) {
+            if(timeSection[1]) {
+                if(timeSection[1] < time) {
+                    Toast.fail('开始时间不能大于等于结束时间', 1);
+                    return;
+                }
+            }
+        } else if (aryIndex == 1) {
+            if(timeSection[0]) {
+                if(timeSection[0] > time) {
+                    Toast.fail('开始时间不能大于等于结束时间', 1);
+                    return;
+                }
+            }
+        }
+        timeSection[aryIndex] = time;
+        this.setState({timeSections: timeSections});
+    }
     render() {
         const { getFieldProps, getFieldError } = this.props.form;
         const timeSections = this.state.timeSections;
@@ -49,21 +97,25 @@ class AutoOxygenationSetting extends React.Component {
                 <DatePicker
                     mode="time"
                     minuteStep={5}
-                    value={this.state.time}
-                    onChange={time => this.setState({ time })}
+                    value={item[0]}
+                    onChange={time => this.handleTimeChange(time, index, 0 )}
+                    extra='开始时间'
                     className=''
                 >
-                    <span>开始时间&nbsp;</span>
+                    {/* <span>开始时间&nbsp;</span> */}
+                    <CustomChildren></CustomChildren>
                 </DatePicker>
                 -
                     <DatePicker
                     mode="time"
                     minuteStep={5}
-                    value={this.state.time}
-                    onChange={time => this.setState({ time })}
+                    value={item[1]}
+                    extra='结束时间'
+                    onChange={time => this.handleTimeChange(time, index, 1 )}
                     className=''
                 >
-                    <span>&nbsp;结束时间</span>
+                    {/* <span>&nbsp;结束时间</span> */}
+                    <CustomChildren></CustomChildren>
                 </DatePicker>
             </div>}>定时增氧</Item>
         })
@@ -99,16 +151,6 @@ class AutoOxygenationSetting extends React.Component {
             <List className='os-list'>
                 <Item extra={<span style={{ minWidth: '100px', color: '#000' }} >10.26mg/L</span>}>控制器1<span>(增氧机1)</span></Item>
                 <InputItem
-                    {...getFieldProps('state', {
-                        rules: [
-                            { required: true }
-                        ],
-                    }) }
-                    className="os-input"
-                    error={!!getFieldError('state')}
-                    extra={<span>mg/L</span>}
-                >增氧下限</InputItem>
-                <InputItem
                     {...getFieldProps('floor', {
                         rules: [
                             { required: true }
@@ -117,7 +159,7 @@ class AutoOxygenationSetting extends React.Component {
                     className="os-input"
                     error={!!getFieldError('floor')}
                     extra={<span>mg/L</span>}
-                >增氧上限</InputItem>
+                >增氧下限</InputItem>
                 <InputItem
                     {...getFieldProps('upperLimit', {
                         rules: [
@@ -126,6 +168,16 @@ class AutoOxygenationSetting extends React.Component {
                     }) }
                     className="os-input"
                     error={!!getFieldError('upperLimit')}
+                    extra={<span>mg/L</span>}
+                >增氧上限</InputItem>
+                <InputItem
+                    {...getFieldProps('heightLimit', {
+                        rules: [
+                            { required: true }
+                        ],
+                    }) }
+                    className="os-input"
+                    error={!!getFieldError('heightLimit')}
                     extra={<span>mg/L</span>}
                 >增氧高限</InputItem>
                 {times}

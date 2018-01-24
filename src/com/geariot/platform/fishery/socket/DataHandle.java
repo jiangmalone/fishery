@@ -23,11 +23,11 @@ public class DataHandle {
 	private static Map<String,String> beatMap=new ConcurrentHashMap<String,String>();
 	private static SimpleDateFormat sdf=new SimpleDateFormat("mm");
 	
-	public static void handle(SelectionKey key) {
-		Map<String, Object> attachmentObject = (Map<String, Object>) key.attachment();
-		byte[] data = (byte[]) attachmentObject.get("data");
+	public static void handle(byte[] data,SocketChannel readChannel) {
+		//Map<String, Object> attachmentObject = (Map<String, Object>) key.attachment();
+		//byte[] data = (byte[]) attachmentObject.get("data");
 		
-		SocketChannel readChannel = (SocketChannel) attachmentObject.get("readChannel");	
+		//SocketChannel readChannel = (SocketChannel) attachmentObject.get("readChannel");	
 		String prefix = CommonUtils.printHexStringMerge(data, 0, 2);
 		//心跳包socket，如果有3次没收到终端发来的心跳包则认为设备已经离线
 		//[62 65 61 74 5F 49 44 3D 78 78 78 78 78 78 0D 0A ]
@@ -82,32 +82,32 @@ public class DataHandle {
 			String deviceSn = CommonUtils.printHexStringMerge(byteID,0,3);
 			byte way = data[5];
 			byte order = data[6];
-			attachmentObject.put("deviceSn", deviceSn);
-			attachmentObject.put("way", way);
+			//attachmentObject.put("deviceSn", deviceSn);
+			//attachmentObject.put("way", way);
 			try {
 				
 				switch (order) {
 				case 0:
-					CMDUtils.selfTestCMD(key);
+					CMDUtils.selfTestCMD(data,readChannel,deviceSn,way);
 					
 					break;
 				case 1:
-					CMDUtils.uploadLimitCMD(key);
+					CMDUtils.uploadLimitCMD(data,readChannel,deviceSn,way);
 					break;
 				case 2:
 					CMDUtils.setFeedback(new AtomicBoolean(true));
 					break;
 				case 3:
-					CMDUtils.timingUploadCMD(key);
+					CMDUtils.timingUploadCMD(data,readChannel,deviceSn,way);
 					break;
 				case 4:
-					CMDUtils.oxygenAlarmCMD(key);
+					CMDUtils.oxygenAlarmCMD(data,readChannel,deviceSn,way);
 					break;
 				case 5:
-					CMDUtils.voltageAlarmCMD(key);
+					CMDUtils.voltageAlarmCMD(data,readChannel,deviceSn,way);
 					break;
 				case 6:
-					CMDUtils.oxygenTimeCMD(key);
+					CMDUtils.oxygenTimeCMD(data,readChannel,deviceSn,way);
 					break;
 				case 7:
 					CMDUtils.setFeedback(new AtomicBoolean(true));
@@ -116,13 +116,13 @@ public class DataHandle {
 					CMDUtils.setFeedback(new AtomicBoolean(true));
 					break;
 				case 9:
-					CMDUtils.oxygenExceptionAlarmCMD(key);
+					CMDUtils.oxygenExceptionAlarmCMD(data,readChannel,deviceSn,way);
 					break;
 				case 10: // 0A
-					CMDUtils.cancelAllAlarmCMD(key);
+					CMDUtils.cancelAllAlarmCMD(data,readChannel,deviceSn,way);
 					break;
 				case 11: // 0B
-					CMDUtils.timingDataCMD(key);
+					CMDUtils.timingDataCMD(data,readChannel,deviceSn,way);
 				case 12: // 0C
 					CMDUtils.setFeedback(new AtomicBoolean(true));
 					break;

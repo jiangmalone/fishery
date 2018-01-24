@@ -47,17 +47,17 @@ public class DataHandle {
 				String judge=deviceSn.substring(0, 2);
 				SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 				if(judge.equals("01")||judge.equals("02")) {
-					AIO aio=new AIO();
+					AIO aio=service.findAIOByDeviceSn(deviceSn);
 					aio.setStatus(1);
 					service.updateAIO(aio);
 					beatMap.remove(deviceSn);
 				}else if(judge.equals("03")) {
-					Sensor sensor=new Sensor();
+					Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 					sensor.setStatus(1);
 					service.updateSensor(sensor);
 					beatMap.remove(deviceSn);
 				}else if(judge.equals("04")) {
-					Controller controller =new Controller();
+					Controller controller =service.findControllerByDeviceSn(deviceSn);
 					controller.setStatus(1);
 					service.updateController(controller);
 					beatMap.remove(deviceSn);

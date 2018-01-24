@@ -35,6 +35,17 @@ export default {
             }
           }
         });
+      } else {
+        message.error(response.msg, 1);
+        yield put({
+          type: 'appendList',
+          payload: {
+            list: [],
+            pagination: {
+              total: 0,
+            }
+          }
+        });
       }
       yield put({
         type: 'changeLoading',

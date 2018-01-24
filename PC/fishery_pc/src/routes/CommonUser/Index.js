@@ -5,6 +5,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd'
 import { Link } from 'react-router-dom'
 import AddUser from './AddUser'
+import { changeConfirmLocale } from '../../../node_modules/_antd@3.0.1@antd/lib/modal/locale';
 
 const Search = Input.Search;
 @connect(state => ({
@@ -124,6 +125,11 @@ class UserList extends PureComponent {
     }
 
     onDelete = (idArray) => {
+      
+    
+        this.setState({
+            selectedRowKeys:[]
+        })
         this.props.dispatch({
             type: 'commonUser/deleteUser',
             payload: {
@@ -165,8 +171,22 @@ class UserList extends PureComponent {
             selectedRowKeys: this.state.selectedRowKeys,
             onSelect: (changableRow, selected, selectedRows) => {
                 //state里面记住这两个变量就好
-                let origKeys = this.state.selectedRowKeys;
+                let origKeys = []
                 let origRows = this.state.selectedRows;
+                console.log(selectedRows)
+                 //去掉数组里面的undefined
+                for(var i=0;i<this.state.selectedRowKeys.length;i++){
+                    if(typeof(this.state.selectedRowKeys[i])!='undefined'){
+                        origKeys.push(this.state.selectedRowKeys[i]);
+                    }
+                }
+                // this.state.selectedRowKeys.filter((item,index )=>{
+                //     for(let Litem of this.props.list) {
+                //         if(Litem.id!==item) {
+                //             return item
+                //         }
+                //     }
+                // })
                 if (selected) {
                     origKeys = [...origKeys, changableRow.key];
                     origRows = [...origRows, changableRow];
@@ -178,6 +198,7 @@ class UserList extends PureComponent {
                         return obj.key !== changableRow.key;
                     });
                 }
+            
                 console.log(origKeys)
                 this.setState({
                     selectedRowKeys: origKeys,

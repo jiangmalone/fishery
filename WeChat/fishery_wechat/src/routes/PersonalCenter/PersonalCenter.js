@@ -88,7 +88,7 @@ class PersonalCenter extends React.Component {
           thumb={require("../../img/mine_about.png")}
           arrow="horizontal"
           onClick={() => {
-            this.props.history.push('/MyPond');
+           window.location.href = 'http://v1.rabbitpre.com/m/NuqyzFRIK?mobile=1&openid=o7kepwR53UD0UUW-ycj-CXyhgeGY&access_token=6_9P-2-tOCdBXe9KyaTR9oaspqzBDLg7J9Wm0L6icFtPNXVdxChXrRwBXy6d6Lxh11ybjrg7lNAYO9weEm0hv2ug'
             this.props.dispatch({
               type: 'global/changeState',
               payload: {

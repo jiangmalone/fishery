@@ -354,58 +354,41 @@ public class CMDUtils {
 	}
 
 	// 服务器开关增氧机,因为没有设计打开和关闭哪一路增氧机，默认就全部关闭，写死在这，参数operation=1为打开增氧机，为0是关闭增氧机
-	public static Map<String, Object> serverOnOffOxygenCMD(Timer timer,int operation) {
-		SocketChannel channel=clientMap.get(timer.getDevice_sn());
-		if(channel==null) {
-        	return RESCODE.NOT_OPEN.getJSONRES();
-        }
-		if(!channel.isConnected()) {
+	public static Map<String, Object> serverOnOffOxygenCMD(String deviceSn,int way,int operation) {
+		SocketChannel channel = clientMap.get(deviceSn);
+		if (channel == null) {
+			return RESCODE.NOT_OPEN.getJSONRES();
+		}
+		if (!channel.isConnected()) {
 			return RESCODE.CONNECTION_CLOSED.getJSONRES();
 		}
-		byte[] requestFirstPath = null;
-		byte[] requestSecondPath=null;
-		if(operation==1) {
-			String openFirstPath=StringUtils.add(timer.getDevice_sn(), 1, 7)
-				.append("01")
-                .append("          ")
-				.toString();
-			String openSecondPath=StringUtils.add(timer.getDevice_sn(), 2, 7)
-					.append("01")
-	                .append("          ")
-					.toString();
-			requestFirstPath=CommonUtils.toByteArray(openFirstPath);
-			requestSecondPath=CommonUtils.toByteArray(openSecondPath);
-			
-			
-		}else {
-			String closeFirstPath=StringUtils.add(timer.getDevice_sn(), 1, 7)
-					.append("00")
-	                .append("          ")
-					.toString();
-			String closeSecondPath=StringUtils.add(timer.getDevice_sn(), 2, 7)
-					.append("00")
-	                .append("          ")
-					.toString();
-			
-			requestFirstPath=CommonUtils.toByteArray(closeFirstPath);
-			requestSecondPath=CommonUtils.toByteArray(closeSecondPath);
-			
+		byte[] request = null;
+
+		if (operation == 1) {
+			String openFirstPath = StringUtils.add(deviceSn, way, 7).append("01").append("          ").toString();
+
+			request = CommonUtils.toByteArray(openFirstPath);
+
+		} else {
+			String close = StringUtils.add(deviceSn, way, 7).append("00").append("          ").toString();
+
+			request = CommonUtils.toByteArray(close);
+
 		}
-		requestFirstPath[8]=CommonUtils.arrayMerge(requestFirstPath, 2, 6);
-		requestSecondPath[8]=CommonUtils.arrayMerge(requestSecondPath, 2, 6);
-		CommonUtils.addSuffix(requestFirstPath, 9);
-		CommonUtils.addSuffix(requestSecondPath, 9);
-	    ByteBuffer outBufferFirstPath = ByteBuffer.wrap(requestFirstPath);
-	    ByteBuffer outBufferSecondPath=ByteBuffer.wrap(requestSecondPath);
-	    try {
-			channel.write(outBufferFirstPath);
-			channel.write(outBufferSecondPath);
+		request[8] = CommonUtils.arrayMerge(request, 2, 6);
+
+		CommonUtils.addSuffix(request, 9);
+
+		ByteBuffer outBuffer = ByteBuffer.wrap(request);
+
+		try {
+			channel.write(outBuffer);
+
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-	
-	    return responseToBrowser();
-        
+
+		return responseToBrowser();
 
 	}
 
@@ -651,12 +634,16 @@ public class CMDUtils {
 			break;
 		}
 		
+		//有故障推送给微信用户，快的需要105毫秒，慢的有998毫秒，性能上可以做成异步队列，因为有故障了不一定要立即推送给用户，慢个几秒也无所谓
+		long start=System.currentTimeMillis();
+		
 		WXUser wxuser=new WXUser();
 		wxuser=service.findWXUserById(relation);
 		BrokenMSG bs=new BrokenMSG();
 		WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
 		bs.clear(); 
-		
+		long end=System.currentTimeMillis();
+		System.out.println(end-start);
 	}
 	
 	public static void selfTestBrokenHandle(String relation,int entityModel,int entityType,String brokenmsg,List<Broken> brokenlist,String deviceSn) {

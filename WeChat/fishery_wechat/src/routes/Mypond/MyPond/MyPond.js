@@ -49,7 +49,6 @@ class MyPond extends PureComponent {
             // wrapProps,
         },
             (buttonIndex) => {
-                console.log(buttonIndex)
                 if (buttonIndex == 0) {
                     this.deletePond(index, id)
                 }
@@ -95,9 +94,7 @@ class MyPond extends PureComponent {
 
     gotoDetail = (record) => {
         let formData = {}
-        console.log(record)
         for (let key in record) {
-            console.log(key)
             formData[key] = {
                 value: record[key] + '',
                 name: key

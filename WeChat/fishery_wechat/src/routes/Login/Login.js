@@ -71,7 +71,6 @@ class LoginIndex extends React.Component {
             // headimgurl: getParameterByName('headimgurl'),
             headimgurl: '111'
         }).then((res) => {
-            console.log(res)
             if (res.data.code == '0') {
                 window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'))
                 window.localStorage.setItem('openid', getParameterByName('openid'))

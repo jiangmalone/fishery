@@ -102,7 +102,6 @@ export default {
 
     reducers: {
         changeState(state, action) {
-            console.log(action)
             return { ...state, ...action.payload, ...action.list };
         },
         hideLoginLoading(state, action) {

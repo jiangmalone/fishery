@@ -6,6 +6,7 @@ import { connect } from 'dva';
 import './addEquipment.less';
 import scan from '../../img/scan_QR.png'
 import { addEquipment } from '../../services/equipment.js'; //接口
+import { getWXConfig } from '../../services/wxConfig.js'; //接口
 
 class AddEquipment extends React.Component {
 
@@ -15,8 +16,31 @@ class AddEquipment extends React.Component {
             equipmentCode: ''
         }
     }
+
+    componentDidMount() {
+        getWXConfig({
+            targetUrl: window.location.href
+        }).then((res) => {
+            let data = res.data;
+            //先注入配置JSSDK信息
+            wx.config({
+                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                appId: data.appId, // 必填，公众号的唯一标识
+                timestamp: data.timestamp, // 必填，生成签名的时间戳
+                nonceStr: data.nonceStr, // 必填，生成签名的随机串
+                signature: data.signature,// 必填，签名，见附录1
+                jsApiList: [
+                    'checkJsApi',
+                    'scanQRCode'
+                ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            });
+            wx.ready(function () {
+                console.log("验证微信接口成功");
+            });
+        })
+    }
+
     scanEquipment = () => {
-        console.log('scan');
         wx.scanQRCode({
             desc: 'scanQRCode desc',
             needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，

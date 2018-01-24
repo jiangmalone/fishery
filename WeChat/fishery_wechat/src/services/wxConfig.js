@@ -3,6 +3,6 @@ import get from '../utils/get';
 export default {
     
     getWXConfig: (params) => {
-        return get('api/webService/weather', params)
+        return get('api/webService/wx/getJSSDKConfig', params)
     },
 }

@@ -79,7 +79,6 @@ class EquipmentManagement extends React.Component {
             device_sn: this.state.device_sn
         }).then(res => {
             this.setState({ animating: false });
-            console.log(res);
             if (res.data && res.data.code == 0) {
                 let portBinds = res.data.data.portBinds;
                 let standardPorts = [];
@@ -92,9 +91,7 @@ class EquipmentManagement extends React.Component {
                 portBinds.map((item, index) => {
                     bindPorts.push(item.port);
                 })
-                console.log(bindPorts)
                 let difference = standardPorts.filter(x => bindPorts.indexOf(x) == -1).concat(bindPorts.filter(x => standardPorts.indexOf(x) == -1));
-                console.log(difference)
                 difference.map((item, index) => {
                     portBinds.push({port: item});
                 })

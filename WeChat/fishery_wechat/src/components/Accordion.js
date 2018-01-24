@@ -30,7 +30,8 @@ class Accordion extends React.Component {
             <div className='name-line' onClick={() => {this.handlaClick()}}>
                 <div className='name'>{this.props.title}</div>
                 {this.state.isShowState && <img className='state-img' src={this.props.isOnline? online : offline} />}
-                <Icon type={this.state.isShowChildren? 'up' : 'down'} className='icon'></Icon>
+                {this.props.children ? <Icon type={this.state.isShowChildren? 'up' : 'down'} className='icon'></Icon> : 
+                <span  className='icon'>无</span>}
             </div>
             {this.state.isShowChildren && <div>
                 {this.props.children}

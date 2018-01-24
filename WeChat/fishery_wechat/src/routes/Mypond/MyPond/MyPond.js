@@ -109,7 +109,8 @@ class MyPond extends PureComponent {
                 formData: { fields: formData },
                 address: record.address,
                 latitude: record.latitude,
-                longitude: record.longitude
+                longitude: record.longitude,
+                selectedFishes:record.fish_categorys
             }
         })
         this.props.dispatch({

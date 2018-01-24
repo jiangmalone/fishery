@@ -10,8 +10,8 @@ export default {
         return get('api/equipment/add',  params);
     },
 
-    deleteEquipment: (options, params) => {
-        return post('api/equipment/delEquipments', options, params);
+    deleteEquipment: (params) => {
+        return get('api/equipment/delEquipments', params);
     },
 
     getDataToday: (params) => {          //获得设备数据汇总  （曲线图数据）

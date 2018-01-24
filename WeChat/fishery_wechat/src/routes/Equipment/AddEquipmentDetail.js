@@ -20,7 +20,7 @@ class BindEquipment extends React.Component {
         addEquipment({
             name: this.state.name,
             device_sn: this.props.match.params.equipmentCode,
-            relationId: 14   //TODO 应该是获得本人的id，酱紫
+            relationId: window.localStorage.getItem('relationId'),
         }).then((res) => {
             console.log(res);
             if (res.data.code == 0) {

@@ -37,7 +37,7 @@ class Main extends React.Component {
     queryPonds = () => {
         this.setState({ animating: true });
         wxQuery({
-             relationId: 'WX4',
+             relationId: window.localStorage.getItem('relationId'),
         }).then((res) => {
             this.setState({ animating: false });
             if (res.data.code == '0') {

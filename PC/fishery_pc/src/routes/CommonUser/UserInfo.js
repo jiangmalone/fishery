@@ -162,7 +162,7 @@ class UserInfo extends PureComponent {
                 title: '设备编号',
                 dataIndex: 'device_sn',
                 render: (text, record, index) => {
-                    return <Link to={`/equipment/detail/${text}`}>{text}</Link>
+                    return <Link to={`/equipment/detail/${text}/${ this.props.match.params.id}/${record.id}`}>{text}</Link>
                 },
             },
             {

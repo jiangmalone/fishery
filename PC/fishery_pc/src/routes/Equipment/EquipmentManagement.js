@@ -98,7 +98,7 @@ export default class EquipmentManagement extends React.Component {
     onOk = (values) => {
         if (isNaN(this.state.index)) {
             values.current = this.props.pagination.current
-            values.relation = 'CO1';
+            values.relationId = this.props.match.params.relation;
             this.props.dispatch({
                 type: 'equipment/addEquipment',
                 payload: values,
@@ -229,7 +229,7 @@ export default class EquipmentManagement extends React.Component {
                 title: '设备编号',
                 dataIndex: 'device_sn',
                 render: (text, record, index) => {
-                    return <Link to={`/equipment/detail/${record.device_sn}/${this.props.match.params.relation}`}>{text}</Link>
+                    return <Link to={`/equipment/detail/${record.device_sn}/${this.props.match.params.relation}/${record.id}`}>{text}</Link>
                 },
             },
             {

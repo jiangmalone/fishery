@@ -2,7 +2,7 @@ import { queryFakeList, addUser } from '../services/api';
 import { queryPond, addPond, modifyPond, delPonds, pondEquipment, pondFish } from '../services/pond'
 import update from 'immutability-helper'
 import { pondDetail } from '../services/pond.js'
-
+import { message } from 'antd';
 export default {
     namespace: 'pond',
 
@@ -17,7 +17,7 @@ export default {
         pondList: [],
         pagination2: { current: 1 },
         fishCategories: [],
-        pondInfo:{}
+        pondInfo: {}
     },
 
     effects: {
@@ -58,20 +58,31 @@ export default {
                         }
                     }
                 });
+            } else {
+                message.error(response.msg, 1);
+                yield put({
+                    type: 'appendList',
+                    payload: {
+                        list: [],
+                        pagination: {
+                            total: 0,
+                        }
+                    }
+                });
             }
             yield put({
                 type: 'changeLoading',
                 payload: false,
             });
         },
-        *fetchDetail({payload},{call,put}) {
-            const response = yield call (pondDetail,payload);
+        *fetchDetail({ payload }, { call, put }) {
+            const response = yield call(pondDetail, payload);
             console.log(response)
-            if(response.code=="0") {
+            if (response.code == "0") {
                 yield put({
-                    type:'changeModal',
-                    payload:{
-                        pondInfo:response.data
+                    type: 'changeModal',
+                    payload: {
+                        pondInfo: response.data
                     }
                 })
             }
@@ -142,7 +153,7 @@ export default {
                     type: 'fetch',
                     payload: {
                         page: payload.pagination.current,
-                        relationId:payload.relationId,
+                        relationId: payload.relationId,
                         number: 10
                     }
                 })

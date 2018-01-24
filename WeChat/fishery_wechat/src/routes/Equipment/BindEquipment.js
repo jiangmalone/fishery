@@ -42,7 +42,7 @@ class BindEquipment extends React.Component {
     queryEquipment = () => {
         this.setState({animating: true});
         myEquipment({
-            relationId: 'WX4',
+            relationId: window.localStorage.getItem('relationId'),
         }).then((res) => {
             this.setState({animating: false});
             console.log(res);
@@ -150,7 +150,7 @@ class BindEquipment extends React.Component {
                     className="forss" 
                     extra="请选择"
                     onOk={e => {this.setState({ bindEquipment: e })}}
-                    onChange={v => {this.selectController(1)}}
+                    onChange={v => {this.selectController(v)}}
                     value={this.state.bindEquipment}
                     >
                         <List.Item arrow="horizontal" key='1'>绑定设备：</List.Item>

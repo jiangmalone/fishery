@@ -110,7 +110,6 @@ public class EquipmentService {
 			} catch (Exception e) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
-
 			if (devices.equals("01") || devices.equals("02")) {
 				aioDao.delete(device);
 			} else if (devices.equals("03")) {

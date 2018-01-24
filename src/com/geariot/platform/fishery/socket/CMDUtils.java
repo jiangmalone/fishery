@@ -638,9 +638,9 @@ public class CMDUtils {
 		WXUser wxuser=new WXUser();
 		wxuser=service.findWXUserById(relation);
 		BrokenMSG bs=new BrokenMSG();
-		
 		WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
-		bs.clear();
+		bs.clear(); 
+		
 	}
 	
 	public static void selfTestBrokenHandle(String relation,int entityModel,int entityType,String brokenmsg,List<Broken> brokenlist) {
@@ -648,7 +648,7 @@ public class CMDUtils {
 			if(relation.contains("WX")) {
 				//是微信用户就推送给前台
 				BrokenMSG bs=new BrokenMSG();
-				bs.setMSG("brokenmsg");
+				bs.setMSG(brokenmsg);
 			}
 			 Broken  broken=new Broken();
 				broken.setCreateDate(new Date());

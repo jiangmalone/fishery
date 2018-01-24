@@ -51,7 +51,7 @@ class MyEquipment extends React.Component {
         });
     }
 
-    wouldDelete = (e, device_sn) => {
+    wouldDelete = (device_sn) => {
 
         console.log(device_sn)
         const BUTTONS = ['删除', '取消'];
@@ -116,7 +116,7 @@ class MyEquipment extends React.Component {
             const ports = controller.port_status.split("");
             return (
                 <div key={controller.id}>
-                    {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e, controller.device_sn)} >
+                    {this.state.isEdit && <div className='delete-button' onClick={() => this.wouldDelete(controller.device_sn)} >
                     </div>}
                     <div className={this.state.isEdit ? 'line editLine' : 'line'} onClick={() => this.checkDetail({ device_sn: controller.device_sn, id: controller.id })} >
                         <div className='name' >
@@ -145,7 +145,7 @@ class MyEquipment extends React.Component {
             // const ports = sensor.portsState;
             return (
                 <div key={sensor.id}>
-                    {this.state.isEdit && <div className='delete-button' onClick={(e) => this.wouldDelete(e, sensor.device_sn)} >
+                    {this.state.isEdit && <div className='delete-button' onClick={() => this.wouldDelete(sensor.device_sn)} >
                     </div>}
                     <div
                         className={this.state.isEdit ? 'line editLine' : 'line'}
@@ -173,7 +173,7 @@ class MyEquipment extends React.Component {
                 <div key={allInOne.id}>
                     {this.state.isEdit &&
                         <div className='delete-button'
-                            onClick={(e) => this.wouldDelete(e, allInOne.device_sn)}
+                            onClick={() => this.wouldDelete(allInOne.device_sn)}
                         >
                         </div>
                     }

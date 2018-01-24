@@ -66,7 +66,6 @@ class MapModal extends PureComponent {
                         }
                     })
                 });
-                console.log('高德地图 Map 实例创建成功；如果你要亲自对实例进行操作，可以从这里开始。比如：');
             }
         };
     }

@@ -197,15 +197,15 @@ public class CMDUtils {
 			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
-				AIO aio=new AIO();
+				AIO aio=service.findAIOByDeviceSn(deviceSn);
 				aio.setStatus(3);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
-				Sensor sensor=new Sensor();
+				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 				sensor.setStatus(3);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
-				Controller controller =new Controller();
+				Controller controller =service.findControllerByDeviceSn(deviceSn);
 				controller.setStatus(3);
 				service.updateController(controller);
 			}
@@ -232,15 +232,15 @@ public class CMDUtils {
 			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
-				AIO aio=new AIO();
+				AIO aio=service.findAIOByDeviceSn(deviceSn);
 				aio.setStatus(2);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
-				Sensor sensor=new Sensor();
+				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 				sensor.setStatus(2);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
-				Controller controller =new Controller();
+				Controller controller =service.findControllerByDeviceSn(deviceSn);
 				controller.setStatus(2);
 				service.updateController(controller);
 			}	
@@ -269,15 +269,15 @@ public class CMDUtils {
 			
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
-				AIO aio=new AIO();
+				AIO aio=service.findAIOByDeviceSn(deviceSn);
 				aio.setStatus(4);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
-				Sensor sensor=new Sensor();
+				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 				sensor.setStatus(4);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
-				Controller controller =new Controller();
+				Controller controller =service.findControllerByDeviceSn(deviceSn);
 				controller.setStatus(4);
 				service.updateController(controller);
 			}
@@ -305,15 +305,15 @@ public class CMDUtils {
 			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
-				AIO aio=new AIO();
+				AIO aio=service.findAIOByDeviceSn(deviceSn);
 				aio.setStatus(0);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
-				Sensor sensor=new Sensor();
+				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 				sensor.setStatus(0);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
-				Controller controller =new Controller();
+				Controller controller =service.findControllerByDeviceSn(deviceSn);
 				controller.setStatus(0);
 				service.updateController(controller);
 			}	

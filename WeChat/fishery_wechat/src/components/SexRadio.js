@@ -21,7 +21,6 @@ class SexRadio extends React.Component{
     }
 
     handlaClick = (type) => {
-        console.log(type);
         this.setState({
             selectType: type
         }, function () {

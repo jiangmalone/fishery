@@ -23,13 +23,12 @@ class PersonalCenter extends React.Component {
         onPress: () => {
 
           LogOut({ phone: window.localStorage.getItem('phone') }).then((res) => {
-            console.log(res)
             if (res.data.code == '0') {
               this.props.history.push('/login')
               this.props.dispatch({
                 type: 'global/changeState',
                 payload: { login: false }
-              }); console.log('退出登录')
+              }); 
             }
           })
         }

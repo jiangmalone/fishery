@@ -22,7 +22,6 @@ class BindEquipment extends React.Component {
             device_sn: this.props.match.params.equipmentCode,
             relationId: window.localStorage.getItem('relationId'),
         }).then((res) => {
-            console.log(res);
             if (res.data.code == 0) {
                 Toast.success('新增设备成功', 1);
                 setTimeout(() => {

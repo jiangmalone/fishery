@@ -22,7 +22,6 @@ class UserInfo extends React.Component {
     }
 
     handlaSexClick = (type) => {
-        console.log(type);
         const form = this.state.form;
         form['sex'] = type ? '女' : '男';
         this.setState({
@@ -71,7 +70,6 @@ class UserInfo extends React.Component {
                 sex: form.sex,
                 life: form.years
             }).then((res) => {
-                console.log(res);
                 if (res.data.code == 0) {
                     window.localStorage.setItem("name", form.name);
                     window.localStorage.setItem("phone", form.phone);

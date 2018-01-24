@@ -31,7 +31,6 @@ class AddFish extends Component {
 
 
     selectFish(item, index) {
-        console.log(this.state.selectedFish)
         let existIndex = this.state.selectedFish.findIndex((value) => {
             return value == item.fish_name;
         });

@@ -45,7 +45,6 @@ class BindEquipment extends React.Component {
             relationId: window.localStorage.getItem('relationId'),
         }).then((res) => {
             this.setState({animating: false});
-            console.log(res);
             if (res.data && res.data.code == 0) {
                 if (res.data.controller) {
                     const data = res.data.controller;
@@ -54,7 +53,6 @@ class BindEquipment extends React.Component {
                     data.map((item, index) => {
                         let controller = {}, usefulPorts = []
                         const allPorts = item.port_status.split('');
-                        // console.log(allPorts);
                         allPorts.map((post, index) => {
                             const portNum = index + 1;
                             if (post == 0) {
@@ -65,7 +63,6 @@ class BindEquipment extends React.Component {
                                 usefulPorts.push(postData);
                             }
                         })
-                        // console.log(usefulPorts);
                         controller = {label: item.name, value: item.id, ports: usefulPorts};
                         controllers.push(controller);
                     })
@@ -122,7 +119,6 @@ class BindEquipment extends React.Component {
     }
 
     selectController = (id) => {
-        console.log(this.state.controllers)
         const controllers = this.state.controllers;
         controllers.map((controller, index) => {
             if(controller.value == id) {

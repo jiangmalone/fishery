@@ -62,14 +62,14 @@ public class RequestProcessor {
 					
 				}
 				byte[] data = buffer.array();
-			Map<String,Object> map=new HashMap<String,Object>();
-			map.put("data", data);
-			map.put("readChannel", readChannel);
-			key.attach(map);
-		DataHandle.handle(key); 
+			//Map<String,Object> map=new HashMap<String,Object>();
+			//map.put("data", data);
+			//map.put("readChannel", readChannel);
+			//key.attach(map);
+		DataHandle.handle(data,readChannel); 
            //将下一个读放进队列里面，并在主线程里面注册下一次读
 		NIOServer.addQueen(key);
           
-          
+           
 		}
 	}

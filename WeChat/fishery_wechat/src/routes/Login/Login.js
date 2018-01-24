@@ -77,6 +77,9 @@ class LoginIndex extends React.Component {
                 window.localStorage.setItem('openid', getParameterByName('openid'))
                 window.localStorage.setItem('id', res.data.data.id)
                 window.localStorage.setItem('relationId', res.data.data.relationId)
+                window.localStorage.setItem("phone", res.data.data.phone);
+                window.localStorage.setItem("sex", res.data.data.sex);
+                window.localStorage.setItem("life", res.data.data.life);
                 this.props.dispatch({
                     type: 'global/changeState',
                     payload: {
@@ -84,10 +87,7 @@ class LoginIndex extends React.Component {
                     }
                 })
                 if (res.data.data.name) {
-                    window.localStorage.setItem("name", res.data.data.name);
-                    window.localStorage.setItem("phone", res.data.data.phone);
-                    window.localStorage.setItem("sex", res.data.data.sex);
-                    window.localStorage.setItem("life", res.data.data.life);
+               
                     this.props.history.push(`/main`)
                 } else {
                     this.props.history.push(`/userInfo`)

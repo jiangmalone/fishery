@@ -60,7 +60,11 @@ class AutoOxygenationSetting extends React.Component {
     }
 
     addTimeSection = () => {
+<<<<<<< HEAD
         console.log('add')
+=======
+        const timeSections = this.state.timeSections;
+>>>>>>> 0da3e3f8baeec2d068c61962099d349f86f53f6f
         timeSections.push(['', '']);
         this.setState({
             timeSections: timeSections

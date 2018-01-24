@@ -19,7 +19,7 @@ export const getNavData = app => [
         name: '首页',
         icon: 'home',
         path: 'analysis',
-        component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
+        component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Picture')),
 
       },
       {

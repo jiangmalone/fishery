@@ -52,8 +52,6 @@ class MyEquipment extends React.Component {
     }
 
     wouldDelete = (device_sn) => {
-
-        console.log(device_sn)
         const BUTTONS = ['删除', '取消'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,

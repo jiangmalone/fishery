@@ -39,11 +39,11 @@ public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static Map<String, SocketChannel> clientMap = new ConcurrentHashMap<String, SocketChannel>();
-	private static	byte[] response = null;
+	/*private static	byte[] response = null;
 	private static byte[] data=null;
 	private static SocketChannel readChannel=null;
 	private static String deviceSn;
-	private static byte way;
+	private static byte way;*/
 	private static  AtomicBoolean feedback=new AtomicBoolean();
     private static SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	
@@ -57,7 +57,7 @@ public class CMDUtils {
 	{
 		return clientMap;
 	}
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	public static void preHandle(SelectionKey key) {
 		
 		Map<String,Object> attachmentObject=(Map<String,Object>) key.attachment();
@@ -67,11 +67,11 @@ public class CMDUtils {
 		 
 		 way=(byte) attachmentObject.get("way");
         
-	}
+	}*/
 	// 自检
-	public static void selfTestCMD(SelectionKey key) throws IOException {
+	public static void selfTestCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
 		  
-		preHandle(key);
+		//preHandle(key);
 		clientMap.put(deviceSn, readChannel); 
 		    byte ac = data[7];
 			byte[] byteLongitude =new byte[4];
@@ -85,7 +85,7 @@ public class CMDUtils {
 			status[0]=data[16];//传感器和水泵状态
 			status[1]=data[17];
 			List<Broken> brokenlist=new ArrayList<Broken>();
-			statusHandle(status,brokenlist);
+			statusHandle(status,brokenlist,deviceSn);
 			byte gprs = data[18];
 			//byte check = data[18];
 			//String suffix0 = CommonUtils.printHexStringMerge(data,19,4);
@@ -100,12 +100,12 @@ public class CMDUtils {
            selfTest.setCreateDate(new Date());
           
 		service.save(selfTest);
-		response(19);
+		response(19,data,readChannel);
 	}
 
 	// 下位机设限上传给服务器
-	public static void uploadLimitCMD(SelectionKey key) throws IOException {
-		 preHandle(key);
+	public static void uploadLimitCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
+		 //preHandle(key);
 		byte[] byteHigh = new byte[4];
 			CommonUtils.arrayHandle(data, byteHigh, 7, 0, 4);
 			float high= CommonUtils.byte2float(byteHigh,0);
@@ -125,7 +125,7 @@ public class CMDUtils {
 			limit.setHigh_limit(high);
 			limit.setLow_limit(low);
 			service.save(limit);
-				response(20);
+				response(20,data,readChannel);
 	}
 
 	// 服务器设限下发给终端
@@ -161,8 +161,8 @@ public class CMDUtils {
 	}
 
 	// 5分钟一次上传溶氧和水温值
-	public static void timingUploadCMD(SelectionKey key) throws IOException {
-		 preHandle(key);
+	public static void timingUploadCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
+		 //preHandle(key);
 		byte[] byteOxygen= new byte[4];
 			CommonUtils.arrayHandle(data, byteOxygen, 7, 0, 4);
 			float oxygen= CommonUtils.byte2float(byteOxygen,0);
@@ -185,12 +185,12 @@ public class CMDUtils {
 			}
 			service.update(sData);
 
-				response(16);
+				response(16,data,readChannel);
 	}
 
 	// 增氧机缺相报警
-	public static void oxygenAlarmCMD(SelectionKey key) throws IOException {
-		 preHandle(key);    
+	public static void oxygenAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
+		// preHandle(key);    
 		//byte check4 = data[7];
 			//String suffix4 = CommonUtils.printHexStringMerge(data,8,4);
 			
@@ -220,12 +220,12 @@ public class CMDUtils {
              alarm.setAlarmType(1);
              service.save(alarm);
 
-				response(8);
+				response(8,data,readChannel);
 	}
 
 	// 220v断电报警
-	public static void voltageAlarmCMD(SelectionKey key) throws IOException {
-		 preHandle(key);
+	public static void voltageAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
+		 //preHandle(key);
 		//byte check5 = data[7];
 			//String suffix5 = CommonUtils.printHexStringMerge(data,8,4);
 			
@@ -254,12 +254,12 @@ public class CMDUtils {
 			}
              alarm.setAlarmType(2);
              service.save(alarm);
-				response(8);
+				response(8,data,readChannel);
 	}
 
 	// 增氧机打开后半小时内效果不明显报警
-	public static void oxygenExceptionAlarmCMD(SelectionKey key) throws IOException {
-		 preHandle(key);
+	public static void oxygenExceptionAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
+		 //preHandle(key);
 		//byte check9 = data[7];
 			//System.out.println("check = "+check9);
 			//String suffix9 = CommonUtils.printHexStringMerge(data,8,4);
@@ -291,12 +291,12 @@ public class CMDUtils {
 			}
              alarm.setAlarmType(3);
              service.save(alarm);
-				response(8);
+				response(8,data,readChannel);
 	}
 
 	// 取消所有报警
-	public static void cancelAllAlarmCMD(SelectionKey key) throws IOException {
-		 preHandle(key);
+	public static void cancelAllAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
+		 //preHandle(key);
 		//byte check10 = data[7];
 			//System.out.println("check = "+check10);
 			//String suffix10 = CommonUtils.printHexStringMerge(data,8,4);
@@ -327,12 +327,12 @@ public class CMDUtils {
 			}
              alarm.setAlarmType(4);
              service.save(alarm);
-				response(8);
+				response(8,data,readChannel);
 	}
 
 	// 增氧机打开和关闭时间记录
-	public static void oxygenTimeCMD(SelectionKey key) throws IOException {
-		 preHandle(key);
+	public static void oxygenTimeCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
+		 //preHandle(key);
 		/*byte power6 = data[7];
 		byte[] byteTime = new byte[5];
 		CommonUtils.arrayHandle(data, byteTime, 8, 0, 5);
@@ -350,50 +350,49 @@ public class CMDUtils {
 		}
 		byte check6 = data[13];
 		String suffix6 = CommonUtils.printHexStringMerge(data,14,4);*/
-			response(14);
+			response(14,data,readChannel);
 	}
 
-	// 服务器开关增氧机
-	public static Map<String, Object> serverOnOffOxygenCMD(Timer timer,int operation) {
-		SocketChannel channel=clientMap.get(timer.getDevice_sn());
-		if(channel==null) {
-        	return RESCODE.NOT_OPEN.getJSONRES();
-        }
-		if(!channel.isConnected()) {
+	// 服务器开关增氧机,因为没有设计打开和关闭哪一路增氧机，默认就全部关闭，写死在这，参数operation=1为打开增氧机，为0是关闭增氧机
+	public static Map<String, Object> serverOnOffOxygenCMD(String deviceSn,int way,int operation) {
+		SocketChannel channel = clientMap.get(deviceSn);
+		if (channel == null) {
+			return RESCODE.NOT_OPEN.getJSONRES();
+		}
+		if (!channel.isConnected()) {
 			return RESCODE.CONNECTION_CLOSED.getJSONRES();
 		}
 		byte[] request = null;
-		if(operation==1) {
-			String open=StringUtils.add(timer.getDevice_sn(), way, 7)
-				.append("01")
-                .append("          ")
-				.toString();
-			request=CommonUtils.toByteArray(open);
-			request[8]=CommonUtils.arrayMerge(request, 2, 6);
-			CommonUtils.addSuffix(request, 9);
-		}else {
-			String close=StringUtils.add(timer.getDevice_sn(), way, 7)
-					.append("00")
-	                .append("          ")
-					.toString();
-				request=CommonUtils.toByteArray(close);
-			
-			request[8]=CommonUtils.arrayMerge(request, 2, 6);
-			CommonUtils.addSuffix(request, 9);
+
+		if (operation == 1) {
+			String openFirstPath = StringUtils.add(deviceSn, way, 7).append("01").append("          ").toString();
+
+			request = CommonUtils.toByteArray(openFirstPath);
+
+		} else {
+			String close = StringUtils.add(deviceSn, way, 7).append("00").append("          ").toString();
+
+			request = CommonUtils.toByteArray(close);
+
 		}
-	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
-	    try {
+		request[8] = CommonUtils.arrayMerge(request, 2, 6);
+
+		CommonUtils.addSuffix(request, 9);
+
+		ByteBuffer outBuffer = ByteBuffer.wrap(request);
+
+		try {
 			channel.write(outBuffer);
+
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-	
-	    return responseToBrowser();
-        
+
+		return responseToBrowser();
 
 	}
 
-	// 服务器设置一键自动
+	// 服务器设置一键自动,这个指令在前台尚未有调用的地方，先放在这
 	public static Map<String, Object> serverSetAutoCMD(String deviceSn) {
 		SocketChannel channel=clientMap.get(deviceSn);
 		if(channel==null) {
@@ -403,7 +402,7 @@ public class CMDUtils {
 			return RESCODE.CONNECTION_CLOSED.getJSONRES();
 		}
 		byte[] request = null;
-		String temp=StringUtils.add(deviceSn, way, 8)
+		String temp=StringUtils.add(deviceSn, 1, 8)
                 .append("          ")
 				.toString();
 		request=CommonUtils.toByteArray(temp);
@@ -419,7 +418,7 @@ public class CMDUtils {
 	    return responseToBrowser();
 	}
 
-	// 服务器设置设备使用哪路传感器
+	// 服务器设置设备使用哪路传感器，这个指令在前台尚未有调用的地方，先放在这
 	public static Map<String, Object> serverSetpathCMD(String deviceSn) {
 		SocketChannel channel=clientMap.get(deviceSn);
 		if(channel==null) {
@@ -429,7 +428,7 @@ public class CMDUtils {
 			return RESCODE.CONNECTION_CLOSED.getJSONRES();
 		}
 		byte[] request = null;
-		String temp=StringUtils.add(deviceSn, way, 12)
+		String temp=StringUtils.add(deviceSn, 1, 12)
                 .append("          ")
 				.toString();
 		request=CommonUtils.toByteArray(temp);
@@ -486,8 +485,8 @@ public class CMDUtils {
 	}
 
 	// 五分钟上传一次溶氧，水温和PH值信息
-	public static void timingDataCMD(SelectionKey key) throws IOException {
-		 preHandle(key);
+	public static void timingDataCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
+		 //preHandle(key);
 		byte[] byteOxygen= new byte[4];
 		CommonUtils.arrayHandle(data, byteOxygen, 7, 0, 4);
 		float oxygen= CommonUtils.byte2float(byteOxygen,0);
@@ -515,11 +514,11 @@ public class CMDUtils {
 		}
 		service.save(sData);
 
-			response(16);
+			response(16,data,readChannel);
 	}
 	
-	public static void response(int dataStart) throws IOException {
-		response = new byte[12];
+	public static void response(int dataStart,byte[] data,SocketChannel readChannel) throws IOException {
+		byte[] response = new byte[12];
 		CommonUtils.arrayHandle(data, response, 0, 0, 7);
 		response[7]=CommonUtils.arrayMerge(response, 2, 5);
 		CommonUtils.arrayHandle(data, response, dataStart, 8, 4);
@@ -528,7 +527,7 @@ public class CMDUtils {
 		System.out.println("cmd代码处理完");
 	}
 	
-	public static void statusHandle(byte[] status,List<Broken> brokenlist) {
+	public static void statusHandle(byte[] status,List<Broken> brokenlist,String deviceSn) {
 		
 		String statusStr=CommonUtils.printHexStringMerge(status, 0, 2);
 		System.out.println("分析故障信息");
@@ -558,20 +557,20 @@ public class CMDUtils {
 		switch (statusStr.substring(0,1)) {
 		case "0":
 			//水泵关闭故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_OFF_BROKEN,"水泵关闭故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_OFF_BROKEN,"水泵关闭故障",brokenlist,deviceSn);
 			System.out.println("````水泵关闭故障");
 			break;
 		case "1":
 			//水泵打开故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_ON_BROKEN,"水泵打开故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_ON_BROKEN,"水泵打开故障",brokenlist,deviceSn);
 			break;
 		case "2":
 			//水泵低电流故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_LOWCURRENT_BROKEN,"水泵低电流故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_LOWCURRENT_BROKEN,"水泵低电流故障",brokenlist,deviceSn);
 			break;
 		case "3":
 			//水泵高电流故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.HIGH_LIMIT_BROKEN,"水泵高电流故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.HIGH_LIMIT_BROKEN,"水泵高电流故障",brokenlist,deviceSn);
 			break;
 		default:
 			break;
@@ -580,16 +579,16 @@ public class CMDUtils {
 		switch (statusStr.substring(1,2)) {
 		case "0":
 			//PH故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.BROKEN,"PH故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.BROKEN,"PH故障",brokenlist,deviceSn);
 			System.out.println("````ph故障");
 			break;
 		case "1":
 			//PH低限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.LOW_LIMIT_BROKEN,"PH低限故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.LOW_LIMIT_BROKEN,"PH低限故障",brokenlist,deviceSn);
 			break;
 		case "2":
 			//PH高限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.HIGH_LIMIT_BROKEN,"PH高限故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.HIGH_LIMIT_BROKEN,"PH高限故障",brokenlist,deviceSn);
 			break;
 		default:
 			break;
@@ -598,16 +597,16 @@ public class CMDUtils {
 		switch (statusStr.substring(2,3)) {
 		case "0":
 			//溶氧值故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.BROKEN,"溶氧值故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.BROKEN,"溶氧值故障",brokenlist,deviceSn);
 			System.out.println("溶氧值故障");
 			break;
 		case "1":
 			//溶氧值低限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.LOW_LIMIT_BROKEN,"溶氧值低限故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.LOW_LIMIT_BROKEN,"溶氧值低限故障",brokenlist,deviceSn);
 			break;
 		case "2":
 			//溶氧值高限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.HIGH_LIMIT_BROKEN,"溶氧值高限故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.HIGH_LIMIT_BROKEN,"溶氧值高限故障",brokenlist,deviceSn);
 			break;
 		default:
 			break;
@@ -616,34 +615,38 @@ public class CMDUtils {
 		switch (statusStr.substring(3,4)) {
 		case "0":
 			//温度故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.BROKEN,"温度故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.BROKEN,"温度故障",brokenlist,deviceSn);
 			break;
 		case "1":
 			//温度低限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN,"温度低限故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN,"温度低限故障",brokenlist,deviceSn);
 			System.out.println("温度低限故障");
 			break;
 		case "2":
 			//温度高限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.HIGH_LIMIT_BROKEN,"温度高限故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.HIGH_LIMIT_BROKEN,"温度高限故障",brokenlist,deviceSn);
 			break;
 		case "4":
 			//温度断开故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.TEMPORETURE_CLOSED_BROKEN,"温度断开故障",brokenlist);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.TEMPORETURE_CLOSED_BROKEN,"温度断开故障",brokenlist,deviceSn);
 			break;
 		default:
 			break;
 		}
+		
+		//有故障推送给微信用户，快的需要105毫秒，慢的有998毫秒，性能上可以做成异步队列，因为有故障了不一定要立即推送给用户，慢个几秒也无所谓
+		long start=System.currentTimeMillis();
 		
 		WXUser wxuser=new WXUser();
 		wxuser=service.findWXUserById(relation);
 		BrokenMSG bs=new BrokenMSG();
 		WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
 		bs.clear(); 
-		
+		long end=System.currentTimeMillis();
+		System.out.println(end-start);
 	}
 	
-	public static void selfTestBrokenHandle(String relation,int entityModel,int entityType,String brokenmsg,List<Broken> brokenlist) {
+	public static void selfTestBrokenHandle(String relation,int entityModel,int entityType,String brokenmsg,List<Broken> brokenlist,String deviceSn) {
 		if(relation!=null) {
 			if(relation.contains("WX")) {
 				//是微信用户就推送给前台

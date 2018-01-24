@@ -46,7 +46,6 @@ class MapModal extends PureComponent {
                 map.addControl(geolocation);
                 geolocation.getCurrentPosition();
                 AMap.event.addListener(geolocation, 'complete', (geo) => {
-                    console.log(geo);
                     this.setState({
                         address: geo
                     })
@@ -58,7 +57,6 @@ class MapModal extends PureComponent {
                     //TODO 针对选中的poi实现自己的功能
                     placeSearch.setCity(e.poi.adcode);
                     placeSearch.search(e.poi.name);
-                    console.log(e.poi)
                     this.setState({
                         address: {
                             formattedAddress:e.poi.district+e.poi.address+e.poi.name,
@@ -71,7 +69,6 @@ class MapModal extends PureComponent {
     }
 
     saveAddress = () => {
-        console.log(this.state.address)
         this.props.dispatch({
             type: 'pond/changeState',
             payload: {

@@ -82,7 +82,6 @@ class SensorDetail extends React.Component {
         getDataToday({
             device_sn: this.state.device_sn,
         }).then((res) => {
-            console.log(res);
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
                 this.setState({
@@ -105,7 +104,6 @@ class SensorDetail extends React.Component {
         getDataToday({
             device_sn: this.state.device_sn,
         }).then((res) => {
-            console.log(res);
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
                 this.setState({
@@ -177,7 +175,6 @@ class SensorDetail extends React.Component {
     }
 
     onSelect = (opt) => {
-        console.log(opt.props.value);
         this.setState({
             device_sn: opt.props.value,
             isShowMore: false,

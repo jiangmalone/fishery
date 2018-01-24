@@ -31,13 +31,13 @@ public class TimerTask {
 				if (now.compareTo(timer.getStartTime()) <= 5&&now.compareTo(timer.getStartTime()) >= 0) {
 					logger.debug("检测到数据中有待执行的定时任务，准备向终端发送打开增氧机的命令");
 					
-					CMDUtils.serverOnOffOxygenCMD(timer, 1);
+					CMDUtils.serverOnOffOxygenCMD(timer.getDevice_sn(),timer.getWay(), 1);
 					
 				}
 				if (now.compareTo(timer.getEndTime())<=5&&now.compareTo(timer.getEndTime())>=0) {
 					logger.debug("检测到数据中有待执行的定时任务，准备向终端发送关闭增氧机的命令");
 					
-					CMDUtils.serverOnOffOxygenCMD(timer, 0);
+					CMDUtils.serverOnOffOxygenCMD(timer.getDevice_sn(),timer.getWay(), 0);
 					
 				}
 			}

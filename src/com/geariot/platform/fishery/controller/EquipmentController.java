@@ -97,4 +97,9 @@ public class EquipmentController {
 	public Map<String,Object> serverCheck(String device_sn){
 		return CMDUtils.serverCheckCMD(device_sn);
 	}
+	//增氧机开关
+	@RequestMapping(value="/aeratorOnOff",method=RequestMethod.GET)
+	public Map<String,Object> aeratorOnOff(String device_sn,int way,int openOrclose){
+		return CMDUtils.serverOnOffOxygenCMD(device_sn,way,openOrclose);
+	}
 }

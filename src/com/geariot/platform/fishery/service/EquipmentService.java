@@ -110,7 +110,6 @@ public class EquipmentService {
 			} catch (Exception e) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
-
 			if (devices.equals("01") || devices.equals("02")) {
 				aioDao.delete(device);
 			} else if (devices.equals("03")) {
@@ -398,6 +397,7 @@ public class EquipmentService {
 
 	public Map<String, Object> companyFindEquipment(String device_sn, String relationId, int page, int number) {
 		int from = (page - 1) * number;
+		Sensor sensor = null;
 		Company company = companyDao.findCompanyByRelationId(relationId);
 		if (company == null) {
 			return RESCODE.NOT_FOUND.getJSONRES();
@@ -406,6 +406,19 @@ public class EquipmentService {
 			companies.add(company);
 			if (device_sn == null || device_sn.length() < 0) {
 				List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, from, number);
+				for(Equipment equipment : equipments){
+					String type = equipment.getDevice_sn().substring(0,2);
+					if(type.equals("03")){
+						sensor = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn());
+						if(sensor == null){
+							equipment.setSensorId(0);
+						}else{
+							equipment.setSensorId(sensor.getId());
+						}
+					}else{
+						equipment.setSensorId(0);
+					}
+				}
 				long count = pondDao.adminFindEquipmentCountCo(companies);
 				int size = (int) Math.ceil(count / (double) number);
 				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);

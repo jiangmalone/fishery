@@ -47,11 +47,9 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        console.log('111')
         verifyIsLogin({
             phone: '18362981113'
         }).then((res) => {
-            console.log(res)
             if (res.data.code == '0') {
                 this.props.dispatch({
                     type: 'global/changeState',

@@ -48,7 +48,7 @@ class PersonalCenter extends React.Component {
         <div className="avatar">
           <img src={require('../../img/avatar.jpg')} />
         </div>
-        <div className="name">
+        <div className="name" onClick={()=>{this.props.history.push('/userInfo')}}>
           {window.localStorage.getItem('name')}
           {/* 登录/注册 */}
         </div>

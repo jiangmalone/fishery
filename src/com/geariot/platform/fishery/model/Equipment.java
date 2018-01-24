@@ -14,6 +14,7 @@ public class Equipment {
 	private String companyName;
 	private int companyId;
 	private String relationId;
+	private int sensorId;
 	public Equipment() {
 
 	}
@@ -70,6 +71,14 @@ public class Equipment {
 
 	public void setRelationId(String relationId) {
 		this.relationId = relationId;
+	}
+
+	public int getSensorId() {
+		return sensorId;
+	}
+
+	public void setSensorId(int sensorId) {
+		this.sensorId = sensorId;
 	}
 
 }

@@ -5,7 +5,6 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd'
 import { Link } from 'react-router-dom'
 import AddUser from './AddUser'
-import { changeConfirmLocale } from '../../../node_modules/_antd@3.0.1@antd/lib/modal/locale';
 
 const Search = Input.Search;
 @connect(state => ({

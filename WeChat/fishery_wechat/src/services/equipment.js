@@ -46,6 +46,10 @@ export default {
 
     myEquipment: (params) => {
         return get('api/equipment/myEquipment', params);
+    },
+
+    serverCheck: (params) => {
+        return get('api/equipment/serverCheck', params);
     }
 
 

@@ -11,7 +11,7 @@ const Item = Popover.Item;
 import correct from '../../img/btn_correct.png';
 import back_img from '../../img/back.png';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
-import { getDataToday, getRealTimeData, myEquipment, getDataSevenday } from '../../services/equipment.js'; //接口
+import { getDataToday, getRealTimeData, myEquipment, getDataSevenday, serverCheck } from '../../services/equipment.js'; //接口
 
 const cols = {
     'ph': { min: 0 },
@@ -217,9 +217,21 @@ class SensorDetail extends React.Component {
         }
     }
 
-    calibration = () => {   //校准
+    serverCheck = () => {   //校准
         console.log('calibration');
         console.log(this.state.device_sn);
+        serverCheck({
+            device_sn: this.state.device_sn
+        }).then(res => {
+            if (res.data && res.data.code == 0) {
+                Toast.success('校准成功', 1);
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch(error => {
+            Toast.fail('校准失败', 1);
+            console.log(error)
+        })
     }
 
     render() {
@@ -276,7 +288,7 @@ class SensorDetail extends React.Component {
                     <span>当前状态</span>
                     <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
                 </div>
-                <img src={correct} className='correct' onClick={() => {this.calibration()}} />
+                <img src={correct} className='correct' onClick={() => {this.serverCheck()}} />
             </div>
             {this.state.isShowDetail && <div className='detail'>
                 <div>实时溶氧：&nbsp;&nbsp; {this.state.realTimeData.oxygen}</div>

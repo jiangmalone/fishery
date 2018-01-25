@@ -97,7 +97,8 @@ class PondDetail extends PureComponent {
             dataIndex: 'device_sn',
             key: 'device_sn',
             render: (text, record, index) => {
-                return <Link to={`${index}`}>{text}</Link>
+                console.log(record)
+                return <Link to={`/equipment/detail/${record.device_sn}/${record.relationId}/${record.sensroId}`}>{text}</Link>
             }
         }, {
             title: '设备名称',

@@ -7,7 +7,8 @@ import { connect } from 'dva';
 import addImg from '../../img/add.png'
 import question from '../../img/question.png'
 import './autoOxygenationSetting.less';
-import { delSensorOrAIOBind, delBind } from '../../services/bind.js'; //接口
+import { autoSet } from '../../services/equipment.js'; //接口
+
 const Item = List.Item;
 const CustomChildren = ({ extra, onClick, children }) => (
     <div
@@ -20,11 +21,20 @@ const CustomChildren = ({ extra, onClick, children }) => (
   );
 class AutoOxygenationSetting extends React.Component {
 
-    state = {
-        time: '',
-        timeSections: [['', '']],
-        isShowDeclare: false
+    constructor(props) {
+        super(props);
+        const data = JSON.parse(this.props.match.data);
+        const device_sn = data.device_sn;
+        const way = data.way
+        this.state = {
+            device_sn: device_sn,
+            way: way,
+            time: '',
+            timeSections: [['', '']],
+            isShowDeclare: false
+        }
     }
+    
 
     onSubmit = () => {
 
@@ -47,11 +57,32 @@ class AutoOxygenationSetting extends React.Component {
                 }
            }
         }
+
         this.props.form.validateFields({ force: true }, (error) => {
             if (!error) {
+                let form = this.props.form.getFieldsValue(), timers = [];
+                form.device_sn = this.state.device_sn;
+                form.way = this.state.way;
+                timeSections.map((item, index) => {
+                    timers.push({
+                        startTime: item[0],
+                        endTime: item[1],
+                        way: this.state.way,
+                        device_sn: this.state.way,                                                                       
+                    })
+                })
+
                 console.log(this.props.form.getFieldsValue());
+                autoSet({
+                    limit_Install:form,
+                    timers: timers
+                }).then(res => {
+                    console.log(res);
+                }).catch(error => {
+
+                })
             } else {
-                alert('Validation failed');
+                // alert('Validation failed');
             }
         });
     }
@@ -152,33 +183,33 @@ class AutoOxygenationSetting extends React.Component {
             <List className='os-list'>
                 <Item extra={<span style={{ minWidth: '100px', color: '#000' }} >10.26mg/L</span>}>控制器1<span>(增氧机1)</span></Item>
                 <InputItem
-                    {...getFieldProps('floor', {
+                    {...getFieldProps('low_limit', {
                         rules: [
                             { required: true }
                         ],
                     }) }
                     className="os-input"
-                    error={!!getFieldError('floor')}
+                    error={!!getFieldError('low_limit')}
                     extra={<span>mg/L</span>}
                 >增氧下限</InputItem>
                 <InputItem
-                    {...getFieldProps('upperLimit', {
+                    {...getFieldProps('up_limit', {
                         rules: [
                             { required: true }
                         ],
                     }) }
                     className="os-input"
-                    error={!!getFieldError('upperLimit')}
+                    error={!!getFieldError('up_limit')}
                     extra={<span>mg/L</span>}
                 >增氧上限</InputItem>
                 <InputItem
-                    {...getFieldProps('heightLimit', {
+                    {...getFieldProps('high_limit', {
                         rules: [
                             { required: true }
                         ],
                     }) }
                     className="os-input"
-                    error={!!getFieldError('heightLimit')}
+                    error={!!getFieldError('high_limit')}
                     extra={<span>mg/L</span>}
                 >增氧高限</InputItem>
                 {times}

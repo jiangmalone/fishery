@@ -85,7 +85,7 @@ class App extends React.Component {
                 <Route location={this.props.location} path="/addPond/:id" component={addPond} />
                 <Route location={this.props.location} path="/addFish" component={addFish} />
                 <Route location={this.props.location} path="/MyPond" component={MyPond} />
-                <Route location={this.props.location} path="/autoOrxygenationSetting/:id" component={AutoOrxygenationSetting} />
+                <Route location={this.props.location} path="/autoOrxygenationSetting/:data" component={AutoOrxygenationSetting} />
                 <Route location={this.props.location} path="/addEquipment" component={AddEquipment} />
                 <Route location={this.props.location} path="/addEquipmentDetail/:equipmentCode" component={AddEquipmentDetail} />
                 <Route location={this.props.location} path="/myEquipment" component={MyEquipment} />

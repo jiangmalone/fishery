@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Row, Col, Card, Input, Icon, Button, Table, message, Select, Modal } from 'antd';
+import { Row, Col, Card, Input, Icon, Button, Table, message, Select, Modal, Popconfirm } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { realTimeData, getAllEquipment } from '../../services/equipment';
 import { bindState } from '../../services/bind';
@@ -347,7 +347,7 @@ export default class EquipmentDetail extends React.Component {
                     return <span>
                         {record.bindName ?
                             <Popconfirm title="确认要解绑嘛?" onConfirm={() => this.unbindEquipment(record.port)}>
-                                <a href="javascript:void(0);">解绑</a>
+                                <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>解绑</a>
                             </Popconfirm> :
                             <span onClick={() => { this.setState({ showBindModal: true, portIndex: record.port }) }}>
                                 <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>绑定</a>
@@ -427,7 +427,7 @@ export default class EquipmentDetail extends React.Component {
                 </Card>}
                 <Modal title='绑定设备'
                     visible={this.state.showBindModal}
-                    onOk={this.handleOk}
+                    onOk={this.doBindEquipment}
                     onCancel={this.handleCancel}
                     optionFilterProp="children"
                     okText="确认"

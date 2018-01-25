@@ -91,7 +91,7 @@ public class AIO {
 	public void setpH_value(float pH_value) {
 		this.pH_value = pH_value;
 	}
-	@Transient
+	
 	public int getWay() {
 		return way;
 	}

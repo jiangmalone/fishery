@@ -236,7 +236,7 @@ class Main extends React.Component {
                 <div className='name' >
                     增氧机（{aio.way}路）
                 </div>
-                <button className='auto-button do-auto' onClick={() => this.showActionSheet(aio.device_sn, aio.way)} >自动</button>
+                <button className='auto-button do-auto' onClick={() => this.showActionSheet(aio.device_sn, aio.way)} >定时</button>
                 <Switch
                     nanme='watertem'
                     checked={this.state.waterCheck1}

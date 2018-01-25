@@ -134,6 +134,8 @@ public class PondService {
 
 	public Map<String, Object> WXqueryPond(String relationId) {
 		Sensor_Data sensor_Data = null;
+		Sensor_Data oneWay = null;
+		Sensor_Data twoWay = null;
 		AIO aioTemp = null;
 		List<AIO> temp = new ArrayList<>();
 		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relationId, null);
@@ -155,35 +157,38 @@ public class PondService {
 			pond.setSensors(sensors);
 			List<AIO> aios = aioDao.findAIOsByPondId(pond.getId());
 			for (AIO aio : aios) {
-				sensor_Data = sensor_DataDao.findDataByDeviceSns(aio.getDevice_sn());
-				if (sensor_Data == null) {
+				oneWay = sensor_DataDao.findDataByDeviceSnAndWay(aio.getDevice_sn(), 1);
+				if(oneWay == null){
 					aio.setOxygen(0);
 					aio.setWater_temperature(0);
 					aio.setpH_value(0);
-				} else {
-					if (sensor_Data.getWay() == 2) {
-						aioTemp = new AIO();
-						aioTemp.setId(EightInteger.eightInteger());
-						aioTemp.setDevice_sn(aio.getDevice_sn());
-						aioTemp.setName(aio.getName());
-						aioTemp.setPondId(aio.getPondId());
-						aioTemp.setRelationId(aio.getRelationId());
-						aioTemp.setType(aio.getType());
-						aioTemp.setStatus(aio.getStatus());
-						if (aio.getType() == 2) {
-							aioTemp.setpH_value(sensor_Data.getpH_value());
-						}
-						aioTemp.setOxygen(sensor_Data.getOxygen());
-						aioTemp.setWater_temperature(sensor_Data.getWater_temperature());
-						temp.add(aioTemp);
-					} else {
-						aio.setWater_temperature(sensor_Data.getWater_temperature());
-						aio.setOxygen(sensor_Data.getOxygen());
-						if (aio.getType() == 2) {
-							aioTemp.setpH_value(sensor_Data.getpH_value());
-						}
-					}
+					aio.setWay(1);
+				}else{
+					aio.setWater_temperature(sensor_Data.getWater_temperature());
+					aio.setOxygen(sensor_Data.getOxygen());
+					aio.setpH_value(sensor_Data.getpH_value());
+					aio.setWay(1);
 				}
+				twoWay = sensor_DataDao.findDataByDeviceSnAndWay(aio.getDevice_sn(), 2);
+				aioTemp = new AIO();
+				aioTemp.setId(EightInteger.eightInteger());
+				aioTemp.setDevice_sn(aio.getDevice_sn());
+				aioTemp.setName(aio.getName());
+				aioTemp.setPondId(aio.getPondId());
+				aioTemp.setRelationId(aio.getRelationId());
+				aioTemp.setType(aio.getType());
+				aioTemp.setStatus(aio.getStatus());
+				aioTemp.setWay(2);
+				if(twoWay == null){
+					aioTemp.setOxygen(0);
+					aioTemp.setWater_temperature(0);
+					aioTemp.setpH_value(0);
+				}else{
+					aioTemp.setWater_temperature(sensor_Data.getWater_temperature());
+					aioTemp.setOxygen(sensor_Data.getOxygen());
+					aioTemp.setpH_value(sensor_Data.getpH_value());
+				}
+				temp.add(aioTemp);
 			}
 			aios.addAll(temp);
 			pond.setAios(aios);

@@ -63,7 +63,7 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
             <FormItem label="养殖品种" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('fish_categorys')(<Select
                     mode="tags"
-                    placeholder="Please select"
+                    placeholder="请选择"
                     style={{ width: '200px' }}
                 >
                     {children}

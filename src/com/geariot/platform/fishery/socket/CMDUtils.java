@@ -636,13 +636,17 @@ public class CMDUtils {
 		}
 		
 		
-		
+		long start=System.currentTimeMillis();
 		WXUser wxuser=new WXUser();
 		wxuser=service.findWXUserById(relation);
 		BrokenMSG bs=new BrokenMSG();
+		System.out.println(bs.getMSG());
+		System.out.println(wxuser.getOpenId());
 		WechatSendMessageUtils.sendWechatMessages(bs.getMSG(),wxuser.getOpenId());
 		//WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
 		bs.clear(); 
+		long end=System.currentTimeMillis();
+		System.out.println(end-start);
 		
 	}
 	

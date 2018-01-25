@@ -16,6 +16,7 @@ public class BrokenMSG {
 	    }
 
 	    public void clear() {
+	    	sb=new StringBuilder();
 	    	brokenMSG.remove();;
 	    }
 	

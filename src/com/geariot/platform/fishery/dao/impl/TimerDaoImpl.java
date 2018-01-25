@@ -70,4 +70,14 @@ public class TimerDaoImpl implements TimerDao {
 		String hql = "delete from Timer where device_sn = :device_sn and way = :way";
 		this.getSession().createQuery(hql).setString("device_sn",device_sn).setInteger("way", way).executeUpdate();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Timer> findTimerByDeviceSnAndWay(String device_sn, int way) {
+		String hql = "from Timer where device_sn= :device_sn ";
+		return (List<Timer>) this.getSession().createQuery(hql).setString("device_sn",device_sn)
+				.setInteger("way", way)
+				.list();
+			
+	}
 }

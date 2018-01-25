@@ -11,6 +11,8 @@ import com.geariot.platform.fishery.model.ExcelData;
 public interface Sensor_DataDao {
 	Sensor_Data findDataByDeviceSns(String deviceSns);
 	
+	Sensor_Data findDataByDeviceSnAndWay(String deviceSns,int way);
+	
 	List<ExcelData> getExcelData(String device_sn, Date startTime, Date endTime);
 	
 	void updateData(Sensor_Data sensor_Data);

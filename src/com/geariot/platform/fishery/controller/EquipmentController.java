@@ -108,4 +108,9 @@ public class EquipmentController {
 	public Map<String,Object> aeratorOnOff(String device_sn,int way,int openOrclose){
 		return CMDUtils.serverOnOffOxygenCMD(device_sn,way,openOrclose);
 	}
+	
+	@RequestMapping(value ="/queryAeratorData", method = RequestMethod.GET)
+	public Map<String, Object> queryAeratorData(String device_sn,int way){
+		return equipmentService.queryAeratorData(device_sn,way);
+	}
 }

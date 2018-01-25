@@ -27,13 +27,14 @@ class AutoOxygenationSetting extends React.Component {
     }
 
     onSubmit = () => {
+
+        const timeSections = this.state.timeSections;
         if(timeSections.length <= 0) {
             Toast.fail('必须选择至少一个时间段！', 1);
             return;
         }
-        const timeSections = this.state.timeSections;
         for (let i = 0; i < timeSections.length; i++) {
-            if (!timeSection[i][0] || !timeSection[i][0]) {
+            if (!timeSections[i][0] || !timeSections[i][0]) {
                 Toast.fail('有未填写完整的时间段，请填写后提交！', 1);
                     return;
             }
@@ -60,7 +61,7 @@ class AutoOxygenationSetting extends React.Component {
     }
 
     addTimeSection = () => {
-        console.log('add')
+        const timeSections = this.state.timeSections
         timeSections.push(['', '']);
         this.setState({
             timeSections: timeSections

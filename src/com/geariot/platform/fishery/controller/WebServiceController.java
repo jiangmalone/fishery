@@ -12,8 +12,10 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.geariot.platform.fishery.utils.HttpRequest;
 import com.geariot.platform.fishery.utils.MD5;
@@ -24,7 +26,7 @@ import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.WebServiceService;
 import com.geariot.platform.fishery.utils.Constants;
 
-@RestController
+@Controller
 @RequestMapping("/webService")
 public class WebServiceController {
 
@@ -47,11 +49,12 @@ public class WebServiceController {
 
 	private String appkey = "hqSCLSLjTuCYphRJ5q9kiqJo";
 
-	private static String BASEURL = "http://www.fisherymanager.net/#/";
+	private static String BASEURL = "http://www.fisherymanager.net/index.html#/";
 
 	private Logger logger = LogManager.getLogger(WebServiceController.class);
 
 	@RequestMapping(value = "/weather", method = RequestMethod.GET)
+	@ResponseBody
 	public String getWeatherTest(String city) {
 		Map<String, Object> param = new HashMap<>();
 		param.put("city", city);
@@ -64,6 +67,7 @@ public class WebServiceController {
 	}
 
 	@RequestMapping(value = "/verification", method = RequestMethod.GET)
+	@ResponseBody
 	public String getVerification(String phone) {
 		JSONObject param = new JSONObject();
 		param.put("mobilePhoneNumber", phone);
@@ -96,6 +100,7 @@ public class WebServiceController {
 
 	// 微信jsapi
 	@RequestMapping(value = "/wx/getJSSDKConfig", method = RequestMethod.GET)
+	@ResponseBody
 	public String getJsSDKConfig(String targetUrl) {
 		logger.debug("JSSDK Url:" + targetUrl);
 		if (targetUrl == null || targetUrl.isEmpty()) {
@@ -133,9 +138,9 @@ public class WebServiceController {
 				String ret = BASEURL + htmlPage;
 				boolean wxUser = webServiceService.isExistUserOpenId(openId);
 				if (!wxUser) {
-					ret = BASEURL + "login?openid=" + openId + "&headimgurl=" + headimgurl+ "&directUrl=" + htmlPage;
+					ret = BASEURL + "login?openid=" + openId + "&headimgurl=" + headimgurl;
+					return "redirect:" + ret;
 					} 
-				return "redirect:" + ret;
 				}
 			}catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -147,6 +152,7 @@ public class WebServiceController {
 
 	// 注册验证结果请求
 	@RequestMapping(value = "/verifySmsCode", method = RequestMethod.GET)
+	@ResponseBody
 	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl) {
 		JSONObject json = this.verifySmscode(phone, smscode);
 		if (json.getString("error") != null) {
@@ -161,6 +167,7 @@ public class WebServiceController {
 	}
 
 	@RequestMapping(value = "/checkLogin", method = RequestMethod.GET)
+	@ResponseBody
 	public Map<String, Object> checkLogin(String phone){
 		return webServiceService.checkLogin(phone);
 	}
@@ -182,6 +189,7 @@ public class WebServiceController {
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	@ResponseBody
 	public Map<String, Object> logout(String phone) {
 		return webServiceService.deletWXUser(phone);
 	}

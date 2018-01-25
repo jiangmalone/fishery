@@ -49,7 +49,7 @@ class UserInfo extends PureComponent {
     }
     onSearchUserPond = (page = 1) => {
         queryPond({
-            relation: this.props.match.params.id,
+            relationId: this.props.match.params.id,
             name: '',
             page: page,
             number: 10
@@ -120,6 +120,9 @@ class UserInfo extends PureComponent {
             title: '塘口名称',
             dataIndex: 'name',
             key: 'name',
+            render: (text, record, index) => {
+                return <Link to={`/userManage/pondManage/detail/${record.id}`}>{text}</Link>
+            }
         }, {
             title: '面积（亩）',
             dataIndex: 'area',

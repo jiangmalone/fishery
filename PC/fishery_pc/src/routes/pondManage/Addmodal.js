@@ -49,7 +49,7 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 })(<Input style={{ width: 200 }} disabled={modifyId ? true : false} />)}
             </FormItem>
             <FormItem label="面积" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('area', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="亩" />)}
+                {getFieldDecorator('area', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="亩" />)}亩
             </FormItem>
             <FormItem label="塘口位置" {...formItemLayout} style={{ width: '100%' }} >
                 <div onClick={() => { showMapModal() }} style={{ cursor: 'pointer' }}>
@@ -58,7 +58,7 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 </div>
             </FormItem>
             <FormItem label="深度" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('depth', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="m" />)}
+                {getFieldDecorator('depth', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="m" />)}m
             </FormItem>
             <FormItem label="养殖品种" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('fish_categorys')(<Select
@@ -73,10 +73,10 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 {getFieldDecorator('water_source')(<Input style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="底泥厚度" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('sediment_thickness', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="cm" />)}
+                {getFieldDecorator('sediment_thickness', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="cm" />)}cm
             </FormItem>
             <FormItem label="塘口密度" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('density', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="kg/㎡" />)}
+                {getFieldDecorator('density', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="kg/㎡" />)}kg/㎡
             </FormItem>
         </Form>
     </Modal >

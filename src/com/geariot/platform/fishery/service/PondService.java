@@ -95,8 +95,17 @@ public class PondService {
 
 	public Map<String, Object> pondEquipment(int pondId, int page, int number) {
 		int from = (page - 1) * number;
+		Sensor sensor = null;
 		Pond pond = pondDao.findPondByPondId(pondId);
 		List<Equipment> equipments = pondDao.findEquipmentByPondId(pondId, from, number);
+		for(Equipment equipment : equipments){
+			if(equipment.getDevice_sn().substring(0, 2).equals("03")){
+				sensor = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn());
+				if(sensor != null){
+					equipment.setSensorId(sensor.getId());
+				}
+			}
+		}
 		long count = this.pondDao.equipmentByPondIdCount(pondId);
 		int size = (int) Math.ceil(count / (double) number);
 		Map<String, Object> obj = RESCODE.SUCCESS.getJSONRES(equipments, size, count);

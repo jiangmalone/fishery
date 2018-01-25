@@ -22,17 +22,16 @@ public class TimerDaoImpl implements TimerDao {
 	private Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
+	
 	@Override
-	public void save(Timer... timer) {
+	public void save(Timer timer) {
 		this.getSession().save(timer);
-
 	}
 
 	@Override
 	public void delete(String device_sn) {
-		String hql = "delete from Timer where device_sn in :device_sn";
+		String hql = "delete from Timer where device_sn = :device_sn";
 		this.getSession().createQuery(hql).setString("device_sn",device_sn).executeUpdate();
-
 	}
 
 	@Override
@@ -46,7 +45,6 @@ public class TimerDaoImpl implements TimerDao {
 	@Override
 	public List<Timer> findAllTimer() {
 		String hql="from Timer";
-		
 		return this.getSession().createQuery(hql).list();
 	}
 
@@ -66,5 +64,20 @@ public class TimerDaoImpl implements TimerDao {
 		// TODO Auto-generated method stub
 		this.getSession().merge(timer);
 	}
-
+	
+	@Override
+	public void delete(String device_sn, int way) {
+		String hql = "delete from Timer where device_sn = :device_sn and way = :way";
+		this.getSession().createQuery(hql).setString("device_sn",device_sn).setInteger("way", way).executeUpdate();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Timer> findTimerByDeviceSnAndWay(String device_sn, int way) {
+		String hql = "from Timer where device_sn= :device_sn ";
+		return (List<Timer>) this.getSession().createQuery(hql).setString("device_sn",device_sn)
+				.setInteger("way", way)
+				.list();
+			
+	}
 }

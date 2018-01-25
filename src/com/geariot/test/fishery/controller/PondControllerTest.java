@@ -107,8 +107,8 @@ public class PondControllerTest {
 	public void equipmentPondTest() throws Exception{
 		mockMvc.perform(get("/pond/pondEquipment").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("pondId", "5")
-				.param("page","2")
+				.param("pondId", "68")
+				.param("page","1")
 				.param("number","10")
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());

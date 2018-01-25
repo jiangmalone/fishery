@@ -251,7 +251,6 @@ class UserInfo extends PureComponent {
                 });
             },
             onOk: (values) => {
-                console.log(!this.state.modifyId, this.state.modifyId !== 0)
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
                     values.relation = this.props.match.params.id;
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
@@ -358,7 +357,7 @@ class UserInfo extends PureComponent {
                 <Card title="塘口信息" bordered={false} style={{ marginBottom: '20px' }}>
                     <Button onClick={()=>{
                         this.showAddModal()
-                    }}>新增塘口</Button>
+                    }} style={{marginBottom:'10px'}}>新增塘口</Button>
                     <Table loading={loading}
                         dataSource={this.state.pondList}
                         columns={columns}

@@ -13,6 +13,8 @@ public interface TimerDao {
 
 	Timer findTimerById(int timerId);
 	
+	List<Timer> findTimerByDeviceSnAndWay(String deviceSn,int way);
+	
 	List<Timer> findAllTimer();
 
 	List<Timer> queryTimerByDeviceSn(String device_sn, int from, int pageSize);

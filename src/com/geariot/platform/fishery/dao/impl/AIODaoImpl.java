@@ -97,4 +97,11 @@ public class AIODaoImpl implements AIODao {
 		this.getSession().merge(aio);
 	}
 
+	@Override
+	public AIO findAIOByDeviceSnAndWay(String device_sn, int way) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from AIO");
+		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
+		return (AIO) query.uniqueResult();
+	}
+
 }

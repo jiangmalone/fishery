@@ -562,6 +562,34 @@ public class EquipmentService {
 		}
 		return RESCODE.SUCCESS.getJSONRES();
 	}
+	
+	public Map<String, Object> queryAeratorData(String device_sn, int way) {
+		 
+		String type = null;
+		try {
+			 type=device_sn.substring(0,2);
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
+		if(type.equals("01")||type.equals("02")) {
+			AIO aio=aioDao.findAIOByDeviceSnAndWay(device_sn, way);
+			if(aio==null) {
+				return RESCODE.NOT_FOUND.getJSONRES();
+			}
+			Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+			Limit_Install limit=limitDao.findLimitByDeviceSns(device_sn);
+			List<Timer> timer=timerDao.findTimerByDeviceSnAndWay(device_sn, way);
+			Sensor_Data sensor_data=sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
+			map.put("currentOxygens", sensor_data.getOxygen());
+			map.put("oxyHighLimit", limit.getHigh_limit());
+			map.put("oxyUpLimit",limit.getUp_limit());
+			map.put("oxyLowLimit", limit.getLow_limit());
+			map.put("timerList", timer);
+			return map;
+		}
+		
+		return RESCODE.DEVICESNS_INVALID.getJSONRES();
+	}
 
 	
 }

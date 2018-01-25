@@ -17,6 +17,8 @@ public interface AIODao {
 	AIO findAIOById(int AIOId);
 	
 	AIO findAIOByDeviceSns(String deviceSns);
+	
+	AIO findAIOByDeviceSnAndWay(String deviceSn,int way);
 
 	List<AIO> queryAIOByNameAndRelation(String relation, String name, int from, int pageSize);
 	

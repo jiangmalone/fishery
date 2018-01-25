@@ -125,4 +125,11 @@ public class EquipmentControllerTest {
 		mockMvc.perform(get("/equipment/dataAll").contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param("device_sn", "0300001")).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
+	
+	@Test
+	public void queryDataTest() throws Exception {
+		mockMvc.perform(get("/equipment/queryAeratorData").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sn", "010001")
+				.param("way", "1")).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
 }

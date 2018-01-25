@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
+import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.model.ExcelData;
 import com.geariot.platform.fishery.utils.Constants;
@@ -83,6 +84,15 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 	public List<Sensor_Data> sevenData(String device_sn) {
 		String hql = "select * from sensor_data where device_sn = :device_sn and DATE_SUB(CURDATE(),INTERVAL 7 Day) <= date(receiveTime)";
 		return getSession().createSQLQuery(hql).setString("device_sn", device_sn).setResultTransformer(Transformers.aliasToBean(Sensor_Data.class)).setCacheable(Constants.SELECT_CACHE).list();
+	}
+
+	@Override
+	public Sensor_Data findDataByDeviceSnAndWay(String device_sn, int way) {
+		
+			QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor_Data");
+			Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
+			return (Sensor_Data) query.uniqueResult();
+		
 	}
 
 }

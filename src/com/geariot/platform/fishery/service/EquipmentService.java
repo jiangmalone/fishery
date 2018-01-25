@@ -202,6 +202,7 @@ public class EquipmentService {
 				aio.setDevice_sn(device_sn);
 				aio.setName(name);
 				aio.setRelationId(relationId);
+				aio.setStatus(1);
 				aio.setType(Integer.parseInt(deviceSn));
 				aioDao.save(aio);
 				return RESCODE.SUCCESS.getJSONRES();
@@ -215,6 +216,7 @@ public class EquipmentService {
 				sensor.setDevice_sn(device_sn);
 				sensor.setName(name);
 				sensor.setRelationId(relationId);
+				sensor.setStatus(1);
 				sensor.setPort_status("00");
 				sensorDao.save(sensor);
 				return RESCODE.SUCCESS.getJSONRES();
@@ -228,6 +230,7 @@ public class EquipmentService {
 				controller.setDevice_sn(device_sn);
 				controller.setName(name);
 				controller.setRelationId(relationId);
+				controller.setStatus(1);
 				controller.setPort_status("0000");
 				controllerDao.save(controller);
 				return RESCODE.SUCCESS.getJSONRES();

@@ -47,7 +47,7 @@ public class WebServiceController {
 
 	private String appkey = "hqSCLSLjTuCYphRJ5q9kiqJo";
 
-	private static String BASEURL = "http://www.fishery.com/freelycar_wechat/index.html#/";
+	private static String BASEURL = "http://www.fisherymanager.net/#/";
 
 	private Logger logger = LogManager.getLogger(WebServiceController.class);
 
@@ -142,7 +142,7 @@ public class WebServiceController {
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
-		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.com%2ffreelycar_wechat%2fapi%2fuser%2fwechatlogin%3FhtmlPage%3DpersonalInfo&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9871d8699143d59e&redirect_uri=http%3a%2f%2fwww.fisherymanager.net%2fapi%2fwebService%2fwechatlogin%3fhtmlPage%3dlogin&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
 		}
 
 	// 注册验证结果请求

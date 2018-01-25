@@ -3,6 +3,7 @@
  */
 package com.geariot.platform.fishery.service;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.transaction.Transactional;
@@ -79,6 +80,7 @@ public class WebServiceService {
 			wxUserNew.setHeadimgurl(headimgurl);
 			wxUserNew.setOpenId(openId);
 			wxUserNew.setLogin(true);
+			wxUserNew.setCreateDate(new Date());
 			wxUserDao.save(wxUserNew);
 			wxUserNew.setRelationId("WX"+wxUserNew.getId());
 			return RESCODE.SUCCESS.getJSONRES(wxUserNew);

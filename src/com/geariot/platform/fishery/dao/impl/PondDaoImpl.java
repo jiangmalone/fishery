@@ -96,13 +96,13 @@ public class PondDaoImpl implements PondDao {
 	@Override
 	public List<Equipment> findEquipmentByPondId(int pondId, int from, int pageSize) {
 		StringBuilder sb = new StringBuilder(2048);
-		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status, a.relationId as relationId ");
 		sb.append("from AIO a where a.pondId = :pondId ");
 		sb.append("UNION ALL ");
-		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status, b.relationId as relationId, b.id as sensorId ");
 		sb.append("from Sensor b where b.pondId = :pondId ");
 		sb.append("UNION ALL ");
-		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status, c.relationId as relationId ");
 		sb.append("from Controller c where c.pondId = :pondId");
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))

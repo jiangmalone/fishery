@@ -24,10 +24,11 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName, modifyId }) {
             let obj = {}
             validateFieldsAndScroll((err, values) => {
                 if (!err) {
-                    obj = values
+                    obj = values;
+                    onOk(obj);
                 }
             })
-            onOk(obj)
+            
         }}
         onCancel={() => { onCancel() }}
         wrapClassName={wrapClassName}
@@ -55,18 +56,10 @@ function AddUser({ visible, form, onOk, onCancel, wrapClassName, modifyId }) {
                 })(<Input style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="养殖年限" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('life', {
-                    rules: [
-                        { required: true, message: '请填写用户养殖年限' },
-                    ],
-                })(<Input style={{ width: 200 }} />)}
+                {getFieldDecorator('life')(<Input style={{ width: 200 }} />)}
             </FormItem>
             <FormItem label="联系地址" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('address', {
-                    rules: [
-                        { required: true, message: '请填写用户联系地址' },
-                    ],
-                })(<Input style={{ width: 200 }} />)}
+                {getFieldDecorator('address')(<Input style={{ width: 200 }} />)}
             </FormItem>
         </Form>
     </Modal >

@@ -9,7 +9,7 @@ import login_logo from '../../img/logo.png';
 import login_password_logo from '../../img/password-logo.png';
 import login_user_logo from '../../img/user-logo.png';
 import { connect } from 'dva';
-
+import { verifyIsLogin } from '../../services/sms'
 class LoginIndex extends React.Component {
 
     constructor(props) {
@@ -64,12 +64,11 @@ class LoginIndex extends React.Component {
         })
 
         verifySmsCode({
-            openId: '112221',
-            // openId: getParameterByName('openid'),
+            // openId: '112221',
+            openId: getParameterByName('openid'),
             phone: this.state.phone,
             smscode: this.state.smscode,
-            // headimgurl: getParameterByName('headimgurl'),
-            headimgurl: '111'
+            headimgurl: getParameterByName('headimgurl'),
         }).then((res) => {
             if (res.data.code == '0') {
                 window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'))
@@ -86,7 +85,7 @@ class LoginIndex extends React.Component {
                     }
                 })
                 if (res.data.data.name) {
-               
+
                     this.props.history.push(`/main`)
                 } else {
                     this.props.history.push(`/userInfo`)

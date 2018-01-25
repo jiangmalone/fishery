@@ -21,14 +21,13 @@ class PersonalCenter extends React.Component {
       {
         text: '确定',
         onPress: () => {
-
           LogOut({ phone: window.localStorage.getItem('phone') }).then((res) => {
             if (res.data.code == '0') {
-              this.props.history.push('/login')
               this.props.dispatch({
                 type: 'global/changeState',
                 payload: { login: false }
-              }); 
+              });
+              this.props.history.push(`/login?openid=${window.localStorage.getItem('openid')}&headimgurl=${window.localStorage.getItem('headimgurl')}`)
             }
           })
         }
@@ -37,17 +36,17 @@ class PersonalCenter extends React.Component {
   }
   render() {
     return (<div className="body-fill">
-      <div className="personInfo-box">
-        <div className="backgroundImageFilter">
+      <div className="personInfo-box" >
+        <div className="backgroundImageFilter" style={{ background: `url(${window.localStorage.getItem('headimgurl')}) no-repeat center center`,backgroundSize: '100% auto'}}>
         </div>
         <div className="out-phone-btn clear">
           <div className="out-btn" onClick={() => { this.logOut() }} />
           <a href="tel:15105182270" className="phone-btn" />
         </div>
         <div className="avatar">
-          <img src={require('../../img/avatar.jpg')} />
+          <img src={window.localStorage.getItem('headimgurl')} />
         </div>
-        <div className="name" onClick={()=>{this.props.history.push('/userInfo')}}>
+        <div className="name" onClick={() => { this.props.history.push('/userInfo') }}>
           {window.localStorage.getItem('name')}
           {/* 登录/注册 */}
         </div>
@@ -88,7 +87,7 @@ class PersonalCenter extends React.Component {
           thumb={require("../../img/mine_about.png")}
           arrow="horizontal"
           onClick={() => {
-           window.location.href = 'http://v1.rabbitpre.com/m/NuqyzFRIK?mobile=1&openid=o7kepwR53UD0UUW-ycj-CXyhgeGY&access_token=6_9P-2-tOCdBXe9KyaTR9oaspqzBDLg7J9Wm0L6icFtPNXVdxChXrRwBXy6d6Lxh11ybjrg7lNAYO9weEm0hv2ug'
+            window.location.href = 'http://v1.rabbitpre.com/m/NuqyzFRIK?mobile=1&openid=o7kepwR53UD0UUW-ycj-CXyhgeGY&access_token=6_9P-2-tOCdBXe9KyaTR9oaspqzBDLg7J9Wm0L6icFtPNXVdxChXrRwBXy6d6Lxh11ybjrg7lNAYO9weEm0hv2ug'
             this.props.dispatch({
               type: 'global/changeState',
               payload: {

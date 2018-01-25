@@ -29,7 +29,7 @@ public class WechatConfig {
 
 	public static final String APP_SECRET = "0872554cedfb5082b359e32c655a7039";
 
-	public static final String APP_DOMAIN = "www.freelycar.com/freelycar_wechat";// url域名
+	public static final String APP_DOMAIN = "www.fisherymanager.net";// url域名
 
 	//public static final String KEY = "3E0JZPZTEZQHKC96GMQZJ0EVBT92JBIF"; // 签名秘钥，在微信商户平台里面设置z`z`
 

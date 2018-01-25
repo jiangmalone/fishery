@@ -306,7 +306,7 @@ export default class EquipmentDetail extends React.Component {
             }
         ];
 
-        const bindRelationColumns = [
+        let bindRelationColumns = [
             {
                 title: '序号',
                 dataIndex: 'index',
@@ -339,7 +339,26 @@ export default class EquipmentDetail extends React.Component {
                     return (record.bindName ? '增氧机' : '')
                 }
             },
-            {
+            // {
+            //     title: '操作',
+            //     dataIndex: 'pH_value',
+            //     render: (text, record, index) => {
+            //         console.log(record)
+            //         return <span>
+            //             {record.bindName ?
+            //                 <Popconfirm title="确认要解绑嘛?" onConfirm={() => this.unbindEquipment(record.port)}>
+            //                     <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>解绑</a>
+            //                 </Popconfirm> :
+            //                 <span onClick={() => { this.setState({ showBindModal: true, portIndex: record.port }) }}>
+            //                     <a href="javascript:void(0);" style={{ marginLeft: '15px' }}>绑定</a>
+            //                 </span>}
+            //         </span>
+            //     }
+            // }
+        ];
+
+        if (this.state.type == 1) {
+            bindRelationColumns.push({
                 title: '操作',
                 dataIndex: 'pH_value',
                 render: (text, record, index) => {
@@ -354,8 +373,8 @@ export default class EquipmentDetail extends React.Component {
                             </span>}
                     </span>
                 }
-            }
-        ];
+            })
+        }
 
         let pondOptions = this.state.ponds.map((item, index) => {
             return <Option key={index} value={item.id}>{item.name}</Option>

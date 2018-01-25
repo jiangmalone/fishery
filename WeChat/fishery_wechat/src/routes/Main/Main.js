@@ -234,7 +234,7 @@ class Main extends React.Component {
 
             <div className='line' >
                 <div className='name' >
-                    增氧机
+                    增氧机（{aio.way}路）
                 </div>
                 <button className='auto-button do-auto' onClick={() => this.showActionSheet(aio.device_sn, aio.way)} >自动</button>
                 <Switch

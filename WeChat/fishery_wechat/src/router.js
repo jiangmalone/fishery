@@ -9,8 +9,7 @@ function RouterConfig({ history }) {
   return (
     <Router history={history}>
       <div>
-        <Route path="/login" component={Login} />
-        <Route path="/" component={App} />
+        <Route path="/"  component={App} />
       </div>
     </Router>
   );

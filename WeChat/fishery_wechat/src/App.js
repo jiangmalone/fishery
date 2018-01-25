@@ -47,59 +47,71 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        verifyIsLogin({
-            phone: '18362981113'
-        }).then((res) => {
-            if (res.data.code == '0') {
-                this.props.dispatch({
-                    type: 'global/changeState',
-                    payload: { login: true }
-                })
-            } else {
-                this.props.dispatch({
-                    type: 'global/changeState',
-                    payload: { login: false }
-                })
-            }
-        }).catch((error) => {
-            console.log(error)
-        })
+        console.log(this.props.login)
+        console.log(window.location)
+        if(window.location.hash.indexOf('login')==-1&&(window.location.hash!=='#/')&&(window.location.hash!=='#/main')){
+            verifyIsLogin({
+                phone: window.localStorage.getItem('phone')
+            }).then((res) => {
+                if (res.data.code == '0') {
+                    this.props.dispatch({
+                        type: 'global/changeState',
+                        payload: { login: true }
+                    })
+                    this.props.history.push('/main');
+                } else {
+                    this.props.dispatch({
+                        type: 'global/changeState',
+                        payload: { login: false }
+                    })
+                }
+            }).catch((error) => {
+                console.log(error)
+            })
+        }
+        
     }
 
 
     render() {
-        return (this.props.login ? <div><CSSTransitionGroup
-            transitionName={this.props.transitionName}
-            style={styles.content}
-            transitionEnterTimeout={400}
-            transitionLeaveTimeout={400}
-        // transitionAppear = {true}
-        >
-            <div key={this.props.location.pathname} style={styles.content} >
-                <Route location={this.props.location} path="/alarm" component={Alarm} />
-                <Route location={this.props.location} path="/main" component={Main} />
-                <Route location={this.props.location} exact path="/" component={IndexPage} />
-                <Route location={this.props.location} path="/userInfo" component={UserInfo} />
-                <Route location={this.props.location} path="/center" component={PersonalCenter} />
-                <Route location={this.props.location} path="/addPond" component={addPond} />
-                <Route location={this.props.location} path="/addPond/:id" component={addPond} />
-                <Route location={this.props.location} path="/addFish" component={addFish} />
-                <Route location={this.props.location} path="/MyPond" component={MyPond} />
-                <Route location={this.props.location} path="/autoOrxygenationSetting/:id" component={AutoOrxygenationSetting} />
-                <Route location={this.props.location} path="/addEquipment" component={AddEquipment} />
-                <Route location={this.props.location} path="/addEquipmentDetail/:equipmentCode" component={AddEquipmentDetail} />
-                <Route location={this.props.location} path="/myEquipment" component={MyEquipment} />
-                <Route location={this.props.location} exact path="/equipmentManagement/:data" component={EquipmentManagement} />
-                <Route location={this.props.location} exact path="/bindEquipment/:data" component={BindEquipment} />
-                <Route location={this.props.location} exact path="/sensorDetail/:device_sn" component={SensorDetail} />
-                <Route location={this.props.location} exact path="/address" component={AddAddress} />
-                {/* <Route component={NotFound}/> */}
-            </div>
-        </CSSTransitionGroup>
-        </div> : <Redirect to={{
-            pathname: '/login',
-            state: { from: this.props.location },
-        }} />
+        return (<div>
+            {!this.props.login && <Redirect to={{
+                pathname: '/login',
+                state: { from: this.props.location },
+                search: `?openid=${window.localStorage.getItem('openid')}&headimgurl=${window.localStorage.getItem('headimgurl')}`,
+            }} >
+            </Redirect>}
+            <CSSTransitionGroup
+                transitionName={this.props.transitionName}
+                style={styles.content}
+                transitionEnterTimeout={400}
+                transitionLeaveTimeout={400}
+            // transitionAppear = {true}
+            >
+                <div key={this.props.location.pathname} style={styles.content} >
+
+                    <Route location={this.props.location} path="/alarm" component={Alarm} />
+                    <Route location={this.props.location} path="/main" component={Main} />
+                    <Route location={this.props.location} exact path="/" component={IndexPage} />
+                    <Route location={this.props.location} path="/userInfo" component={UserInfo} />
+                    <Route location={this.props.location} path="/center" component={PersonalCenter} />
+                    <Route location={this.props.location} path="/addPond" component={addPond} />
+                    <Route location={this.props.location} path="/addPond/:id" component={addPond} />
+                    <Route location={this.props.location} path="/addFish" component={addFish} />
+                    <Route location={this.props.location} path="/MyPond" component={MyPond} />
+                    <Route location={this.props.location} path="/autoOrxygenationSetting/:id" component={AutoOrxygenationSetting} />
+                    <Route location={this.props.location} path="/addEquipment" component={AddEquipment} />
+                    <Route location={this.props.location} path="/addEquipmentDetail/:equipmentCode" component={AddEquipmentDetail} />
+                    <Route location={this.props.location} path="/myEquipment" component={MyEquipment} />
+                    <Route location={this.props.location} exact path="/equipmentManagement/:data" component={EquipmentManagement} />
+                    <Route location={this.props.location} exact path="/bindEquipment/:data" component={BindEquipment} />
+                    <Route location={this.props.location} exact path="/sensorDetail/:device_sn" component={SensorDetail} />
+                    <Route location={this.props.location} exact path="/address" component={AddAddress} />
+                    <Route location={this.props.location} path="/login" component={Login} />
+                    {/* <Route component={NotFound}/> */}
+                </div>
+            </CSSTransitionGroup>
+        </div> 
         )
     }
 }

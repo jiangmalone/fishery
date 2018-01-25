@@ -14,7 +14,7 @@ class UserInfo extends React.Component {
         this.state = {
             form: {
                 name: window.localStorage.getItem('name') ? window.localStorage.getItem('name') : '',
-                sex: window.localStorage.getItem('sex'),  //0 man 1 faleman
+                sex: window.localStorage.getItem('sex')?window.localStorage.getItem('sex'):'',  //0 man 1 faleman
                 phone: window.localStorage.getItem('phone') ? window.localStorage.getItem('phone') : '',
                 years: window.localStorage.getItem('life') ? window.localStorage.getItem('life') : ''
             }
@@ -22,8 +22,8 @@ class UserInfo extends React.Component {
     }
 
     handlaSexClick = (type) => {
-        const form = this.state.form;
-        form['sex'] = type ? '女' : '男';
+        let form = this.state.form;
+        form['sex'] = type ;
         this.setState({
             form: form
         })
@@ -63,8 +63,8 @@ class UserInfo extends React.Component {
         } else {
             const form = this.state.form;
             modifyWXUser({
-                // id: window.localStorage.getItem('clientId'),
                 id: window.localStorage.getItem('id'),
+                openId: window.localStorage.getItem('openid'),
                 name: form.name,
                 phone: form.phone,
                 sex: form.sex,
@@ -86,7 +86,7 @@ class UserInfo extends React.Component {
     render() {
         return <div className='user-info-bg' style={{ height: window.document.body.clientHeight }} >
             <Flex justify='center'>
-                <img className='avater' src={defaultAvater} />
+                <img className='avater' src={window.localStorage.getItem('headimgurl')} />
             </Flex>
             <div style={{ marginBottom: '.74rem' }}>
                 <div className='input-line'>

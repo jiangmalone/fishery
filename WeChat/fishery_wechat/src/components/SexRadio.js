@@ -31,11 +31,11 @@ class SexRadio extends React.Component{
     }
     render(){
         return <div style={{width: '100%'}}>
-            <div onClick={() => this.handlaClick(0)} style={{width: '50%', display: 'inline-block'}}>
+            <div onClick={() => this.handlaClick('男')} style={{width: '50%', display: 'inline-block'}}>
                 <img src={!this.state.selectType? selectedImg : unselectedImg} style={{ verticalAlign:'middle', height:'.3rem'}}/>
                 <span style={{ verticalAlign:'middle'}}> {(this.props.items && this.props.items.length == 2)? this.props.items[0] : '男'}</span>
             </div>
-            <div onClick={() => this.handlaClick(1)} style={{width: '50%', display: 'inline-block'}}>
+            <div onClick={() => this.handlaClick('女')} style={{width: '50%', display: 'inline-block'}}>
                 <img src={this.state.selectType? selectedImg : unselectedImg} style={{verticalAlign:'middle', height:'.3rem'}}/>
                 <span style={{verticalAlign:'middle'}}> {(this.props.items && this.props.items.length == 2)? this.props.items[1] : '女'}</span>
             </div>

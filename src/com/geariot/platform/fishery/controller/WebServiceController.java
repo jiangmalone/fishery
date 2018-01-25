@@ -142,6 +142,7 @@ public class WebServiceController {
 					return "redirect:" + ret;
 					} 
 				}
+				return "redirect:"+BASEURL+"main";
 			}catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}catch (Exception e) {

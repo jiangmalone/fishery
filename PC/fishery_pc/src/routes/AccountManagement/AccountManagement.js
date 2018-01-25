@@ -10,23 +10,14 @@ export default class CompanyUserDetail extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            originalAccount: {
-                name: "杨威",
-                account: "0001",
-                password: "123456",
-                remark: "我就瞎备注一下"
-            },
-            accountInfo: {
-                name: "杨威",
-                account: "0001",
-                password: "123456",
-                passwordAgain: "123456",
-                remark: "我就瞎备注一下"
-            }
+            name: "杨威",
+            account: window.localStorage.getItem('account'),
+            password: "",
+            passwordAgain: "",
         }
     }
     handleOk = () => {
-        const account = this.state.accountInfo;
+        const account = this.state;
         if (!account.password) {
             message.warn("请输入密码！");
             return;
@@ -38,37 +29,34 @@ export default class CompanyUserDetail extends React.Component {
             return;
         } else {
             modify({
-                password: this.state.accountInfo.password,
+                password: this.state.password,
                 adminId: 1
             }).then(response => {
                 console.log(response);
                 if (response.code == 0) {
                     message.success("修改成功！");
-                    const accountInfo = this.state.accountInfo;
                     this.setState({
-                        originalAccount: accountInfo
-                    })
+                        password: '',
+                        passwordAgain: ''
+                    });
                 } else {
                     message.error(response.msg);
                 }
             })
-
         }
-
     }
 
     handleCancal = () => {
-        const originalAccount = this.state.originalAccount;
-        originalAccount.passwordAgain = originalAccount.password;
         this.setState({
-            accountInfo: originalAccount
+            password: '',
+            passwordAgain: ''
         });
     }
 
     handleInputChange = (value, key) => {
         if (key) {
             this.setState({
-                accountInfo: update(this.state.accountInfo, { [key]: { $set: value } })
+                key: value
             })
         }
     }
@@ -82,7 +70,7 @@ export default class CompanyUserDetail extends React.Component {
                             账号：
                        </Col>
                         <Col span={6}>
-                            {this.state.accountInfo.account}
+                            {this.state.account}
                         </Col>
                     </Row>
                     <Row style={{ height: 60, fontSize: 20 }} align="middle">
@@ -90,7 +78,7 @@ export default class CompanyUserDetail extends React.Component {
                             名称：
                        </Col>
                         <Col span={6} >
-                            {this.state.accountInfo.name}
+                            {this.state.name}
                         </Col>
                     </Row>
                     <Row style={{ height: 60, fontSize: 20 }} align="middle">
@@ -98,7 +86,7 @@ export default class CompanyUserDetail extends React.Component {
                             密码：
                        </Col>
                         <Col span={6} >
-                            <Input type="password" value={this.state.accountInfo.password} onChange={e => this.handleInputChange(e.target.value, "password")} />
+                            <Input type="password" value={this.state.password} onChange={e => this.handleInputChange(e.target.value, "password")} />
                         </Col>
                     </Row>
                     <Row style={{ height: 60, fontSize: 20 }} align="middle">
@@ -106,17 +94,17 @@ export default class CompanyUserDetail extends React.Component {
                             密码确认：
                        </Col>
                         <Col span={6}>
-                            <Input type="password" value={this.state.accountInfo.passwordAgain} onChange={e => this.handleInputChange(e.target.value, "passwordAgain")} />
+                            <Input type="password" value={this.state.passwordAgain} onChange={e => this.handleInputChange(e.target.value, "passwordAgain")} />
                         </Col>
                     </Row>
-                    <Row style={{ height: 150, fontSize: 20 }} align="middle">
+                    {/* <Row style={{ height: 150, fontSize: 20 }} align="middle">
                         <Col span={3} offset={7}>
                             备注：
                         </Col>
                         <Col span={6} >
                             <TextArea rows={3} value={this.state.accountInfo.remark} onChange={e => this.handleInputChange(e.target.value, "remark")} />
                         </Col>
-                    </Row>
+                    </Row> */}
                     <Row style={{ height: 60, fontSize: 20 }} align="middle">
                         <Col span={3} offset={8}>
                             <Button size="large" onClick={this.handleCancal}>取消</Button>

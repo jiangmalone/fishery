@@ -100,7 +100,7 @@ class Main extends React.Component {
         this.props.history.push(`/sensorDetail/${device_sn}`);
     }
 
-    showActionSheet = (id) => {
+    showActionSheet = (device_sn, way) => {
         const BUTTONS2 = ['确认打开', '取消', '自动增氧设置'];
         const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
         ActionSheet.showActionSheetWithOptions({
@@ -118,7 +118,12 @@ class Main extends React.Component {
                         transitionName: 'left'
                     }
                 })
-                this.props.history.push(`/autoOrxygenationSetting/${id}`);
+                const data = {
+                    device_sn: device_sn,
+                    way: way
+                }
+                const str = JSON.stringify(data)
+                this.props.history.push(`/autoOrxygenationSetting/${str}`);
             }
         });
     }
@@ -231,7 +236,7 @@ class Main extends React.Component {
                 <div className='name' >
                     增氧机
                 </div>
-                <button className='auto-button do-auto' onClick={() => this.showActionSheet(2)} >自动</button>
+                <button className='auto-button do-auto' onClick={() => this.showActionSheet(aio.device_sn, aio.way)} >自动</button>
                 <Switch
                     nanme='watertem'
                     checked={this.state.waterCheck1}

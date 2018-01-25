@@ -24,6 +24,21 @@ public class Equipment {
 		this.name = name;
 		this.status = status;
 	}
+	
+	public Equipment(String device_sn, String name, int status, String relationId) {
+		this.device_sn = device_sn;
+		this.name = name;
+		this.status = status;
+		this.relationId = relationId;
+	}
+	
+	public Equipment(String device_sn, String name, int status, String relationId, int sensorId) {
+		this.device_sn = device_sn;
+		this.name = name;
+		this.status = status;
+		this.relationId = relationId;
+		this.sensorId = sensorId;
+	}
 
 	public String getDevice_sn() {
 		return device_sn;

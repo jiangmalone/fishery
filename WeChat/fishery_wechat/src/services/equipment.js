@@ -50,7 +50,12 @@ export default {
 
     serverCheck: (params) => {
         return get('api/equipment/serverCheck', params);
-    }
+    },
+
+    autoSet: (params) => {
+        return post('api/equipment/autoSet', params)
+    },
+    
 
 
 }

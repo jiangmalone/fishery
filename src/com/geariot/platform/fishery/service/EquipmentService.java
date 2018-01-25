@@ -123,7 +123,7 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	public Map<String, Object> setTimer(Timer[] timerArray) {
+	/*public Map<String, Object> setTimer(Timer[] timerArray) {
 		String deviceSn;
 		Timer timer = timerArray[0];
 		try {
@@ -142,12 +142,12 @@ public class EquipmentService {
 			}
 		} else
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		timerDao.delete(timer.getDevice_sn());
+		timerDao.delete(timer.getDevice_sn(),timer.getWay());
 		for (Timer timersave : timerArray) {
 			timerDao.save(timersave);
 		}
 		return RESCODE.SUCCESS.getJSONRES();
-	}
+	}*/
 
 	/*
 	 * public Map<String, Object> queryEquipment(String device_sn, String
@@ -530,4 +530,35 @@ public class EquipmentService {
 		map.put("temperatures", temperatures);
 		return map;//
 	}
+
+	public Map<String, Object> autoSet(Limit_Install limit_Install, Timer[] timers) {
+		String deviceSn;
+		try {
+			deviceSn = limit_Install.getDevice_sn().substring(0, 2);
+			Map<String, Object> map = CMDUtils.downLimitCMD(limit_Install);
+			if (!map.containsKey("0"))
+				return map;
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
+		if (deviceSn.equals("01") || deviceSn.equals("02")) {
+			if (aioDao.findAIOByDeviceSns(limit_Install.getDevice_sn()) == null) {
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
+			}
+		} else if (deviceSn.equals("03")) {
+			if (sensorDao.findSensorByDeviceSns(limit_Install.getDevice_sn()) == null) {
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
+			}
+		} else
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		limitDao.updateLimit(limit_Install);
+		Timer timer = timers[0];
+		timerDao.delete(timer.getDevice_sn(), timer.getWay());
+		for (Timer timersave : timers) {
+			timerDao.save(timersave);
+		}
+		return RESCODE.SUCCESS.getJSONRES();
+	}
+
+	
 }

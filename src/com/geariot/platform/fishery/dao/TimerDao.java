@@ -7,7 +7,7 @@ import com.geariot.platform.fishery.entities.Timer;
 
 
 public interface TimerDao {
-    void save(Timer... timer);
+    void save(Timer timer);
 	
 	void delete(String device_sn);
 
@@ -18,4 +18,6 @@ public interface TimerDao {
 	List<Timer> queryTimerByDeviceSn(String device_sn, int from, int pageSize);
 
 	void updateTimer(Timer timer);
+	
+	void delete(String device_sn, int way);
 }

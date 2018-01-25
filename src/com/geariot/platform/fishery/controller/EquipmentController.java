@@ -22,20 +22,20 @@ public class EquipmentController {
 	@Autowired
 	private EquipmentService equipmentService;
 
-	@RequestMapping(value = "/limit", method = RequestMethod.POST)
+	/*@RequestMapping(value = "/limit", method = RequestMethod.POST)
 	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install) {
 		return equipmentService.setLimit(limit_Install);
-	}
+	}*/
 
 	@RequestMapping(value = "/delEquipments", method = RequestMethod.GET)
 	public Map<String, Object> delEquipment(String... device_sns) {
 		return equipmentService.delEquipment(device_sns);
 	}
 
-	@RequestMapping(value = "/timer", method = RequestMethod.POST)
+	/*@RequestMapping(value = "/timer", method = RequestMethod.POST)
 	public Map<String, Object> setTimer(@RequestBody Timer... timer) {
 		return equipmentService.setTimer(timer);
-	}
+	}*/
 
 	/*@RequestMapping(value = "/query", method = RequestMethod.GET)
 	public Map<String, Object> queryEquipment(String device_sn, String relation, String name, int page, int number) {
@@ -92,11 +92,17 @@ public class EquipmentController {
 		return equipmentService.companyFindEquipment(device_sn, relationId, page, number);
 	}
 	
+	@RequestMapping(value = "/autoSet", method = RequestMethod.POST)
+	public Map<String, Object> autoSet(@RequestBody Limit_Install limit_Install, @RequestBody Timer... timers){
+		return equipmentService.autoSet(limit_Install, timers);
+	}
+	
 	//服务器设置校准
 	@RequestMapping(value="/serverCheck",method=RequestMethod.GET)
 	public Map<String,Object> serverCheck(String device_sn){
 		return CMDUtils.serverCheckCMD(device_sn);
 	}
+	
 	//增氧机开关
 	@RequestMapping(value="/aeratorOnOff",method=RequestMethod.GET)
 	public Map<String,Object> aeratorOnOff(String device_sn,int way,int openOrclose){

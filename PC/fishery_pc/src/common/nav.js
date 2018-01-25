@@ -37,7 +37,7 @@ export const getNavData = app => [
               },
               {
                 path: ':id',
-                component: dynamicWrapper(app, ['userDetail'], () => import('../routes/CommonUser/UserInfo')),
+                component: dynamicWrapper(app, ['userDetail','pond'], () => import('../routes/CommonUser/UserInfo')),
               },
             ]
           },

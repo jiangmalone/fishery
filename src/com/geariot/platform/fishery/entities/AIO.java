@@ -25,7 +25,7 @@ public class AIO {
 	private float oxygen;						//溶氧量
 	private float water_temperature;			//水温
 	private float pH_value;						//ph值
-	
+	private int way;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getId() {
@@ -90,5 +90,12 @@ public class AIO {
 	}
 	public void setpH_value(float pH_value) {
 		this.pH_value = pH_value;
+	}
+	@Transient
+	public int getWay() {
+		return way;
+	}
+	public void setWay(int way) {
+		this.way = way;
 	}
 }

@@ -88,11 +88,10 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 
 	@Override
 	public Sensor_Data findDataByDeviceSnAndWay(String device_sn, int way) {
-		
-			QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor_Data");
-			Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
-			return (Sensor_Data) query.uniqueResult();
-		
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor_Data");
+		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way)
+				.addOrderByDesc("receiveTime").setMaxResults(1).getQuery();
+		return (Sensor_Data) query.uniqueResult();
 	}
 
 }

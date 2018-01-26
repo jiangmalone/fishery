@@ -32,13 +32,9 @@ export default class CompanyUserDetail extends React.Component {
         }
 
         this.markerEvents = {
-            created: (instance) => {
-              console.log('Marker 实例创建成功；如果你需要对原生实例进行操作，可以从这里开始；');
-              console.log(instance);
-            },
             click: (e) => {
               console.log(e);
-              this.setState({selectMarker: 38})
+            //   this.setState({selectMarker: 38})
             },
             // ... 支持绑定所有原生的高德 Marker 事件
           }
@@ -110,16 +106,17 @@ export default class CompanyUserDetail extends React.Component {
                 longitude: item.longitude,
                 latitude: item.latitude
             }
-            return (<InfoWindow
+            return ( <Link to={`/userManage/pondManage/detail/${item.id}`}>
+            <InfoWindow
                 position={position}
                 visible={this.state.selectMarker == item.id ? true : false}
                 isCustom={false}
                 key={index}
                 offset={[0, -30]}
             >
-                <div>hahahah</div>
-                {/* <Link to={`/userManage/pondManage/detail/${item.id}`}>{item.name}</Link> */}
-            </InfoWindow>)
+                <div>
+               {item.name}hahahah</div>
+            </InfoWindow></Link>)
         })
     }
 
@@ -130,11 +127,12 @@ export default class CompanyUserDetail extends React.Component {
                 longitude: item.longitude,
                 latitude: item.latitude
             }
-            return (<Marker
+            return (
+            <Marker
                 position={position}
-                clickable
+                clickable='true'
                 events={this.markerEvents}
-                onClick={() => this.setState({selectMarker: item.id})}
+                onClick={() => {this.setState({selectMarker: item.id}); console.log('her')}}
             >
             </Marker>)
         })

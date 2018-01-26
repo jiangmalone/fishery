@@ -10,6 +10,7 @@ import fetch from 'dva/fetch';
 import { connect } from 'dva';
 import { wxQuery } from '../../services/pondManage.js'; //接口
 import { getWeather } from '../../services/weather.js'; //接口
+import { aeratorOnOff } from '../../services/oxygenControl.js'; //接口
 
 class Main extends React.Component {
 
@@ -100,13 +101,39 @@ class Main extends React.Component {
         this.props.history.push(`/sensorDetail/${device_sn}`);
     }
 
-    showActionSheet = (device_sn, way) => {
+    changeAeratorOnOff = (device_sn, way, onOff, pondIndex, aioIndex) => {
+        this.setState({ animating: true });
+        aeratorOnOff({
+            device_sn: device_sn,
+            way: way,
+            onOff: onOff
+        }).then((res) => {
+            this.setState({ animating: false });
+            if (res.data.code == '0') {
+                let ponds = this.state.ponds
+                ponds[pondIndex].aio[aioIndex].openState = onOff;
+                this.setState({ ponds: ponds })
+                if (onOff) {
+                    Toast.success('开启增氧机成功!', 1)
+                } else {
+                    Toast.success('关闭增氧机成功', 1)
+                }
+            }
+        }).catch((error) => {
+            this.setState({ animating: false });
+            console.log(error);
+        });
+    }
+
+    showActionSheet = (device_sn, way ,state) => {
         //两种情况   已经打开，和没有打开
-        // let BOTTONS = [];
-        // if (device_sn) {
+        // let BOTTONS = [], title = ''
+        // if (state) {
         //     BOTTONS = ['确认关闭', '取消', '自动增氧设置'];
+            // title = '你是否确定关闭自动增氧？'
         // } else {
         //     BOTTONS = ['取消', '自动增氧设置'];
+            // title = '你是否确定打开自动增氧？'
         // }
         const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
         ActionSheet.showActionSheetWithOptions({
@@ -171,36 +198,10 @@ class Main extends React.Component {
                     </div>
                 </div>
             </div>
-
-            {/* <div className='line' >
-                <div className='name' >
-                    增氧机1
-                </div>
-                <button className='auto-button do-auto' onClick={() => this.showActionSheet(2)} >自动</button>
-                <Switch
-                    nanme='watertem'
-                    checked={this.state.waterCheck1}
-                    onClick={(checked) => { this.setState({ waterCheck1: !this.state.waterCheck1 }) }}
-                    className='state-switch'
-                />
-            </div>
-
-            <div className='line' >
-                <div className='name' >
-                    增氧机2
-                </div>
-                <button className='auto-button no-auto'>自动</button>
-                <Switch
-                    nanme='watertem'
-                    checked={this.state.waterCheck2}
-                    onClick={(checked) => { this.setState({ waterCheck2: !this.state.waterCheck2 }) }}
-                    className='state-switch'
-                />
-            </div> */}
         </div>
     }
 
-    getAioNode = (aio) => {
+    getAioNode = (aio, pondIndex, aioIndex) => {
         return <div className='equipment' key={aio.id}  >
             <div >
                 <div className='line border-line' >
@@ -242,11 +243,11 @@ class Main extends React.Component {
                 <div className='name' >
                     增氧机（{aio.way}路）
                 </div>
-                <button className='auto-button do-auto' onClick={() => this.showActionSheet(aio.device_sn, aio.way)} >定时</button>
+                <button className='auto-button do-auto' onClick={() => this.showActionSheet(aio.device_sn, aio.way, aio.timeState)} >定时</button>
                 <Switch
                     nanme='watertem'
-                    checked={this.state.waterCheck1}
-                    onClick={(checked) => { this.setState({ waterCheck1: !this.state.waterCheck1 }) }}
+                    checked={aio.openState}
+                    onClick={() => { this.changeAeratorOnOff(aio.device_sn, aio.way, !aio.openState, pondIndex, aioIndex) }}
                     className='state-switch'
                 />
             </div>
@@ -255,15 +256,15 @@ class Main extends React.Component {
 
     getPondsAccordion = () => {
         const ponds = this.state.ponds;
-        return ponds.map((pond, index) => {
+        return ponds.map((pond, pondIndex) => {
             // let equipemnts = this.getEquipment();
             let sensors = pond.sensors ? pond.sensors : [];
             let aios = pond.aios ? pond.aios : [];
             let sensorNode = sensors.map((sensor, index) => {
                 return this.getEquipment(sensor);
             })
-            let aioNode = aios.map((aio, index) => {
-                return this.getAioNode(aio)
+            let aioNode = aios.map((aio, aioIndex) => {
+                return this.getAioNode(aio, pondIndex, aioIndex)
             })
             
             return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} >

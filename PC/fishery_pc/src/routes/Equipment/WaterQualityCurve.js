@@ -176,7 +176,7 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{ padding: 30, paddingTop: 0 }}>
                         <Col span={20}>
-                            {this.state.oxygens.length > 0 ?<TimelineChart
+                            {(this.state.oxygens && this.state.oxygens.length > 0) ?<TimelineChart
                                 height={300}
                                 data={this.state.oxygens}
                                 titleMap={{ y1: '溶氧' }}
@@ -188,7 +188,7 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{ padding: 30 }}>
                         <Col span={20}>
-                            {this.state.WaterQualityCurve.length > 0 ? <TimelineChart
+                            {(this.state.WaterQualityCurve && this.state.WaterQualityCurve.length > 0) ? <TimelineChart
                                 height={300}
                                 data={this.state.temperatures}
                                 titleMap={{ y1: '水温' }}
@@ -196,8 +196,6 @@ export default class WaterQualityCurve extends React.Component {
                         </Col>
                     </Row>
                 </Card>
-
-
             </PageHeaderLayout>
         );
     }

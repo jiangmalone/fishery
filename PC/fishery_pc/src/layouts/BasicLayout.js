@@ -169,14 +169,6 @@ class BasicLayout extends React.PureComponent {
     });
   }
   getPageTitle() {
-    // const { location, getRouteData } = this.props;
-    // const { pathname } = location;
-    // let title = '渔管在线';
-    // getRouteData('BasicLayout').forEach((item) => {
-    //   if (item.path === pathname) {
-    //     title = `${item.name} - 渔管在线`;
-    //   }
-    // });
     return "渔管在线";
   }
   getNoticeData() {
@@ -248,9 +240,6 @@ class BasicLayout extends React.PureComponent {
 
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        {/* <Menu.Item disabled><Icon type="user" />个人中心</Menu.Item>
-        <Menu.Item disabled><Icon type="setting" />设置</Menu.Item>
-        <Menu.Divider /> */}
         <Menu.Item key="logout"><Icon type="logout" />退出登录</Menu.Item>
       </Menu>
     );

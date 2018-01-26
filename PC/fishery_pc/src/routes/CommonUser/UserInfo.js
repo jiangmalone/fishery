@@ -2,19 +2,24 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col, Input, Button } from 'antd'
-import { queryPond } from '../../services/pond.js'
-import { wxuserDetail, relationDetail } from '../../services/user.js'
-import { myEquipment } from '../../services/equipment.js'
-import { Link } from 'react-router-dom'
-import update from 'immutability-helper'
-
+import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd';
+import { wxuserDetail, relationDetail } from '../../services/user.js';
+import { myEquipment } from '../../services/equipment.js';
+import { Link } from 'react-router-dom';
+import update from 'immutability-helper';
+import Addmodal from '../pondManage/Addmodal.js';
+import Mapmoal from '../pondManage/MapModal.js';
+import { queryPond, addPond, modifyPond, delPonds, pondEquipment, pondFish } from '../../services/pond.js';
 const Search = Input.Search;
 @connect(state => {
     console.log(state); return ({
         list: state.userDetail.list,
         loading: state.userDetail.loading,
-        pagination: state.userDetail.pagination
+        pagination: state.userDetail.pagination,
+        modalVisible: state.pond.modalVisible,
+        mapVisible: state.pond.mapVisible,
+        address: state.pond.address,
+        fishCategories: state.pond.fishCategories
     })
 })
 
@@ -26,11 +31,14 @@ class UserInfo extends PureComponent {
             equipmentList: [],
             userInfo: {},
             pondPagination: {},
-            euipPagination: {}
+            euipPagination: {},
+            modifyId:''
         }
     }
     componentDidMount() {
-
+        this.props.dispatch({
+            type: 'pond/fetchFishList'
+        })
         this.onSearchUserDetail();
         this.onSearchUserPond();
         this.onSearchUserEquipment();
@@ -61,10 +69,10 @@ class UserInfo extends PureComponent {
                 }
                 this.setState({
                     pondList: response.data,
-                    pondPagination:update(this.state.pondPagination, { total: { $set: response.realSize } })
+                    pondPagination: update(this.state.pondPagination, { total: { $set: response.realSize } })
                 })
             }
-        }).catch((error)=>{console.log(error)})
+        }).catch((error) => { console.log(error) })
     }
 
 
@@ -75,8 +83,8 @@ class UserInfo extends PureComponent {
             number: 10
         }).then((res) => {
             console.log(res)
-            for(let item of res.data) {
-                item.key= item.id
+            for (let item of res.data) {
+                item.key = item.id
             }
             this.setState({
                 equipmentList: res.data,
@@ -96,18 +104,77 @@ class UserInfo extends PureComponent {
         })
     }
 
-    handleTableChange1 = (pagination)=>{
-        const pager = {...this.state.pondPagination};
+    handleTableChange1 = (pagination) => {
+        const pager = { ...this.state.pondPagination };
         pager.current = pagination.current;
         this.onSearchUserPond(pagination.current);
         this.setState({
-            pondPagination:pager
+            pondPagination: pager
+        })
+    }
+    showAddModal = (mode = 'add', index, record) => {
+        if (mode == 'add') {
+            this.props.dispatch({
+                type: 'pond/changeModal',
+                payload: {
+                    formData: { fields: {} },
+                    address: ''
+                }
+            })
+        } else {
+            this.props.dispatch({
+                type: 'pond/changeModal',
+                payload: {
+                    address: {
+                        address: record.address, location: {
+                            lat: record.latitude,
+                            lng: record.longitude
+                        }
+                    }
+                }
+            })
+        }
+        this.props.dispatch({
+            type: 'pond/changeModal',
+            payload: {
+                modalVisible: true,
+            },
+        });
+        this.setState({
+            mode: mode,
+            index: index,
+            modifyId: record ? record.id : ''
         })
     }
 
+    modifyInfo = (record, index, isDetail) => {
+        let formData = {}
+        console.log(record)
+        for (let key in record) {
+            console.log(key)
+            formData[key] = {
+                value: record[key],
+                name: key
+            }
+        }
+        this.props.dispatch({
+            type: 'pond/changeModal',
+            payload: {
+                formData: { fields: formData }
+            }
+        })
+        this.showAddModal('modify', index, record)
+    }
 
+    onDelete = (idArray) => {
+        delPonds({ pondIds: idArray }).then(() => {
+            this.onSearchUserPond();
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
     render() {
-        let { list, loading } = this.props;
+        let { list, loading, fishCategories, modalVisible, address } = this.props;
 
         const columns = [{
             title: '序号',
@@ -135,8 +202,8 @@ class UserInfo extends PureComponent {
             title: '品种',
             dataIndex: 'fish_categorys',
             key: 'fish_categorys',
-            render:(text,record,index)=>{
-                return <div>{text?text.join(','):''}</div>
+            render: (text, record, index) => {
+                return <div>{text ? text.join(',') : ''}</div>
             }
         }, {
             title: '池塘水源',
@@ -150,8 +217,91 @@ class UserInfo extends PureComponent {
             title: '塘口密度（kg/㎡）',
             key: 'density',
             dataIndex: 'density'
+        }, {
+            title: '操作',
+            dataIndex: 'keyword',
+            render: (text, record, index) => {
+                return <span>
+                    <span> <a href="javascript:void(0);" onClick={() => { this.modifyInfo(record, index) }} style={{ marginRight: '15px' }}>修改</a></span>
+                    <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.id + ''])}>
+                        <a href="javascript:void(0);">删除</a>
+                    </Popconfirm>
+                </span>
+            }
         }];
-
+        const modalProps = {
+            visible: modalVisible,
+            wrapClassName: 'vertical-center-modal',
+            address: address,
+            fishCategories: fishCategories,
+            onCancel: () => {
+                this.props.dispatch({
+                    type: 'pond/changeModal',
+                    payload: {
+                        modalVisible: false,
+                    },
+                });
+            },
+            showMapModal: () => {
+                this.props.dispatch({
+                    type: 'pond/changeModal',
+                    payload: {
+                        mapVisible: true,
+                    },
+                });
+            },
+            onOk: (values) => {
+                if (!this.state.modifyId && this.state.modifyId !== 0) {
+                    values.relation = this.props.match.params.id;
+                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
+                    values.latitude = this.props.address.location ? this.props.address.location.lat : '';
+                    values.longitude = this.props.address.location ? this.props.address.location.lng : '';
+                    addPond(values).then((response)=>{
+                        if (response.code == '0') {
+                            this.onSearchUserPond();
+                        }
+                    })
+                } else {
+                    values.id = this.state.modifyId;
+                    values.relation = this.props.match.params.id;
+                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
+                    values.latitude = this.props.address.location.lat;
+                    values.longitude = this.props.address.location.lng;
+                    modifyPond(values).then((response)=>{
+                        if (response.code == '0') {
+                            this.onSearchUserPond();
+                        }
+                    })
+                }
+                this.props.dispatch({
+                    type: 'pond/changeModal',
+                    payload: {
+                        modalVisible: false,
+                    },
+                });
+            }
+        };
+        const mapModalProps = {
+            visible: this.props.mapVisible,
+            wrapClassName: 'vertical-center-map',
+            onMapCancel: () => {
+                this.props.dispatch({
+                    type: 'pond/changeModal',
+                    payload: {
+                        mapVisible: false,
+                    },
+                });
+            },
+            onMapOk: (address) => {
+                this.props.dispatch({
+                    type: 'pond/changeModal',
+                    payload: {
+                        mapVisible: false,
+                        address: address
+                    },
+                });
+            },
+        };
 
         const columns1 = [
             {
@@ -165,7 +315,7 @@ class UserInfo extends PureComponent {
                 title: '设备编号',
                 dataIndex: 'device_sn',
                 render: (text, record, index) => {
-                    return <Link to={`/equipment/detail/${text}/${ this.props.match.params.id}/${record.id}`}>{text}</Link>
+                    return <Link to={`/equipment/detail/${text}/${this.props.match.params.id}/${record.id}`}>{text}</Link>
                 },
             },
             {
@@ -203,7 +353,11 @@ class UserInfo extends PureComponent {
                     </Row>
 
                 </Card>
+
                 <Card title="塘口信息" bordered={false} style={{ marginBottom: '20px' }}>
+                    <Button onClick={()=>{
+                        this.showAddModal()
+                    }} style={{marginBottom:'10px'}}>新增塘口</Button>
                     <Table loading={loading}
                         dataSource={this.state.pondList}
                         columns={columns}
@@ -212,7 +366,8 @@ class UserInfo extends PureComponent {
                         bordered
                     />
                 </Card>
-
+                <Addmodal {...modalProps} />
+                <Mapmoal {...mapModalProps} />
                 <Card title="设备信息" bordered={false} style={{ marginBottom: '20px' }}>
                     <Table loading={loading}
                         dataSource={this.state.equipmentList}

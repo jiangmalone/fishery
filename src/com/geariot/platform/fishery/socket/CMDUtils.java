@@ -33,6 +33,7 @@ import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
 import com.geariot.platform.fishery.utils.StringUtils;
+import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 import com.geariot.platform.fishery.wxutils.WechatTemplateMessage;
 
 public class CMDUtils {
@@ -634,16 +635,19 @@ public class CMDUtils {
 			break;
 		}
 		
-		//有故障推送给微信用户，快的需要105毫秒，慢的有998毫秒，性能上可以做成异步队列，因为有故障了不一定要立即推送给用户，慢个几秒也无所谓
-		long start=System.currentTimeMillis();
 		
+		long start=System.currentTimeMillis();
 		WXUser wxuser=new WXUser();
 		wxuser=service.findWXUserById(relation);
 		BrokenMSG bs=new BrokenMSG();
-		WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
+		System.out.println(bs.getMSG());
+		System.out.println(wxuser.getOpenId());
+		WechatSendMessageUtils.sendWechatMessages(bs.getMSG(),wxuser.getOpenId());
+		//WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
 		bs.clear(); 
 		long end=System.currentTimeMillis();
 		System.out.println(end-start);
+		
 	}
 	
 	public static void selfTestBrokenHandle(String relation,int entityModel,int entityType,String brokenmsg,List<Broken> brokenlist,String deviceSn) {

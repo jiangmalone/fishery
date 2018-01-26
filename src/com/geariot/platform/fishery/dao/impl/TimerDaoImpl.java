@@ -74,7 +74,7 @@ public class TimerDaoImpl implements TimerDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Timer> findTimerByDeviceSnAndWay(String device_sn, int way) {
-		String hql = "from Timer where device_sn= :device_sn ";
+		String hql = "from Timer where device_sn= :device_sn and way = :way";
 		return (List<Timer>) this.getSession().createQuery(hql).setString("device_sn",device_sn)
 				.setInteger("way", way)
 				.list();

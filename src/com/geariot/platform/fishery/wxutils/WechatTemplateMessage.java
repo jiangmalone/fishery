@@ -14,7 +14,7 @@ public class WechatTemplateMessage {
 	private static final String SELFTEST_BROKEN_TEMPLATE_ID="k2_jq21hHH1bMYDuiCwyW9w2-YEM0jJRRuLEDxJlwhQ";
 //	private static final Logger log = Logger.getLogger(WechatTemplateMessage.class);
 	private static final Logger log = LogManager.getLogger(WechatTemplateMessage.class);
-	
+	private static final String OXYGEN_ON_OFF_TEMPLATE_ID="L-MhZftW-sTPMCKBR3kNK_l9oZnVfwdYq_RyxLwueFo";
 	
 	private static String invokeTemplateMessage(JSONObject params){
 		StringEntity entity = new StringEntity(params.toString(),"utf-8"); //解决中文乱码问题   
@@ -47,6 +47,20 @@ public class WechatTemplateMessage {
 		String result=invokeTemplateMessage(params);
 		log.debug("故障消息结果:"+result);
 		//data.put(key, value);
+	}
+	
+	public static void sendOxygenOnoffMSG(String msg,String openId) {
+		log.debug("向微信用户发送增氧机打开失败或者关闭失败信息····");
+		JSONObject params=new JSONObject();
+		JSONObject data=new JSONObject();
+		params.put("touser", openId);
+		params.put("template_id", OXYGEN_ON_OFF_TEMPLATE_ID);
+		data.put("first", keywordFactory("增氧机开闭信息","#173177"));
+		data.put("增氧机开闭失败详细信息", keywordFactory(msg,"#173177"));
+		params.put("data", data);
+		String result=invokeTemplateMessage(params);
+		log.debug("增氧机开闭失败信息结果："+result);
+		
 	}
 	
 	

@@ -25,7 +25,9 @@ public class AIO {
 	private float oxygen;						//溶氧量
 	private float water_temperature;			//水温
 	private float pH_value;						//ph值
-	private int way;
+	private int way;								//一体机第几路数据
+	private boolean onoff;							//开关状态
+	private boolean isTimed;						//是否定时增氧
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getId() {
@@ -91,11 +93,25 @@ public class AIO {
 	public void setpH_value(float pH_value) {
 		this.pH_value = pH_value;
 	}
-	
+	@Transient
 	public int getWay() {
 		return way;
 	}
 	public void setWay(int way) {
 		this.way = way;
+	}
+	@Transient
+	public boolean isOnoff() {
+		return onoff;
+	}
+	public void setOnoff(boolean onoff) {
+		this.onoff = onoff;
+	}
+	@Transient
+	public boolean isTimed() {
+		return isTimed;
+	}
+	public void setTimed(boolean isTimed) {
+		this.isTimed = isTimed;
 	}
 }

@@ -415,7 +415,7 @@ export default class EquipmentDetail extends React.Component {
                         >
                             {pondOptions}
                             <Option value={0}>无</Option>
-                        </Select></Col><Col span={8}>{this.state.pondId > 0 && <Button onClick={() => { this.disBind() }}>解绑</Button>}</Col></Row>}
+                        </Select></Col><Col span={8}>{this.state.pondId > 0 && <Popconfirm title="确认要删除嘛?" onConfirm={() =>this.disBind()}><Button>解绑</Button></Popconfirm>}</Col></Row>}
 
                 </Card>
                 <Card

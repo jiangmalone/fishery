@@ -68,7 +68,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/relationDetail" , method = RequestMethod.GET)
-	public Map<String,Object> relationDetail(String relationId){
-		return userService.relationDetail(relationId);
+	public Map<String,Object> relationDetail(String relation){
+		return userService.relationDetail(relation);
 	}
 }

@@ -49,7 +49,7 @@ public class AIODaoImpl implements AIODao {
 	@Override
 	public List<AIO> queryAIOByNameAndRelation(String relation, String name, int page, int number) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from AIO");
-		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).setFirstResult(page)
+		Query query = queryUtils.addStringLike("name", name).addString("relation", relation).setFirstResult(page)
 				.setMaxResults(number).getQuery();
 		return query.list();
 	}
@@ -57,7 +57,7 @@ public class AIODaoImpl implements AIODao {
 	@Override
 	public long queryAIOByNameAndRelationCount(String relation, String name) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "select count(*) from AIO");
-		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relation", relation).getQuery();
 		return (long) query.uniqueResult();
 	}
 
@@ -87,7 +87,7 @@ public class AIODaoImpl implements AIODao {
 	@Override
 	public List<AIO> queryAIOByNameAndRelation(String relation, String name) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from AIO");
-		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relation", relation).getQuery();
 		return query.list();
 	}
 

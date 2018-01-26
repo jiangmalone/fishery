@@ -82,7 +82,7 @@ public class WebServiceService {
 			wxUserNew.setLogin(true);
 			wxUserNew.setCreateDate(new Date());
 			wxUserDao.save(wxUserNew);
-			wxUserNew.setRelationId("WX"+wxUserNew.getId());
+			wxUserNew.setrelation("WX"+wxUserNew.getId());
 			return RESCODE.SUCCESS.getJSONRES(wxUserNew);
 		} else {
 			wxUser.setHeadimgurl(headimgurl);

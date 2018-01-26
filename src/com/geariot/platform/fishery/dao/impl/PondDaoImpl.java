@@ -96,13 +96,13 @@ public class PondDaoImpl implements PondDao {
 	@Override
 	public List<Equipment> findEquipmentByPondId(int pondId, int from, int pageSize) {
 		StringBuilder sb = new StringBuilder(2048);
-		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status, a.relationId as relationId ");
+		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status, a.relation as relation ");
 		sb.append("from AIO a where a.pondId = :pondId ");
 		sb.append("UNION ALL ");
-		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status, b.relationId as relationId ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status, b.relation as relation ");
 		sb.append("from Sensor b where b.pondId = :pondId ");
 		sb.append("UNION ALL ");
-		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status, c.relationId as relationId ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status, c.relation as relation ");
 		sb.append("from Controller c where c.pondId = :pondId");
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
@@ -187,20 +187,20 @@ public class PondDaoImpl implements PondDao {
 	public List<Equipment> adminFindEquipmentByCo(List<Company> companies, int from, int pageSize) {
 		List<String> strings = new ArrayList<>();
 		for(Company company : companies){
-			strings.add(company.getRelationId());
+			strings.add(company.getrelation());
 		}
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
-		sb.append("from AIO a where a.relationId in :relationIds ");
+		sb.append("from AIO a where a.relation in :relations ");
 		sb.append("UNION ALL ");
 		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
-		sb.append("from Sensor b where b.relationId in :relationIds ");
+		sb.append("from Sensor b where b.relation in :relations ");
 		sb.append("UNION ALL ");
 		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
-		sb.append("from Controller c where c.relationId in :relationIds ");
+		sb.append("from Controller c where c.relation in :relations ");
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
-				.setParameterList("relationIds", strings)
+				.setParameterList("relations", strings)
 				.setFirstResult(from)
 				.setMaxResults(pageSize).list();
 	}
@@ -209,20 +209,20 @@ public class PondDaoImpl implements PondDao {
 	public long adminFindEquipmentCountCo(List<Company> companies) {
 		List<String> strings = new ArrayList<>();
 		for(Company company : companies){
-			strings.add(company.getRelationId());
+			strings.add(company.getrelation());
 		}
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select count(*) from (");
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
-		sb.append("from AIO a where a.relationId in :relationIds ");
+		sb.append("from AIO a where a.relation in :relations ");
 		sb.append("UNION ALL ");
 		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
-		sb.append("from Sensor b where b.relationId in :relationIds ");
+		sb.append("from Sensor b where b.relation in :relations ");
 		sb.append("UNION ALL ");
 		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
-		sb.append("from Controller c where c.relationId in :relationIds) ");
+		sb.append("from Controller c where c.relation in :relations) ");
 		sb.append("as total");
-		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString()).setParameterList("relationIds", strings).uniqueResult();
+		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString()).setParameterList("relations", strings).uniqueResult();
 		return big.longValue();
 	}
 
@@ -264,21 +264,21 @@ public class PondDaoImpl implements PondDao {
 	public List<Equipment> adminFindEquipmentDouble(String device_sn, List<Company> companies, int from, int pageSize) {
 		List<String> strings = new ArrayList<>();
 		for(Company company : companies){
-			strings.add(company.getRelationId());
+			strings.add(company.getrelation());
 		}
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
-		sb.append("from AIO a where a.device_sn like :device_sn and a.relationId in :relationIds ");
+		sb.append("from AIO a where a.device_sn like :device_sn and a.relation in :relations ");
 		sb.append("UNION ALL ");
 		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
-		sb.append("from Sensor b where b.device_sn like :device_sn and b.relationId in :relationIds ");
+		sb.append("from Sensor b where b.device_sn like :device_sn and b.relation in :relations ");
 		sb.append("UNION ALL ");
 		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
-		sb.append("from Controller c where c.device_sn like :device_sn and c.relationId in :relationIds ");
+		sb.append("from Controller c where c.device_sn like :device_sn and c.relation in :relations ");
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
 				.setString("device_sn", "%"+device_sn+"%")
-				.setParameterList("relationIds", strings)
+				.setParameterList("relations", strings)
 				.setFirstResult(from)
 				.setMaxResults(pageSize)
 				.list();
@@ -288,61 +288,61 @@ public class PondDaoImpl implements PondDao {
 	public long adminFindEquipmentCountDouble(String device_sn, List<Company> companies) {
 		List<String> strings = new ArrayList<>();
 		for(Company company : companies){
-			strings.add(company.getRelationId());
+			strings.add(company.getrelation());
 		}
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select count(*) from (");
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
-		sb.append("from AIO a where a.device_sn like :device_sn and a.relationId in :relationIds ");
+		sb.append("from AIO a where a.device_sn like :device_sn and a.relation in :relations ");
 		sb.append("UNION ALL ");
 		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
-		sb.append("from Sensor b where b.device_sn like :device_sn and b.relationId in :relationIds ");
+		sb.append("from Sensor b where b.device_sn like :device_sn and b.relation in :relations ");
 		sb.append("UNION ALL ");
 		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
-		sb.append("from Controller c where c.device_sn like :device_sn and c.relationId in :relationIds) ");
+		sb.append("from Controller c where c.device_sn like :device_sn and c.relation in :relations) ");
 		sb.append("as total");
 		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString())
 				.setString("device_sn", "%"+device_sn+"%")
-				.setParameterList("relationIds", strings)
+				.setParameterList("relations", strings)
 				.uniqueResult();
 		return big.longValue();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Equipment> equipmentRelation(String relationId, int from, int pageSize) {
+	public List<Equipment> equipmentRelation(String relation, int from, int pageSize) {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
-		sb.append("from AIO a where a.relationId = :relationId ");
+		sb.append("from AIO a where a.relation = :relation ");
 		sb.append("UNION ALL ");
 		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
-		sb.append("from Sensor b where b.relationId = :relationId ");
+		sb.append("from Sensor b where b.relation = :relation ");
 		sb.append("UNION ALL ");
 		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
-		sb.append("from Controller c where c.relationId = :relationId ");
+		sb.append("from Controller c where c.relation = :relation ");
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
-				.setString("relationId", relationId)
+				.setString("relation", relation)
 				.setFirstResult(from)
 				.setMaxResults(pageSize)
 				.list();
 	}
 
 	@Override
-	public long equipmentRelationCount(String relationId) {
+	public long equipmentRelationCount(String relation) {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select count(*) from (");
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
-		sb.append("from AIO a where a.relationId = :relationId ");
+		sb.append("from AIO a where a.relation = :relation ");
 		sb.append("UNION ALL ");
 		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
-		sb.append("from Sensor b where b.relationId = :relationId ");
+		sb.append("from Sensor b where b.relation = :relation ");
 		sb.append("UNION ALL ");
 		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
-		sb.append("from Controller c where c.relationId = :relationId) ");
+		sb.append("from Controller c where c.relation = :relation) ");
 		sb.append("as total");
 		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString())
-				.setString("relationId", relationId).uniqueResult();
+				.setString("relation", relation).uniqueResult();
 		return big.longValue();
 	}
 

@@ -186,7 +186,7 @@ public class EquipmentService {
 		}
 	}
 
-	public Map<String, Object> addEquipment(String device_sn, String name, String relationId) {
+	public Map<String, Object> addEquipment(String device_sn, String name, String relation) {
 		String deviceSn;
 		try {
 			deviceSn = device_sn.trim().substring(0, 2);
@@ -201,7 +201,7 @@ public class EquipmentService {
 				AIO aio = new AIO();
 				aio.setDevice_sn(device_sn);
 				aio.setName(name);
-				aio.setRelationId(relationId);
+				aio.setrelation(relation);
 				aio.setStatus(1);
 				aio.setType(Integer.parseInt(deviceSn));
 				aioDao.save(aio);
@@ -215,7 +215,7 @@ public class EquipmentService {
 				Sensor sensor = new Sensor();
 				sensor.setDevice_sn(device_sn);
 				sensor.setName(name);
-				sensor.setRelationId(relationId);
+				sensor.setrelation(relation);
 				sensor.setStatus(1);
 				sensor.setPort_status("00");
 				sensorDao.save(sensor);
@@ -229,7 +229,7 @@ public class EquipmentService {
 				Controller controller = new Controller();
 				controller.setDevice_sn(device_sn);
 				controller.setName(name);
-				controller.setRelationId(relationId);
+				controller.setrelation(relation);
 				controller.setStatus(1);
 				controller.setPort_status("0000");
 				controllerDao.save(controller);
@@ -274,10 +274,10 @@ public class EquipmentService {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 	}
 
-	public Map<String, Object> myEquipment(String relationId) {
-		List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(relationId, null);
-		List<AIO> aios = aioDao.queryAIOByNameAndRelation(relationId, null);
-		List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(relationId, null);
+	public Map<String, Object> myEquipment(String relation) {
+		List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(relation, null);
+		List<AIO> aios = aioDao.queryAIOByNameAndRelation(relation, null);
+		List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(relation, null);
 		Map<String, Object> result = RESCODE.SUCCESS.getJSONRES();
 		result.put("sensor", sensors);
 		result.put("controller", controllers);
@@ -333,10 +333,10 @@ public class EquipmentService {
 			switch (type) {
 			case "01":
 				aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
-				relation = aio.getRelationId();
-				equipment.setRelationId(relation);
+				relation = aio.getrelation();
+				equipment.setrelation(relation);
 				if (relation != null && relation.contains("CO")) {
-					company = companyDao.findCompanyByRelationId(relation);
+					company = companyDao.findCompanyByrelation(relation);
 					equipment.setCompanyName(company.getName());
 					equipment.setCompanyId(company.getId());
 				} else {
@@ -346,10 +346,10 @@ public class EquipmentService {
 				break;
 			case "02":
 				aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
-				relation = aio.getRelationId();
-				equipment.setRelationId(relation);
+				relation = aio.getrelation();
+				equipment.setrelation(relation);
 				if (relation != null && relation.contains("CO")) {
-					company = companyDao.findCompanyByRelationId(relation);
+					company = companyDao.findCompanyByrelation(relation);
 					equipment.setCompanyName(company.getName());
 					equipment.setCompanyId(company.getId());
 				} else {
@@ -359,10 +359,10 @@ public class EquipmentService {
 				break;
 			case "03":
 				sensor = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn());
-				relation = sensor.getRelationId();
-				equipment.setRelationId(relation);
+				relation = sensor.getrelation();
+				equipment.setrelation(relation);
 				if (relation != null && relation.contains("CO")) {
-					company = companyDao.findCompanyByRelationId(relation);
+					company = companyDao.findCompanyByrelation(relation);
 					equipment.setCompanyName(company.getName());
 					equipment.setCompanyId(company.getId());
 				} else {
@@ -372,10 +372,10 @@ public class EquipmentService {
 				break;
 			case "04":
 				controller = controllerDao.findControllerByDeviceSns(equipment.getDevice_sn());
-				relation = controller.getRelationId();
-				equipment.setRelationId(relation);
+				relation = controller.getrelation();
+				equipment.setrelation(relation);
 				if (relation != null && relation.contains("CO")) {
-					company = companyDao.findCompanyByRelationId(relation);
+					company = companyDao.findCompanyByrelation(relation);
 					equipment.setCompanyName(company.getName());
 					equipment.setCompanyId(company.getId());
 				} else {
@@ -398,10 +398,10 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}
 
-	public Map<String, Object> companyFindEquipment(String device_sn, String relationId, int page, int number) {
+	public Map<String, Object> companyFindEquipment(String device_sn, String relation, int page, int number) {
 		int from = (page - 1) * number;
 		Sensor sensor = null;
-		Company company = companyDao.findCompanyByRelationId(relationId);
+		Company company = companyDao.findCompanyByrelation(relation);
 		if (company == null) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {

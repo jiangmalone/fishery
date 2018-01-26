@@ -20,7 +20,7 @@ public class AIO {
 	private String name;				//设备名称
 	private int status;					//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
 	private int pondId;					//绑定的塘口Id
-	private String relationId;			//绑定的用户relationId
+	private String relation;			//绑定的用户relation
 	
 	private float oxygen;						//溶氧量
 	private float water_temperature;			//水温
@@ -66,11 +66,11 @@ public class AIO {
 	public void setType(int type) {
 		this.type = type;
 	}
-	public String getRelationId() {
-		return relationId;
+	public String getrelation() {
+		return relation;
 	}
-	public void setRelationId(String relationId) {
-		this.relationId = relationId;
+	public void setrelation(String relation) {
+		this.relation = relation;
 	}
 	@Transient
 	public float getOxygen() {

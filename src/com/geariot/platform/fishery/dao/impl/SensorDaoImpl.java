@@ -53,7 +53,7 @@ public class SensorDaoImpl implements SensorDao {
 	@Override
 	public List<Sensor> querySensorByNameAndRelation(String relation, String name, int from, int pageSize) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
-		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).setFirstResult(from)
+		Query query = queryUtils.addStringLike("name", name).addString("relation", relation).setFirstResult(from)
 				.setMaxResults(pageSize).getQuery();
 		return query.list();
 	}
@@ -61,7 +61,7 @@ public class SensorDaoImpl implements SensorDao {
 	@Override
 	public long querySensorByNameAndRelationCount(String relation, String name) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "select count(*) from Sensor");
-		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relation", relation).getQuery();
 		return (long) query.uniqueResult();
 	}
 
@@ -91,7 +91,7 @@ public class SensorDaoImpl implements SensorDao {
 	@Override
 	public List<Sensor> querySensorByNameAndRelation(String relation, String name) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
-		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relation", relation).getQuery();
 		return query.list();
 	}
 

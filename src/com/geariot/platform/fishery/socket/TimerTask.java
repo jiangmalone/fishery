@@ -50,7 +50,7 @@ public class TimerTask {
 					if(!CMDUtils.serverOnOffOxygenCMD(timer.getDevice_sn(),timer.getWay(), 1).containsKey("0")) {
 						WechatSendMessageUtils.sendWechatOxygenOnOffMessages("设备编号为 "+timer.getDevice_sn()
 						+" 的增氧机在定时时间为:"+timer.getStartTime()+"打开失败",
-						wxuserDao.findUserById(Integer.parseInt(aio.getRelationId().substring(2))).getOpenId());
+						wxuserDao.findUserById(Integer.parseInt(aio.getrelation().substring(2))).getOpenId());
 					}
 					
 				}
@@ -60,7 +60,7 @@ public class TimerTask {
 					if(!CMDUtils.serverOnOffOxygenCMD(timer.getDevice_sn(),timer.getWay(), 0).containsKey("0")){
 						WechatSendMessageUtils.sendWechatOxygenOnOffMessages("设备编号为 "+timer.getDevice_sn()
 						+" 的增氧机在定时时间为:"+timer.getStartTime()+"关闭失败",
-						wxuserDao.findUserById(Integer.parseInt(aio.getRelationId().substring(2))).getOpenId());
+						wxuserDao.findUserById(Integer.parseInt(aio.getrelation().substring(2))).getOpenId());
 					}
 					
 				}

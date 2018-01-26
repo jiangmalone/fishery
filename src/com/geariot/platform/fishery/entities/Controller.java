@@ -16,7 +16,7 @@ public class Controller {
 	private int id;						//控制器Id,自增
 	private String device_sn;			//控制器设备编号
 	private int pondId;					//绑定的塘口Id
-	private String relationId;			//绑定的用户relationId
+	private String relation;			//绑定的用户relation
 	private String name;				//控制器名称
 	private int status;					//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
 	private String port_status;  		//表示传感器四路绑定状态, 如0101 0110 1100 1111等
@@ -41,11 +41,11 @@ public class Controller {
 	public void setPondId(int pondId) {
 		this.pondId = pondId;
 	}
-	public String getRelationId() {
-		return relationId;
+	public String getrelation() {
+		return relation;
 	}
-	public void setRelationId(String relationId) {
-		this.relationId = relationId;
+	public void setrelation(String relation) {
+		this.relation = relation;
 	}
 	public String getName() {
 		return name;

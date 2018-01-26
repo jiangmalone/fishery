@@ -196,6 +196,9 @@ export default class WaterQualityCurve extends React.Component {
                         </Col>
                     </Row>
                 </Card>
+                <Button type="primary" style={{float:'right'}} onClick={()=>{history.back()}}>
+                   返回上一页
+                </Button>
             </PageHeaderLayout>
         );
     }

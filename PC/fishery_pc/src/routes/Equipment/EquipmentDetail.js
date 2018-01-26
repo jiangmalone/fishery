@@ -484,6 +484,9 @@ export default class EquipmentDetail extends React.Component {
                         </Select>
                     </Row>
                 </Modal >
+                <Button type="primary" style={{float:'right'}} onClick={()=>{history.back()}}>
+                   返回上一页
+                </Button>
             </PageHeaderLayout>
         );
     }

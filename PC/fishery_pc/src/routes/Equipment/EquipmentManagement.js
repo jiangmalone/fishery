@@ -36,8 +36,8 @@ export default class EquipmentManagement extends React.Component {
             payload: {
                 number: 10,
                 page: 1,
-                relationId: this.props.match.params.relation
-                // relationId: 'CO1'
+                relation: this.props.match.params.relation
+                // relation: 'CO1'
             },
         });
     }
@@ -69,7 +69,7 @@ export default class EquipmentManagement extends React.Component {
             payload: {
                 device_sns: idArray,
                 pagination: this.props.pagination,
-                relationId:'CO1'
+                relation:'CO1'
             },
         });
         this.setState({
@@ -98,7 +98,7 @@ export default class EquipmentManagement extends React.Component {
     onOk = (values) => {
         if (isNaN(this.state.index)) {
             values.current = this.props.pagination.current
-            values.relationId = this.props.match.params.relation;
+            values.relation = this.props.match.params.relation;
             this.props.dispatch({
                 type: 'equipment/addEquipment',
                 payload: values,
@@ -142,7 +142,7 @@ export default class EquipmentManagement extends React.Component {
                 name: this.state.name,
                 page: 1,
                 number: 10,
-                relationId: this.props.match.params.relation
+                relation: this.props.match.params.relation
             },
         });
     }
@@ -156,7 +156,7 @@ export default class EquipmentManagement extends React.Component {
             payload: {
                 number: 10,
                 page: pagination.current,
-                relationId: this.props.match.params.relation
+                relation: this.props.match.params.relation
             },
         });
         this.props.dispatch({

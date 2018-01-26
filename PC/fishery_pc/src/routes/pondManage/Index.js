@@ -98,7 +98,7 @@ class PondList extends PureComponent {
             type: 'pond/fetch',
             payload: {
                 name: value,
-                relationId:this.props.match.params?this.props.match.params.relation:'',
+                relation:this.props.match.params?this.props.match.params.relation:'',
                 number: 10,
                 page: 1
             },
@@ -114,7 +114,7 @@ class PondList extends PureComponent {
             type: 'pond/deletePond',
             payload: {
                 pondIds: idArray,
-                relationId:this.props.match.params?this.props.match.params.relation:'',
+                relation:this.props.match.params?this.props.match.params.relation:'',
                 pagination: this.props.pagination
             },
         });
@@ -127,7 +127,7 @@ class PondList extends PureComponent {
             type: 'pond/fetch',
             payload: {
                 number: 10,
-                relationId:this.props.match.params?this.props.match.params.relation:'',
+                relation:this.props.match.params?this.props.match.params.relation:'',
                 page: pagination.current,
             },
         });

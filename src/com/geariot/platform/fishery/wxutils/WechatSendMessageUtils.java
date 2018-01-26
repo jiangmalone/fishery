@@ -8,7 +8,7 @@ public class WechatSendMessageUtils {
 	//private static final Logger log = LogManager.getLogger(WechatSendMessageUtils.class);
     private static ExecutorService  executorService  = Executors.newFixedThreadPool(10);
 	
-	public static void  sendWechatMessages(StringBuilder sb,String openId) {
+	public static void  sendWechatMessages(final StringBuilder sb,final String openId) {
 		executorService.submit(new Runnable() {
 
             @Override
@@ -18,7 +18,7 @@ public class WechatSendMessageUtils {
         });
 	}
 	
-	public static void sendWechatOxygenOnOffMessages(String msg,String openId) {
+	public static void sendWechatOxygenOnOffMessages(final String msg,final String openId) {
 		executorService.submit(new Runnable() {
 
 			@Override

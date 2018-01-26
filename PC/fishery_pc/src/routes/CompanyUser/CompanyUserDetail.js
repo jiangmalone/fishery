@@ -66,7 +66,7 @@ export default class CompanyUserDetail extends React.Component {
 
     queryPond = () => {
         queryPond({
-            relationId: this.props.match.params.relation,
+            relation: this.props.match.params.relation,
             name: '',
             page: 1,
             number: 100

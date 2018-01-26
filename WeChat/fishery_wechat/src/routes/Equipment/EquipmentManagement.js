@@ -123,7 +123,7 @@ class EquipmentManagement extends React.Component {
     queryPond = () => {
         this.setState({ animating: true });
         wxQuery({
-            relationId: window.localStorage.getItem('relationId'),
+            relation: window.localStorage.getItem('relation'),
         }).then((res) => {
             this.setState({ animating: false });
             if (res.data.code == '0') {

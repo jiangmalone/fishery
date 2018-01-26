@@ -96,7 +96,7 @@ export default class EquipmentDetail extends React.Component {
 
     getPonds = () => {
         queryPond({
-            relationId: this.props.match.params.relation,
+            relation: this.props.match.params.relation,
             page: 1,
             number: 99
         }).then((res) => {
@@ -125,7 +125,7 @@ export default class EquipmentDetail extends React.Component {
 
     queryEquipment = () => {
         getAllEquipment({
-            relationId: this.props.match.params.relation,
+            relation: this.props.match.params.relation,
         }).then((res) => {
             if (res && res.code == 0) {
                 if (res.controller) {

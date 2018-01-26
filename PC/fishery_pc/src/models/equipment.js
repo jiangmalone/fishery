@@ -78,7 +78,7 @@ export default {
           payload: {
             page: payload.current,
             number: 10,
-            relationId: payload.relationId
+            relation: payload.relation
           }
         })
       } else {
@@ -109,7 +109,7 @@ export default {
           payload: {
             page: payload.pagination.current,
             number: 10,
-            relationId: payload.relationId
+            relation: payload.relation
           }
         })
       } else {

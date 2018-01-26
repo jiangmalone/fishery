@@ -46,7 +46,7 @@ class UserInfo extends PureComponent {
 
     onSearchUserDetail = () => {
         relationDetail({
-            relationId: this.props.match.params.id
+            relation: this.props.match.params.id
         }).then((res) => {
             this.setState({
                 userInfo: res.data
@@ -57,7 +57,7 @@ class UserInfo extends PureComponent {
     }
     onSearchUserPond = (page = 1) => {
         queryPond({
-            relationId: this.props.match.params.id,
+            relation: this.props.match.params.id,
             name: '',
             page: page,
             number: 10
@@ -78,7 +78,7 @@ class UserInfo extends PureComponent {
 
     onSearchUserEquipment = (page = 1) => {
         myEquipment({
-            relationId: this.props.match.params.id,
+            relation: this.props.match.params.id,
             page: page,
             number: 10
         }).then((res) => {

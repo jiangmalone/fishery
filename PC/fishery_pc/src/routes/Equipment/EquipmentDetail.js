@@ -408,7 +408,7 @@ export default class EquipmentDetail extends React.Component {
                             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                         >
                             {pondOptions}
-                            <Option value={-1}>无</Option>
+                            <Option value={0}>无</Option>
                         </Select></Col><Col span={8}>{this.state.pondId > 0 && <Button onClick={() => { this.disBind() }}>解绑</Button>}</Col></Row>}
 
                 </Card>
@@ -461,7 +461,7 @@ export default class EquipmentDetail extends React.Component {
                             value={this.state.selectControllerId}
                         >
                             {controllerOptions}
-                            <Option value={'0'}>无</Option>
+                            <Option value={0}>无</Option>
                         </Select>
                     </Row>
                     <Row style={{ marginTop: 20 }} >绑定端口: &nbsp;

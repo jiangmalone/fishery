@@ -41,7 +41,7 @@ public class UserService {
 		}
 		wxuser.setCreateDate(new Date());
 		wxuserDao.save(wxuser);
-		wxuser.setRelationId("WX"+wxuser.getId());
+		wxuser.setrelation("WX"+wxuser.getId());
 		return RESCODE.SUCCESS.getJSONRES(wxuser);
 	}
 
@@ -53,7 +53,7 @@ public class UserService {
 		company.setCreateDate(new Date());
 		company.setHasAccount(false);
 		companyDao.save(company);
-		company.setRelationId("CO"+company.getId());
+		company.setrelation("CO"+company.getId());
 		return RESCODE.SUCCESS.getJSONRES(company);
 	}
 
@@ -151,7 +151,7 @@ public class UserService {
 		List<Company> companies = new ArrayList<>();
 		companies.add(company);
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(company);
-		List<Pond> ponds = pondDao.queryPondByNameAndRelation(company.getRelationId(), null);
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(company.getrelation(), null);
 		List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, 0, 2000);
 		for(Equipment equipment :equipments){
 			if(equipment.getStatus()==0){
@@ -163,11 +163,11 @@ public class UserService {
 		return map;
 	}
 
-	public Map<String, Object> relationDetail(String relationId) {
-		String type = relationId.substring(0, 2);
+	public Map<String, Object> relationDetail(String relation) {
+		String type = relation.substring(0, 2);
 		switch(type){
-			case "WX" : return WXUserDetail(Integer.parseInt(relationId.substring(2)));
-			case "CO" :	return CompanyDetail(Integer.parseInt(relationId.substring(2)));
+			case "WX" : return WXUserDetail(Integer.parseInt(relation.substring(2)));
+			case "CO" :	return CompanyDetail(Integer.parseInt(relation.substring(2)));
 			default : return RESCODE.WRONG_PARAM.getJSONRES();
 		}
 	}

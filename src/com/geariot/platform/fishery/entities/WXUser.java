@@ -24,7 +24,7 @@ public class WXUser {
 	private String openId;						//普通用户微信的openId
 	private String address;						//普通用户的联系地址
 	private Date createDate;					//普通用户的创建时间
-	private String relationId;					//普通用户的relationId(格式  = "WX" + id)
+	private String relation;					//普通用户的relation(格式  = "WX" + id)
 	private boolean isLogin;
 	
 	@Id
@@ -83,11 +83,11 @@ public class WXUser {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
-	public String getRelationId() {
-		return relationId;
+	public String getrelation() {
+		return relation;
 	}
-	public void setRelationId(String relationId) {
-		this.relationId = relationId;
+	public void setrelation(String relation) {
+		this.relation = relation;
 	}
 	public boolean isLogin() {
 		return isLogin;

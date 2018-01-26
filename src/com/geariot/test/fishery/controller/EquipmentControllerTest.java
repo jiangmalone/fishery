@@ -117,7 +117,7 @@ public class EquipmentControllerTest {
 	@Test
 	public void companyEquipmentTest() throws Exception {
 		mockMvc.perform(get("/equipment/companyFindEquipment").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("page", "1").param("number", "2").param("relationId", "CO1")).andDo(print()).andExpect(status().is2xxSuccessful());
+				.param("page", "1").param("number", "2").param("relation", "CO1")).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test

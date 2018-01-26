@@ -150,7 +150,7 @@ public class CompanyControllerTest {
 	public void relationTest() throws Exception{
 		mockMvc.perform(get("/usermanagement/relationDetail").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("relationId", "CO14")
+				.param("relation", "CO14")
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}

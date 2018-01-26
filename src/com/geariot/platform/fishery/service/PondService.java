@@ -85,10 +85,10 @@ public class PondService {
 		}
 	}
 
-	public Map<String, Object> queryPond(String relationId, String name, int page, int number) {
+	public Map<String, Object> queryPond(String relation, String name, int page, int number) {
 		int from = (page - 1) * number;
-		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relationId, name, from, number);
-		long count = this.pondDao.queryPondByNameAndRelationCount(relationId, name);
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, name, from, number);
+		long count = this.pondDao.queryPondByNameAndRelationCount(relation, name);
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(ponds, size, count);
 	}
@@ -132,13 +132,13 @@ public class PondService {
 		return RESCODE.SUCCESS.getJSONRES(list);
 	}
 
-	public Map<String, Object> WXqueryPond(String relationId) {
+	public Map<String, Object> WXqueryPond(String relation) {
 		Sensor_Data sensor_Data = null;
 		Sensor_Data oneWay = null;
 		Sensor_Data twoWay = null;
 		AIO aioTemp = null;
 		List<AIO> temp = new ArrayList<>();
-		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relationId, null);
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, null);
 		for (Pond pond : ponds) {
 			// 塘口内添加sensor的list
 			List<Sensor> sensors = sensorDao.findSensorsByPondId(pond.getId());
@@ -175,7 +175,7 @@ public class PondService {
 				aioTemp.setDevice_sn(aio.getDevice_sn());
 				aioTemp.setName(aio.getName());
 				aioTemp.setPondId(aio.getPondId());
-				aioTemp.setRelationId(aio.getRelationId());
+				aioTemp.setrelation(aio.getrelation());
 				aioTemp.setType(aio.getType());
 				aioTemp.setStatus(aio.getStatus());
 				aioTemp.setWay(2);
@@ -205,10 +205,10 @@ public class PondService {
 		}
 	}
 
-	public Map<String, Object> relationEquipment(String relationId, int page, int number) {
+	public Map<String, Object> relationEquipment(String relation, int page, int number) {
 		int from = (page - 1) * number;
-		List<Equipment> equipments = pondDao.equipmentRelation(relationId, from, number);
-		long count = pondDao.equipmentRelationCount(relationId);
+		List<Equipment> equipments = pondDao.equipmentRelation(relation, from, number);
+		long count = pondDao.equipmentRelationCount(relation);
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}

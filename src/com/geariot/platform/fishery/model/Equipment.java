@@ -13,7 +13,7 @@ public class Equipment {
 	private int status;
 	private String companyName;
 	private int companyId;
-	private String relationId;
+	private String relation;
 	private int sensorId;
 	public Equipment() {
 
@@ -25,18 +25,18 @@ public class Equipment {
 		this.status = status;
 	}
 	
-	public Equipment(String device_sn, String name, int status, String relationId) {
+	public Equipment(String device_sn, String name, int status, String relation) {
 		this.device_sn = device_sn;
 		this.name = name;
 		this.status = status;
-		this.relationId = relationId;
+		this.relation = relation;
 	}
 	
-	public Equipment(String device_sn, String name, int status, String relationId, int sensorId) {
+	public Equipment(String device_sn, String name, int status, String relation, int sensorId) {
 		this.device_sn = device_sn;
 		this.name = name;
 		this.status = status;
-		this.relationId = relationId;
+		this.relation = relation;
 		this.sensorId = sensorId;
 	}
 
@@ -80,12 +80,12 @@ public class Equipment {
 		this.companyId = companyId;
 	}
 
-	public String getRelationId() {
-		return relationId;
+	public String getrelation() {
+		return relation;
 	}
 
-	public void setRelationId(String relationId) {
-		this.relationId = relationId;
+	public void setrelation(String relation) {
+		this.relation = relation;
 	}
 
 	public int getSensorId() {

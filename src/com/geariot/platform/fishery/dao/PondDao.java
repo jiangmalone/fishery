@@ -54,7 +54,7 @@ public interface PondDao {
 	
 	long adminFindEquipmentCountDouble(String device_sn, List<Company> companies);
 	
-	List<Equipment> equipmentRelation(String relationId, int from, int pageSize);
+	List<Equipment> equipmentRelation(String relation, int from, int pageSize);
 	
-	long equipmentRelationCount(String relationId);
+	long equipmentRelationCount(String relation);
 }

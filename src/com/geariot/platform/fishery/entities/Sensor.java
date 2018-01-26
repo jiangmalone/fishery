@@ -19,7 +19,7 @@ public class Sensor {
 	private int pondId;						//绑定的塘口Id
 	private int status;						//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
 	private String name;					//传感器名称,可自己定义
-	private String relationId;				//绑定的用户relationId
+	private String relation;				//绑定的用户relation
 	private String port_status;				//表示传感器两路绑定状态, 如01 00 10 11等
 	
 	private float oxygen;						//溶氧量
@@ -59,11 +59,11 @@ public class Sensor {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getRelationId() {
-		return relationId;
+	public String getrelation() {
+		return relation;
 	}
-	public void setRelationId(String relationId) {
-		this.relationId = relationId;
+	public void setrelation(String relation) {
+		this.relation = relation;
 	}
 	public String getPort_status() {
 		return port_status;

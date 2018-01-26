@@ -33,7 +33,7 @@ public class Pond {
 	private float sediment_thickness;	//底泥厚度
 	private float depth;				//塘口深度
 	private float density;				//塘口密度
-	private String relation;			//普通用户或企业用户的relationId;
+	private String relation;			//普通用户或企业用户的relation;
 	private List<Sensor> sensors;		//查询时的传感器
 	private List<AIO> aios;				//查询时的一体机
 	

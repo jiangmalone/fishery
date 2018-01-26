@@ -51,7 +51,7 @@ public class ControllerDaoImpl implements ControllerDao {
 	@Override
 	public List<Controller> queryControllerByNameAndRelation(String relation, String name, int from, int pageSize) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
-		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).setFirstResult(from)
+		Query query = queryUtils.addStringLike("name", name).addString("relation", relation).setFirstResult(from)
 				.setMaxResults(pageSize).getQuery();
 		return query.list();
 	}
@@ -59,7 +59,7 @@ public class ControllerDaoImpl implements ControllerDao {
 	@Override
 	public long queryControllerByNameAndRelationCount(String relation, String name) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "select count(*) from Controller");
-		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relation", relation).getQuery();
 		return (long) query.uniqueResult();
 	}
 
@@ -81,7 +81,7 @@ public class ControllerDaoImpl implements ControllerDao {
 	@Override
 	public List<Controller> queryControllerByNameAndRelation(String relation, String name) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
-		Query query = queryUtils.addStringLike("name", name).addString("relationId", relation).getQuery();
+		Query query = queryUtils.addStringLike("name", name).addString("relation", relation).getQuery();
 		return query.list();
 	}
 

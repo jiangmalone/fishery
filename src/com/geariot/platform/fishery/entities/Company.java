@@ -22,7 +22,7 @@ public class Company {
 	private String mail_address;			//企业用户邮箱
 	private String address;					//企业用户联系地址
 	private Date createDate;				//企业用户创建时间
-	private String relationId;				//企业用户relationId(格式 = "CO" + id)
+	private String relation;				//企业用户relation(格式 = "CO" + id)
 	private String account;					//企业登录账号
 	private String password;				//登录密码
 	private String comment;					//备注
@@ -71,11 +71,11 @@ public class Company {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
-	public String getRelationId() {
-		return relationId;
+	public String getrelation() {
+		return relation;
 	}
-	public void setRelationId(String relationId) {
-		this.relationId = relationId;
+	public void setrelation(String relation) {
+		this.relation = relation;
 	}
 	public String getAccount() {
 		return account;

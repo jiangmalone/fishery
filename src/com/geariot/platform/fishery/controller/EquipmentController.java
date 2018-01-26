@@ -48,8 +48,8 @@ public class EquipmentController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
-	public Map<String, Object> addEquipment(String device_sn, String name, String relationId) {
-		return equipmentService.addEquipment(device_sn, name, relationId);
+	public Map<String, Object> addEquipment(String device_sn, String name, String relation) {
+		return equipmentService.addEquipment(device_sn, name, relation);
 	}
 
 	@RequestMapping(value = "/realTimeData", method = RequestMethod.GET)
@@ -78,8 +78,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value = "/myEquipment", method = RequestMethod.GET)
-	public Map<String, Object> myEquipment(String relationId){
-		return equipmentService.myEquipment(relationId);
+	public Map<String, Object> myEquipment(String relation){
+		return equipmentService.myEquipment(relation);
 	}
 	
 	@RequestMapping(value ="/adminFindEquipment", method = RequestMethod.GET)
@@ -88,8 +88,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
-	public Map<String, Object> companyFindEquipment(String device_sn, String relationId, int page, int number){
-		return equipmentService.companyFindEquipment(device_sn, relationId, page, number);
+	public Map<String, Object> companyFindEquipment(String device_sn, String relation, int page, int number){
+		return equipmentService.companyFindEquipment(device_sn, relation, page, number);
 	}
 	
 	@RequestMapping(value = "/autoSet", method = RequestMethod.POST)

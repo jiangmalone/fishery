@@ -70,6 +70,7 @@ class UserList extends PureComponent {
 
     onOk = (values) => {
         if (!this.state.modifyId && this.state.modifyId !== 0) {
+            
             this.props.dispatch({
                 type: 'commonUser/addUser',
                 payload: values,
@@ -259,7 +260,9 @@ class UserList extends PureComponent {
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
                         <Button onClick={()=>this.showAddModal('add')}>新建用户</Button>
-                        <Button style={{ marginLeft: '10px' }} onClick={() => this.onDelete(this.state.selectedRowKeys)}>删除用户</Button>
+                        <Popconfirm title="确认要删除嘛?" onConfirm={() =>this.onDelete(this.state.selectedRowKeys)}>
+                        <Button style={{ marginLeft: '10px' }} >删除用户</Button>
+                    </Popconfirm>
                     </Row>
                     <Table loading={loading}
                         dataSource={this.props.list}

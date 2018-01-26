@@ -98,7 +98,7 @@ class PondList extends PureComponent {
             type: 'pond/fetch',
             payload: {
                 name: value,
-                relation:this.props.match.params?this.props.match.params.relation:'',
+                relation: this.props.match.params ? this.props.match.params.relation : '',
                 number: 10,
                 page: 1
             },
@@ -107,14 +107,14 @@ class PondList extends PureComponent {
 
     onDelete = (idArray) => {
         this.setState({
-            selectedRowKeys:[]
+            selectedRowKeys: []
         })
         console.log(this.props.pagination)
         this.props.dispatch({
             type: 'pond/deletePond',
             payload: {
                 pondIds: idArray,
-                relation:this.props.match.params?this.props.match.params.relation:'',
+                relation: this.props.match.params ? this.props.match.params.relation : '',
                 pagination: this.props.pagination
             },
         });
@@ -127,7 +127,7 @@ class PondList extends PureComponent {
             type: 'pond/fetch',
             payload: {
                 number: 10,
-                relation:this.props.match.params?this.props.match.params.relation:'',
+                relation: this.props.match.params ? this.props.match.params.relation : '',
                 page: pagination.current,
             },
         });
@@ -165,8 +165,8 @@ class PondList extends PureComponent {
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
                     values.relation = this.props.match.params.relation;
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
-                    values.latitude =this.props.address.location? this.props.address.location.lat:'';
-                    values.longitude = this.props.address.location?this.props.address.location.lng:'';
+                    values.latitude = this.props.address.location ? this.props.address.location.lat : '';
+                    values.longitude = this.props.address.location ? this.props.address.location.lng : '';
                     this.props.dispatch({
                         type: 'pond/addPond',
                         payload: values,
@@ -288,8 +288,8 @@ class PondList extends PureComponent {
             title: '品种',
             dataIndex: 'fish_categorys',
             key: 'fish_categorys',
-            render:(text,record,index)=>{
-                return <span>{text?text.join(','):''}</span>
+            render: (text, record, index) => {
+                return <span>{text ? text.join(',') : ''}</span>
             }
         }, {
             title: '池塘水源',
@@ -323,7 +323,9 @@ class PondList extends PureComponent {
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>
                         <Button onClick={() => this.showAddModal()}>新增塘口</Button>
-                        <Button style={{ marginLeft: '10px' }} onClick={() => this.onDelete(this.state.selectedRowKeys)}>删除塘口</Button>
+                        <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete(this.state.selectedRowKeys)}>
+                            <Button style={{ marginLeft: '10px' }} >删除塘口</Button>
+                        </Popconfirm>
                     </Row>
                     <Addmodal {...modalProps} />
                     <Table loading={loading}

@@ -182,7 +182,7 @@ export default class CompanyUserDetail extends React.Component {
                 <Card>
                     <Row>
                         <Col span={8}>
-                            <Radio.Group onChange={this.handleShowChange}>
+                            <Radio.Group value={this.state.isShowMap} onChange={this.handleShowChange}>
                                 <Radio.Button value={true}>地图查看</Radio.Button>
                                 <Radio.Button value={false}>列表查看</Radio.Button>
                             </Radio.Group>

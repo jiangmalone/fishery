@@ -81,10 +81,10 @@ class MapModal extends PureComponent {
             onOk={()=>this.props.onMapOk(this.state.address)}
             onCancel={this.props.onMapCancel}
             wrapClassName={this.props.wrapClassName}
-            width='80%'
+            width='70%'
             okText="确认"
             cancelText="取消">
-            <div style={{ height: '800px' }}>
+            <div style={{ height: '500px' }}>
                 <Map amapkey={'ae721b47f9c198651a4bfecec901aa8c'} version={'1.4.2'}
                     plugins={this.mapPlugins}
                     events={this.amapEvents} >

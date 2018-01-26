@@ -362,12 +362,13 @@ export default class CompanyUserList extends React.Component {
                             <Button onClick={this.showAddModal}>
                                 新建企业
                             </Button>
+                            <Popconfirm title="确认要删除嘛?" onConfirm={() =>this.onDelete(this.state.selectedRowKeys)}>
                             <Button
                                 className={styles.button}
-                                onClick={() => this.onDelete(this.state.selectedRowKeys)}
                             >
                                 删除企业
                             </Button>
+                            </Popconfirm>
                         </div>
                         <Table
                             loading={this.props.loading}

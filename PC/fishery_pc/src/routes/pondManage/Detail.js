@@ -12,15 +12,15 @@ const Search = Input.Search;
     pondList: state.pond.pondList,
     loading: state.pond.loading,
     pagination2: state.pond.pagination2,
-    pondInfo:state.pond.pondInfo
+    pondInfo: state.pond.pondInfo
 }))
 
 class PondDetail extends PureComponent {
     componentDidMount() {
         console.log(this.props.match)
         this.props.dispatch({
-            type:'pond/fetchDetail',
-            payload:{
+            type: 'pond/fetchDetail',
+            payload: {
                 pondId: this.props.match.params.id
             }
         });
@@ -83,7 +83,7 @@ class PondDetail extends PureComponent {
     }
 
     render() {
-        const { pondList, loading, pagination2 ,pondInfo} = this.props;
+        const { pondList, loading, pagination2, pondInfo } = this.props;
 
         const columns = [{
             title: '序号',
@@ -98,7 +98,7 @@ class PondDetail extends PureComponent {
             key: 'device_sn',
             render: (text, record, index) => {
                 console.log(record)
-                return <Link to={`/equipment/detail/${record.device_sn}/${record.relation}/${record.sensroId}`}>{text}</Link>
+                return <Link to={`/equipment/detail/${record.device_sn}/${record.relation}/${record.sensorId}`}>{text}</Link>
             }
         }, {
             title: '设备名称',
@@ -128,12 +128,12 @@ class PondDetail extends PureComponent {
                         <Col span={4}>深度（m）：{pondInfo.depth || ''}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>养殖品种：{pondInfo.fish_categorys?pondInfo.fish_categorys.join(','):''}</Col>
+                        <Col span={4}>养殖品种：{pondInfo.fish_categorys ? pondInfo.fish_categorys.join(',') : ''}</Col>
                         <Col span={4}>池塘水源：{pondInfo.water_source || ''}</Col>
                         <Col span={4}>底泥厚度(cm)：{pondInfo.sediment_thickness || ''}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>塘口密度(㎏/㎡)：{ pondInfo.density|| ''}</Col>
+                        <Col span={4}>塘口密度(㎏/㎡)：{pondInfo.density || ''}</Col>
                         <Col span={4}>塘口位置：{pondInfo.address || ''}</Col>
                         <Col span={4}></Col>
                     </Row>
@@ -147,6 +147,10 @@ class PondDetail extends PureComponent {
                         onChange={this.handleTableChange}
                     />
                 </Card>
+                <Button type="primary" style={{float:'right'}} onClick={()=>{history.back()}}>
+                   返回上一页
+                </Button>
+
             </PageHeaderLayout>
         );
     }

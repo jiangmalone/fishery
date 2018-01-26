@@ -321,16 +321,6 @@ export default class EquipmentManagement extends React.Component {
                                 />
                             </div>
                         </Col>
-                        <Col span={7}>
-                            <div style={{ marginBottom: 16 }}>
-                                设备名称：&nbsp;
-                                <Input
-                                    style={{ width: '200px' }}
-                                    value={this.state.name}
-                                    onChange={e => this.handleInputChange('name', e.target.value)}
-                                />
-                            </div>
-                        </Col>
                         <Col span={2}>
                             <Button type="primary" onClick={this.doSearch} >查询</Button>
                         </Col>

@@ -15,7 +15,7 @@ import Switch from 'antd/lib/switch';
 }))
 
 export default class EquipmentManagement extends React.Component {
- 
+
     constructor(props) {
         super(props);
         this.state = {
@@ -69,7 +69,7 @@ export default class EquipmentManagement extends React.Component {
             payload: {
                 device_sns: idArray,
                 pagination: this.props.pagination,
-                relation:'CO1'
+                relation: 'CO1'
             },
         });
         this.setState({
@@ -239,16 +239,16 @@ export default class EquipmentManagement extends React.Component {
                 render: (text, record, index) => {
                     let str = '';
                     if (record.device_sn != undefined) {
-                        const type = record.device_sn.substring(0,2);
+                        const type = record.device_sn.substring(0, 2);
                         switch (type) {
-                            case '01': 
-                            case '02': 
+                            case '01':
+                            case '02':
                                 str = '一体机';
                                 break;
                             case '03':
                                 str = '传感器';
                                 break;
-                            case '04': 
+                            case '04':
                                 str = '控制器';
                                 break;
                             default:
@@ -269,16 +269,16 @@ export default class EquipmentManagement extends React.Component {
                     let str = '';
                     if (record.status != undefined) {
                         switch (record.status) {
-                            case 0: 
+                            case 0:
                                 str = '正常';
                                 break;
-                            case 1: 
+                            case 1:
                                 str = '离线';
                                 break;
                             case 2:
                                 str = '断电';
                                 break;
-                            case 3: 
+                            case 3:
                                 str = '缺相';
                                 break;
                             case 4:
@@ -342,12 +342,10 @@ export default class EquipmentManagement extends React.Component {
                             <Button onClick={this.showAddModal}>
                                 新建设备
                             </Button>
-                            <Button
-                                className={styles.deletebutton}
-                                onClick={() => this.onDelete(this.state.selectedRowKeys)}
-                            >
-                                删除设备
-                            </Button>
+                            <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete(this.state.selectedRowKeys)}>
+                                <Button className={styles.deletebutton} > 删除设备</Button>
+                            </Popconfirm>
+
                         </div>
                         <Table
                             loading={this.props.loading}

@@ -15,7 +15,7 @@
 
 	<!-- 开启socket服务 -->
 	<listener>
-		<listener-class>com.geariot.platform.fishery.server.SocketServerLoader</listener-class>
+		<listener-class>com.geariot.platform.fishery.socket.SocketServiceLoader</listener-class>
 	</listener> 
 	
 	<welcome-file-list>

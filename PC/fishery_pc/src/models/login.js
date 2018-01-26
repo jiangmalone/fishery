@@ -15,7 +15,6 @@ export default {
         payload: true,
       });
       const response = yield call(login, payload);
-      console.log(response)
       yield put({
         type: 'changeLoginStatus',
         payload: response,
@@ -23,6 +22,7 @@ export default {
       // Login successfully
     
       if (response.code == 0) {
+        window.localStorage.setItem('adminId',response.data.id)
         window.localStorage.setItem('account',payload.account)
         yield put(routerRedux.push('/'));
       }

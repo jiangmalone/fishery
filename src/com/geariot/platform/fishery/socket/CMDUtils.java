@@ -40,39 +40,34 @@ public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static Map<String, SocketChannel> clientMap = new ConcurrentHashMap<String, SocketChannel>();
-	/*private static	byte[] response = null;
-	private static byte[] data=null;
-	private static SocketChannel readChannel=null;
-	private static String deviceSn;
-	private static byte way;*/
-	private static  AtomicBoolean feedback=new AtomicBoolean();
+	//private static  AtomicBoolean feedback=new AtomicBoolean();
     private static SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-	
-	public static  AtomicBoolean getFeedback() {
+	private static Map<String,String> feedback=new ConcurrentHashMap<String,String>();
+	/*public static synchronized AtomicBoolean getFeedback() {
 		return feedback;
-	}
-	public static void setFeedback(AtomicBoolean feedback) {
+	} 
+	public static synchronized void setFeedback(AtomicBoolean feedback) {
 		CMDUtils.feedback = feedback;
-	}
-	public static Map<String, SocketChannel> getclientMap()
+	}*/
+	
+	
+	public static  Map<String, SocketChannel> getclientMap()
 	{
 		return clientMap;
 	}
-	/*@SuppressWarnings("unchecked")
-	public static void preHandle(SelectionKey key) {
-		
-		Map<String,Object> attachmentObject=(Map<String,Object>) key.attachment();
-		 data =(byte[]) attachmentObject.get("data");		
-		 readChannel=(SocketChannel) attachmentObject.get("readChannel");
-		 deviceSn=(String) attachmentObject.get("deviceSn");
-		 
-		 way=(byte) attachmentObject.get("way");
-        
-	}*/
+	
+	public static Map<String, String> getFeedback() {
+		return feedback;
+	}
+
+	public static void setFeedback(Map<String, String> feedback) {
+		CMDUtils.feedback = feedback;
+	}
+
 	// 自检
 	public static void selfTestCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
 		  
-		//preHandle(key);
+		
 		clientMap.put(deviceSn, readChannel); 
 		    byte ac = data[7];
 			byte[] byteLongitude =new byte[4];
@@ -157,7 +152,7 @@ public class CMDUtils {
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-	    return responseToBrowser();
+	    return responseToBrowser("2",limit.getDevice_sn());
         
 	}
 
@@ -226,11 +221,7 @@ public class CMDUtils {
 
 	// 220v断电报警
 	public static void voltageAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		 //preHandle(key);
-		//byte check5 = data[7];
-			//String suffix5 = CommonUtils.printHexStringMerge(data,8,4);
-			
-			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+		
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
@@ -260,13 +251,7 @@ public class CMDUtils {
 
 	// 增氧机打开后半小时内效果不明显报警
 	public static void oxygenExceptionAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		 //preHandle(key);
-		//byte check9 = data[7];
-			//System.out.println("check = "+check9);
-			//String suffix9 = CommonUtils.printHexStringMerge(data,8,4);
-			//System.out.println("suffix = "+suffix9);
-			
-			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+		
 			
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
@@ -297,13 +282,7 @@ public class CMDUtils {
 
 	// 取消所有报警
 	public static void cancelAllAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		 //preHandle(key);
-		//byte check10 = data[7];
-			//System.out.println("check = "+check10);
-			//String suffix10 = CommonUtils.printHexStringMerge(data,8,4);
-			//System.out.println("suffix = "+suffix10);
-			
-			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+		
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
@@ -389,7 +368,7 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 
-		return responseToBrowser();
+		return responseToBrowser("7",deviceSn);
 
 	}
 
@@ -416,7 +395,7 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 	
-	    return responseToBrowser();
+	    return responseToBrowser("8",deviceSn);
 	}
 
 	// 服务器设置设备使用哪路传感器，这个指令在前台尚未有调用的地方，先放在这
@@ -442,7 +421,7 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 	
-	    return responseToBrowser();
+	    return responseToBrowser("12",deviceSn);
 	}
 
 	// 服务器校准命令
@@ -482,7 +461,7 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 	
-	    return responseToBrowser();
+	    return responseToBrowser("13",deviceSn);
 	}
 
 	// 五分钟上传一次溶氧，水温和PH值信息
@@ -669,11 +648,13 @@ public class CMDUtils {
 		
 	}
 	//while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
-	public static Map<String, Object> responseToBrowser(){
+	public static Map<String, Object> responseToBrowser(String order,String deviceSn){
 		 long start=System.currentTimeMillis();
 		    long end=0;
 		    while(true) {
-		    	if(getFeedback().getAndSet(false)) {
+		    	Map<String,String> map=getFeedback();
+		    	if(map.containsKey(order)&&getFeedback().containsValue(deviceSn)) {
+		    		map.remove(order, deviceSn);
 		    		return RESCODE.SUCCESS.getJSONRES();
 		    	}
 		    	

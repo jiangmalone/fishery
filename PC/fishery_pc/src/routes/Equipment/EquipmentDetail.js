@@ -461,7 +461,7 @@ export default class EquipmentDetail extends React.Component {
                             value={this.state.selectControllerId}
                         >
                             {controllerOptions}
-                            <Option value={0}>无</Option>
+                            <Option value={'0'}>无</Option>
                         </Select>
                     </Row>
                     <Row style={{ marginTop: 20 }} >绑定端口: &nbsp;

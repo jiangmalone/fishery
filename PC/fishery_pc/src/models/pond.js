@@ -34,8 +34,6 @@ export default {
             }
             yield put({
                 type: 'changeModal',
-
-
             })
         },
         *fetch({ payload }, { call, put }) {

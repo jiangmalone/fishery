@@ -85,7 +85,7 @@ public class DataHandle {
 			//attachmentObject.put("deviceSn", deviceSn);
 			//attachmentObject.put("way", way);
 			try {
-				
+				 
 				switch (order) {
 				case 0:
 					CMDUtils.selfTestCMD(data,readChannel,deviceSn,way);
@@ -95,7 +95,8 @@ public class DataHandle {
 					CMDUtils.uploadLimitCMD(data,readChannel,deviceSn,way);
 					break;
 				case 2:
-					CMDUtils.setFeedback(new AtomicBoolean(true));
+					//CMDUtils.setFeedback(new AtomicBoolean(true));
+					CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
 					break;
 				case 3:
 					CMDUtils.timingUploadCMD(data,readChannel,deviceSn,way);
@@ -110,10 +111,12 @@ public class DataHandle {
 					CMDUtils.oxygenTimeCMD(data,readChannel,deviceSn,way);
 					break;
 				case 7:
-					CMDUtils.setFeedback(new AtomicBoolean(true));
+					//CMDUtils.setFeedback(new AtomicBoolean(true));
+					CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
 					break;
 				case 8:
-					CMDUtils.setFeedback(new AtomicBoolean(true));
+					//CMDUtils.setFeedback(new AtomicBoolean(true));
+					CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
 					break;
 				case 9:
 					CMDUtils.oxygenExceptionAlarmCMD(data,readChannel,deviceSn,way);
@@ -124,12 +127,14 @@ public class DataHandle {
 				case 11: // 0B
 					CMDUtils.timingDataCMD(data,readChannel,deviceSn,way);
 				case 12: // 0C
-					CMDUtils.setFeedback(new AtomicBoolean(true));
+					//CMDUtils.setFeedback(new AtomicBoolean(true));
+					CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
 					break;
 				case 13:// 0D
 					//服务器校准因为有2路传感器，先发送第一路校准，再发送第二路校准，在收到第二路校准的时候反馈给前端
 					if(way==2) {
-					CMDUtils.setFeedback(new AtomicBoolean(true));
+						//CMDUtils.setFeedback(new AtomicBoolean(true));
+						CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
 					}
 					break;
 				default:

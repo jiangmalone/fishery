@@ -15,9 +15,6 @@ import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Timer;
-import com.geariot.platform.fishery.entities.WXUser;
-import com.geariot.platform.fishery.service.SocketSerivce;
-import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 

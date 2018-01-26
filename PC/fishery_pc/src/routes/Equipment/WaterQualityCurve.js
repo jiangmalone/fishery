@@ -140,16 +140,15 @@ export default class WaterQualityCurve extends React.Component {
             <PageHeaderLayout >
                 <Card bordered={false}>
                     <Row style={{ fontSize: 17 }}>
-                        {/* <Col span={7}>设备编号: &nbsp;&nbsp; 南京鱼儿欢欢有限公司</Col>
-                        <Col span={5}>设备名称: &nbsp; 传感器01</Col>
+                        {/* <Col span={7}>设备编号: &nbsp;&nbsp; </Col>
                         <Col span={5}>设备状态: &nbsp; 在线</Col> */}
-                        <Col span={7}>设备名称: &nbsp;&nbsp; 传感器</Col>
+                        <Col span={7}>设备名称: &nbsp;&nbsp; 传感器（编号:{}）</Col>
                     </Row>
                     <Row style={{marginTop: 20}}>
                         <Col span={7}>
                             <Radio.Group onChange={e => this.handleTimeChange(e.target.value)} >
                                 <Radio.Button value="today" >今日</Radio.Button>
-                                <Radio.Button value="sevent">七日平均</Radio.Button>
+                                <Radio.Button value="sevent">七日</Radio.Button>
                                 {/* <Radio.Button value="small">区间</Radio.Button> */}
                             </Radio.Group>
                         </Col>
@@ -196,6 +195,9 @@ export default class WaterQualityCurve extends React.Component {
                         </Col>
                     </Row>
                 </Card>
+                <Button type="primary" style={{float:'right'}} onClick={()=>{history.back()}}>
+                   返回上一页
+                </Button>
             </PageHeaderLayout>
         );
     }

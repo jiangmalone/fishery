@@ -653,8 +653,8 @@ public class CMDUtils {
 		    long end=0;
 		    while(true) {
 		    	Map<String,String> map=getFeedback();
-		    	if(map.containsKey(order)&&getFeedback().containsValue(deviceSn)) {
-		    		map.remove(order, deviceSn);
+		    	if(order.equals(map.get(deviceSn))) {
+		    		map.remove(deviceSn,order);
 		    		return RESCODE.SUCCESS.getJSONRES();
 		    	}
 		    	

@@ -30,14 +30,6 @@ export default class CompanyUserDetail extends React.Component {
             ponds: [],
             selectMarker: ''//选择地图上的某个点
         }
-
-        this.markerEvents = {
-            click: (e) => {
-              console.log(e);
-            //   this.setState({selectMarker: 38})
-            },
-            // ... 支持绑定所有原生的高德 Marker 事件
-          }
     }
 
     componentDidMount() {
@@ -100,29 +92,29 @@ export default class CompanyUserDetail extends React.Component {
         })
     }
 
-    getInfoWindows = () => {
-        return this.state.ponds.map((item, index) => {
-            const position = {
-                longitude: item.longitude,
-                latitude: item.latitude
-            }
-            return ( <Link to={`/userManage/pondManage/detail/${item.id}`}>
-            <InfoWindow
-                position={position}
-                visible={this.state.selectMarker == item.id ? true : false}
-                isCustom={false}
-                key={index}
-                offset={[0, -30]}
-            >
-                <div>
-               {item.name}hahahah</div>
-            </InfoWindow></Link>)
-        })
-    }
-
     getMarker = () => {
+        const stylea = {
+            background: `url('http://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/map-marker-icon.png')`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            width: '30px',
+            height: '40px',
+            color: '#000',
+            textAlign: 'center',
+            lineHeight: '40px'
+          }
+          const styleb = {
+            background: '#fff',
+            padding: '5 5',
+          }
+
+          
         return this.state.ponds.map((item, index) => {
-    
+            let offset=( 0, 0 )
+            if (this.state.selectMarker == item.id) {
+              offset={x: 0, y: -20}
+            }
             const position = {
                 longitude: item.longitude,
                 latitude: item.latitude
@@ -131,9 +123,10 @@ export default class CompanyUserDetail extends React.Component {
             <Marker
                 position={position}
                 clickable='true'
-                events={this.markerEvents}
-                onClick={() => {this.setState({selectMarker: item.id}); console.log('her')}}
+                // offset={}
             >
+            <div style={stylea} onClick={() => {this.setState({selectMarker: item.id}); console.log('her')}} ></div>
+            {this.state.selectMarker == item.id &&<div style={styleb} onClick={() => {console.log("fuck");this.props.history.push(`/userManage/pondManage/detail/${item.id}`)}}><a style={{fontSize: 20}} >{item.name}</a></div>}
             </Marker>)
         })
     }
@@ -175,7 +168,6 @@ export default class CompanyUserDetail extends React.Component {
             }
         ];
 
-        // const infoWindows = this.getInfoWindows();
         const markers = this.getMarker();
         return (
             <PageHeaderLayout >
@@ -210,7 +202,6 @@ export default class CompanyUserDetail extends React.Component {
                                     markers={this.state.markers}
                                 /> */}
                                 {markers}
-                                {/* {infoWindows} */}
                             </Map>
                         </div> : <Table
                                 dataSource={this.state.ponds}

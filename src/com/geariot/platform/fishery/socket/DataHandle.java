@@ -42,8 +42,8 @@ public class DataHandle {
 				}
 			}
 			beatMap.put(deviceSn,sdf.format(new Date()));//在beatMap里面保存每次收到心跳包的时间
-			//每个设备心跳包发送的时间间隔为2分08秒，这里判断距离上一次时间是否大于9分钟，约等于3次，大于则说明离线
-			if(sdf.format(new Date()).compareTo(beatMap.get(deviceSn))>9) {
+			//每个设备心跳包发送的时间间隔为2分08秒，这里判断距离上一次时间是否大于5分钟，大于则说明离线
+			if(sdf.format(new Date()).compareTo(beatMap.get(deviceSn))>5) {
 				String judge=deviceSn.substring(0, 2);
 				SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 				if(judge.equals("01")||judge.equals("02")) {
@@ -96,7 +96,7 @@ public class DataHandle {
 					break;
 				case 2:
 					//CMDUtils.setFeedback(new AtomicBoolean(true));
-					CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
+					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					break;
 				case 3:
 					CMDUtils.timingUploadCMD(data,readChannel,deviceSn,way);
@@ -112,11 +112,11 @@ public class DataHandle {
 					break;
 				case 7:
 					//CMDUtils.setFeedback(new AtomicBoolean(true));
-					CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
+					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					break;
 				case 8:
 					//CMDUtils.setFeedback(new AtomicBoolean(true));
-					CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
+					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					break;
 				case 9:
 					CMDUtils.oxygenExceptionAlarmCMD(data,readChannel,deviceSn,way);
@@ -128,13 +128,13 @@ public class DataHandle {
 					CMDUtils.timingDataCMD(data,readChannel,deviceSn,way);
 				case 12: // 0C
 					//CMDUtils.setFeedback(new AtomicBoolean(true));
-					CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
+					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					break;
 				case 13:// 0D
 					//服务器校准因为有2路传感器，先发送第一路校准，再发送第二路校准，在收到第二路校准的时候反馈给前端
 					if(way==2) {
 						//CMDUtils.setFeedback(new AtomicBoolean(true));
-						CMDUtils.getFeedback().put(String.valueOf(order), deviceSn);
+						CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					}
 					break;
 				default:

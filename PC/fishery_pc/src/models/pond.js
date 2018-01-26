@@ -115,9 +115,15 @@ export default {
             const response = yield call(addPond, payload);
             if (response.code == '0') {
                 yield put({
-                    type: 'addList',
-                    payload: response.data,
-                });
+                    type: 'fetch',
+                    payload: {
+                        page: 1,
+                        relation: payload.relation,
+                        number: 10
+                    }
+                })
+            } else {
+                message.error(response.msg,1)
             }
         },
         *modifyPond({ payload }, { call, put }) {

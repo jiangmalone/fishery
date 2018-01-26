@@ -101,7 +101,13 @@ class Main extends React.Component {
     }
 
     showActionSheet = (device_sn, way) => {
-        const BUTTONS2 = ['确认打开', '取消', '自动增氧设置'];
+        //两种情况   已经打开，和没有打开
+        // let BOTTONS = [];
+        // if (device_sn) {
+        //     BOTTONS = ['确认关闭', '取消', '自动增氧设置'];
+        // } else {
+        //     BOTTONS = ['取消', '自动增氧设置'];
+        // }
         const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,

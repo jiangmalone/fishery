@@ -26,12 +26,14 @@ export default class EquipmentDetail extends React.Component {
         this.state = {
             loading: false,
             ponds: [],
-            realTimeData: [{
-                receiveTime: '',
-                oxygen: '',
-                water_temperature: '',
-                pH_value: ''
-            }],
+            realTimeData: [
+            //     {
+            //     receiveTime: '',
+            //     oxygen: '',
+            //     water_temperature: '',
+            //     pH_value: ''
+            // }
+        ],
             bindList: [],
             type: type,
             portIndex: '',
@@ -114,7 +116,11 @@ export default class EquipmentDetail extends React.Component {
             device_sn: this.props.match.params.device_sn
         }).then(res => {
             if (res.code == 0) {
-                // this.setState({ realTimeData: [res.data] })
+                if (res.data) {
+                    this.setState({ realTimeData: [res.data] })
+                } else {
+                    this.setState({realTimeData: []})
+                }
             } else {
                 message(res.msg, 2);
             }
@@ -395,7 +401,7 @@ export default class EquipmentDetail extends React.Component {
                         <Col span={8}>设备状态: &nbsp; {this.state.status}</Col>
                     </Row>
                     {Number(this.props.match.params.device_sn.slice(0, 2)) < 4 && <Row style={{ fontSize: 17, marginTop: 20 }}>
-                        <Col span={12}>绑定塘口: &nbsp;  <Select
+                        <Col span={8}>绑定塘口: &nbsp;  <Select
                             showSearch
                             style={{ width: 200 }}
                             placeholder="选择一个塘口"

@@ -123,7 +123,7 @@ export const getNavData = app => [
             path: 'water-quality',
             children: [
               {
-                path: ":id",
+                path: ":data",
                 component: dynamicWrapper(app, [], () => import('../routes/Equipment/WaterQualityCurve')),
               }
             ]

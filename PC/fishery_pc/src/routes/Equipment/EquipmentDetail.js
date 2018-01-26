@@ -392,6 +392,13 @@ export default class EquipmentDetail extends React.Component {
         let portOptions = this.state.ports.map((item, index) => {
             return <Option key={item.id} value={item.id}>{item.name}</Option>
         })
+        let data = {
+            device_sn: this.props.match.params.device_sn,
+            deviceName: this.state.deviceName,
+            status: this.state.status
+        }
+        data = JSON.stringify(data);
+        console.log(data);
         return (
             <PageHeaderLayout >
                 <Card bordered={false}>
@@ -433,7 +440,7 @@ export default class EquipmentDetail extends React.Component {
                         />
                     </Col>
                     <Col span={4} offset={2} style={{ paddingTop: 40 }}>
-                        <Link to={`/equipment/water-quality/${0}`}><Button size="large">水质曲线</Button></Link>
+                        <Link to={`/equipment/water-quality/${data}`}><Button size="large">水质曲线</Button></Link>
                     </Col>
                 </Card>
                 {this.state.type != 2 && <Card

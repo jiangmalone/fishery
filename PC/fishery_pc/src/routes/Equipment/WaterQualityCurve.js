@@ -22,11 +22,14 @@ export default class WaterQualityCurve extends React.Component {
 
     constructor(props) {
         super(props);
+        const data = JSON.parse(this.props.match.params.data);
         this.state = {
             oxygens: [],
             phs: [],
             temperatures: [],
-            device_sn: '0300001'
+            device_sn: data.device_sn,
+            name: data.deviceName,
+            status: data.status
         }
     }
 
@@ -42,10 +45,8 @@ export default class WaterQualityCurve extends React.Component {
                 console.log(res)
                 let oxygens = [], phs = [], temperatures = [];
                 res.oxygens.map((oxygen, index) => {
-                    console.log('111')
                     oxygens.push({
                         x: new Date(Date.parse(oxygen.receiveTime.replace(/-/g, "/"))),
-                        // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
                         y1: oxygen.oxygen
                     })
                 })
@@ -140,9 +141,8 @@ export default class WaterQualityCurve extends React.Component {
             <PageHeaderLayout >
                 <Card bordered={false}>
                     <Row style={{ fontSize: 17 }}>
-                        {/* <Col span={7}>设备编号: &nbsp;&nbsp; </Col>
-                        <Col span={5}>设备状态: &nbsp; 在线</Col> */}
-                        <Col span={7}>设备名称: &nbsp;&nbsp; 传感器（编号:{}）</Col>
+                        <Col span={10}>设备名称: &nbsp;&nbsp; {this.state.name}（编号:{this.state.device_sn}）</Col>
+                        <Col span={5}>设备状态: &nbsp; {this.state.status}</Col>
                     </Row>
                     <Row style={{marginTop: 20}}>
                         <Col span={7}>

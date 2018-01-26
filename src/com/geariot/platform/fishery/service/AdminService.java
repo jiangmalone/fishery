@@ -84,4 +84,20 @@ public class AdminService {
 		}
 	}
 
+	public Map<String, Object> modifyCompanyPSW(int companyId, String password) {
+		Admin exist = adminDao.findAdminByAdminId(companyId);
+		if(exist == null){
+			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
+		}else{
+			exist.setPassword(MD5.compute(password));
+			if(exist.getCompanyId()>0){
+				Company com = companyDao.findCompanyById(exist.getCompanyId());
+				com.setAccount(exist.getAccount());
+				com.setPassword(exist.getPassword());
+				com.setComment(exist.getComment());
+			}
+			return RESCODE.SUCCESS.getJSONRES();
+		}
+	}
+
 }

@@ -46,5 +46,8 @@ public class AdminController {
 		return adminService.modifyPSW(adminId, password);
 	}
 	
-	
+	@RequestMapping(value = "/modifyCompany" , method = RequestMethod.GET)
+	public Map<String,Object> modifyCompanyPSW(int companyId, String password){
+		return adminService.modifyCompanyPSW(companyId, password);
+	}
 }

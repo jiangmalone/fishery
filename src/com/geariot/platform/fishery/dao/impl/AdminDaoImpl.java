@@ -46,4 +46,12 @@ public class AdminDaoImpl implements AdminDao{
 		return (Admin) query.uniqueResult();
 	}
 
+	@Override
+	public Admin findAdminByCompanyId(int companyId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Admin");
+		Query query = queryUtils.addInteger("companyId", companyId).getQuery();
+		return (Admin) query.uniqueResult();
+		
+	}
+
 }

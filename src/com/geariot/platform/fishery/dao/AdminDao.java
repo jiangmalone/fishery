@@ -16,4 +16,6 @@ public interface AdminDao {
 	void save(Admin admin);
 	
 	Admin findAdminByAdminId(int adminId);
+	
+	Admin findAdminByCompanyId(int companyId);
 }

@@ -27,7 +27,7 @@ class MyEquipment extends React.Component {
     queryMyEquipment = () => {
         this.setState({ animating: true })
         myEquipment({
-            relationId: window.localStorage.getItem('relationId'),
+            relation: window.localStorage.getItem('relation'),
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {

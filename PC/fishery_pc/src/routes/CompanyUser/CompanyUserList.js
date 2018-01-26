@@ -286,7 +286,7 @@ export default class CompanyUserList extends React.Component {
                 title: '名称',
                 dataIndex: 'name',
                 render: (text, redcord, index) => {
-                    return <Link to={`company-user/${redcord.id}/${redcord.relationId}`}>{text}</Link>
+                    return <Link to={`company-user/${redcord.id}/${redcord.relation}`}>{text}</Link>
                 },
             },
             {

@@ -33,7 +33,7 @@ class AddPond extends PureComponent {
         this.props.form.validateFields((error, value) => {
             if (!error) {
             }
-            value.relation =window.localStorage.getItem('relationId');
+            value.relation =window.localStorage.getItem('relation');
             value.address = this.props.address;
             value.longitude = this.props.longitude;
             value.latitude = this.props.latitude;

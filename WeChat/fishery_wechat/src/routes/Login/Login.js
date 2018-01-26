@@ -74,7 +74,7 @@ class LoginIndex extends React.Component {
                 window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'))
                 window.localStorage.setItem('openid', getParameterByName('openid'))
                 window.localStorage.setItem('id', res.data.data.id)
-                window.localStorage.setItem('relationId', res.data.data.relationId)
+                window.localStorage.setItem('relation', res.data.data.relation)
                 window.localStorage.setItem("phone", res.data.data.phone);
                 window.localStorage.setItem("sex", res.data.data.sex);
                 window.localStorage.setItem("life", res.data.data.life);

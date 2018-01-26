@@ -217,7 +217,7 @@ class UserList extends PureComponent {
             dataIndex: 'name',
             key: 'name',
             render: (text, record, index) => {
-                return <Link to={`common-user/${record.relationId}`}>{text}</Link>
+                return <Link to={`common-user/${record.relation}`}>{text}</Link>
             }
         }, {
             title: '性别',

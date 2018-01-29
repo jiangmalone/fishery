@@ -411,6 +411,7 @@ export default class EquipmentDetail extends React.Component {
                         <Col span={8}>绑定塘口: &nbsp;  <Select
                             showSearch
                             style={{ width: 200 }}
+                            disabled = {this.state.pondId > 0?true:false}
                             placeholder="选择一个塘口"
                             optionFilterProp="children"
                             onChange={(v) => {
@@ -422,7 +423,7 @@ export default class EquipmentDetail extends React.Component {
                         >
                             {pondOptions}
                             <Option value={0}>无</Option>
-                        </Select></Col><Col span={8}>{this.state.pondId > 0 && <Popconfirm title="确认要删除嘛?" onConfirm={() =>this.disBind()}><Button>解绑</Button></Popconfirm>}</Col></Row>}
+                        </Select></Col><Col span={8}>{this.state.pondId > 0 && <Popconfirm title="确认要解绑嘛?" onConfirm={() =>this.disBind()}><Button>解绑</Button></Popconfirm>}</Col></Row>}
 
                 </Card>
                 <Card

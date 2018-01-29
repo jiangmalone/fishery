@@ -34,7 +34,7 @@ class UserLayout extends React.PureComponent {
     let title = 'Ant Design Pro';
     getRouteData('UserLayout').forEach((item) => {
       if (item.path === pathname) {
-        title = `${item.name} - Ant Design Pro`;
+        title = `Ant Design Pro`;
       }
     });
     return title;

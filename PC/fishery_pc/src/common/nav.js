@@ -14,11 +14,13 @@ export const getNavData = app => [
     layout: 'BasicLayout',
     name: '首页', // for breadcrumb
     path: '/',
+    isSideMenu: true,
     children: [
       {
         name: '首页',
         icon: 'home',
         path: 'analysis',
+        isSideMenu: true,
         component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Picture')),
 
       },
@@ -26,10 +28,12 @@ export const getNavData = app => [
         name: '用户管理',
         path: 'userManage',
         icon: 'team',
+        isSideMenu: true,
         children: [
           {
             name: '普通用户',
             path: 'common-user',
+            isSideMenu: true,
             children: [
               {
                 path: '',
@@ -44,6 +48,7 @@ export const getNavData = app => [
           {
             name: '企业用户',
             path: 'company-user',
+            isSideMenu: true,
             // component: dynamicWrapper(app, ['form'], () => import('../routes/CompanyUser/CompanyUserList')),
             children: [
               {
@@ -51,12 +56,14 @@ export const getNavData = app => [
                 component: dynamicWrapper(app, ['companyuser'], () => import('../routes/CompanyUser/CompanyUserList')),
               },
               {
-                // name: '企业用户',
+                name: '企业用户详情',
                 path: ':id/:relation',
+                isSideMenu: false,
                 component: dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail')),
               },
               {
-                // name: '企业用户',
+                // name: '设备列表',
+                isSideMenu: false,
                 path: '/equipment',
                 component: dynamicWrapper(app, [], () => import('../routes/Equipment/Query')),
               },
@@ -66,11 +73,13 @@ export const getNavData = app => [
           {
             // name: '企业用户',
             path: 'company-user-detail',
+            isSideMenu: false,
             component: dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail')),
           },
           {
-            name: '',
+            // name: '塘口管理',
             path: 'pondManage',
+            isSideMenu: false,
             children: [
               {
                 path: ':relation',
@@ -87,6 +96,7 @@ export const getNavData = app => [
         name: '设备查询',
         path: 'equipmentsQuery',
         icon: 'bars',
+        isSideMenu: true,
         component: dynamicWrapper(app, ['allEquipment'], () => import('../routes/Equipment/AllEquipment')),
 
       },
@@ -94,6 +104,7 @@ export const getNavData = app => [
         name: '账户管理',
         path: 'account-management',
         icon: 'user',
+        isSideMenu: true,
         component: dynamicWrapper(app, ['login'], () => import('../routes/AccountManagement/AccountManagement')),
 
       },
@@ -102,14 +113,16 @@ export const getNavData = app => [
         path: 'equipment',
         children: [
           {
-            // name: '设备管理',
+            name: '设备管理',
             path: ':relation',
+            isSideMenu: false,
             component: dynamicWrapper(app, ['equipment'], () => import('../routes/Equipment/EquipmentManagement')),
           },
 
           {
-            // name: '设备详情',
+            name: '设备详情',
             path: 'detail',
+            isSideMenu: false,
             children: [
               {
                 path: ':device_sn/:relation/:id',
@@ -121,6 +134,7 @@ export const getNavData = app => [
           {
             name: '水质曲线',
             path: 'water-quality',
+            isSideMenu: false,
             children: [
               {
                 path: ":data",

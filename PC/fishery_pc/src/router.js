@@ -34,6 +34,7 @@ function getLayout(navData, path) {
     layout: route.layout,
     name: route.name,
     path: route.path,
+    isSideMenu: route.isSideMenu
   };
 }
 

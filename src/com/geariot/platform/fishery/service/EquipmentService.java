@@ -22,6 +22,7 @@ import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.SensorDao;
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.dao.TimerDao;
+import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
@@ -29,6 +30,7 @@ import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.ExcelData;
 import com.geariot.platform.fishery.model.Oxygen;
@@ -66,6 +68,9 @@ public class EquipmentService {
 
 	@Autowired
 	private CompanyDao companyDao;
+	
+	@Autowired
+	private WXUserDao wxUserDao;
 
 	private String type = "";
 	private String relation = "";
@@ -73,6 +78,7 @@ public class EquipmentService {
 	private AIO aio = null;
 	private Sensor sensor = null;
 	private Controller controller = null;
+	private WXUser wxUser = null;
 
 	public Map<String, Object> setLimit(Limit_Install limit_Install) {
 		String deviceSn;
@@ -201,7 +207,7 @@ public class EquipmentService {
 				AIO aio = new AIO();
 				aio.setDevice_sn(device_sn);
 				aio.setName(name);
-				aio.setrelation(relation);
+				aio.setRelation(relation);
 				aio.setStatus(1);
 				aio.setType(Integer.parseInt(deviceSn));
 				aioDao.save(aio);
@@ -215,7 +221,7 @@ public class EquipmentService {
 				Sensor sensor = new Sensor();
 				sensor.setDevice_sn(device_sn);
 				sensor.setName(name);
-				sensor.setrelation(relation);
+				sensor.setRelation(relation);
 				sensor.setStatus(1);
 				sensor.setPort_status("00");
 				sensorDao.save(sensor);
@@ -229,7 +235,7 @@ public class EquipmentService {
 				Controller controller = new Controller();
 				controller.setDevice_sn(device_sn);
 				controller.setName(name);
-				controller.setrelation(relation);
+				controller.setRelation(relation);
 				controller.setStatus(1);
 				controller.setPort_status("0000");
 				controllerDao.save(controller);
@@ -333,54 +339,118 @@ public class EquipmentService {
 			switch (type) {
 			case "01":
 				aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
-				relation = aio.getrelation();
-				equipment.setrelation(relation);
-				if (relation != null && relation.contains("CO")) {
-					company = companyDao.findCompanyByrelation(relation);
-					equipment.setCompanyName(company.getName());
-					equipment.setCompanyId(company.getId());
-				} else {
-					equipment.setCompanyName("");
-					equipment.setCompanyId(0);
+				relation = aio.getRelation();
+				if(relation == null){
+					equipment.setName("");
+					equipment.setRelation("0");
+				}else{
+					if(relation.contains("CO")){
+						company = companyDao.findCompanyByRelation(relation);
+						if(company == null){
+							equipment.setName("");
+							equipment.setRelation("0");
+						}
+						equipment.setUserName(company.getName());
+						equipment.setRelation(relation);
+					}else if(relation.contains("WX")){
+						wxUser = wxUserDao.findUserByRelation(relation);
+						if(wxUser == null){
+							equipment.setName("");
+							equipment.setRelation("0");
+						}
+						equipment.setUserName(wxUser.getName());
+						equipment.setRelation(relation);
+					}else{
+						equipment.setName("");
+						equipment.setRelation("0");
+					}
 				}
 				break;
 			case "02":
 				aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
-				relation = aio.getrelation();
-				equipment.setrelation(relation);
-				if (relation != null && relation.contains("CO")) {
-					company = companyDao.findCompanyByrelation(relation);
-					equipment.setCompanyName(company.getName());
-					equipment.setCompanyId(company.getId());
-				} else {
-					equipment.setCompanyName("");
-					equipment.setCompanyId(0);
+				relation = aio.getRelation();
+				if(relation == null){
+					equipment.setName("");
+					equipment.setRelation("0");
+				}else{
+					if(relation.contains("CO")){
+						company = companyDao.findCompanyByRelation(relation);
+						if(company == null){
+							equipment.setName("");
+							equipment.setRelation("0");
+						}
+						equipment.setUserName(company.getName());
+						equipment.setRelation(relation);
+					}else if(relation.contains("WX")){
+						wxUser = wxUserDao.findUserByRelation(relation);
+						if(wxUser == null){
+							equipment.setName("");
+							equipment.setRelation("0");
+						}
+						equipment.setUserName(wxUser.getName());
+						equipment.setRelation(relation);
+					}else{
+						equipment.setName("");
+						equipment.setRelation("0");
+					}
 				}
 				break;
 			case "03":
 				sensor = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn());
-				relation = sensor.getrelation();
-				equipment.setrelation(relation);
-				if (relation != null && relation.contains("CO")) {
-					company = companyDao.findCompanyByrelation(relation);
-					equipment.setCompanyName(company.getName());
-					equipment.setCompanyId(company.getId());
-				} else {
-					equipment.setCompanyName("");
-					equipment.setCompanyId(0);
+				relation = sensor.getRelation();
+				if(relation == null){
+					equipment.setName("");
+					equipment.setRelation("0");
+				}else{
+					if(relation.contains("CO")){
+						company = companyDao.findCompanyByRelation(relation);
+						if(company == null){
+							equipment.setName("");
+							equipment.setRelation("0");
+						}
+						equipment.setUserName(company.getName());
+						equipment.setRelation(relation);
+					}else if(relation.contains("WX")){
+						wxUser = wxUserDao.findUserByRelation(relation);
+						if(wxUser == null){
+							equipment.setName("");
+							equipment.setRelation("0");
+						}
+						equipment.setUserName(wxUser.getName());
+						equipment.setRelation(relation);
+					}else{
+						equipment.setName("");
+						equipment.setRelation("0");
+					}
 				}
 				break;
 			case "04":
 				controller = controllerDao.findControllerByDeviceSns(equipment.getDevice_sn());
-				relation = controller.getrelation();
-				equipment.setrelation(relation);
-				if (relation != null && relation.contains("CO")) {
-					company = companyDao.findCompanyByrelation(relation);
-					equipment.setCompanyName(company.getName());
-					equipment.setCompanyId(company.getId());
-				} else {
-					equipment.setCompanyName("");
-					equipment.setCompanyId(0);
+				relation = controller.getRelation();
+				if(relation == null){
+					equipment.setName("");
+					equipment.setRelation("0");
+				}else{
+					if(relation.contains("CO")){
+						company = companyDao.findCompanyByRelation(relation);
+						if(company == null){
+							equipment.setName("");
+							equipment.setRelation("0");
+						}
+						equipment.setUserName(company.getName());
+						equipment.setRelation(relation);
+					}else if(relation.contains("WX")){
+						wxUser = wxUserDao.findUserByRelation(relation);
+						if(wxUser == null){
+							equipment.setName("");
+							equipment.setRelation("0");
+						}
+						equipment.setUserName(wxUser.getName());
+						equipment.setRelation(relation);
+					}else{
+						equipment.setName("");
+						equipment.setRelation("0");
+					}
 				}
 				break;
 			default:
@@ -401,7 +471,7 @@ public class EquipmentService {
 	public Map<String, Object> companyFindEquipment(String device_sn, String relation, int page, int number) {
 		int from = (page - 1) * number;
 		Sensor sensor = null;
-		Company company = companyDao.findCompanyByrelation(relation);
+		Company company = companyDao.findCompanyByRelation(relation);
 		if (company == null) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {

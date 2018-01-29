@@ -502,19 +502,19 @@ public class CMDUtils {
 			AIO aio=new AIO();
 			aio=service.findAIOByDeviceSn(deviceSn);
 			if(aio!=null) {
-			relation=aio.getrelation();
+			relation=aio.getRelation();
 			System.out.println(relation);
 			}
 		}else if(type.equals("03")) {
 		Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 		if(sensor!=null) {
-		relation=sensor.getrelation();
+		relation=sensor.getRelation();
 		}
 		}else if(type.equals("04")) {
 			Controller controller=new Controller();
 			controller=service.findControllerByDeviceSn(deviceSn);
 			if(controller!=null) {
-			relation=controller.getrelation();
+			relation=controller.getRelation();
 			}
 		}
 		System.out.println(statusStr);

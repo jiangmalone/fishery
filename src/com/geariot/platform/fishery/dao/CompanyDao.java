@@ -10,7 +10,7 @@ public interface CompanyDao {
 
 	Company findCompanyById(int id);
 	
-	Company findCompanyByrelation(String relation);
+	Company findCompanyByRelation(String relation);
 
 	void deleteCompany(int companyId);
 

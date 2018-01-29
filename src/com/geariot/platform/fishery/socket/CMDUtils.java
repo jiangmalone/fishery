@@ -40,15 +40,9 @@ public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static Map<String, SocketChannel> clientMap = new ConcurrentHashMap<String, SocketChannel>();
-	//private static  AtomicBoolean feedback=new AtomicBoolean();
     private static SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	private static Map<String,String> feedback=new ConcurrentHashMap<String,String>();
-	/*public static synchronized AtomicBoolean getFeedback() {
-		return feedback;
-	} 
-	public static synchronized void setFeedback(AtomicBoolean feedback) {
-		CMDUtils.feedback = feedback;
-	}*/
+	
 	
 	
 	public static  Map<String, SocketChannel> getclientMap()
@@ -111,9 +105,6 @@ public class CMDUtils {
 			byte[] bytelow = new byte[4];
 			CommonUtils.arrayHandle(data, bytelow, 15, 0, 4);
 			float low= CommonUtils.byte2float(bytelow,0);
-			//byte check1 = data[19];
-			//String suffix1 = CommonUtils.printHexStringMerge(data,20,4);
-			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 			Limit_Install limit=new Limit_Install();
 			limit.setDevice_sn(deviceSn);
 			limit.setWay(way);
@@ -186,11 +177,7 @@ public class CMDUtils {
 
 	// 增氧机缺相报警
 	public static void oxygenAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		// preHandle(key);    
-		//byte check4 = data[7];
-			//String suffix4 = CommonUtils.printHexStringMerge(data,8,4);
-			
-			//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+		
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
@@ -477,10 +464,7 @@ public class CMDUtils {
 		CommonUtils.arrayHandle(data, bytePhValue, 15, 0, 4);
 		float phValue=CommonUtils.byte2float(bytePhValue,0);
 		String receiveTime = sdf.format(new Date());
-		//byte check3 = data[19];
-		//String suffix3 = CommonUtils.printHexStringMerge(data,20,4);
 		
-		//SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 		Sensor_Data sData=new Sensor_Data();
 		sData.setDevice_sn(deviceSn);
 		sData.setWay(way);

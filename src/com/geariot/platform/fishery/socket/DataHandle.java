@@ -20,14 +20,11 @@ import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
 
 public class DataHandle {
-	private static Map<String,String> beatMap=new ConcurrentHashMap<String,String>();
-	private static SimpleDateFormat sdf=new SimpleDateFormat("mm");
+	private  Map<String,String> beatMap=new ConcurrentHashMap<String,String>();
+	private  SimpleDateFormat sdf=new SimpleDateFormat("mm");
 	
-	public static void handle(byte[] data,SocketChannel readChannel) {
-		//Map<String, Object> attachmentObject = (Map<String, Object>) key.attachment();
-		//byte[] data = (byte[]) attachmentObject.get("data");
+	public void handle(byte[] data,SocketChannel readChannel) {
 		
-		//SocketChannel readChannel = (SocketChannel) attachmentObject.get("readChannel");	
 		String prefix = CommonUtils.printHexStringMerge(data, 0, 2);
 		//心跳包socket，如果有3次没收到终端发来的心跳包则认为设备已经离线
 		//[62 65 61 74 5F 49 44 3D 78 78 78 78 78 78 0D 0A ]
@@ -62,7 +59,7 @@ public class DataHandle {
 					service.updateController(controller);
 					beatMap.remove(deviceSn);
 				}
-					
+				CMDUtils.getclientMap().remove(deviceSn);//如果离线了就把clientmap里面存的socketchannel移除	
 			}
 			byte[] resdata=Arrays.copyOf(data, 16);
 			ByteBuffer outBuffer = ByteBuffer.wrap(resdata);
@@ -82,8 +79,7 @@ public class DataHandle {
 			String deviceSn = CommonUtils.printHexStringMerge(byteID,0,3);
 			byte way = data[5];
 			byte order = data[6];
-			//attachmentObject.put("deviceSn", deviceSn);
-			//attachmentObject.put("way", way);
+			
 			try {
 				 
 				switch (order) {
@@ -95,7 +91,7 @@ public class DataHandle {
 					CMDUtils.uploadLimitCMD(data,readChannel,deviceSn,way);
 					break;
 				case 2:
-					//CMDUtils.setFeedback(new AtomicBoolean(true));
+					
 					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					break;
 				case 3:
@@ -111,11 +107,11 @@ public class DataHandle {
 					CMDUtils.oxygenTimeCMD(data,readChannel,deviceSn,way);
 					break;
 				case 7:
-					//CMDUtils.setFeedback(new AtomicBoolean(true));
+					
 					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					break;
 				case 8:
-					//CMDUtils.setFeedback(new AtomicBoolean(true));
+					
 					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					break;
 				case 9:
@@ -127,13 +123,13 @@ public class DataHandle {
 				case 11: // 0B
 					CMDUtils.timingDataCMD(data,readChannel,deviceSn,way);
 				case 12: // 0C
-					//CMDUtils.setFeedback(new AtomicBoolean(true));
+					
 					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					break;
 				case 13:// 0D
 					//服务器校准因为有2路传感器，先发送第一路校准，再发送第二路校准，在收到第二路校准的时候反馈给前端
 					if(way==2) {
-						//CMDUtils.setFeedback(new AtomicBoolean(true));
+						
 						CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
 					}
 					break;

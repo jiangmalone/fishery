@@ -348,7 +348,7 @@ class UserInfo extends PureComponent {
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
                         <Col span={4}>养殖年限：{this.state.userInfo.life}年</Col>
-                        <Col span={4}>塘口位置：{this.state.userInfo.address}</Col>
+                        <Col span={4}>联系地址：{this.state.userInfo.address}</Col>
                         <Col span={4}></Col>
                     </Row>
 

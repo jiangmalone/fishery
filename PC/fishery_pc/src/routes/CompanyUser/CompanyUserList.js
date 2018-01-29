@@ -169,7 +169,6 @@ export default class CompanyUserList extends React.Component {
                     data: values
                 },
             });
-            console.log(22)
         } else {
             this.props.dispatch({
                 type: 'companyUser/modifyAccount',

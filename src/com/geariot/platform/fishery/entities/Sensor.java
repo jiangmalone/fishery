@@ -22,6 +22,8 @@ public class Sensor {
 	private String relation;				//绑定的用户relation
 	private String port_status;				//表示传感器两路绑定状态, 如01 00 10 11等
 	
+	
+	//以下这些字段均用@Transient注解了
 	private float oxygen;						//溶氧量
 	private float water_temperature;			//水温
 	private float pH_value;						//ph值

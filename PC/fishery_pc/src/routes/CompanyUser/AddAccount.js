@@ -23,7 +23,7 @@ function AddAccount({ visible, form, onOk, onCancel, wrapClassName, modifyId }) 
             callback();
         }
     }
-    return <Modal title={modifyId ? "新增账户" : '修改账户'}
+    return <Modal title={modifyId ? '修改账户':"新增账户"}
         visible={visible}
         onOk={() => {
             let obj = {}

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd';
+import { Table, Card, Row, Col, Input, Button, Popconfirm,message } from 'antd';
 import { wxuserDetail, relationDetail } from '../../services/user.js';
 import { myEquipment } from '../../services/equipment.js';
 import { Link } from 'react-router-dom';
@@ -259,6 +259,8 @@ class UserInfo extends PureComponent {
                     addPond(values).then((response)=>{
                         if (response.code == '0') {
                             this.onSearchUserPond();
+                        } else {
+                            message.error(response.msg,1)
                         }
                     })
                 } else {

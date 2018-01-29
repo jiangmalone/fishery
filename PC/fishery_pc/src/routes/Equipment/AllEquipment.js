@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { Table, Card, Row, Col, Input, Button } from 'antd'
 import { Link } from 'react-router-dom'
+import index from '../../../node_modules/_antd@3.0.1@antd/lib/row';
 
 @connect(state => ({
     list: state.allequipment.list,
@@ -77,7 +78,7 @@ class AllEquipmentQuery extends PureComponent {
             },
             {
                 title: '所属企业',
-                dataIndex: 'companyName',
+                dataIndex: 'companyName'
             },
             {
                 title: '设备状态',

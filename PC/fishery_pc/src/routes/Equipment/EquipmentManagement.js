@@ -229,7 +229,6 @@ export default class EquipmentManagement extends React.Component {
                 title: '设备编号',
                 dataIndex: 'device_sn',
                 render: (text, record, index) => {
-                    console.log(record)
                     return <Link to={`/equipment/detail/${record.device_sn}/${this.props.match.params.relation}/${record.sensorId}`}>{text}</Link>
                 },
             },

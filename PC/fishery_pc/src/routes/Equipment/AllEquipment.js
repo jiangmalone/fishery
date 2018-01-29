@@ -53,7 +53,6 @@ class AllEquipmentQuery extends PureComponent {
 
 
     render() {
-        console.log(this.props)
         const { list, loading } = this.props;
 
         const columns = [

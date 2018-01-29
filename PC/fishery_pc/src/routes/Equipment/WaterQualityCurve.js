@@ -42,7 +42,6 @@ export default class WaterQualityCurve extends React.Component {
             device_sn: this.state.device_sn,
         }).then((res) => {
             if (res && res.code == 0) {
-                console.log(res)
                 let oxygens = [], phs = [], temperatures = [];
                 res.oxygens.map((oxygen, index) => {
                     oxygens.push({
@@ -51,7 +50,6 @@ export default class WaterQualityCurve extends React.Component {
                     })
                 })
                 res.phs.map((ph, index) => {
-                    console.log('222')
                     phs.push({
                         // x: new Date().getTime(ph.receiveTime),
                         x: new Date(Date.parse(ph.receiveTime.replace(/-/g, "/"))),
@@ -86,30 +84,22 @@ export default class WaterQualityCurve extends React.Component {
             device_sn: this.state.device_sn,
         }).then((res) => {
             if (res && res.code == 0) {
-                console.log(res)
                 let oxygens = [], phs = [], temperatures = [];
                 res.oxygens.map((oxygen, index) => {
-                    console.log('111')
                     oxygens.push({
                         x: new Date(Date.parse(oxygen.receiveTime.replace(/-/g, "/"))),
-                        // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
                         y1: oxygen.oxygen
                     })
                 })
                 res.phs.map((ph, index) => {
-                    console.log('222')
                     phs.push({
-                        // x: new Date().getTime(ph.receiveTime),
                         x: new Date(Date.parse(ph.receiveTime.replace(/-/g, "/"))),
-                        // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
                         y1: ph.ph
                     })
                 })
                 res.temperatures.map((temperature, index) => {
                     temperatures.push({
-                        // x: new Date().getTime(temperature.receiveTime),
                         x: new Date(Date.parse(temperature.receiveTime.replace(/-/g, "/"))),
-                        // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
                         y1: temperature.temperature
                     })
                 })
@@ -128,7 +118,6 @@ export default class WaterQualityCurve extends React.Component {
     }
 
     handleTimeChange = (value) => {
-        console.log(value)
         if (value == 'today') {
             this.getDataToday();
         } else if (value == 'sevent') {
@@ -136,7 +125,6 @@ export default class WaterQualityCurve extends React.Component {
         }
     }
     render() {
-        console.log(this.state.oxygens)
         return (
             <PageHeaderLayout >
                 <Card bordered={false}>

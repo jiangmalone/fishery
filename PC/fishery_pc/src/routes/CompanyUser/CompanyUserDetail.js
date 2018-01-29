@@ -93,41 +93,28 @@ export default class CompanyUserDetail extends React.Component {
     }
 
     getMarker = () => {
-        const stylea = {
-            background: `url('http://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/map-marker-icon.png')`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            width: '30px',
-            height: '40px',
-            color: '#000',
-            textAlign: 'center',
-            lineHeight: '40px'
-          }
-          const styleb = {
-            background: '#fff',
-            padding: '5 5',
-          }
-
-          
         return this.state.ponds.map((item, index) => {
-            let offset=( 0, 0 )
-            if (this.state.selectMarker == item.id) {
-              offset={x: 0, y: -20}
-            }
-            const position = {
-                longitude: item.longitude,
-                latitude: item.latitude
-            }
-            return (
-            <Marker
-                position={position}
-                clickable='true'
-                // offset={}
-            >
-            <div style={stylea} onClick={() => {this.setState({selectMarker: item.id}); console.log('her')}} ></div>
-            {this.state.selectMarker == item.id &&<div style={styleb} onClick={() => {console.log("fuck");this.props.history.push(`/userManage/pondManage/detail/${item.id}`)}}><a style={{fontSize: 20}} >{item.name}</a></div>}
-            </Marker>)
+            // if (!(item.longitude == 0 && item.latitude == 0)) {
+                
+            // } 
+            let offset = (0, 0)
+                if (this.state.selectMarker == item.id) {
+                    offset = { x: 0, y: -20 }
+                }
+                const position = {
+                    longitude: item.longitude,
+                    latitude: item.latitude
+                }
+                return (
+                    <Marker
+                        position={position}
+                        clickable='true'
+                        visible={(item.longitude == 0 && item.latitude == 0) ? false : true}
+                        key={index}
+                    >
+                        <div className={styles.mapMakerIcon} onClick={() => { this.setState({ selectMarker: item.id }) }} ></div>
+                        {this.state.selectMarker == item.id && <div className={styles.mapMaker} onClick={() => { this.props.history.push(`/userManage/pondManage/detail/${item.id}`) }}>塘口名称: <a >{item.name}</a></div>}
+                    </Marker>)
         })
     }
 

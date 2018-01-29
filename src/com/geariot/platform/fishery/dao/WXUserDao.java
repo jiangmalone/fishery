@@ -11,6 +11,8 @@ public interface WXUserDao {
 	WXUser findUserById(int Id);
 
 	WXUser findUserByPhone(String phone);
+	
+	WXUser findUserByRelation(String relation);
 
 	void deleteUser(int WXUserId);
 

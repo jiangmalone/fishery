@@ -41,10 +41,10 @@ public class Controller {
 	public void setPondId(int pondId) {
 		this.pondId = pondId;
 	}
-	public String getrelation() {
+	public String getRelation() {
 		return relation;
 	}
-	public void setrelation(String relation) {
+	public void setRelation(String relation) {
 		this.relation = relation;
 	}
 	public String getName() {

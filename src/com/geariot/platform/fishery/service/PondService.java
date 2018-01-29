@@ -175,7 +175,7 @@ public class PondService {
 				aioTemp.setDevice_sn(aio.getDevice_sn());
 				aioTemp.setName(aio.getName());
 				aioTemp.setPondId(aio.getPondId());
-				aioTemp.setrelation(aio.getrelation());
+				aioTemp.setRelation(aio.getRelation());
 				aioTemp.setType(aio.getType());
 				aioTemp.setStatus(aio.getStatus());
 				aioTemp.setWay(2);

@@ -77,7 +77,7 @@ public class CompanyDaoImpl implements CompanyDao {
 	}
 
 	@Override
-	public Company findCompanyByrelation(String relation) {
+	public Company findCompanyByRelation(String relation) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Company");
 		Query query = queryUtils.addString("relation", relation).getQuery();
 		return (Company) query.uniqueResult();

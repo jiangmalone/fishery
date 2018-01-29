@@ -11,8 +11,7 @@ public class Equipment {
 	private String device_sn;
 	private String name;
 	private int status;
-	private String companyName;
-	private int companyId;
+	private String userName;
 	private String relation;
 	private int sensorId;
 	public Equipment() {
@@ -64,27 +63,19 @@ public class Equipment {
 		this.status = status;
 	}
 
-	public String getCompanyName() {
-		return companyName;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
-	public int getCompanyId() {
-		return companyId;
-	}
-
-	public void setCompanyId(int companyId) {
-		this.companyId = companyId;
-	}
-
-	public String getrelation() {
+	public String getRelation() {
 		return relation;
 	}
 
-	public void setrelation(String relation) {
+	public void setRelation(String relation) {
 		this.relation = relation;
 	}
 

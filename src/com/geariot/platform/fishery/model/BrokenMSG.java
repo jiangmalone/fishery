@@ -16,7 +16,8 @@ public class BrokenMSG {
 	    }
 
 	    public void clear() {
-	    	sb=new StringBuilder();
+	    	//sb=new StringBuilder();
+	    	sb.delete(0, sb.length());//清空原先的sb
 	    	brokenMSG.remove();;
 	    }
 	

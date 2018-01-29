@@ -502,19 +502,19 @@ public class CMDUtils {
 			AIO aio=new AIO();
 			aio=service.findAIOByDeviceSn(deviceSn);
 			if(aio!=null) {
-			relation=aio.getrelation();
+			relation=aio.getRelation();
 			System.out.println(relation);
 			}
 		}else if(type.equals("03")) {
 		Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 		if(sensor!=null) {
-		relation=sensor.getrelation();
+		relation=sensor.getRelation();
 		}
 		}else if(type.equals("04")) {
 			Controller controller=new Controller();
 			controller=service.findControllerByDeviceSn(deviceSn);
 			if(controller!=null) {
-			relation=controller.getrelation();
+			relation=controller.getRelation();
 			}
 		}
 		System.out.println(statusStr);
@@ -599,17 +599,17 @@ public class CMDUtils {
 		}
 		
 		
-		long start=System.currentTimeMillis();
+		//long start=System.currentTimeMillis();
 		WXUser wxuser=new WXUser();
 		wxuser=service.findWXUserById(relation);
 		BrokenMSG bs=new BrokenMSG();
-		System.out.println(bs.getMSG());
-		System.out.println(wxuser.getOpenId());
+		//System.out.println(bs.getMSG());
+		//System.out.println(wxuser.getOpenId());
 		WechatSendMessageUtils.sendWechatMessages(bs.getMSG(),wxuser.getOpenId());
 		//WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
 		bs.clear(); 
-		long end=System.currentTimeMillis();
-		System.out.println(end-start);
+		//long end=System.currentTimeMillis();
+		//System.out.println(end-start);
 		
 	}
 	

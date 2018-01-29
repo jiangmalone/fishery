@@ -66,10 +66,10 @@ public class AIO {
 	public void setType(int type) {
 		this.type = type;
 	}
-	public String getrelation() {
+	public String getRelation() {
 		return relation;
 	}
-	public void setrelation(String relation) {
+	public void setRelation(String relation) {
 		this.relation = relation;
 	}
 	@Transient

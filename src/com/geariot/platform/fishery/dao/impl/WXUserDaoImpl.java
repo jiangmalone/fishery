@@ -84,6 +84,13 @@ public class WXUserDaoImpl implements WXUserDao {
 		this.getSession().createSQLQuery(sql).setString("phone", phone).setCacheable(Constants.SELECT_CACHE).executeUpdate();
 	}
 
+	@Override
+	public WXUser findUserByRelation(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from WXUser");
+		Query query = queryUtils.addString("relation", relation).getQuery();
+		return (WXUser) query.uniqueResult();
+	}
+
 
 
 }

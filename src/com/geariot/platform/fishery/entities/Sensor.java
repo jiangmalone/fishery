@@ -59,10 +59,10 @@ public class Sensor {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getrelation() {
+	public String getRelation() {
 		return relation;
 	}
-	public void setrelation(String relation) {
+	public void setRelation(String relation) {
 		this.relation = relation;
 	}
 	public String getPort_status() {

@@ -638,7 +638,7 @@ public class CMDUtils {
 		    while(true) {
 		    	Map<String,String> map=getFeedback();
 		    	if(order.equals(map.get(deviceSn))) {
-		    		map.remove(deviceSn,order);
+		    		map.remove(deviceSn);
 		    		return RESCODE.SUCCESS.getJSONRES();
 		    	}
 		    	
@@ -648,4 +648,4 @@ public class CMDUtils {
 		    	}
 		    }
 	}
-}
+} 

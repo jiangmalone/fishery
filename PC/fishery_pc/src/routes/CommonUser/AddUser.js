@@ -18,7 +18,7 @@ const formItemLayout = {
 function AddUser({ visible, form, onOk, onCancel, wrapClassName, modifyId }) {
     const { getFieldDecorator, validateFieldsAndScroll } = form;
 
-    return <Modal title={modifyId ? "新增用户" : '修改用户'}
+    return <Modal title={modifyId ? '修改用户':"新增用户"}
         visible={visible}
         onOk={() => {
             let obj = {}

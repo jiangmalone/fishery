@@ -16,18 +16,11 @@ import org.apache.logging.log4j.Logger;
 public class RequestProcessor {
 //1
 	private static final Logger log = LogManager.getLogger(RequestProcessor.class);
-    private static ExecutorService  executorService  = Executors.newFixedThreadPool(10);
+    private  ExecutorService  executorService  = Executors.newFixedThreadPool(10);
+    private DataHandle handle=new DataHandle();
    
-   
-	public static void ProcessorRequest(final SelectionKey key){
-		/*try {
-			
-        	read(key);
-        	System.out.println("read wan");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  */
+	public void ProcessorRequest(final SelectionKey key){
+		
         //获得线程并执行
         executorService.submit(new Runnable() {
 
@@ -46,15 +39,16 @@ public class RequestProcessor {
         });
     } 
 
-	public static void read(final SelectionKey key) throws IOException {
+	public  void read(final SelectionKey key) throws IOException {
 		// 服务器可读取消息:得到事件发生的Socket通道
 				SocketChannel readChannel = (SocketChannel) key.channel();
 				// 创建读取的缓冲区
-				ByteBuffer buffer = ByteBuffer.allocate(1024);
+				ByteBuffer buffer = ByteBuffer.allocate(100);
 
 				try
 				{
 					readChannel.read(buffer);
+					
 				}
 				catch (IOException e1)
 				{
@@ -62,11 +56,8 @@ public class RequestProcessor {
 					
 				}
 				byte[] data = buffer.array();
-			//Map<String,Object> map=new HashMap<String,Object>();
-			//map.put("data", data);
-			//map.put("readChannel", readChannel);
-			//key.attach(map);
-		DataHandle.handle(data,readChannel); 
+			
+				handle.handle(data,readChannel); 
            //将下一个读放进队列里面，并在主线程里面注册下一次读
 		NIOServer.addQueen(key);
           

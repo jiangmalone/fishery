@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd';
+import { Table, Card, Row, Col, Input, Button, Popconfirm,message } from 'antd';
 import { wxuserDetail, relationDetail } from '../../services/user.js';
 import { myEquipment } from '../../services/equipment.js';
 import { Link } from 'react-router-dom';
@@ -259,6 +259,8 @@ class UserInfo extends PureComponent {
                     addPond(values).then((response)=>{
                         if (response.code == '0') {
                             this.onSearchUserPond();
+                        } else {
+                            message.error(response.msg,1)
                         }
                     })
                 } else {
@@ -348,7 +350,7 @@ class UserInfo extends PureComponent {
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
                         <Col span={4}>养殖年限：{this.state.userInfo.life}年</Col>
-                        <Col span={4}>塘口位置：{this.state.userInfo.address}</Col>
+                        <Col span={4}>联系地址：{this.state.userInfo.address}</Col>
                         <Col span={4}></Col>
                     </Row>
 

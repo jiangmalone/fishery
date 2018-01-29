@@ -19,3 +19,8 @@ export async function logout(params) {
 export async function login(params) {
     return request(`/api/admin/login?${stringify(params)}`)
 }
+
+
+export async function modifyCompanyAccount(params) {
+    return request(`/api/admin/modifyCompany?${stringify(params)}`)
+}

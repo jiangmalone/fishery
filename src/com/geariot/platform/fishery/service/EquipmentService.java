@@ -291,27 +291,35 @@ public class EquipmentService {
 		return result;
 	}
 
-	public Map<String, Object> adminFindEquipment(String device_sn, String companyName, int page, int number) {
+	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number) {
 		int from = (page - 1) * number;
-		if ((device_sn == null || device_sn.length() < 0) && (companyName == null || companyName.length() < 0)) {
+		if ((device_sn == null || device_sn.length() < 0) && (userName == null || userName.length() < 0)) {
 			return noConditionsQuery(from, number);
 		}
 		if ((device_sn == null || device_sn.length() < 0)
-				&& (companyName != null && !companyName.isEmpty() && !companyName.trim().isEmpty())) {
-			return companyConditionQuery(companyName, from, number);
+				&& (userName != null && !userName.isEmpty() && !userName.trim().isEmpty())) {
+			return nameConditionQuery(userName, from, number);
 		}
 		if ((device_sn != null && !device_sn.isEmpty() && !device_sn.trim().isEmpty())
-				&& (companyName == null || companyName.length() < 0)) {
+				&& (userName == null || userName.length() < 0)) {
 			return deviceSnConditionQuery(device_sn, from, number);
 		}
-		return doubleConditionQuery(device_sn, companyName, from, number);
+		return doubleConditionQuery(device_sn, userName, from, number);
 	}
 
-	private Map<String, Object> doubleConditionQuery(String device_sn, String companyName, int from, int number) {
-		List<Company> companies = companyDao.companies(companyName);
-		List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, companies, from, number);
+	private Map<String, Object> doubleConditionQuery(String device_sn, String userName, int from, int number) {
+		List<Company> companies = companyDao.companies(userName);
+		List<WXUser> wxUsers= wxUserDao.wxUsers(userName);
+		List<String> relations = new ArrayList<>();
+		for(Company company: companies){
+			relations.add(company.getRelation());
+		}
+		for(WXUser wxUser: wxUsers){
+			relations.add(wxUser.getRelation());
+		}
+		List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
 		shareDealMethod(equipments);
-		long count = pondDao.adminFindEquipmentCountDouble(device_sn, companies);
+		long count = pondDao.adminFindEquipmentCountDouble(device_sn, relations);
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}
@@ -324,11 +332,19 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}
 
-	private Map<String, Object> companyConditionQuery(String companyName, int from, int number) {
-		List<Company> companies = companyDao.companies(companyName);
-		List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, from, number);
+	private Map<String, Object> nameConditionQuery(String userName, int from, int number) {
+		List<Company> companies = companyDao.companies(userName);
+		List<WXUser> wxUsers= wxUserDao.wxUsers(userName);
+		List<String> relations = new ArrayList<>();
+		for(Company company: companies){
+			relations.add(company.getRelation());
+		}
+		for(WXUser wxUser: wxUsers){
+			relations.add(wxUser.getRelation());
+		}
+		List<Equipment> equipments = pondDao.adminFindEquipmentByName(relations, from, number);
 		shareDealMethod(equipments);
-		long count = pondDao.adminFindEquipmentCountCo(companies);
+		long count = pondDao.adminFindEquipmentCountName(relations);
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}
@@ -475,10 +491,10 @@ public class EquipmentService {
 		if (company == null) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
-			List<Company> companies = new ArrayList<>();
-			companies.add(company);
+			List<String> relations = new ArrayList<>();
+			relations.add(company.getRelation());
 			if (device_sn == null || device_sn.length() < 0) {
-				List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, from, number);
+				List<Equipment> equipments = pondDao.adminFindEquipmentByName(relations, from, number);
 				for(Equipment equipment : equipments){
 					String type = equipment.getDevice_sn().substring(0,2);
 					if(type.equals("03")){
@@ -492,12 +508,12 @@ public class EquipmentService {
 						equipment.setSensorId(0);
 					}
 				}
-				long count = pondDao.adminFindEquipmentCountCo(companies);
+				long count = pondDao.adminFindEquipmentCountName(relations);
 				int size = (int) Math.ceil(count / (double) number);
 				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 			} else {
-				List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, companies, from, number);
-				long count = pondDao.adminFindEquipmentCountDouble(device_sn, companies);
+				List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
+				long count = pondDao.adminFindEquipmentCountDouble(device_sn, relations);
 				int size = (int) Math.ceil(count / (double) number);
 				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 			}

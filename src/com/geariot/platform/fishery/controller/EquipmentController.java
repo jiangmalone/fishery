@@ -83,8 +83,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/adminFindEquipment", method = RequestMethod.GET)
-	public Map<String, Object> adminFindEquipment(String device_sn, String companyName, int page, int number){
-		return equipmentService.adminFindEquipment(device_sn,companyName,page,number);
+	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number){
+		return equipmentService.adminFindEquipment(device_sn,userName,page,number);
 	}
 	
 	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)

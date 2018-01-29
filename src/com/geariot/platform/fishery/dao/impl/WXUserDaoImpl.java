@@ -91,6 +91,14 @@ public class WXUserDaoImpl implements WXUserDao {
 		return (WXUser) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<WXUser> wxUsers(String name) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from WXUser");
+		Query query = queryUtils.addStringLike("name", name).getQuery();
+		return query.list();
+	}
+
 
 
 }

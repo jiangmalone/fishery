@@ -41,7 +41,7 @@ public class UserService {
 		}
 		wxuser.setCreateDate(new Date());
 		wxuserDao.save(wxuser);
-		wxuser.setrelation("WX"+wxuser.getId());
+		wxuser.setRelation("WX"+wxuser.getId());
 		return RESCODE.SUCCESS.getJSONRES(wxuser);
 	}
 
@@ -53,7 +53,7 @@ public class UserService {
 		company.setCreateDate(new Date());
 		company.setHasAccount(false);
 		companyDao.save(company);
-		company.setrelation("CO"+company.getId());
+		company.setRelation("CO"+company.getId());
 		return RESCODE.SUCCESS.getJSONRES(company);
 	}
 
@@ -151,7 +151,7 @@ public class UserService {
 		List<Company> companies = new ArrayList<>();
 		companies.add(company);
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(company);
-		List<Pond> ponds = pondDao.queryPondByNameAndRelation(company.getrelation(), null);
+		List<Pond> ponds = pondDao.queryPondByNameAndRelation(company.getRelation(), null);
 		List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, 0, 2000);
 		for(Equipment equipment :equipments){
 			if(equipment.getStatus()==0){

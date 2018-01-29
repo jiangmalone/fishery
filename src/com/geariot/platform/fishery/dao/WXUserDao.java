@@ -25,4 +25,6 @@ public interface WXUserDao {
 	long getQueryCount(String name);
 
 	void logout(String phone);
+	
+	List<WXUser> wxUsers(String name);
 }

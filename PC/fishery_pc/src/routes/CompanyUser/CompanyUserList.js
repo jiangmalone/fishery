@@ -156,8 +156,9 @@ export default class CompanyUserList extends React.Component {
     onOk2 = (values) => {
         console.log(values,this.state.mode2)
         values.companyId = this.state.companyId;
-        values.type = 1;
         delete values.password2
+        delete values.comment
+        delete values.account
         delete values.name
         if (this.state.mode2 == 'add') {
      
@@ -170,7 +171,6 @@ export default class CompanyUserList extends React.Component {
             });
             console.log(22)
         } else {
-            values.adminId =window.localStorage.getItem('adminId')
             this.props.dispatch({
                 type: 'companyUser/modifyAccount',
                 payload: {

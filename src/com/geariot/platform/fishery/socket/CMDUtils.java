@@ -515,17 +515,23 @@ public class CMDUtils {
 			if(aio!=null) {
 			relation=aio.getRelation();
 			System.out.println(relation);
+			}else {
+				return;
 			}
 		}else if(type.equals("03")) {
 		Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 		if(sensor!=null) {
 		relation=sensor.getRelation();
+		}else {
+			return;
 		}
 		}else if(type.equals("04")) {
 			Controller controller=new Controller();
 			controller=service.findControllerByDeviceSn(deviceSn);
 			if(controller!=null) {
 			relation=controller.getRelation();
+			}else {
+				return;
 			}
 		}
 		System.out.println(statusStr);

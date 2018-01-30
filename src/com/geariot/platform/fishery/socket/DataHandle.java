@@ -92,7 +92,11 @@ public class DataHandle {
 					break;
 				case 2:
 					
-					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
+					String lockObject2=CMDUtils.getFeedback().get(deviceSn);
+					synchronized (lockObject2) {
+						//map.put(deviceSn,String.valueOf(order));
+						lockObject2.notify();
+					}
 					break;
 				case 3:
 					CMDUtils.timingUploadCMD(data,readChannel,deviceSn,way);
@@ -108,11 +112,20 @@ public class DataHandle {
 					break;
 				case 7:
 					
-					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
+					String lockObject7=CMDUtils.getFeedback().get(deviceSn);
+					synchronized (lockObject7) {
+						//map.put(deviceSn,String.valueOf(order));
+						lockObject7.notify();
+					}
+					
 					break;
 				case 8:
 					
-					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
+					String lockObject8=CMDUtils.getFeedback().get(deviceSn);
+					synchronized (lockObject8) {
+						//map.put(deviceSn,String.valueOf(order));
+						lockObject8.notify();
+					}
 					break;
 				case 9:
 					CMDUtils.oxygenExceptionAlarmCMD(data,readChannel,deviceSn,way);
@@ -124,13 +137,21 @@ public class DataHandle {
 					CMDUtils.timingDataCMD(data,readChannel,deviceSn,way);
 				case 12: // 0C
 					
-					CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
+					String lockObject12=CMDUtils.getFeedback().get(deviceSn);
+					synchronized (lockObject12) {
+						//map.put(deviceSn,String.valueOf(order));
+						lockObject12.notify();
+					}
 					break;
 				case 13:// 0D
 					//服务器校准因为有2路传感器，先发送第一路校准，再发送第二路校准，在收到第二路校准的时候反馈给前端
 					if(way==2) {
 						
-						CMDUtils.getFeedback().put(deviceSn,String.valueOf(order));
+						String lockObject13=CMDUtils.getFeedback().get(deviceSn);
+						synchronized (lockObject13) {
+							//map.put(deviceSn,String.valueOf(order));
+							lockObject13.notify();
+						}
 					}
 					break;
 				default:

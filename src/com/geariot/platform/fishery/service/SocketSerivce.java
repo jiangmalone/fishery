@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.geariot.platform.fishery.dao.AIODao;
+import com.geariot.platform.fishery.dao.AeratorStatusDao;
 import com.geariot.platform.fishery.dao.AlarmDao;
 import com.geariot.platform.fishery.dao.BrokenDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
@@ -21,6 +22,7 @@ import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Alarm;
 import com.geariot.platform.fishery.entities.Broken;
 import com.geariot.platform.fishery.entities.Controller;
@@ -68,6 +70,13 @@ public class SocketSerivce {
 	
 	@Autowired
 	private ControllerDao controllerDao;
+	
+	@Autowired
+	private AeratorStatusDao aeratorStatusDao;
+	
+	public AeratorStatus findByDeviceSnAndWay(String deviceSn,int way) {
+	return	aeratorStatusDao.findByDeviceSnAndWay(deviceSn, way);
+	}
 	
 	public void save(SelfTest selfTest) {
 		selfTestDao.save(selfTest);

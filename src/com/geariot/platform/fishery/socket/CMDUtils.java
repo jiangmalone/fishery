@@ -182,14 +182,23 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					return;
+				}
 				aio.setStatus(3);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					return;
+				}
 				sensor.setStatus(3);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					return;
+				}
 				controller.setStatus(3);
 				service.updateController(controller);
 			}
@@ -213,14 +222,23 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					return;
+				}
 				aio.setStatus(2);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					return;
+				}
 				sensor.setStatus(2);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					return;
+				}
 				controller.setStatus(2);
 				service.updateController(controller);
 			}	
@@ -244,14 +262,23 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					return;
+				}
 				aio.setStatus(4);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					return;
+				}
 				sensor.setStatus(4);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					return;
+				}
 				controller.setStatus(4);
 				service.updateController(controller);
 			}
@@ -274,14 +301,23 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					return;
+				}
 				aio.setStatus(0);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					return;
+				}
 				sensor.setStatus(0);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					return;
+				}
 				controller.setStatus(0);
 				service.updateController(controller);
 			}	

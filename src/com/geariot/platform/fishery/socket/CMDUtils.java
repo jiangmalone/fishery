@@ -62,7 +62,7 @@ public class CMDUtils {
 	// 自检
 	public static void selfTestCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
 		  
-		
+		logger.debug("设备号为:"+deviceSn+"的设备开机自检了，是第"+way+"路");
 		clientMap.put(deviceSn, readChannel); 
 		    byte ac = data[7];
 			byte[] byteLongitude =new byte[4];
@@ -89,7 +89,7 @@ public class CMDUtils {
            selfTest.setGprs(gprs);
            selfTest.setBroken(brokenlist);
            selfTest.setCreateDate(new Date());
-          
+          logger.debug("设备号为:"+deviceSn+"的设备自检分析完毕，是第"+way+"路，准备存入数据库");
 		service.save(selfTest);
 		response(19,data,readChannel);
 	}
@@ -583,19 +583,19 @@ public class CMDUtils {
 			}
 		}
 		System.out.println(statusStr);
-		switch (statusStr.substring(0,1)) {
+		/*switch (statusStr.substring(0,1)) {
 		case "0":
 			//水泵关闭故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_OFF_BROKEN,"水泵关闭故障",brokenlist,deviceSn);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_OFF,"水泵关闭故障",brokenlist,deviceSn);
 			System.out.println("````水泵关闭故障");
 			break;
 		case "1":
 			//水泵打开故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_ON_BROKEN,"水泵打开故障",brokenlist,deviceSn);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_ON,"水泵打开故障",brokenlist,deviceSn);
 			break;
 		case "2":
 			//水泵低电流故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_LOWCURRENT_BROKEN,"水泵低电流故障",brokenlist,deviceSn);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP, EntityType.PUMP_LOWCURRENT,"水泵低电流故障",brokenlist,deviceSn);
 			break;
 		case "3":
 			//水泵高电流故障
@@ -603,14 +603,14 @@ public class CMDUtils {
 			break;
 		default:
 			break;
-		}
+		}*/
 		
 		switch (statusStr.substring(1,2)) {
-		case "0":
+		/*case "0":
 			//PH故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.BROKEN,"PH故障",brokenlist,deviceSn);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.NOT_BROKEN,"PH正常",brokenlist,deviceSn);
 			System.out.println("````ph故障");
-			break;
+			break;*/
 		case "1":
 			//PH低限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.LOW_LIMIT_BROKEN,"PH低限故障",brokenlist,deviceSn);
@@ -624,11 +624,11 @@ public class CMDUtils {
 		}
 		
 		switch (statusStr.substring(2,3)) {
-		case "0":
+		/*case "0":
 			//溶氧值故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.BROKEN,"溶氧值故障",brokenlist,deviceSn);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.NOT_BROKEN,"溶氧值正常",brokenlist,deviceSn);
 			System.out.println("溶氧值故障");
-			break;
+			break;*/
 		case "1":
 			//溶氧值低限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.LOW_LIMIT_BROKEN,"溶氧值低限故障",brokenlist,deviceSn);
@@ -642,10 +642,10 @@ public class CMDUtils {
 		}
 		
 		switch (statusStr.substring(3,4)) {
-		case "0":
+		/*case "0":
 			//温度故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.BROKEN,"温度故障",brokenlist,deviceSn);
-			break;
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.NOT_BROKEN,"温度正常",brokenlist,deviceSn);
+			break;*/
 		case "1":
 			//温度低限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN,"温度低限故障",brokenlist,deviceSn);

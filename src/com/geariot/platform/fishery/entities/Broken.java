@@ -11,8 +11,8 @@ import javax.persistence.Id;
 public class Broken {
 private int id;
 private int entityModel;  //故障实体，0为水泵，1为PH，2为DO溶氧值，3为温度
-private int entityType;   //故障类型，0为故障，1为低限故障，2为高限故障，3为温度断开，4为水泵关闭故障，
-                            //5为水泵打开故障，6为水泵低电流故障，7为水泵高电流故障
+private int entityType;   //故障类型，0为没故障，1为低限故障，2为高限故障，3为温度断开，4为水泵关闭状态，
+                            //5为水泵打开状态，6为水泵低电流状态，7为水泵高电流状态
 private Date createDate;
 private String deviceSn;  //设备编号
 

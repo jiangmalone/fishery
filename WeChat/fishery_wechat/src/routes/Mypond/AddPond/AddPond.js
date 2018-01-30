@@ -30,11 +30,19 @@ class AddPond extends PureComponent {
     }
 
 
+    componentDidMount() {
+        //获取页面高度
+        var inputTextBox = $('#input-text-box');
+        setInterval(function(){
+          inputTextBox.scrollIntoView(false);
+        },200)
+    }
+
     submit = () => {
         this.props.form.validateFields((error, value) => {
             if (!error) {
             }
-            value.relation =window.localStorage.getItem('relation');
+            value.relation = window.localStorage.getItem('relation');
             value.address = this.props.address;
             value.longitude = this.props.longitude;
             value.latitude = this.props.latitude;
@@ -56,8 +64,8 @@ class AddPond extends PureComponent {
     render() {
         const { getFieldProps, getFieldError, validateFields } = this.props.form;
         return (
-            <form className="body-bac">
-                <NavBar title={!this.props.match.params.id ? "添加塘口" : '修改塘口'} />
+            <div className='user-info-bg' style={{ height: window.document.body.clientHeight }}>
+                {/* <NavBar title={!this.props.match.params.id ? "添加塘口" : '修改塘口'} /> */}
                 <List className="addPond-list">
                     <InputItem
                         {...getFieldProps('name', {
@@ -114,6 +122,7 @@ class AddPond extends PureComponent {
                         labelNumber='5'
                         error={!!getFieldError('water_source')}
                         placeholder="请输入池塘水源"
+                        id="input-text-box"
                     >池塘水源</InputItem>
                     <Item arrow="horizontal" onClick={() => {
                         this.props.history.push('/addFish');
@@ -123,7 +132,7 @@ class AddPond extends PureComponent {
                                 transitionName: 'left'
                             }
                         })
-                    }} extra={<span>{this.props.selectedFishes?this.props.selectedFishes.join(','):''}</span>} >
+                    }} extra={<span>{this.props.selectedFishes ? this.props.selectedFishes.join(',') : ''}</span>} >
                         品种
                     </Item>
                     <Item extra={<span>{this.props.address}<img src={require('../../../img/earth.png')} /></span>} onClick={() => {
@@ -144,7 +153,7 @@ class AddPond extends PureComponent {
                     text="等待中..."
                     animating={this.state.loading}
                 />
-            </form>
+            </div>
         );
     }
 
@@ -170,6 +179,6 @@ export default connect((state => {
         address: state.pond.address,
         latitude: state.pond.latitude,
         longitude: state.pond.longitude,
-        selectedFishes:state.pond.selectedFishes
+        selectedFishes: state.pond.selectedFishes
     })
 }))(AddPondForm);

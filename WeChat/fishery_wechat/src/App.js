@@ -74,7 +74,7 @@ class App extends React.Component {
 
 
     render() {
-        return (<div>
+        return (<div style={{height:'100%'}}>
             {!this.props.login && <Redirect to={{
                 pathname: '/login',
                 state: { from: this.props.location },

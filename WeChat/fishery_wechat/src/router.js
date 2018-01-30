@@ -8,7 +8,7 @@ function RouterConfig({ history }) {
 
   return (
     <Router history={history}>
-      <div>
+      <div style={{height:'100%'}}>
         <Route path="/"  component={App} />
       </div>
     </Router>

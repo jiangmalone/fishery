@@ -613,8 +613,10 @@ public class EquipmentService {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		limitDao.updateLimit(limit_Install);
 		AeratorStatus status = statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
-		status.setTimed(true);
 		Timer timer = timers[0];
+		if(timers.length > 0) {
+			status.setTimed(true);
+		}
 		timerDao.delete(timer.getDevice_sn(), timer.getWay());
 		for (Timer timersave : timers) {
 			timerDao.save(timersave);

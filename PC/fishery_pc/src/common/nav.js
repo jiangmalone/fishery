@@ -114,7 +114,7 @@ export const getNavData = app => {
         name: '设备查询',
         path: 'equipmentsQuery',
         icon: 'bars',
-        isSideMenu: true,
+        isSideMenu: authority,
         component: dynamicWrapper(app, ['allEquipment'], () => import('../routes/Equipment/AllEquipment')),
 
       },

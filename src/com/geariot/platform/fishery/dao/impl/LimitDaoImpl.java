@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.LimitDao;
+import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.QueryUtils;
@@ -63,6 +64,13 @@ public class LimitDaoImpl implements LimitDao {
 	public void updateLimit(Limit_Install limit_Install) {
 		// TODO Auto-generated method stub
 		this.getSession().merge(limit_Install);
+	}
+
+	@Override
+	public Limit_Install findLimitByDeviceSnsAndWay(String device_sn, int way) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Limit_Install");
+		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
+		return (Limit_Install) query.uniqueResult();
 	}
 
 }

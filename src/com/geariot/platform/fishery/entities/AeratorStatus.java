@@ -4,6 +4,8 @@
 package com.geariot.platform.fishery.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
@@ -13,11 +15,12 @@ import javax.persistence.Id;
 @Entity
 public class AeratorStatus {
 	
+	private int id;
 	private String device_sn;
 	private int way;
 	private boolean isTimed;
 	private boolean on_off;
-	@Id
+
 	public String getDevice_sn() {
 		return device_sn;
 	}
@@ -41,6 +44,14 @@ public class AeratorStatus {
 	}
 	public void setOn_off(boolean on_off) {
 		this.on_off = on_off;
+	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 }

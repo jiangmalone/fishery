@@ -603,9 +603,19 @@ public class EquipmentService {
 		String deviceSn;
 		try {
 			deviceSn = limit_Install.getDevice_sn().substring(0, 2);
+			if(timers==null) {
+				if(statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay()).isOn_off()) {
+				CMDUtils.serverOnOffOxygenCMD(limit_Install.getDevice_sn(), limit_Install.getWay(), 0);
+				}
+			     
+				timerDao.delete(limit_Install.getDevice_sn(), limit_Install.getWay());
+				 
+				return RESCODE.SUCCESS.getJSONRES();
+			}
 			Map<String, Object> map = CMDUtils.downLimitCMD(limit_Install);
 			if (!map.containsKey("0"))
 				return map;
+			
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
@@ -641,19 +651,25 @@ public class EquipmentService {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
 		if(type.equals("01")||type.equals("02")) {
-			AIO aio=aioDao.findAIOByDeviceSnAndWay(device_sn, way);
+			AIO aio=aioDao.findAIOByDeviceSns(device_sn);
 			if(aio==null) {
 				return RESCODE.NOT_FOUND.getJSONRES();
 			}
 			Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-			Limit_Install limit=limitDao.findLimitByDeviceSns(device_sn);
+			Limit_Install limit=limitDao.findLimitByDeviceSnsAndWay(device_sn,way);
 			List<Timer> timer=timerDao.findTimerByDeviceSnAndWay(device_sn, way);
 			Sensor_Data sensor_data=sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
+			if(sensor_data!=null) {
 			map.put("currentOxygens", sensor_data.getOxygen());
+			}
+			if(limit!=null) {
 			map.put("oxyHighLimit", limit.getHigh_limit());
 			map.put("oxyUpLimit",limit.getUp_limit());
 			map.put("oxyLowLimit", limit.getLow_limit());
+			}
+			if(timer!=null) {
 			map.put("timerList", timer);
+			}
 			return map;
 		}
 		

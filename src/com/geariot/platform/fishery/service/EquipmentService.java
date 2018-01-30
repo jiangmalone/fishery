@@ -336,17 +336,19 @@ public class EquipmentService {
 						if(company == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(company.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(company.getName());
-						equipment.setRelation(relation);
 					}else if(relation.contains("WX")){
 						wxUser = wxUserDao.findUserByRelation(relation);
 						if(wxUser == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(wxUser.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(wxUser.getName());
-						equipment.setRelation(relation);
 					}else{
 						equipment.setName("");
 						equipment.setRelation("0");
@@ -365,17 +367,19 @@ public class EquipmentService {
 						if(company == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(company.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(company.getName());
-						equipment.setRelation(relation);
 					}else if(relation.contains("WX")){
 						wxUser = wxUserDao.findUserByRelation(relation);
 						if(wxUser == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(wxUser.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(wxUser.getName());
-						equipment.setRelation(relation);
 					}else{
 						equipment.setName("");
 						equipment.setRelation("0");
@@ -394,17 +398,19 @@ public class EquipmentService {
 						if(company == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(company.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(company.getName());
-						equipment.setRelation(relation);
 					}else if(relation.contains("WX")){
 						wxUser = wxUserDao.findUserByRelation(relation);
 						if(wxUser == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(wxUser.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(wxUser.getName());
-						equipment.setRelation(relation);
 					}else{
 						equipment.setName("");
 						equipment.setRelation("0");
@@ -423,17 +429,19 @@ public class EquipmentService {
 						if(company == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(company.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(company.getName());
-						equipment.setRelation(relation);
 					}else if(relation.contains("WX")){
 						wxUser = wxUserDao.findUserByRelation(relation);
 						if(wxUser == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(wxUser.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(wxUser.getName());
-						equipment.setRelation(relation);
 					}else{
 						equipment.setName("");
 						equipment.setRelation("0");

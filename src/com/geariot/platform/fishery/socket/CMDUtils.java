@@ -658,6 +658,7 @@ public class CMDUtils {
 		    		
 					try {
 						lockObject.wait(10000);
+						map.remove(deviceSn);
 						end=System.currentTimeMillis();
 						if(end-start>=10000) {
 							return RESCODE.NOT_RECEIVED.getJSONRES();

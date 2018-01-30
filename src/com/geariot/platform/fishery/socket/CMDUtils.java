@@ -182,14 +182,26 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				aio.setStatus(3);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				sensor.setStatus(3);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				controller.setStatus(3);
 				service.updateController(controller);
 			}
@@ -213,14 +225,26 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				aio.setStatus(2);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				sensor.setStatus(2);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				controller.setStatus(2);
 				service.updateController(controller);
 			}	
@@ -244,14 +268,26 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				aio.setStatus(4);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				sensor.setStatus(4);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				controller.setStatus(4);
 				service.updateController(controller);
 			}
@@ -274,14 +310,26 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				aio.setStatus(0);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				sensor.setStatus(0);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				controller.setStatus(0);
 				service.updateController(controller);
 			}	
@@ -515,17 +563,23 @@ public class CMDUtils {
 			if(aio!=null) {
 			relation=aio.getRelation();
 			System.out.println(relation);
+			}else {
+				return;
 			}
 		}else if(type.equals("03")) {
 		Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 		if(sensor!=null) {
 		relation=sensor.getRelation();
+		}else {
+			return;
 		}
 		}else if(type.equals("04")) {
 			Controller controller=new Controller();
 			controller=service.findControllerByDeviceSn(deviceSn);
 			if(controller!=null) {
 			relation=controller.getRelation();
+			}else {
+				return;
 			}
 		}
 		System.out.println(statusStr);
@@ -658,6 +712,7 @@ public class CMDUtils {
 		    		
 					try {
 						lockObject.wait(10000);
+						map.remove(deviceSn);
 						end=System.currentTimeMillis();
 						if(end-start>=10000) {
 							return RESCODE.NOT_RECEIVED.getJSONRES();

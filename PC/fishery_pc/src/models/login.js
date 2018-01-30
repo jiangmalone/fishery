@@ -20,9 +20,12 @@ export default {
         payload: response,
       });
       // Login successfully
-    
       if (response.code == 0) {
+        console.log(response);
         window.localStorage.setItem('adminId',response.data.id)
+        window.localStorage.setItem('authority', response.data.type); // 0 管理员 1 企业账户
+        window.localStorage.setItem('companyId', response.data.companyId);
+        window.localStorage.setItem('relationId', 'CO' + response.data.companyId);
         window.localStorage.setItem('account',payload.account)
         yield put(routerRedux.push('/'));
       }

@@ -156,11 +156,9 @@ export default class CompanyUserList extends React.Component {
     onOk2 = (values) => {
         values.companyId = this.state.companyId;
         delete values.password2
-        delete values.comment
-        delete values.account
         delete values.name
         if (this.state.mode2 == 'add') {
-     
+            delete values.comment
             this.props.dispatch({
                 type: 'companyUser/addAccount',
                 payload: {
@@ -169,6 +167,7 @@ export default class CompanyUserList extends React.Component {
                 },
             });
         } else {
+            delete values.account
             this.props.dispatch({
                 type: 'companyUser/modifyAccount',
                 payload: {

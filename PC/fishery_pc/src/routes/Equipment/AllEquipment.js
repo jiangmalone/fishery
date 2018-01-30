@@ -31,7 +31,7 @@ class AllEquipmentQuery extends PureComponent {
             obj.device_sn = this.state.device_sn
         } 
         if(this.state.name){
-            obj.companyName = this.state.name
+            obj.userName = this.state.name
         } 
         obj.page = page;
         obj.number = 10;
@@ -75,8 +75,17 @@ class AllEquipmentQuery extends PureComponent {
                 dataIndex: 'name',
             },
             {
-                title: '所属企业',
-                dataIndex: 'companyName'
+                title: '所属者',
+                dataIndex: 'userName',
+                render:(text,record,index)=>{
+                    if(record.relation!=='0'&&record.relation.slice(0,2)=='CO'){
+                        return <Link to={`/userManage/company-user/${record.relation.slice(2)}/${record.relation}`}>{record.userName}</Link>
+                    } else if (record.relation!=='0'&&record.relation.slice(0,2)=='WX') {
+                        return <Link to={`/userManage/common-user/${record.relation}`}>{record.userName}</Link>
+                    } else {
+                        return <span>{text}</span>
+                    }
+                }
             },
             {
                 title: '设备状态',
@@ -103,7 +112,7 @@ class AllEquipmentQuery extends PureComponent {
                                 device_sn: e.target.value
                             })
                         }} /></Col>
-                        <Col span={8}>企业名称：<Input style={{ width: 200 }} onChange={(e) => {
+                        <Col span={8}>所有者名称：<Input style={{ width: 200 }} onChange={(e) => {
                             this.setState({
                                 name: e.target.value
                             })

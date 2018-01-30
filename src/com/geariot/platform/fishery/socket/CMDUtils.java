@@ -482,6 +482,7 @@ public class CMDUtils {
 
 	// 服务器校准命令
 	public static Map<String, Object> serverCheckCMD(String deviceSn,int way) {
+		logger.debug("服务器校准设备编号和路分别为:"+deviceSn+"第"+way+"路");
 		SocketChannel channel=clientMap.get(deviceSn);
 		if(channel==null) {
         	return RESCODE.NOT_OPEN.getJSONRES();
@@ -490,11 +491,11 @@ public class CMDUtils {
 			return RESCODE.CONNECTION_CLOSED.getJSONRES();
 		}
 		byte[] request = null;
-		//第一路开始校准
-		String firstpath=StringUtils.add(deviceSn, way, 13)
+		
+		String path=StringUtils.add(deviceSn, way, 13)
                 .append("          ")
 				.toString();
-		request=CommonUtils.toByteArray(firstpath);
+		request=CommonUtils.toByteArray(path);
 		request[7]=CommonUtils.arrayMerge(request, 2, 5);
 		CommonUtils.addSuffix(request, 8);
 	    ByteBuffer outBuffer = ByteBuffer.wrap(request);
@@ -510,7 +511,7 @@ public class CMDUtils {
 
 	// 五分钟上传一次溶氧，水温和PH值信息
 	public static void timingDataCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		 //preHandle(key);
+		
 		byte[] byteOxygen= new byte[4];
 		CommonUtils.arrayHandle(data, byteOxygen, 7, 0, 4);
 		float oxygen= CommonUtils.byte2float(byteOxygen,0);
@@ -528,6 +529,7 @@ public class CMDUtils {
 		sData.setOxygen(oxygen);
 		sData.setWater_temperature(waterTemp);
 		sData.setpH_value(phValue);
+		logger.debug("服务器接收设备编号和路分别为:"+deviceSn+"第"+way+"路，溶氧值为:"+oxygen+"水温为:"+waterTemp+"ph值为:"+phValue);
 		try {
 			sData.setReceiveTime(sdf.parse(receiveTime));
 		} catch (ParseException e) {
@@ -539,19 +541,20 @@ public class CMDUtils {
 	}
 	
 	public static void response(int dataStart,byte[] data,SocketChannel readChannel) throws IOException {
+		logger.debug("处理完将反馈指令发送给终端设备");
 		byte[] response = new byte[12];
 		CommonUtils.arrayHandle(data, response, 0, 0, 7);
 		response[7]=CommonUtils.arrayMerge(response, 2, 5);
 		CommonUtils.arrayHandle(data, response, dataStart, 8, 4);
 		ByteBuffer outBuffer = ByteBuffer.wrap(response);
 		readChannel.write(outBuffer);// 将消息回送给客户端
-		System.out.println("cmd代码处理完");
+		//System.out.println("cmd代码处理完");
 	}
 	
 	public static void statusHandle(byte[] status,List<Broken> brokenlist,String deviceSn) {
-		
+		logger.debug("设备编号为:"+deviceSn+"的设备开机自检中，现在在进行故障分析");
 		String statusStr=CommonUtils.printHexStringMerge(status, 0, 2);
-		System.out.println("分析故障信息");
+		//System.out.println("分析故障信息");
 		String relation=null;
 		String type=deviceSn.substring(0,2);
 		System.out.println(type);
@@ -612,10 +615,12 @@ public class CMDUtils {
 		case "1":
 			//PH低限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.LOW_LIMIT_BROKEN,"PH低限故障",brokenlist,deviceSn);
+			logger.debug("设备编号为:"+deviceSn+"的设备开机自检中发现PH低限故障");
 			break;
 		case "2":
 			//PH高限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.HIGH_LIMIT_BROKEN,"PH高限故障",brokenlist,deviceSn);
+			logger.debug("设备编号为:"+deviceSn+"的设备开机自检中发现PH高限故障");
 			break;
 		default:
 			break;
@@ -630,10 +635,12 @@ public class CMDUtils {
 		case "1":
 			//溶氧值低限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.LOW_LIMIT_BROKEN,"溶氧值低限故障",brokenlist,deviceSn);
+			logger.debug("设备编号为:"+deviceSn+"的设备开机自检中发现溶氧值低限故障");
 			break;
 		case "2":
 			//溶氧值高限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.HIGH_LIMIT_BROKEN,"溶氧值高限故障",brokenlist,deviceSn);
+			logger.debug("设备编号为:"+deviceSn+"的设备开机自检中发现PH高限故障");
 			break;
 		default:
 			break;
@@ -647,21 +654,24 @@ public class CMDUtils {
 		case "1":
 			//温度低限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN,"温度低限故障",brokenlist,deviceSn);
-			System.out.println("温度低限故障");
+			logger.debug("设备编号为:"+deviceSn+"的设备开机自检中发现温度低限故障");
+			//System.out.println("温度低限故障");
 			break;
 		case "2":
 			//温度高限故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.HIGH_LIMIT_BROKEN,"温度高限故障",brokenlist,deviceSn);
+			logger.debug("设备编号为:"+deviceSn+"的设备开机自检中发现温度高限故障");
 			break;
 		case "4":
 			//温度断开故障
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.TEMPORETURE_CLOSED_BROKEN,"温度断开故障",brokenlist,deviceSn);
+			logger.debug("设备编号为:"+deviceSn+"的设备开机自检中发现温度断开故障");
 			break;
 		default:
 			break;
 		}
 		
-		
+		logger.debug("准备将故障信息推送给微信用户");
 		//long start=System.currentTimeMillis();
 		WXUser wxuser=new WXUser();
 		wxuser=service.findWXUserById(relation);
@@ -685,6 +695,7 @@ public class CMDUtils {
 				BrokenMSG bs=new BrokenMSG();
 				bs.setMSG(brokenmsg);
 			}
+			logger.debug("准备将故障信息保存到数据库");
 			 Broken  broken=new Broken();
 				broken.setCreateDate(new Date());
 				broken.setEntityModel(entityModel);
@@ -699,7 +710,9 @@ public class CMDUtils {
 	//while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
 	public static Map<String, Object> responseToBrowser(String order,String deviceSn){
 		// long start=System.currentTimeMillis();
+		
 		 String lockObject=order+deviceSn;
+		 logger.debug("生成锁对象"+lockObject);
 		   // long end=0;
 		    //while(true) {
 		    	Map<String,String> map=getFeedback();
@@ -709,10 +722,13 @@ public class CMDUtils {
 		    	synchronized (lockObject) {
 		    		
 					try {
+						logger.debug("当前线程"+Thread.currentThread().getName()+"准备进入等待");
 						lockObject.wait(10000);
+						logger.debug("当前线程"+Thread.currentThread().getName()+"被唤醒或者超时");
 						map.remove(deviceSn);
 						end=System.currentTimeMillis();
 						if(end-start>=10000) {
+							logger.debug("等待反馈超时");
 							return RESCODE.NOT_RECEIVED.getJSONRES();
 						}
 						

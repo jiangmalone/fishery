@@ -183,6 +183,7 @@ public class CMDUtils {
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
 				if(aio==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				aio.setStatus(3);
@@ -190,6 +191,7 @@ public class CMDUtils {
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 				if(sensor==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				sensor.setStatus(3);
@@ -197,6 +199,7 @@ public class CMDUtils {
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
 				if(controller==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				controller.setStatus(3);
@@ -223,6 +226,7 @@ public class CMDUtils {
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
 				if(aio==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				aio.setStatus(2);
@@ -230,6 +234,7 @@ public class CMDUtils {
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 				if(sensor==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				sensor.setStatus(2);
@@ -237,6 +242,7 @@ public class CMDUtils {
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
 				if(controller==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				controller.setStatus(2);
@@ -263,6 +269,7 @@ public class CMDUtils {
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
 				if(aio==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				aio.setStatus(4);
@@ -270,6 +277,7 @@ public class CMDUtils {
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 				if(sensor==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				sensor.setStatus(4);
@@ -277,6 +285,7 @@ public class CMDUtils {
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
 				if(controller==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				controller.setStatus(4);
@@ -302,6 +311,7 @@ public class CMDUtils {
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
 				if(aio==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				aio.setStatus(0);
@@ -309,6 +319,7 @@ public class CMDUtils {
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 				if(sensor==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				sensor.setStatus(0);
@@ -316,6 +327,7 @@ public class CMDUtils {
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
 				if(controller==null) {
+					response(8,data,readChannel);
 					return;
 				}
 				controller.setStatus(0);

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.model.ParamBody;
 import com.geariot.platform.fishery.service.EquipmentService;
 import com.geariot.platform.fishery.socket.CMDUtils;
 
@@ -93,8 +94,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value = "/autoSet", method = RequestMethod.POST)
-	public Map<String, Object> autoSet(@RequestBody Limit_Install limit_Install, @RequestBody Timer... timers){
-		return equipmentService.autoSet(limit_Install, timers);
+	public Map<String, Object> autoSet(@RequestBody ParamBody body){
+		return equipmentService.autoSet(body.getLimit_Install(), body.getTimers());
 	}
 	
 	//服务器设置校准

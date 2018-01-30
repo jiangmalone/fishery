@@ -34,12 +34,21 @@ class MyEquipment extends React.Component {
                 const data = res.data;
                 if (data.aio && data.aio.length > 0) {
                     this.setState({ aios: data.aio })
+                } else {
+                    this.setState({ aios: [] })
                 }
                 if (data.controller && data.controller.length > 0) {
                     this.setState({ controllers: data.controller })
+                } else {
+                    this.setState({ controllers: [] })
                 }
                 if (data.sensor && data.sensor.length > 0) {
                     this.setState({ sensors: data.sensor })
+                } else {
+                    this.setState({ sensors: [] })
+                }
+                if ((!data.aio || data.aio.length == 0) && (!data.controller || data.controller.length == 0) && (!data.sensor || data.sensor.length == 0)) {
+                    // this.addEquipment();
                 }
             } else {
                 Toast.fail(res.data.msg, 1);

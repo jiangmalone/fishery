@@ -4,6 +4,7 @@ import { List, InputItem, Picker, ActivityIndicator, Toast } from 'antd-mobile';
 import NavBar from '../../../components/NavBar';
 import { createForm } from 'rc-form';
 import { connect } from 'dva';
+import $ from 'jquery';
 const Item = List.Item;
 const Brief = Item.Brief;
 
@@ -105,7 +106,7 @@ class AddPond extends PureComponent {
                         labelNumber='5'
                         error={!!getFieldError('sediment_thickness')}
                         placeholder="请输入底泥厚度"
-                    >底泥厚度(m)</InputItem>
+                    >底泥厚度(cm)</InputItem>
                     <InputItem
                         {...getFieldProps('water_source') }
                         clear

@@ -30,7 +30,7 @@ export default class CompanyUserDetail extends React.Component {
             ponds: [],
             selectMarker: '',        //选择地图上的某个点
             relation: props.match.params.relation ? props.match.params.relation : window.localStorage.getItem('relationId'),
-            id: props.match.params.id ? props.match.params.id : window.localStorage.getItem('id')
+            companyId: props.match.params.id ? props.match.params.id : window.localStorage.getItem('companyId')
         }
     }
 
@@ -41,7 +41,7 @@ export default class CompanyUserDetail extends React.Component {
 
     getCompanyDetail = () => {
         CompanyDetail({
-            id: this.state.id
+            id: this.state.companyId
         }).then(res => {
             if (res && res.code == 0) {
                 let data = res.data;

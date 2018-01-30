@@ -4,7 +4,6 @@ import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { Table, Card, Row, Col, Input, Button } from 'antd'
 import { Link } from 'react-router-dom'
-import index from '../../../node_modules/_antd@3.0.1@antd/lib/checkbox';
 
 @connect(state => ({
     list: state.allequipment.list,

@@ -80,7 +80,7 @@ class EquipmentManagement extends React.Component {
         }).then(res => {
             this.setState({ animating: false });
             if (res.data && res.data.code == 0) {
-                let portBinds = res.data.data.portBinds;
+                let portBinds = res.data.data.portBinds ? res.data.data.portBinds : [];
                 let standardPorts = [];
                 let bindPorts = [];
                 if (this.state.type == 1) {
@@ -116,6 +116,7 @@ class EquipmentManagement extends React.Component {
             }
         }).catch(error => {
             this.setState({ animating: false });
+            console.log(error);
             Toast.fail('请求失败!', 1);
         })
     }

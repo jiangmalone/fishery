@@ -80,7 +80,13 @@ class AutoOxygenationSetting extends React.Component {
                     if (res.data.code == 0) {
                         Toast.success('设置成功', 1);
                         setTimeout(() => {
-                            history.back();
+                            this.props.dispatch({
+                                type: 'global/changeState',
+                                payload: {
+                                    transitionName: 'right'
+                                }
+                            })
+                            this.props.history.push('/main');
                         }, 1000);
                     } else {
                         Toast.fail(res.data.msg, 1)
@@ -104,7 +110,7 @@ class AutoOxygenationSetting extends React.Component {
             console.log(res);
             if (res.data.code == 0) {
                 const form = {
-                    
+
                 }
             } else {
                 Toast.fail(res.data.msg, 1);

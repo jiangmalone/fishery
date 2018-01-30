@@ -100,8 +100,8 @@ public class EquipmentController {
 	
 	//服务器设置校准
 	@RequestMapping(value="/serverCheck",method=RequestMethod.GET)
-	public Map<String,Object> serverCheck(String device_sn){
-		return CMDUtils.serverCheckCMD(device_sn);
+	public Map<String,Object> serverCheck(String device_sn,int way){
+		return CMDUtils.serverCheckCMD(device_sn,way);
 	}
 	
 	//增氧机开关

@@ -481,7 +481,7 @@ public class CMDUtils {
 	}
 
 	// 服务器校准命令
-	public static Map<String, Object> serverCheckCMD(String deviceSn) {
+	public static Map<String, Object> serverCheckCMD(String deviceSn,int way) {
 		SocketChannel channel=clientMap.get(deviceSn);
 		if(channel==null) {
         	return RESCODE.NOT_OPEN.getJSONRES();
@@ -491,7 +491,7 @@ public class CMDUtils {
 		}
 		byte[] request = null;
 		//第一路开始校准
-		String firstpath=StringUtils.add(deviceSn, 1, 13)
+		String firstpath=StringUtils.add(deviceSn, way, 13)
                 .append("          ")
 				.toString();
 		request=CommonUtils.toByteArray(firstpath);
@@ -503,19 +503,7 @@ public class CMDUtils {
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-	    //第二路开始校准
-	    String secondpath=StringUtils.add(deviceSn, 2, 13)
-                .append("          ")
-				.toString();
-	    request=CommonUtils.toByteArray(secondpath);
-		request[7]=CommonUtils.arrayMerge(request, 2, 5);
-		CommonUtils.addSuffix(request, 8);
-	     outBuffer = ByteBuffer.wrap(request);
-	    try {
-			channel.write(outBuffer);
-		} catch (IOException e) {
-			return RESCODE.SEND_FAILED.getJSONRES();
-		}
+	   
 	
 	    return responseToBrowser("13",deviceSn);
 	}

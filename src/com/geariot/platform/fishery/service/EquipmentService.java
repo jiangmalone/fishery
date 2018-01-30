@@ -651,7 +651,7 @@ public class EquipmentService {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
 		if(type.equals("01")||type.equals("02")) {
-			AIO aio=aioDao.findAIOByDeviceSnAndWay(device_sn, way);
+			AIO aio=aioDao.findAIOByDeviceSns(device_sn);
 			if(aio==null) {
 				return RESCODE.NOT_FOUND.getJSONRES();
 			}

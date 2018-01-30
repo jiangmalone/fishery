@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.geariot.platform.fishery.dao.AIODao;
+import com.geariot.platform.fishery.dao.AeratorStatusDao;
 import com.geariot.platform.fishery.dao.FishCateDao;
 import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.SensorDao;
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
@@ -45,6 +47,9 @@ public class PondService {
 
 	@Autowired
 	private Sensor_DataDao sensor_DataDao;
+	
+	@Autowired
+	private AeratorStatusDao statusDao;
 
 	private Logger logger = LogManager.getLogger(PondService.class);
 
@@ -158,18 +163,24 @@ public class PondService {
 			List<AIO> aios = aioDao.findAIOsByPondId(pond.getId());
 			for (AIO aio : aios) {
 				oneWay = sensor_DataDao.findDataByDeviceSnAndWay(aio.getDevice_sn(), 1);
+				AeratorStatus oneStatus = statusDao.findByDeviceSnAndWay(aio.getDevice_sn(), 1);
 				if(oneWay == null){
 					aio.setOxygen(0);
 					aio.setWater_temperature(0);
 					aio.setpH_value(0);
 					aio.setWay(1);
+					aio.setTimed(oneStatus.isTimed());
+					aio.setOnoff(oneStatus.isOn_off());
 				}else{
 					aio.setWater_temperature(sensor_Data.getWater_temperature());
 					aio.setOxygen(sensor_Data.getOxygen());
 					aio.setpH_value(sensor_Data.getpH_value());
 					aio.setWay(1);
+					aio.setTimed(oneStatus.isTimed());
+					aio.setOnoff(oneStatus.isOn_off());
 				}
 				twoWay = sensor_DataDao.findDataByDeviceSnAndWay(aio.getDevice_sn(), 2);
+				AeratorStatus twoStatus = statusDao.findByDeviceSnAndWay(aio.getDevice_sn(), 2);
 				aioTemp = new AIO();
 				aioTemp.setId(EightInteger.eightInteger());
 				aioTemp.setDevice_sn(aio.getDevice_sn());
@@ -183,10 +194,14 @@ public class PondService {
 					aioTemp.setOxygen(0);
 					aioTemp.setWater_temperature(0);
 					aioTemp.setpH_value(0);
+					aio.setTimed(twoStatus.isTimed());
+					aio.setOnoff(twoStatus.isOn_off());
 				}else{
 					aioTemp.setWater_temperature(sensor_Data.getWater_temperature());
 					aioTemp.setOxygen(sensor_Data.getOxygen());
 					aioTemp.setpH_value(sensor_Data.getpH_value());
+					aio.setTimed(twoStatus.isTimed());
+					aio.setOnoff(twoStatus.isOn_off());
 				}
 				temp.add(aioTemp);
 			}

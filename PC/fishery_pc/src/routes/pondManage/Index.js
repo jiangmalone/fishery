@@ -143,6 +143,7 @@ class PondList extends PureComponent {
             visible: modalVisible,
             wrapClassName: 'vertical-center-modal',
             address: address,
+            modifyId:this.state.modifyId,
             fishCategories: fishCategories,
             onCancel: () => {
                 this.props.dispatch({

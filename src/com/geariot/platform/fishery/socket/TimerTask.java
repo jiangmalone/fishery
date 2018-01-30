@@ -17,56 +17,61 @@ import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
-
 @Component
 @Transactional
 public class TimerTask {
-	
+
 	@Autowired
 	private TimerDao timerDao;
-	
+
 	@Autowired
 	private AIODao aioDao;
-	
+
 	@Autowired
 	private WXUserDao wxuserDao;
 	private static Logger logger = Logger.getLogger(TimerTask.class);
+
 	@Scheduled(cron = "0 0/30 * * * ?") // 每半小时执行一次
-	public  void judgeTime() {
-         
+	public void judgeTime() {
+
 		List<Timer> lt = timerDao.findAllTimer();
-		
+
 		if (!lt.isEmpty()) {
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 			String now = sdf.format(new Date());
 			for (Timer timer : lt) {
-			    AIO aio=aioDao.findAIOByDeviceSns(timer.getDevice_sn());
-				if (now.compareTo(timer.getStartTime()) <= 5&&now.compareTo(timer.getStartTime()) >= 0) {
+				AIO aio = aioDao.findAIOByDeviceSns(timer.getDevice_sn());
+				if (aio == null)
+					return;
+				if (now.compareTo(timer.getStartTime()) <= 5 && now.compareTo(timer.getStartTime()) >= 0) {
 					logger.debug("检测到数据中有待执行的定时任务，准备向终端发送打开增氧机的命令");
-					
-					if(!CMDUtils.serverOnOffOxygenCMD(timer.getDevice_sn(),timer.getWay(), 1).containsKey("0")) {
-						WechatSendMessageUtils.sendWechatOxygenOnOffMessages("设备编号为 "+timer.getDevice_sn()
-						+" 的增氧机在定时时间为:"+timer.getStartTime()+"打开失败",
-						wxuserDao.findUserById(Integer.parseInt(aio.getRelation().substring(2))).getOpenId());
+
+					if (!CMDUtils.serverOnOffOxygenCMD(timer.getDevice_sn(), timer.getWay(), 1).containsKey("0")) {
+
+						if (aio.getRelation() != null && aio.getRelation().contains("WX")) {
+							WechatSendMessageUtils.sendWechatOxygenOnOffMessages(
+									"设备编号为 " + timer.getDevice_sn() + " 的增氧机在定时时间为:" + timer.getStartTime() + "打开失败",
+									wxuserDao.findUserById(Integer.parseInt(aio.getRelation().substring(2)))
+											.getOpenId());
+						}
 					}
-					
 				}
-				if (now.compareTo(timer.getEndTime())<=5&&now.compareTo(timer.getEndTime())>=0) {
+				if (now.compareTo(timer.getEndTime()) <= 5 && now.compareTo(timer.getEndTime()) >= 0) {
 					logger.debug("检测到数据中有待执行的定时任务，准备向终端发送关闭增氧机的命令");
-					
-					if(!CMDUtils.serverOnOffOxygenCMD(timer.getDevice_sn(),timer.getWay(), 0).containsKey("0")){
-						WechatSendMessageUtils.sendWechatOxygenOnOffMessages("设备编号为 "+timer.getDevice_sn()
-						+" 的增氧机在定时时间为:"+timer.getStartTime()+"关闭失败",
-						wxuserDao.findUserById(Integer.parseInt(aio.getRelation().substring(2))).getOpenId());
+
+					if (!CMDUtils.serverOnOffOxygenCMD(timer.getDevice_sn(), timer.getWay(), 0).containsKey("0")) {
+						if (aio.getRelation() != null && aio.getRelation().contains("WX")) {
+							WechatSendMessageUtils.sendWechatOxygenOnOffMessages(
+									"设备编号为 " + timer.getDevice_sn() + " 的增氧机在定时时间为:" + timer.getStartTime() + "关闭失败",
+									wxuserDao.findUserById(Integer.parseInt(aio.getRelation().substring(2)))
+											.getOpenId());
+						}
 					}
-					
 				}
 			}
 		}
 
 	}
-	
-	
 	
 	
 }

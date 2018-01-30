@@ -16,7 +16,7 @@ const formItemLayout = {
 function AddCompany({ visible, form, onOk, onCancel, wrapClassName,modifyId }) {
     const { getFieldDecorator, validateFieldsAndScroll } = form;
 
-    return <Modal title={modifyId?"新增企业":'修改企业'}
+    return <Modal title={modifyId?'修改企业':"新增企业"}
         visible={visible}
         onOk={() => {
             let obj = {}

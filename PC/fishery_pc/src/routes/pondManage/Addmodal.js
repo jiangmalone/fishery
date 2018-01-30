@@ -23,7 +23,7 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
     children = fishCategories.map((item, index) => {
         return <Option key={item.id} value={item.fish_name}>{item.fish_name}</Option>
     })
-    return <Modal title={modifyId ? '修改塘口':"新增塘口"}
+    return <Modal title={modifyId ? "修改塘口":"新增塘口"}
         visible={visible}
         onOk={() => {
             let obj = {}

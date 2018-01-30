@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.geariot.platform.fishery.dao.AIODao;
+import com.geariot.platform.fishery.dao.AeratorStatusDao;
 import com.geariot.platform.fishery.dao.CompanyDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.dao.LimitDao;
@@ -24,6 +25,7 @@ import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Limit_Install;
@@ -71,6 +73,9 @@ public class EquipmentService {
 	
 	@Autowired
 	private WXUserDao wxUserDao;
+	
+	@Autowired
+	private AeratorStatusDao statusDao;
 
 	private String type = "";
 	private String relation = "";
@@ -129,53 +134,6 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	/*public Map<String, Object> setTimer(Timer[] timerArray) {
-		String deviceSn;
-		Timer timer = timerArray[0];
-		try {
-			deviceSn = timer.getDevice_sn().substring(0, 2);
-
-		} catch (Exception e) {
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		}
-		if (deviceSn.equals("01") || deviceSn.equals("02")) {
-			if (aioDao.findAIOByDeviceSns(timer.getDevice_sn()) == null) {
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-			}
-		} else if (deviceSn.equals("03")) {
-			if (sensorDao.findSensorByDeviceSns(timer.getDevice_sn()) == null) {
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-			}
-		} else
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		timerDao.delete(timer.getDevice_sn(),timer.getWay());
-		for (Timer timersave : timerArray) {
-			timerDao.save(timersave);
-		}
-		return RESCODE.SUCCESS.getJSONRES();
-	}*/
-
-	/*
-	 * public Map<String, Object> queryEquipment(String device_sn, String
-	 * relation, String name, int page, int number) { String deviceSn; try {
-	 * deviceSn = device_sn.trim().substring(0, 2); } catch (Exception e) {
-	 * return RESCODE.DEVICESNS_INVALID.getJSONRES(); } if
-	 * (deviceSn.equals("01") || deviceSn.equals("02")) { List<AIO>
-	 * list=aioDao.queryAIOByNameAndRelation(relation, name, page, number);
-	 * if(list.isEmpty()) return RESCODE.NOT_FOUND.getJSONRES(); return
-	 * RESCODE.SUCCESS.getJSONRES(list); } else if (deviceSn.equals("03")) {
-	 * List<Sensor> list=sensorDao.querySensorByNameAndRelation(relation, name,
-	 * page, number); if(list.isEmpty()) return RESCODE.NOT_FOUND.getJSONRES();
-	 * return RESCODE.SUCCESS.getJSONRES(list); } else if
-	 * (deviceSn.equals("04")) { List<Controller>
-	 * list=controllerDao.queryControllerByNameAndRelation(relation, name, page,
-	 * number); if(list.isEmpty()) return RESCODE.NOT_FOUND.getJSONRES(); return
-	 * RESCODE.SUCCESS.getJSONRES(list); } else { return
-	 * RESCODE.DEVICESNS_INVALID.getJSONRES(); }
-	 * 
-	 * }
-	 */
-
 	public boolean exportData(String device_sn, String startTime, String endTime, HttpServletResponse response) {
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
@@ -211,6 +169,19 @@ public class EquipmentService {
 				aio.setStatus(1);
 				aio.setType(Integer.parseInt(deviceSn));
 				aioDao.save(aio);
+				//初始化两个增氧机状态
+				AeratorStatus status1 = new AeratorStatus();
+				status1.setDevice_sn(device_sn);
+				status1.setOn_off(false);
+				status1.setTimed(false);
+				status1.setWay(1);
+				statusDao.save(status1);
+				AeratorStatus status2 = new AeratorStatus();
+				status2.setDevice_sn(device_sn);
+				status2.setOn_off(false);
+				status2.setTimed(false);
+				status2.setWay(2);
+				statusDao.save(status2);
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		} else if (deviceSn.equals("03")) {
@@ -291,27 +262,35 @@ public class EquipmentService {
 		return result;
 	}
 
-	public Map<String, Object> adminFindEquipment(String device_sn, String companyName, int page, int number) {
+	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number) {
 		int from = (page - 1) * number;
-		if ((device_sn == null || device_sn.length() < 0) && (companyName == null || companyName.length() < 0)) {
+		if ((device_sn == null || device_sn.length() < 0) && (userName == null || userName.length() < 0)) {
 			return noConditionsQuery(from, number);
 		}
 		if ((device_sn == null || device_sn.length() < 0)
-				&& (companyName != null && !companyName.isEmpty() && !companyName.trim().isEmpty())) {
-			return companyConditionQuery(companyName, from, number);
+				&& (userName != null && !userName.isEmpty() && !userName.trim().isEmpty())) {
+			return nameConditionQuery(userName, from, number);
 		}
 		if ((device_sn != null && !device_sn.isEmpty() && !device_sn.trim().isEmpty())
-				&& (companyName == null || companyName.length() < 0)) {
+				&& (userName == null || userName.length() < 0)) {
 			return deviceSnConditionQuery(device_sn, from, number);
 		}
-		return doubleConditionQuery(device_sn, companyName, from, number);
+		return doubleConditionQuery(device_sn, userName, from, number);
 	}
 
-	private Map<String, Object> doubleConditionQuery(String device_sn, String companyName, int from, int number) {
-		List<Company> companies = companyDao.companies(companyName);
-		List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, companies, from, number);
+	private Map<String, Object> doubleConditionQuery(String device_sn, String userName, int from, int number) {
+		List<Company> companies = companyDao.companies(userName);
+		List<WXUser> wxUsers= wxUserDao.wxUsers(userName);
+		List<String> relations = new ArrayList<>();
+		for(Company company: companies){
+			relations.add(company.getRelation());
+		}
+		for(WXUser wxUser: wxUsers){
+			relations.add(wxUser.getRelation());
+		}
+		List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
 		shareDealMethod(equipments);
-		long count = pondDao.adminFindEquipmentCountDouble(device_sn, companies);
+		long count = pondDao.adminFindEquipmentCountDouble(device_sn, relations);
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}
@@ -324,11 +303,19 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}
 
-	private Map<String, Object> companyConditionQuery(String companyName, int from, int number) {
-		List<Company> companies = companyDao.companies(companyName);
-		List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, from, number);
+	private Map<String, Object> nameConditionQuery(String userName, int from, int number) {
+		List<Company> companies = companyDao.companies(userName);
+		List<WXUser> wxUsers= wxUserDao.wxUsers(userName);
+		List<String> relations = new ArrayList<>();
+		for(Company company: companies){
+			relations.add(company.getRelation());
+		}
+		for(WXUser wxUser: wxUsers){
+			relations.add(wxUser.getRelation());
+		}
+		List<Equipment> equipments = pondDao.adminFindEquipmentByName(relations, from, number);
 		shareDealMethod(equipments);
-		long count = pondDao.adminFindEquipmentCountCo(companies);
+		long count = pondDao.adminFindEquipmentCountName(relations);
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}
@@ -349,17 +336,19 @@ public class EquipmentService {
 						if(company == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(company.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(company.getName());
-						equipment.setRelation(relation);
 					}else if(relation.contains("WX")){
 						wxUser = wxUserDao.findUserByRelation(relation);
 						if(wxUser == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(wxUser.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(wxUser.getName());
-						equipment.setRelation(relation);
 					}else{
 						equipment.setName("");
 						equipment.setRelation("0");
@@ -378,17 +367,19 @@ public class EquipmentService {
 						if(company == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(company.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(company.getName());
-						equipment.setRelation(relation);
 					}else if(relation.contains("WX")){
 						wxUser = wxUserDao.findUserByRelation(relation);
 						if(wxUser == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(wxUser.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(wxUser.getName());
-						equipment.setRelation(relation);
 					}else{
 						equipment.setName("");
 						equipment.setRelation("0");
@@ -407,17 +398,19 @@ public class EquipmentService {
 						if(company == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(company.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(company.getName());
-						equipment.setRelation(relation);
 					}else if(relation.contains("WX")){
 						wxUser = wxUserDao.findUserByRelation(relation);
 						if(wxUser == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(wxUser.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(wxUser.getName());
-						equipment.setRelation(relation);
 					}else{
 						equipment.setName("");
 						equipment.setRelation("0");
@@ -436,17 +429,19 @@ public class EquipmentService {
 						if(company == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(company.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(company.getName());
-						equipment.setRelation(relation);
 					}else if(relation.contains("WX")){
 						wxUser = wxUserDao.findUserByRelation(relation);
 						if(wxUser == null){
 							equipment.setName("");
 							equipment.setRelation("0");
+						}else{
+							equipment.setUserName(wxUser.getName());
+							equipment.setRelation(relation);
 						}
-						equipment.setUserName(wxUser.getName());
-						equipment.setRelation(relation);
 					}else{
 						equipment.setName("");
 						equipment.setRelation("0");
@@ -475,10 +470,10 @@ public class EquipmentService {
 		if (company == null) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
-			List<Company> companies = new ArrayList<>();
-			companies.add(company);
+			List<String> relations = new ArrayList<>();
+			relations.add(company.getRelation());
 			if (device_sn == null || device_sn.length() < 0) {
-				List<Equipment> equipments = pondDao.adminFindEquipmentByCo(companies, from, number);
+				List<Equipment> equipments = pondDao.adminFindEquipmentByName(relations, from, number);
 				for(Equipment equipment : equipments){
 					String type = equipment.getDevice_sn().substring(0,2);
 					if(type.equals("03")){
@@ -492,12 +487,12 @@ public class EquipmentService {
 						equipment.setSensorId(0);
 					}
 				}
-				long count = pondDao.adminFindEquipmentCountCo(companies);
+				long count = pondDao.adminFindEquipmentCountName(relations);
 				int size = (int) Math.ceil(count / (double) number);
 				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 			} else {
-				List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, companies, from, number);
-				long count = pondDao.adminFindEquipmentCountDouble(device_sn, companies);
+				List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
+				long count = pondDao.adminFindEquipmentCountDouble(device_sn, relations);
 				int size = (int) Math.ceil(count / (double) number);
 				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 			}
@@ -625,7 +620,11 @@ public class EquipmentService {
 		} else
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		limitDao.updateLimit(limit_Install);
+		AeratorStatus status = statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
 		Timer timer = timers[0];
+		if(timers.length > 0) {
+			status.setTimed(true);
+		}
 		timerDao.delete(timer.getDevice_sn(), timer.getWay());
 		for (Timer timersave : timers) {
 			timerDao.save(timersave);

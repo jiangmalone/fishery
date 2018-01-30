@@ -22,12 +22,15 @@ public class AIO {
 	private int pondId;					//绑定的塘口Id
 	private String relation;			//绑定的用户relation
 	
+	
+	//以下这些字段均用@Transient注解了
 	private float oxygen;						//溶氧量
 	private float water_temperature;			//水温
 	private float pH_value;						//ph值
 	private int way;								//一体机第几路数据
 	private boolean onoff;							//开关状态
 	private boolean isTimed;						//是否定时增氧
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getId() {

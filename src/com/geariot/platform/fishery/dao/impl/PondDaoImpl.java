@@ -184,11 +184,7 @@ public class PondDaoImpl implements PondDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Equipment> adminFindEquipmentByCo(List<Company> companies, int from, int pageSize) {
-		List<String> strings = new ArrayList<>();
-		for(Company company : companies){
-			strings.add(company.getrelation());
-		}
+	public List<Equipment> adminFindEquipmentByName(List<String> relations, int from, int pageSize) {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
 		sb.append("from AIO a where a.relation in :relations ");
@@ -200,17 +196,13 @@ public class PondDaoImpl implements PondDao {
 		sb.append("from Controller c where c.relation in :relations ");
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
-				.setParameterList("relations", strings)
+				.setParameterList("relations", relations)
 				.setFirstResult(from)
 				.setMaxResults(pageSize).list();
 	}
 
 	@Override
-	public long adminFindEquipmentCountCo(List<Company> companies) {
-		List<String> strings = new ArrayList<>();
-		for(Company company : companies){
-			strings.add(company.getrelation());
-		}
+	public long adminFindEquipmentCountName(List<String> relations) {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select count(*) from (");
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
@@ -222,7 +214,7 @@ public class PondDaoImpl implements PondDao {
 		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
 		sb.append("from Controller c where c.relation in :relations) ");
 		sb.append("as total");
-		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString()).setParameterList("relations", strings).uniqueResult();
+		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString()).setParameterList("relations", relations).uniqueResult();
 		return big.longValue();
 	}
 
@@ -261,11 +253,7 @@ public class PondDaoImpl implements PondDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Equipment> adminFindEquipmentDouble(String device_sn, List<Company> companies, int from, int pageSize) {
-		List<String> strings = new ArrayList<>();
-		for(Company company : companies){
-			strings.add(company.getrelation());
-		}
+	public List<Equipment> adminFindEquipmentDouble(String device_sn, List<String> relations, int from, int pageSize) {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
 		sb.append("from AIO a where a.device_sn like :device_sn and a.relation in :relations ");
@@ -278,18 +266,14 @@ public class PondDaoImpl implements PondDao {
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
 				.setString("device_sn", "%"+device_sn+"%")
-				.setParameterList("relations", strings)
+				.setParameterList("relations", relations)
 				.setFirstResult(from)
 				.setMaxResults(pageSize)
 				.list();
 	}
 
 	@Override
-	public long adminFindEquipmentCountDouble(String device_sn, List<Company> companies) {
-		List<String> strings = new ArrayList<>();
-		for(Company company : companies){
-			strings.add(company.getrelation());
-		}
+	public long adminFindEquipmentCountDouble(String device_sn, List<String> relations) {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select count(*) from (");
 		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
@@ -303,7 +287,7 @@ public class PondDaoImpl implements PondDao {
 		sb.append("as total");
 		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString())
 				.setString("device_sn", "%"+device_sn+"%")
-				.setParameterList("relations", strings)
+				.setParameterList("relations", relations)
 				.uniqueResult();
 		return big.longValue();
 	}

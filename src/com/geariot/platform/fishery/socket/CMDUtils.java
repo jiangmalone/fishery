@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 
 import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Alarm;
 import com.geariot.platform.fishery.entities.Broken;
 import com.geariot.platform.fishery.entities.Controller;
@@ -181,14 +182,26 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				aio.setStatus(3);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				sensor.setStatus(3);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				controller.setStatus(3);
 				service.updateController(controller);
 			}
@@ -212,14 +225,26 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				aio.setStatus(2);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				sensor.setStatus(2);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				controller.setStatus(2);
 				service.updateController(controller);
 			}	
@@ -243,14 +268,26 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				aio.setStatus(4);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				sensor.setStatus(4);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				controller.setStatus(4);
 				service.updateController(controller);
 			}
@@ -273,14 +310,26 @@ public class CMDUtils {
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
+				if(aio==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				aio.setStatus(0);
 				service.updateAIO(aio);
 			}else if(judge.equals("03")) {
 				Sensor sensor=service.findSensorByDeviceSn(deviceSn);
+				if(sensor==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				sensor.setStatus(0);
 				service.updateSensor(sensor);
 			}else if(judge.equals("04")) {
 				Controller controller =service.findControllerByDeviceSn(deviceSn);
+				if(controller==null) {
+					response(8,data,readChannel);
+					return;
+				}
 				controller.setStatus(0);
 				service.updateController(controller);
 			}	
@@ -335,11 +384,21 @@ public class CMDUtils {
 			String openFirstPath = StringUtils.add(deviceSn, way, 7).append("01").append("          ").toString();
 
 			request = CommonUtils.toByteArray(openFirstPath);
+			
+			AeratorStatus status=service.findByDeviceSnAndWay(deviceSn, way);
+			
+			status.setOn_off(true);
+			
+			
 
 		} else {
 			String close = StringUtils.add(deviceSn, way, 7).append("00").append("          ").toString();
 
 			request = CommonUtils.toByteArray(close);
+			
+          AeratorStatus status=service.findByDeviceSnAndWay(deviceSn, way);
+			
+			status.setOn_off(false);
 
 		}
 		request[8] = CommonUtils.arrayMerge(request, 2, 6);
@@ -504,17 +563,23 @@ public class CMDUtils {
 			if(aio!=null) {
 			relation=aio.getRelation();
 			System.out.println(relation);
+			}else {
+				return;
 			}
 		}else if(type.equals("03")) {
 		Sensor sensor=service.findSensorByDeviceSn(deviceSn);
 		if(sensor!=null) {
 		relation=sensor.getRelation();
+		}else {
+			return;
 		}
 		}else if(type.equals("04")) {
 			Controller controller=new Controller();
 			controller=service.findControllerByDeviceSn(deviceSn);
 			if(controller!=null) {
 			relation=controller.getRelation();
+			}else {
+				return;
 			}
 		}
 		System.out.println(statusStr);
@@ -602,12 +667,14 @@ public class CMDUtils {
 		//long start=System.currentTimeMillis();
 		WXUser wxuser=new WXUser();
 		wxuser=service.findWXUserById(relation);
+		if(wxuser!=null) {
 		BrokenMSG bs=new BrokenMSG();
 		//System.out.println(bs.getMSG());
 		//System.out.println(wxuser.getOpenId());
 		WechatSendMessageUtils.sendWechatMessages(bs.getMSG(),wxuser.getOpenId());
 		//WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
 		bs.clear(); 
+		}
 		//long end=System.currentTimeMillis();
 		//System.out.println(end-start);
 		
@@ -633,19 +700,39 @@ public class CMDUtils {
 	}
 	//while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
 	public static Map<String, Object> responseToBrowser(String order,String deviceSn){
-		 long start=System.currentTimeMillis();
-		    long end=0;
-		    while(true) {
+		// long start=System.currentTimeMillis();
+		 String lockObject=order+deviceSn;
+		   // long end=0;
+		    //while(true) {
 		    	Map<String,String> map=getFeedback();
-		    	if(order.equals(map.get(deviceSn))) {
+		    	map.put(deviceSn, lockObject);
+		    	long start=System.currentTimeMillis();
+		    	long end=0;
+		    	synchronized (lockObject) {
+		    		
+					try {
+						lockObject.wait(10000);
+						map.remove(deviceSn);
+						end=System.currentTimeMillis();
+						if(end-start>=10000) {
+							return RESCODE.NOT_RECEIVED.getJSONRES();
+						}
+						
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+		    	/*if(order.equals(map.get(deviceSn))) {
 		    		map.remove(deviceSn);
 		    		return RESCODE.SUCCESS.getJSONRES();
-		    	}
+		    	}*/
+				return RESCODE.SUCCESS.getJSONRES();
 		    	
-		    	end=System.currentTimeMillis();
+		    	/*end=System.currentTimeMillis();
 		    	if(end-start>=10000) {
 		    		return RESCODE.NOT_RECEIVED.getJSONRES();
 		    	}
-		    }
+		    }*/
 	}
 } 

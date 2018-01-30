@@ -14,7 +14,7 @@ class UserInfo extends React.Component {
         this.state = {
             form: {
                 name: window.localStorage.getItem('name') ? window.localStorage.getItem('name') : '',
-                sex: window.localStorage.getItem('sex')?window.localStorage.getItem('sex'):'',  //0 man 1 faleman
+                sex: window.localStorage.getItem('sex')?window.localStorage.getItem('sex'):'男',  //0 man 1 faleman
                 phone: window.localStorage.getItem('phone') ? window.localStorage.getItem('phone') : '',
                 years: window.localStorage.getItem('life') ? window.localStorage.getItem('life') : ''
             }

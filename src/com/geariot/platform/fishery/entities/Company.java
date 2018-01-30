@@ -71,10 +71,10 @@ public class Company {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
-	public String getrelation() {
+	public String getRelation() {
 		return relation;
 	}
-	public void setrelation(String relation) {
+	public void setRelation(String relation) {
 		this.relation = relation;
 	}
 	public String getAccount() {

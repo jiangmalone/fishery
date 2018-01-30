@@ -42,17 +42,17 @@ public interface PondDao {
 	
 	long adminFindEquipmentCountAll();
 	
-	List<Equipment> adminFindEquipmentByCo(List<Company> companies , int from, int pageSize);
+	List<Equipment> adminFindEquipmentByName(List<String> relations , int from, int pageSize);
 	
-	long adminFindEquipmentCountCo(List<Company> companies);
+	long adminFindEquipmentCountName(List<String> relations);
 	
 	List<Equipment> adminFindEquipmentBySn(String device_sn);
 	
 	long adminFindEquipmentCountSn(String device_sn);
 	
-	List<Equipment> adminFindEquipmentDouble(String device_sn, List<Company> companies , int from, int pageSize);
+	List<Equipment> adminFindEquipmentDouble(String device_sn, List<String> relations , int from, int pageSize);
 	
-	long adminFindEquipmentCountDouble(String device_sn, List<Company> companies);
+	long adminFindEquipmentCountDouble(String device_sn, List<String> relations);
 	
 	List<Equipment> equipmentRelation(String relation, int from, int pageSize);
 	

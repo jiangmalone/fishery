@@ -1,6 +1,7 @@
 import React from 'react';
 import './main.less'
 import { Flex, Toast, List, Switch, Button, ActionSheet, ActivityIndicator } from 'antd-mobile'
+import { Map } from 'react-amap';
 import { withRouter } from "react-router-dom";
 import BottomTabBar from '../../components/TabBar';
 import Accordion from '../../components/Accordion';
@@ -11,6 +12,7 @@ import { connect } from 'dva';
 import { wxQuery } from '../../services/pondManage.js'; //接口
 import { getWeather } from '../../services/weather.js'; //接口
 import { aeratorOnOff } from '../../services/oxygenControl.js'; //接口
+import { autoSet } from '../../services/equipment.js'; //接口
 
 class Main extends React.Component {
 
@@ -29,6 +31,19 @@ class Main extends React.Component {
     componentDidMount() {
         this.getLocation(); //获得当前地理位置
         this.queryPonds();
+        var citysearch = new AMap.CitySearch();
+        //自动获取用户IP，返回当前城市
+        citysearch.getLocalCity(function(status, result) {
+            if (status === 'complete' && result.info === 'OK') {
+                if (result && result.city && result.bounds) {
+                    var cityinfo = result.city;
+                    var citybounds = result.bounds;
+                    console.log('您当前所在城市：'+cityinfo)
+                }
+            } else {
+                console.log('您当前所在城市：'+ result.info);
+            }
+        });
     }
 
     getLocation = () => {
@@ -101,12 +116,12 @@ class Main extends React.Component {
         this.props.history.push(`/sensorDetail/${device_sn}`);
     }
 
-    changeAeratorOnOff = (device_sn, way, onOff, pondIndex, aioIndex) => {
+    changeAeratorOnOff = (device_sn, way, openOrclose, pondIndex, aioIndex) => {
         this.setState({ animating: true });
         aeratorOnOff({
             device_sn: device_sn,
             way: way,
-            onOff: onOff
+            openOrclose: openOrclose ? 1 : 0
         }).then((res) => {
             this.setState({ animating: false });
             if (res.data.code == '0') {
@@ -118,6 +133,8 @@ class Main extends React.Component {
                 } else {
                     Toast.success('关闭增氧机成功', 1)
                 }
+            } else {
+                Toast.fail(res.data.msg, 1)
             }
         }).catch((error) => {
             this.setState({ animating: false });
@@ -125,26 +142,26 @@ class Main extends React.Component {
         });
     }
 
-    showActionSheet = (device_sn, way ,state) => {
+    showActionSheet = (device_sn, way ,state, pondIndex, aioIndex) => {
         //两种情况   已经打开，和没有打开
-        // let BOTTONS = [], title = ''
-        // if (state) {
-        //     BOTTONS = ['确认关闭', '取消', '自动增氧设置'];
-            // title = '你是否确定关闭自动增氧？'
-        // } else {
-        //     BOTTONS = ['取消', '自动增氧设置'];
-            // title = '你是否确定打开自动增氧？'
-        // }
-        const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
+        let BUTTONS = [], title = ''
+        if (state) {
+            BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
+            title = '你是否确定关闭自动增氧？'
+        } else {
+            BUTTONS = ['取消', '自动增氧设置'];
+            title = '你是否确定打开自动增氧？'
+        }
+        // const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
             cancelButtonIndex: BUTTONS.length - 1,
             destructiveButtonIndex: BUTTONS.length - 3,
-            title: '你是否确定关闭自动增氧？',
+            title: title,
             maskClosable: true,
             'data-seed': 'logId',
         }, (buttonIndex) => {
-            if (buttonIndex == 2) {
+            if (buttonIndex == (BUTTONS.length - 1)) {
                 this.props.dispatch({
                     type: 'global/changeState',
                     payload: {
@@ -157,8 +174,33 @@ class Main extends React.Component {
                 }
                 const str = JSON.stringify(data)
                 this.props.history.push(`/autoOrxygenationSetting/${str}`);
+            } else if (state && buttonIndex == 0) {
+                console.log('关闭这个傻逼的定时增氧功能');
+                this.closeTimeOrxygen(device_sn, way, pondIndex, aioIndex);
             }
         });
+    }
+
+    closeTimeOrxygen = (device_sn, way) => {
+        autoSet({
+            limit_Install: {
+                device_sn: device_sn,
+                way: way
+            },
+            timers: []
+        }).then(res => {
+            if (res.data.code == 0) {
+                let ponds = this.state.ponds
+                ponds[pondIndex].aio[aioIndex].timed = true;
+                this.setState({ ponds: ponds })
+                Toast.success('关闭定时增氧成功!', 1);
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch(error => {
+            console.log(error);
+            Toast.fail('关闭失败，请重试!', 1);
+        })
     }
 
     getEquipment = (sensor) => {
@@ -243,7 +285,7 @@ class Main extends React.Component {
                 <div className='name' >
                     增氧机（{aio.way}路）
                 </div>
-                <button className='auto-button do-auto' onClick={() => this.showActionSheet(aio.device_sn, aio.way, aio.timeState)} >定时</button>
+                <button className={aio.timed ? 'auto-button do-auto' : 'auto-button'} onClick={() => this.showActionSheet(aio.device_sn, aio.way, aio.timed, pondIndex, aioIndex)} >定时</button>
                 <Switch
                     nanme='watertem'
                     checked={aio.openState}
@@ -267,7 +309,7 @@ class Main extends React.Component {
                 return this.getAioNode(aio, pondIndex, aioIndex)
             })
             
-            return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} >
+            return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} isShow={true} >
                 {sensorNode}
                 {aioNode}
             </Accordion>)

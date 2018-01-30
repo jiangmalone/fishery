@@ -603,9 +603,19 @@ public class EquipmentService {
 		String deviceSn;
 		try {
 			deviceSn = limit_Install.getDevice_sn().substring(0, 2);
+			if(timers==null) {
+				if(statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay()).isOn_off()) {
+				CMDUtils.serverOnOffOxygenCMD(limit_Install.getDevice_sn(), limit_Install.getWay(), 0);
+				}
+			     
+				timerDao.delete(limit_Install.getDevice_sn(), limit_Install.getWay());
+				 
+				return RESCODE.SUCCESS.getJSONRES();
+			}
 			Map<String, Object> map = CMDUtils.downLimitCMD(limit_Install);
 			if (!map.containsKey("0"))
 				return map;
+			
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}

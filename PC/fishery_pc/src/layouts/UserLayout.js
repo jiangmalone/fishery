@@ -24,6 +24,10 @@ class UserLayout extends React.PureComponent {
   static childContextTypes = {
     location: PropTypes.object,
   }
+
+  componentWillMount() {
+    window.localStorage.setItem('refresh', 0);
+  }
   getChildContext() {
     const { location } = this.props;
     return { location };

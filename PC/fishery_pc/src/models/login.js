@@ -20,10 +20,11 @@ export default {
         payload: response,
       });
       // Login successfully
-    
       if (response.code == 0) {
         window.localStorage.setItem('adminId',response.data.id)
+        window.localStorage.setItem('authority', response.data.type); // 0 管理员 1 企业账户
         window.localStorage.setItem('account',payload.account)
+
         yield put(routerRedux.push('/'));
       }
     },

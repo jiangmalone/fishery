@@ -8,7 +8,24 @@ const dynamicWrapper = (app, models, component) => dynamic({
 });
 
 // nav data
-export const getNavData = app => [
+export const getNavData = app => {
+  const type = window.localStorage.getItem('authority');
+  let authority, mainComponent,companyDetailComponent;
+  if (type == 0) {
+    console.log('我是超级管理员')
+    authority = true;
+    mainComponent = dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Picture'));
+    companyDetailComponent = dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail'))
+  } else {
+    console.log('我不是超级管理员')
+    authority = false;
+    mainComponent = dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail'));
+    companyDetailComponent = dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Picture'))
+  }
+  if (authority) {
+    
+  }
+  return [
   {
     component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     layout: 'BasicLayout',
@@ -19,16 +36,17 @@ export const getNavData = app => [
       {
         name: '首页',
         icon: 'home',
-        path: 'analysis',
+        path: 'main',
         isSideMenu: true,
-        component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Picture')),
+        component: mainComponent,
 
       },
       {
         name: '用户管理',
         path: 'userManage',
         icon: 'team',
-        isSideMenu: true,
+        isSideMenu: authority,
+        // window.localStorage.getItem('authority') ? false : true,
         children: [
           {
             name: '普通用户',
@@ -59,7 +77,7 @@ export const getNavData = app => [
                 name: '企业用户详情',
                 path: ':id/:relation',
                 isSideMenu: false,
-                component: dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail')),
+                component: companyDetailComponent,
               },
               {
                 // name: '设备列表',
@@ -175,4 +193,4 @@ export const getNavData = app => [
       },
     ],
   }
-];
+]};

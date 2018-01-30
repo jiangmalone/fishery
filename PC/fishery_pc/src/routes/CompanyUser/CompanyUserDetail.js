@@ -21,14 +21,16 @@ const randomMarker = (len) => (
 );
 
 export default class CompanyUserDetail extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             markers: [],
             isShowMap: true,
             companyData: {},
             ponds: [],
-            selectMarker: ''//选择地图上的某个点
+            selectMarker: '',        //选择地图上的某个点
+            relation: props.match.params.relation ? props.match.params.relation : window.localStorage.getItem('relationId'),
+            id: props.match.params.id ? props.match.params.id : window.localStorage.getItem('id')
         }
     }
 
@@ -39,7 +41,7 @@ export default class CompanyUserDetail extends React.Component {
 
     getCompanyDetail = () => {
         CompanyDetail({
-            id: this.props.match.params.id
+            id: this.state.id
         }).then(res => {
             if (res && res.code == 0) {
                 let data = res.data;
@@ -54,7 +56,7 @@ export default class CompanyUserDetail extends React.Component {
 
     queryPond = () => {
         queryPond({
-            relation: this.props.match.params.relation,
+            relation: this.state.relation ,
             name: '',
             page: 1,
             number: 100
@@ -176,10 +178,10 @@ export default class CompanyUserDetail extends React.Component {
                         </Col>
 
                         <Col span={3} offset={10}>
-                            <Link to={`/userManage/pondManage/${this.props.match.params.relation}`}><Button type="primary">管理塘口</Button></Link>
+                            <Link to={`/userManage/pondManage/${this.state.relation}`}><Button type="primary">管理塘口</Button></Link>
                         </Col>
                         <Col span={3}>
-                            <Link to={`/equipment/${this.props.match.params.relation}`}><Button type="primary">管理设备</Button></Link>
+                            <Link to={`/equipment/${this.state.relation}`}><Button type="primary">管理设备</Button></Link>
                         </Col>
                     </Row>
                     <Row style={{ marginTop: 30 }}>

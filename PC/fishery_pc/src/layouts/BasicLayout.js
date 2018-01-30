@@ -15,6 +15,7 @@ import GlobalFooter from '../components/GlobalFooter';
 import NotFound from '../routes/Exception/404';
 import styles from './BasicLayout.less';
 import logo from '../assets/logo.svg';
+import { getNavData } from '../common/nav';
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -48,7 +49,9 @@ class BasicLayout extends React.PureComponent {
     constructor(props) {
         super(props);
         // 把一级 Layout 的 children 作为菜单项
-        this.menus = props.navData.reduce((arr, current) => arr.concat(current.children), []);
+        const navData = getNavData(props.app);
+        this.menus = navData.reduce((arr, current) => arr.concat(current.children), []);
+        
         this.state = {
             openKeys: this.getDefaultCollapsedSubMenus(props),
         };
@@ -68,6 +71,15 @@ class BasicLayout extends React.PureComponent {
         });
         return { location, breadcrumbNameMap };
     }
+
+    componentWillMount() {
+        const refresh = window.localStorage.getItem('refresh');
+        if (refresh == 0) {
+            window.localStorage.setItem('refresh', 1);
+            window.location.reload();
+        }
+    }
+
     componentDidMount() {
         if (!window.localStorage.getItem("account")) {
             this.props.history.push('/user/login')
@@ -315,7 +327,7 @@ class BasicLayout extends React.PureComponent {
                                         )
                                     )
                                 }
-                                <Redirect exact from="/" to="/analysis" />
+                                <Redirect exact from="/" to="/main" />
                                 <Route component={NotFound} />
                             </Switch>
                         </div>

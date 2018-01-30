@@ -16,4 +16,6 @@ public interface LimitDao {
 	List<Limit_Install> queryLimitByDeviceSn(String device_sn, int from, int pageSize);
 
 	void updateLimit(Limit_Install limit_Install);
+
+	Limit_Install findLimitByDeviceSnsAndWay(String device_sn, int way);
 }

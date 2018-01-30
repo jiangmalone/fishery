@@ -96,7 +96,7 @@ public class CMDUtils {
 
 	// 下位机设限上传给服务器
 	public static void uploadLimitCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		 //preHandle(key);
+		
 		byte[] byteHigh = new byte[4];
 			CommonUtils.arrayHandle(data, byteHigh, 7, 0, 4);
 			float high= CommonUtils.byte2float(byteHigh,0);
@@ -106,6 +106,7 @@ public class CMDUtils {
 			byte[] bytelow = new byte[4];
 			CommonUtils.arrayHandle(data, bytelow, 15, 0, 4);
 			float low= CommonUtils.byte2float(bytelow,0);
+			logger.debug("服务器接收设备号为:"+deviceSn+"的设备，的第"+way+"路的低限为:"+low+" 高限为:"+high+" 上限为:"+up);
 			Limit_Install limit=new Limit_Install();
 			limit.setDevice_sn(deviceSn);
 			limit.setWay(way);
@@ -118,6 +119,8 @@ public class CMDUtils {
 
 	// 服务器设限下发给终端
 	public static Map<String, Object> downLimitCMD(Limit_Install limit) {
+		logger.debug("服务器设置设备号为:"+limit.getDevice_sn()+"的设备，的第"+limit.getWay()+"路的低限为:"+limit.getLow_limit()
+		+" 高限为:"+limit.getHigh_limit()+" 上限为:"+limit.getUp_limit());
 		SocketChannel channel=clientMap.get(limit.getDevice_sn());
 		if(channel==null) {
         	return RESCODE.NOT_OPEN.getJSONRES();
@@ -150,7 +153,7 @@ public class CMDUtils {
 
 	// 5分钟一次上传溶氧和水温值
 	public static void timingUploadCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		 //preHandle(key);
+		
 		byte[] byteOxygen= new byte[4];
 			CommonUtils.arrayHandle(data, byteOxygen, 7, 0, 4);
 			float oxygen= CommonUtils.byte2float(byteOxygen,0);
@@ -166,6 +169,7 @@ public class CMDUtils {
 			sData.setWay(way);
 			sData.setOxygen(oxygen);
 			sData.setWater_temperature(waterTemp);
+			logger.debug("服务器接收设备号为:"+deviceSn+"的设备，的第"+way+"路的溶氧值为:"+oxygen+"水温:"+waterTemp);
 			try {
 				sData.setReceiveTime(sdf.parse(receiveTime));
 			} catch (ParseException e) {
@@ -178,7 +182,7 @@ public class CMDUtils {
 
 	// 增氧机缺相报警
 	public static void oxygenAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		
+		logger.debug("服务器接收设备号为:"+deviceSn+"的设备，的第"+way+"路缺相报警");
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
@@ -221,7 +225,7 @@ public class CMDUtils {
 
 	// 220v断电报警
 	public static void voltageAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		
+		logger.debug("服务器接收设备号为:"+deviceSn+"的设备，的第"+way+"路220V断电报警");
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
@@ -263,7 +267,7 @@ public class CMDUtils {
 
 	// 增氧机打开后半小时内效果不明显报警
 	public static void oxygenExceptionAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		
+		logger.debug("服务器接收设备号为:"+deviceSn+"的设备，的第"+way+"路增氧机打开后半小时内效果不明显报警");
 			
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
@@ -306,7 +310,7 @@ public class CMDUtils {
 
 	// 取消所有报警
 	public static void cancelAllAlarmCMD(byte[] data,SocketChannel readChannel,String deviceSn,byte way) throws IOException {
-		
+		logger.debug("服务器接收设备号为:"+deviceSn+"的设备，的第"+way+"路取消所有报警");
 		 String judge=deviceSn.substring(0, 2);
 			if(judge.equals("01")||judge.equals("02")) {
 				AIO aio=service.findAIOByDeviceSn(deviceSn);
@@ -366,10 +370,11 @@ public class CMDUtils {
 		}
 		byte check6 = data[13];
 		String suffix6 = CommonUtils.printHexStringMerge(data,14,4);*/
+		logger.debug("增氧机开关记录");
 			response(14,data,readChannel);
 	}
 
-	// 服务器开关增氧机,因为没有设计打开和关闭哪一路增氧机，默认就全部关闭，写死在这，参数operation=1为打开增氧机，为0是关闭增氧机
+	// 参数operation=1为打开增氧机，为0是关闭增氧机
 	public static Map<String, Object> serverOnOffOxygenCMD(String deviceSn,int way,int operation) {
 		SocketChannel channel = clientMap.get(deviceSn);
 		if (channel == null) {
@@ -381,6 +386,8 @@ public class CMDUtils {
 		byte[] request = null;
 
 		if (operation == 1) {
+			logger.debug("服务器打开设备号为:"+deviceSn+"的增氧机，的第"+way+"路");
+			
 			String openFirstPath = StringUtils.add(deviceSn, way, 7).append("01").append("          ").toString();
 
 			request = CommonUtils.toByteArray(openFirstPath);
@@ -392,6 +399,8 @@ public class CMDUtils {
 			
 
 		} else {
+			
+			logger.debug("服务器关闭设备号为:"+deviceSn+"的增氧机，的第"+way+"路");
 			String close = StringUtils.add(deviceSn, way, 7).append("00").append("          ").toString();
 
 			request = CommonUtils.toByteArray(close);
@@ -418,8 +427,9 @@ public class CMDUtils {
 
 	}
 
-	// 服务器设置一键自动,这个指令在前台尚未有调用的地方，先放在这
-	public static Map<String, Object> serverSetAutoCMD(String deviceSn) {
+	// 服务器设置一键自动
+	public static Map<String, Object> serverSetAutoCMD(String deviceSn,int way) {
+		logger.debug("服务器设置一键自动设备编号和路分别为:"+deviceSn+"第"+way+"路");
 		SocketChannel channel=clientMap.get(deviceSn);
 		if(channel==null) {
         	return RESCODE.NOT_OPEN.getJSONRES();
@@ -428,7 +438,7 @@ public class CMDUtils {
 			return RESCODE.CONNECTION_CLOSED.getJSONRES();
 		}
 		byte[] request = null;
-		String temp=StringUtils.add(deviceSn, 1, 8)
+		String temp=StringUtils.add(deviceSn, way, 8)
                 .append("          ")
 				.toString();
 		request=CommonUtils.toByteArray(temp);

@@ -30,6 +30,7 @@ public class AIO {
 	private int way;								//一体机第几路数据
 	private boolean onoff;							//开关状态
 	private boolean isTimed;						//是否定时增氧
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getId() {

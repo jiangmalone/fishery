@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.geariot.platform.fishery.dao.AIODao;
+import com.geariot.platform.fishery.dao.AeratorStatusDao;
 import com.geariot.platform.fishery.dao.CompanyDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.dao.LimitDao;
@@ -24,6 +25,7 @@ import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Limit_Install;
@@ -71,6 +73,9 @@ public class EquipmentService {
 	
 	@Autowired
 	private WXUserDao wxUserDao;
+	
+	@Autowired
+	private AeratorStatusDao statusDao;
 
 	private String type = "";
 	private String relation = "";
@@ -129,53 +134,6 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	/*public Map<String, Object> setTimer(Timer[] timerArray) {
-		String deviceSn;
-		Timer timer = timerArray[0];
-		try {
-			deviceSn = timer.getDevice_sn().substring(0, 2);
-
-		} catch (Exception e) {
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		}
-		if (deviceSn.equals("01") || deviceSn.equals("02")) {
-			if (aioDao.findAIOByDeviceSns(timer.getDevice_sn()) == null) {
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-			}
-		} else if (deviceSn.equals("03")) {
-			if (sensorDao.findSensorByDeviceSns(timer.getDevice_sn()) == null) {
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-			}
-		} else
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		timerDao.delete(timer.getDevice_sn(),timer.getWay());
-		for (Timer timersave : timerArray) {
-			timerDao.save(timersave);
-		}
-		return RESCODE.SUCCESS.getJSONRES();
-	}*/
-
-	/*
-	 * public Map<String, Object> queryEquipment(String device_sn, String
-	 * relation, String name, int page, int number) { String deviceSn; try {
-	 * deviceSn = device_sn.trim().substring(0, 2); } catch (Exception e) {
-	 * return RESCODE.DEVICESNS_INVALID.getJSONRES(); } if
-	 * (deviceSn.equals("01") || deviceSn.equals("02")) { List<AIO>
-	 * list=aioDao.queryAIOByNameAndRelation(relation, name, page, number);
-	 * if(list.isEmpty()) return RESCODE.NOT_FOUND.getJSONRES(); return
-	 * RESCODE.SUCCESS.getJSONRES(list); } else if (deviceSn.equals("03")) {
-	 * List<Sensor> list=sensorDao.querySensorByNameAndRelation(relation, name,
-	 * page, number); if(list.isEmpty()) return RESCODE.NOT_FOUND.getJSONRES();
-	 * return RESCODE.SUCCESS.getJSONRES(list); } else if
-	 * (deviceSn.equals("04")) { List<Controller>
-	 * list=controllerDao.queryControllerByNameAndRelation(relation, name, page,
-	 * number); if(list.isEmpty()) return RESCODE.NOT_FOUND.getJSONRES(); return
-	 * RESCODE.SUCCESS.getJSONRES(list); } else { return
-	 * RESCODE.DEVICESNS_INVALID.getJSONRES(); }
-	 * 
-	 * }
-	 */
-
 	public boolean exportData(String device_sn, String startTime, String endTime, HttpServletResponse response) {
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
@@ -211,6 +169,19 @@ public class EquipmentService {
 				aio.setStatus(1);
 				aio.setType(Integer.parseInt(deviceSn));
 				aioDao.save(aio);
+				//初始化两个增氧机状态
+				AeratorStatus status1 = new AeratorStatus();
+				status1.setDevice_sn(device_sn);
+				status1.setOn_off(false);
+				status1.setTimed(false);
+				status1.setWay(1);
+				statusDao.save(status1);
+				AeratorStatus status2 = new AeratorStatus();
+				status2.setDevice_sn(device_sn);
+				status2.setOn_off(false);
+				status2.setTimed(false);
+				status2.setWay(2);
+				statusDao.save(status2);
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		} else if (deviceSn.equals("03")) {

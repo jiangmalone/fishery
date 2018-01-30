@@ -7,7 +7,7 @@ import { connect } from 'dva';
 import addImg from '../../img/add.png'
 import question from '../../img/question.png'
 import './autoOxygenationSetting.less';
-import { autoSet } from '../../services/equipment.js'; //接口
+import { autoSet, queryAeratorData } from '../../services/equipment.js'; //接口
 
 const Item = List.Item;
 const CustomChildren = ({ extra, onClick, children }) => (
@@ -23,7 +23,7 @@ class AutoOxygenationSetting extends React.Component {
 
     constructor(props) {
         super(props);
-        const data = JSON.parse(this.props.match.data);
+        const data = JSON.parse(this.props.match.params.data);
         const device_sn = data.device_sn;
         const way = data.way
         this.state = {
@@ -77,16 +77,43 @@ class AutoOxygenationSetting extends React.Component {
                     limit_Install:form,
                     timers: timers
                 }).then(res => {
+                    if (res.data.code == 0) {
+                        Toast.success('设置成功', 1);
+                        setTimeout(() => {
+                            history.back();
+                        }, 1000);
+                    } else {
+                        Toast.fail(res.data.msg, 1)
+                    }
                     console.log(res);
                 }).catch(error => {
-
+                    console.log(error)
+                    Toast.fail('设置失败，请重试!', 1)
                 })
             } else {
                 // alert('Validation failed');
             }
         });
     }
-
+    
+    queryAeratorData = () => {
+        queryAeratorData({
+            device_sn: this.state.device_sn,
+            way: this.state.way
+        }).then(res => {
+            console.log(res);
+            if (res.data.code == 0) {
+                const form = {
+                    
+                }
+            } else {
+                Toast.fail(res.data.msg, 1);
+            }
+        }).catch(error => {
+            console.log(error);
+            Toast.fail('获取失败，请重试!', 1);
+        })
+    }
     onReset = () => {
         this.props.form.resetFields();
     }
@@ -128,7 +155,7 @@ class AutoOxygenationSetting extends React.Component {
             return <Item className='timeItem' key={index} extra={<div className='time' >
                 <DatePicker
                     mode="time"
-                    minuteStep={5}
+                    minuteStep={30}
                     value={item[0]}
                     onChange={time => this.handleTimeChange(time, index, 0 )}
                     extra='开始时间'
@@ -140,7 +167,7 @@ class AutoOxygenationSetting extends React.Component {
                 -
                     <DatePicker
                     mode="time"
-                    minuteStep={5}
+                    minuteStep={30}
                     value={item[1]}
                     extra='结束时间'
                     onChange={time => this.handleTimeChange(time, index, 1 )}
@@ -218,7 +245,7 @@ class AutoOxygenationSetting extends React.Component {
                 <span className='add-span'>定时</span><img className='add-img' src={addImg} />
             </div>
             <div className='buttons'>
-                <div className='left-button'>
+                <div className='left-button' onClick={this.queryAeratorData} >
                     从设备获得
                 </div>
                 <div className='right-button' onClick={this.onSubmit}>

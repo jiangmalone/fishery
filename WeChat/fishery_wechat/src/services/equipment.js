@@ -56,6 +56,8 @@ export default {
         return post('api/equipment/autoSet', params)
     },
     
-
+    queryAeratorData: (params) => {
+        return get('api/equipment/queryAeratorData', params)
+    },
 
 }

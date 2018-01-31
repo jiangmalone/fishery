@@ -59,13 +59,13 @@ public class EquipmentController {
 	}
 
 	@RequestMapping(value = "/dataToday", method = RequestMethod.GET)
-	public Map<String, Object> dataToday(String device_sn) {
-		return equipmentService.dataToday(device_sn);
+	public Map<String, Object> dataToday(String device_sn,int way) {
+		return equipmentService.dataToday(device_sn,way);
 	}
 	
 	@RequestMapping(value = "/dataAll", method = RequestMethod.GET)
-	public Map<String, Object> dataAll(String device_sn) {
-		return equipmentService.dataAll(device_sn);
+	public Map<String, Object> dataAll(String device_sn, int way) {
+		return equipmentService.dataAll(device_sn,way);
 	}
 	
 	@RequestMapping(value = "/pc/dataToday", method = RequestMethod.GET)

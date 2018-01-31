@@ -94,4 +94,18 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 		return (Sensor_Data) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Sensor_Data> today(String device_sn, int way) {
+		String hql = "from Sensor_Data where device_sn = :device_sn and way = :way and date(receiveTime) = curdate() order by receiveTime";
+		return getSession().createQuery(hql).setString("device_sn", device_sn).setInteger("way", way).setCacheable(Constants.SELECT_CACHE).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Sensor_Data> sevenData(String device_sn, int way) {
+		String hql = "select * from sensor_data where device_sn = :device_sn and way = :way and DATE_SUB(CURDATE(),INTERVAL 7 Day) <= date(receiveTime)";
+		return getSession().createSQLQuery(hql).setString("device_sn", device_sn).setInteger("way", way).setResultTransformer(Transformers.aliasToBean(Sensor_Data.class)).setCacheable(Constants.SELECT_CACHE).list();
+	}
+
 }

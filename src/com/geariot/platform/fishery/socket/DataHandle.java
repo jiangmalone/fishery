@@ -26,7 +26,7 @@ public class DataHandle {
 	private  SimpleDateFormat sdf=new SimpleDateFormat("mm");
 	private static Logger logger = Logger.getLogger(DataHandle.class);
 	public void handle(byte[] data,SocketChannel readChannel) {
-		logger.debug(Arrays.toString(data)+"进入handle处理");
+		logger.debug(CommonUtils.printHexStringMerge(data, 0, data.length)+"进入handle处理");
 		String prefix = CommonUtils.printHexStringMerge(data, 0, 2);
 		//心跳包socket，如果有3次没收到终端发来的心跳包则认为设备已经离线
 		//[62 65 61 74 5F 49 44 3D 78 78 78 78 78 78 0D 0A ]
@@ -45,7 +45,7 @@ public class DataHandle {
 			logger.debug("设备编号为:"+deviceSn+"的心跳包");
 			beatMap.put(deviceSn,sdf.format(new Date()));//在beatMap里面保存每次收到心跳包的时间
 			//每个设备心跳包发送的时间间隔为2分08秒，这里判断距离上一次时间是否大于5分钟，大于则说明离线
-			if(sdf.format(new Date()).compareTo(beatMap.get(deviceSn))>5) {
+			if(sdf.format(new Date()).compareTo(beatMap.get(deviceSn))>6) {
 				String judge=deviceSn.substring(0, 2);
 				SocketSerivce service =(SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 				if(judge.equals("01")||judge.equals("02")) {
@@ -65,8 +65,14 @@ public class DataHandle {
 					beatMap.remove(deviceSn);
 				}
 				CMDUtils.getclientMap().remove(deviceSn);
-				logger.debug("离线清除该设备在clientmap里面的信息");
-				//如果离线了就把clientmap里面存的socketchannel移除	
+				logger.debug("离线清除该设备在clientmap里面的信息,并关闭readchannel,设备号为:"+deviceSn);
+				try {
+					readChannel.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					logger.debug("长期心跳包没收到关闭其readChannel,设备号为:"+deviceSn);
+				}
+				//如果离线了就把clientmap里面存的socketchannel移除,并关闭readChannel	
 			}
 			byte[] resdata=Arrays.copyOf(data, 16);
 			ByteBuffer outBuffer = ByteBuffer.wrap(resdata);

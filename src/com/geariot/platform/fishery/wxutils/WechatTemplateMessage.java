@@ -11,7 +11,7 @@ import com.geariot.platform.fishery.wxutils.WechatConfig;
 public class WechatTemplateMessage {
 	
 	
-	private static final String SELFTEST_BROKEN_TEMPLATE_ID="k2_jq21hHH1bMYDuiCwyW9w2-YEM0jJRRuLEDxJlwhQ";
+	private static final String SELFTEST_BROKEN_TEMPLATE_ID="rWbgpqTb6alKSu4Wusf7ItFq2FQRQrzk1CNQV0uyJ_4";
 //	private static final Logger log = Logger.getLogger(WechatTemplateMessage.class);
 	private static final Logger log = LogManager.getLogger(WechatTemplateMessage.class);
 	private static final String OXYGEN_ON_OFF_TEMPLATE_ID="L-MhZftW-sTPMCKBR3kNK_l9oZnVfwdYq_RyxLwueFo";

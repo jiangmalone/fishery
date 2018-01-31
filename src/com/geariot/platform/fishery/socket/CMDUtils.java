@@ -552,13 +552,13 @@ public class CMDUtils {
 		// System.out.println("分析故障信息");
 		String relation = null;
 		String type = deviceSn.substring(0, 2);
-		System.out.println(type);
+		//System.out.println(type);
 		if (type.equals("01") || type.equals("02")) {
 			AIO aio = new AIO();
 			aio = service.findAIOByDeviceSn(deviceSn);
 			if (aio != null) {
 				relation = aio.getRelation();
-				System.out.println(relation);
+				//System.out.println(relation);
 			} else {
 				return;
 			}
@@ -578,7 +578,8 @@ public class CMDUtils {
 				return;
 			}
 		}
-		System.out.println(statusStr);
+		//logger.debug("relation为:"+relation);
+		//System.out.println(statusStr);
 		/*
 		 * switch (statusStr.substring(0,1)) { case "0": //水泵关闭故障
 		 * selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP,

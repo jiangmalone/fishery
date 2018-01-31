@@ -29,7 +29,8 @@ export default class WaterQualityCurve extends React.Component {
             temperatures: [],
             device_sn: data.device_sn,
             name: data.deviceName,
-            status: data.status
+            status: data.status,
+            selectTime: 'today'
         }
     }
 
@@ -118,6 +119,7 @@ export default class WaterQualityCurve extends React.Component {
     }
 
     handleTimeChange = (value) => {
+        this.setState({selectTime: value});
         if (value == 'today') {
             this.getDataToday();
         } else if (value == 'sevent') {
@@ -134,7 +136,7 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{marginTop: 20}}>
                         <Col span={7}>
-                            <Radio.Group onChange={e => this.handleTimeChange(e.target.value)} >
+                            <Radio.Group value={this.state.selectTime} onChange={e => this.handleTimeChange(e.target.value)} >
                                 <Radio.Button value="today" >今日</Radio.Button>
                                 <Radio.Button value="sevent">七日</Radio.Button>
                                 {/* <Radio.Button value="small">区间</Radio.Button> */}
@@ -175,7 +177,7 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{ padding: 30 }}>
                         <Col span={20}>
-                            {(this.state.WaterQualityCurve && this.state.WaterQualityCurve.length > 0) ? <TimelineChart
+                            {(this.state.temperatures && this.state.temperatures.length > 0) ? <TimelineChart
                                 height={300}
                                 data={this.state.temperatures}
                                 titleMap={{ y1: '水温' }}

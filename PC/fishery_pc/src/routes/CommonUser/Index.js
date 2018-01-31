@@ -222,8 +222,12 @@ class UserList extends PureComponent {
             }
         }, {
             title: '性别',
-            dataIndex: 'sex',
-            key: 'sex',
+            // dataIndex: 'sex',
+            // key: 'sex',
+            render: (text, record, index) => {
+                console.log(record.sex)
+                return <span>{record.sex && record.sex != 'null' ? record.sex : ''}</span>
+            }
         }, {
             title: '联系方式',
             dataIndex: 'phone',
@@ -232,6 +236,10 @@ class UserList extends PureComponent {
             title: '养殖年限',
             dataIndex: 'life',
             key: 'life',
+            render: (text, record, index) => {
+                console.log(record.life)
+                return <span>{record.life && record.life != 'undefined' ? record.life : ''}</span>
+            }
         }, {
             title: '联系地址',
             dataIndex: 'address',

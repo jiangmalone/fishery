@@ -12,7 +12,7 @@ import { connect } from 'dva';
 import { wxQuery } from '../../services/pondManage.js'; //接口
 import { getWeather } from '../../services/weather.js'; //接口
 import { aeratorOnOff } from '../../services/oxygenControl.js'; //接口
-import { autoSet } from '../../services/equipment.js'; //接口
+import equipment, { autoSet } from '../../services/equipment.js'; //接口
 
 class Main extends React.Component {
 
@@ -25,25 +25,26 @@ class Main extends React.Component {
             ponds: [],            //池塘列表
             temp: '** ~ ** ℃',   //天气的温度区间
             weatherIcon: '',      //天气的icon名称
+            isEmpty: false,
         }
     }
 
     componentDidMount() {
         this.getLocation(); //获得当前地理位置
         this.queryPonds();
-        var citysearch = new AMap.CitySearch();
-        //自动获取用户IP，返回当前城市
-        citysearch.getLocalCity(function(status, result) {
-            if (status === 'complete' && result.info === 'OK') {
-                if (result && result.city && result.bounds) {
-                    var cityinfo = result.city;
-                    var citybounds = result.bounds;
-                    console.log('您当前所在城市：'+cityinfo)
-                }
-            } else {
-                console.log('您当前所在城市：'+ result.info);
-            }
-        });
+        // var citysearch = new AMap.CitySearch();
+        // //自动获取用户IP，返回当前城市
+        // citysearch.getLocalCity(function(status, result) {
+        //     if (status === 'complete' && result.info === 'OK') {
+        //         if (result && result.city && result.bounds) {
+        //             var cityinfo = result.city;
+        //             var citybounds = result.bounds;
+        //             console.log('您当前所在城市：'+cityinfo)
+        //         }
+        //     } else {
+        //         console.log('您当前所在城市：'+ result.info);
+        //     }
+        // });
     }
 
     getLocation = () => {
@@ -58,6 +59,12 @@ class Main extends React.Component {
             this.setState({ animating: false });
             if (res.data.code == '0') {
                 this.setState({ ponds: res.data.data })
+                let equipmentNum = 0;
+                if (res.data.data.length == 0) {
+                    this.setState({isEmpty: true});
+                } else {
+                    this.setState({isEmpty: false});
+                }
             }
         }).catch((error) => {
             this.setState({ animating: false });
@@ -316,6 +323,16 @@ class Main extends React.Component {
         })
     }
 
+    gotoAddPond = () => {
+        this.props.dispatch({
+            type: 'global/changeState',
+            payload: {
+                transitionName: 'left'
+            }
+        })
+        this.props.history.push(`/addPond`);
+    }
+
     render() {
         const ponds = this.getPondsAccordion();
         return <div className='main-bg' style={{ minHeight: window.document.body.clientHeight }}>
@@ -323,9 +340,13 @@ class Main extends React.Component {
                 <i className={`weather-icon iconfont ${this.state.weatherIcon}`}> </i>
                 {this.state.temp}
             </div>
-            <div className='fishpond-item'>
+            {!this.state.isEmpty ? <div className='fishpond-item'>
                 {ponds}
-            </div>
+            </div> : <div  className='nodata' onClick={this.gotoAddPond} >
+            <div className='img-404'  />
+            <div className='img-add' ></div>
+            <span className='add-span' >添加塘口</span>
+            </div>}
             <BottomTabBar nowTab={1} />
             <ActivityIndicator
                 toast

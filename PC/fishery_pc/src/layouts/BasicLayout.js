@@ -76,7 +76,7 @@ class BasicLayout extends React.PureComponent {
         const refresh = window.localStorage.getItem('refresh');
         if (refresh == 0) {
             window.localStorage.setItem('refresh', 1);
-            // window.location.reload();
+            window.location.reload();
         }
     }
 

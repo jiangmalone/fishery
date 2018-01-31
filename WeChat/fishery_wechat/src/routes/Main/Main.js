@@ -113,14 +113,14 @@ class Main extends React.Component {
         }
     }
 
-    checkEquipment = (device_sn) => {
+    checkEquipment = (device_sn, way) => {
         this.props.dispatch({
             type: 'global/changeState',
             payload: {
                 transitionName: 'left'
             }
         })
-        this.props.history.push(`/sensorDetail/${device_sn}`);
+        this.props.history.push(`/sensorDetail/${device_sn}/${way}`);
     }
 
     changeAeratorOnOff = (device_sn, way, openOrclose, pondIndex, aioIndex) => {
@@ -151,24 +151,26 @@ class Main extends React.Component {
 
     showActionSheet = (device_sn, way ,state, pondIndex, aioIndex) => {
         //两种情况   已经打开，和没有打开
-        let BUTTONS = [], title = ''
+        let BUTTONS = [], title = '', cancelButtonIndex
         if (state) {
             BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
+            cancelButtonIndex = BUTTONS.length - 1;
             title = '你是否确定关闭自动增氧？'
         } else {
             BUTTONS = ['取消', '自动增氧设置'];
+            cancelButtonIndex = 0;
             title = '你是否确定打开自动增氧？'
         }
-        // const BUTTONS = ['确认关闭', '取消', '自动增氧设置'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
-            cancelButtonIndex: BUTTONS.length - 1,
+            cancelButtonIndex: cancelButtonIndex,
             destructiveButtonIndex: BUTTONS.length - 3,
             title: title,
             maskClosable: true,
             'data-seed': 'logId',
         }, (buttonIndex) => {
             if (buttonIndex == (BUTTONS.length - 1)) {
+                console.log(state + '' + buttonIndex)
                 this.props.dispatch({
                     type: 'global/changeState',
                     payload: {
@@ -212,7 +214,7 @@ class Main extends React.Component {
 
     getEquipment = (sensor) => {
         return <div className='equipment' key={sensor.id}  >
-            <div onClick={() => this.checkEquipment(sensor.device_sn)} >
+            <div onClick={() => this.checkEquipment(sensor.device_sn, 0)} >
                 <div className='line border-line' >
                     <div className='name' >
                         {sensor.name}
@@ -252,7 +254,7 @@ class Main extends React.Component {
 
     getAioNode = (aio, pondIndex, aioIndex) => {
         return <div className='equipment' key={aio.id}  >
-            <div >
+            <div onClick={() => this.checkEquipment(aio.device_sn, aio.way)}>
                 <div className='line border-line' >
                     <div className='name' >
                         {aio.name}

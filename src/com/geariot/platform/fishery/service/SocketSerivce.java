@@ -110,8 +110,8 @@ public class SocketSerivce {
 		return controllerDao.findControllerByDeviceSns(deviceSn);
 	}
 	
-	public WXUser findWXUserById(String relation) {
-		return wxuserDao.findUserById(Integer.parseInt(relation.substring(2)));
+	public WXUser findWXUserByRelation(String relation) {
+		return wxuserDao.findUserByRelation(relation);
 	}
 	
 	public void save(Broken broken) {

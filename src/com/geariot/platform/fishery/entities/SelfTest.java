@@ -3,6 +3,7 @@ package com.geariot.platform.fishery.entities;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.persistence.ForeignKey;
 
@@ -96,7 +98,8 @@ public class SelfTest {
 		this.createDate = createDate;
 	}
 
-	@Transient
+	@OneToMany(cascade = {CascadeType.ALL},orphanRemoval=true,fetch=FetchType.EAGER)
+	@JoinColumn(name="selfTestId", foreignKey=@ForeignKey(name="none"))
 	public List<Broken> getBroken() {
 		return broken;
 	}

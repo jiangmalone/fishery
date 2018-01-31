@@ -25,42 +25,35 @@ public class RequestProcessor {
         executorService.submit(new Runnable() {
 
             @Override
-            public void run(){
-                try {
-					
-                	read(key);
-                	
-                	
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					log.debug("IO异常");
-				}    
+            public void run(){ 
+                read(key);    
             }
         });
     } 
 
-	public  void read(final SelectionKey key) throws IOException {
+	public  void read(final SelectionKey key) {
 		// 服务器可读取消息:得到事件发生的Socket通道
-				SocketChannel readChannel = (SocketChannel) key.channel();
+		log.debug("新消息来了，准备开始读，key为"+key.toString());		
+		SocketChannel readChannel = (SocketChannel) key.channel();
+		
 				// 创建读取的缓冲区
 				ByteBuffer buffer = ByteBuffer.allocate(100);
-
-				try
-				{
-					readChannel.read(buffer);
+				
+					try {
+						readChannel.read(buffer);
+					} catch (IOException e) {
+						
+					}
 					
-				}
-				catch (IOException e1)
-				{
-					System.out.println("Connection reset by peer 3");
+						
 					
-				}
-				byte[] data = buffer.array();
-			
+					byte[] data = buffer.array();
+				
 				handle.handle(data,readChannel); 
            //将下一个读放进队列里面，并在主线程里面注册下一次读
-		NIOServer.addQueen(key);
-          
+		if(data[0]!=0) {
+				NIOServer.addQueen(key);
+		}
            
 		}
 	}

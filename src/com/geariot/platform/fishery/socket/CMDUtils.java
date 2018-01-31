@@ -43,7 +43,7 @@ public class CMDUtils {
 	private static Map<String, SocketChannel> clientMap = new ConcurrentHashMap<String, SocketChannel>();
 	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	private static Map<String, String> feedback = new ConcurrentHashMap<String, String>();
-
+    private static BrokenMSG bs=new BrokenMSG();
 	public static Map<String, SocketChannel> getclientMap() {
 		return clientMap;
 	}
@@ -674,8 +674,8 @@ public class CMDUtils {
 		WXUser wxuser = service.findWXUserByRelation(relation);
 		logger.debug(wxuser.getName());
 		if (wxuser != null) {
-			BrokenMSG bs = new BrokenMSG();
-			if (bs.getMSG().length() != 0) {
+			
+			if (bs.getMSG()!= null) {
 				logger.debug((bs.getMSG()==null)+"....>>>>>>>>");
 				WechatSendMessageUtils.sendWechatMessages(bs.getMSG(), wxuser.getOpenId());
 				// WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
@@ -691,7 +691,8 @@ public class CMDUtils {
 			List<Broken> brokenlist, String deviceSn) {
 		if (relation.contains("WX")) {
 			// 是微信用户就推送给前台
-			BrokenMSG bs = new BrokenMSG();
+			//BrokenMSG bs = new BrokenMSG();
+			
 			bs.setMSG(brokenmsg);
 		}
 		logger.debug("准备将故障信息保存到数据库");

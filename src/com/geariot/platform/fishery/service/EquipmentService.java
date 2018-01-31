@@ -218,7 +218,7 @@ public class EquipmentService {
 
 	}
 
-	public Map<String, Object> realTimeData(String device_sn) {
+	public Map<String, Object> realTimeData(String device_sn, int way) {
 		String deviceSn;
 		Sensor_Data data = null;
 		Map<String, Object> map = null;
@@ -231,7 +231,7 @@ public class EquipmentService {
 			if (aioDao.findAIOByDeviceSns(device_sn) == null) {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
-			data = sensor_DataDao.findDataByDeviceSns(device_sn);
+			data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn,way);
 			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
 			map = RESCODE.SUCCESS.getJSONRES(data);
 			map.put("status", aio.getStatus());

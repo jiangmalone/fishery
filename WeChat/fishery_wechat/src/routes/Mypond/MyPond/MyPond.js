@@ -182,7 +182,7 @@ class MyPond extends PureComponent {
             <div className="body-bac">
                 <div className="nav-bar-title" >
                     <i className="back" onClick={() => {
-                        history.back();
+                        this.props.history.push('/center')
                         this.props.dispatch({
                             type: 'global/changeState',
                             payload: {

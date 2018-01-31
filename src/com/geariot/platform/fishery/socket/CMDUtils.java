@@ -677,10 +677,10 @@ public class CMDUtils {
 		wxuser=service.findWXUserById(relation);
 		if(wxuser!=null) {
 		BrokenMSG bs=new BrokenMSG();
-		//System.out.println(bs.getMSG());
-		//System.out.println(wxuser.getOpenId());
+		if(bs.getMSG().length()!=0) {
 		WechatSendMessageUtils.sendWechatMessages(bs.getMSG(),wxuser.getOpenId());
 		//WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
+		}
 		bs.clear(); 
 		}
 		//long end=System.currentTimeMillis();

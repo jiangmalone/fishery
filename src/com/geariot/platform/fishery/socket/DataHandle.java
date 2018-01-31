@@ -20,13 +20,13 @@ import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
-
+ 
 public class DataHandle {
 	private  Map<String,String> beatMap=new ConcurrentHashMap<String,String>();
 	private  SimpleDateFormat sdf=new SimpleDateFormat("mm");
 	private static Logger logger = Logger.getLogger(DataHandle.class);
 	public void handle(byte[] data,SocketChannel readChannel) {
-		logger.debug("进入handle处理");
+		logger.debug(Arrays.toString(data)+"进入handle处理");
 		String prefix = CommonUtils.printHexStringMerge(data, 0, 2);
 		//心跳包socket，如果有3次没收到终端发来的心跳包则认为设备已经离线
 		//[62 65 61 74 5F 49 44 3D 78 78 78 78 78 78 0D 0A ]

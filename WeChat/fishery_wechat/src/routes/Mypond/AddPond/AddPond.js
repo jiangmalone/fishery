@@ -4,7 +4,6 @@ import { List, InputItem, Picker, ActivityIndicator, Toast } from 'antd-mobile';
 import NavBar from '../../../components/NavBar';
 import { createForm } from 'rc-form';
 import { connect } from 'dva';
-import $ from 'jquery';
 const Item = List.Item;
 const Brief = Item.Brief;
 
@@ -30,13 +29,6 @@ class AddPond extends PureComponent {
     }
 
 
-    componentDidMount() {
-        //获取页面高度
-        var inputTextBox = $('#input-text-box');
-        setInterval(function(){
-          inputTextBox.scrollIntoView(false);
-        },200)
-    }
 
     submit = () => {
         this.props.form.validateFields((error, value) => {
@@ -64,8 +56,8 @@ class AddPond extends PureComponent {
     render() {
         const { getFieldProps, getFieldError, validateFields } = this.props.form;
         return (
-            <div className='user-info-bg' style={{ height: window.document.body.clientHeight }}>
-                {/* <NavBar title={!this.props.match.params.id ? "添加塘口" : '修改塘口'} /> */}
+            <div className='user-info-bg' style={{ height:'110%' }}>
+                <NavBar title={!this.props.match.params.id ? "添加塘口" : '修改塘口'} />
                 <List className="addPond-list">
                     <InputItem
                         {...getFieldProps('name', {
@@ -78,7 +70,7 @@ class AddPond extends PureComponent {
                         className="addpond-input"
                         error={!!getFieldError('name')}
                         placeholder="请输入塘口名称"
-                    >塘口名称</InputItem>
+                    ><span style={{color:'red'}}>*</span>塘口名称</InputItem>
                     <InputItem
                         {...getFieldProps('area') }
                         clear
@@ -119,10 +111,8 @@ class AddPond extends PureComponent {
                         {...getFieldProps('water_source') }
                         clear
                         className="addpond-input"
-                        labelNumber='5'
                         error={!!getFieldError('water_source')}
                         placeholder="请输入池塘水源"
-                        id="input-text-box"
                     >池塘水源</InputItem>
                     <Item arrow="horizontal" onClick={() => {
                         this.props.history.push('/addFish');

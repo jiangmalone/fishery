@@ -209,7 +209,7 @@ class MyEquipment extends React.Component {
         return <div className='my-equipment-bg' style={{ minHeight: window.document.body.clientHeight }}>
             <div className="nav-bar-title">
                 <i className="back" onClick={() => {
-                    history.back();
+                    this.props.history.push('/center');
                     this.props.dispatch({
                         type: 'global/changeState',
                         payload: {

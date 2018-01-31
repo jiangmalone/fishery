@@ -142,9 +142,9 @@ public class PondService {
 		Sensor_Data oneWay = null;
 		Sensor_Data twoWay = null;
 		AIO aioTemp = null;
-		List<AIO> temp = new ArrayList<>();
 		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, null);
 		for (Pond pond : ponds) {
+			List<AIO> temp = new ArrayList<>();
 			// 塘口内添加sensor的list
 			List<Sensor> sensors = sensorDao.findSensorsByPondId(pond.getId());
 			for (Sensor sensor : sensors) {
@@ -172,9 +172,9 @@ public class PondService {
 					aio.setTimed(oneStatus.isTimed());
 					aio.setOnoff(oneStatus.isOn_off());
 				}else{
-					aio.setWater_temperature(sensor_Data.getWater_temperature());
-					aio.setOxygen(sensor_Data.getOxygen());
-					aio.setpH_value(sensor_Data.getpH_value());
+					aio.setWater_temperature(oneWay.getWater_temperature());
+					aio.setOxygen(oneWay.getOxygen());
+					aio.setpH_value(oneWay.getpH_value());
 					aio.setWay(1);
 					aio.setTimed(oneStatus.isTimed());
 					aio.setOnoff(oneStatus.isOn_off());
@@ -197,9 +197,9 @@ public class PondService {
 					aio.setTimed(twoStatus.isTimed());
 					aio.setOnoff(twoStatus.isOn_off());
 				}else{
-					aioTemp.setWater_temperature(sensor_Data.getWater_temperature());
-					aioTemp.setOxygen(sensor_Data.getOxygen());
-					aioTemp.setpH_value(sensor_Data.getpH_value());
+					aioTemp.setWater_temperature(twoWay.getWater_temperature());
+					aioTemp.setOxygen(twoWay.getOxygen());
+					aioTemp.setpH_value(twoWay.getpH_value());
 					aio.setTimed(twoStatus.isTimed());
 					aio.setOnoff(twoStatus.isOn_off());
 				}

@@ -559,8 +559,13 @@ public class EquipmentService {
 		return map;//
 	}
 
-	public Map<String, Object> pcDataToday(String device_sn) {
-		List<Sensor_Data> list = sensor_DataDao.today(device_sn);
+	public Map<String, Object> pcDataToday(String device_sn, int way) {
+		List<Sensor_Data> list = new ArrayList<>();
+		if( way > 0){
+			list = sensor_DataDao.today(device_sn,way);
+		}else{
+			list = sensor_DataDao.today(device_sn);
+		}
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
@@ -584,8 +589,13 @@ public class EquipmentService {
 		return map;//
 	}
 
-	public Map<String, Object> pcDataAll(String device_sn) {
-		List<Sensor_Data> list = sensor_DataDao.sevenData(device_sn);
+	public Map<String, Object> pcDataAll(String device_sn, int way) {
+		List<Sensor_Data> list = new ArrayList<>();
+		if( way > 0){
+			list = sensor_DataDao.sevenData(device_sn,way);
+		}else{
+			list = sensor_DataDao.sevenData(device_sn);
+		}
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();

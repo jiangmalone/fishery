@@ -59,3 +59,7 @@ export async function delEquipments(params) {
 export async function realTimeData(params) {
     return request(`/api/equipment/realTimeData?${stringify(params)}`);
 }
+
+export async function aeratorOnOff(params) {        //开关增氧机
+    return request(`/api/equipment/aeratorOnOff?${stringify(params)}`);
+}

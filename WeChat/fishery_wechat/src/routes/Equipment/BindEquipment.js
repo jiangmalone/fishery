@@ -63,8 +63,10 @@ class BindEquipment extends React.Component {
                                 usefulPorts.push(postData);
                             }
                         })
-                        controller = {label: item.name, value: item.id, ports: usefulPorts};
-                        controllers.push(controller);
+                        if (usefulPorts.length > 0) {
+                            controller = {label: item.name, value: item.id, ports: usefulPorts};
+                            controllers.push(controller);
+                        }
                     })
                     this.setState({controllers : controllers})
                 }

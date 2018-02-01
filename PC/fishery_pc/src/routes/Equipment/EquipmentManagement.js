@@ -347,7 +347,6 @@ export default class EquipmentManagement extends React.Component {
                             <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete(this.state.selectedRowKeys)}>
                                 <Button className={styles.deletebutton} > 删除设备</Button>
                             </Popconfirm>
-
                         </div>
                         <Table
                             loading={this.props.loading}

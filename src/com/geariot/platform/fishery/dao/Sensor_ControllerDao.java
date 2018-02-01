@@ -19,4 +19,6 @@ public interface Sensor_ControllerDao {
 	List<Sensor_Controller> list(int sensorId);
 	
 	List<Sensor_Controller> controller(int controllerId);
+	
+	void deleteController(int controllerId);
 }

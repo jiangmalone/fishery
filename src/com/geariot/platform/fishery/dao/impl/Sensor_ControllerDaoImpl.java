@@ -73,6 +73,13 @@ public class Sensor_ControllerDaoImpl implements Sensor_ControllerDao{
 		Query query = queryUtils.addInteger("controllerId", controllerId).getQuery();
 		return query.list();
 	}
+
+	@Override
+	public void deleteController(int controllerId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from Sensor_Controller");
+		Query query = queryUtils.addInteger("controllerId", controllerId).getQuery();
+		query.executeUpdate();
+	}
 	
 	
 }

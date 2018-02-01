@@ -197,8 +197,7 @@ class MyPond extends PureComponent {
                 {this.props.list.length > 0 && ponds}
                 {!this.state.edit && this.props.list.length > 0 && <div onClick={() => { this.setState({ edit: !this.state.edit }) }} className="addPond-btn">取消</div>}
                 {this.props.list.length > 0 && <div className="btn_add" onClick={() => {
-                    this.props.history.push('/addPond');
-                    this.props.dispatch({
+                     this.props.dispatch({
                         type: 'global/changeState',
                         payload: {
                             transitionName: 'fade'
@@ -212,6 +211,8 @@ class MyPond extends PureComponent {
                             selectedFishes: []
                         }
                     })
+                    this.props.history.push('/addPond');
+                   
                 }}>
                 </div>}
                 {this.props.list.length == 0 && <div className="none-list">

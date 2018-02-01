@@ -74,8 +74,8 @@ public class DataHandle {
 				}
 				//如果离线了就把clientmap里面存的socketchannel移除,并关闭readChannel	
 			}
-			byte[] resdata=Arrays.copyOf(data, 16);
-			ByteBuffer outBuffer = ByteBuffer.wrap(resdata);
+			//byte[] resdata=Arrays.copyOf(data, 16);
+			ByteBuffer outBuffer = ByteBuffer.wrap(data);
 			try {
 				readChannel.write(outBuffer);
 			} catch (IOException e) {

@@ -13,6 +13,8 @@ public interface AIODao {
 	int delete(int AIOid);
 	
 	int delete(String deviceSns);
+	
+	void updateByPondId(int pondId);
 
 	AIO findAIOById(int AIOId);
 	

@@ -67,7 +67,7 @@ class PersonalCenter extends React.Component {
                     <img src={window.localStorage.getItem('headimgurl')} />
                 </div>
                 <div className="name" onClick={() => { this.props.history.push('/userInfo') }}>
-                    {window.localStorage.getItem('name')}
+                    {window.localStorage.getItem('name')}&nbsp;>
                     {/* 登录/注册 */}
                 </div>
             </div>

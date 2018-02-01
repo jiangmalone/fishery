@@ -14,15 +14,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.AeratorStatusDao;
+import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.dao.FishCateDao;
 import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.SensorDao;
+import com.geariot.platform.fishery.dao.Sensor_ControllerDao;
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.AeratorStatus;
+import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
+import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
@@ -44,9 +48,15 @@ public class PondService {
 
 	@Autowired
 	private AIODao aioDao;
+	
+	@Autowired
+	private ControllerDao controllerDao;
 
 	@Autowired
 	private Sensor_DataDao sensor_DataDao;
+	
+	@Autowired
+	private Sensor_ControllerDao sensor_ControllerDao;
 	
 	@Autowired
 	private AeratorStatusDao statusDao;
@@ -62,11 +72,33 @@ public class PondService {
 		}
 	}
 
+	private void changeControllerPortStatusClose(Controller controller, int port) {
+		StringBuffer sb = new StringBuffer(controller.getPort_status());
+		sb.setCharAt(port - 1, '0');
+		controller.setPort_status(sb.toString());
+	}
+	
 	public Map<String, Object> delPonds(Integer... pondIds) {
+		Controller controller = null;
 		for (Integer pondId : pondIds) {
 			// 删除塘口时需要先将塘口的鱼种子表置为空,否则无法删除
 			pondDao.findPondByPondId(pondId).setFish_categorys(null);
 			pondDao.delete(pondId);
+			aioDao.updateByPondId(pondId);
+			List<Sensor> sensors = sensorDao.findSensorsByPondId(pondId);
+			for(Sensor sensor : sensors){
+				List<Sensor_Controller> sensor_Controllers = sensor_ControllerDao.list(sensor.getId());
+				for(Sensor_Controller sensor_Controller : sensor_Controllers){
+					controller = controllerDao.findControllerById(sensor_Controller.getControllerId());
+					if(controller == null){
+						continue;
+					}else{
+						changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
+					}
+				}
+				sensor_ControllerDao.delete(sensor.getId());
+			}
+			sensorDao.updateByPondId(pondId);
 		}
 		return RESCODE.SUCCESS.getJSONRES();
 	}

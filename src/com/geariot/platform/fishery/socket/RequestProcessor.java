@@ -1,4 +1,5 @@
 package com.geariot.platform.fishery.socket;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -18,7 +19,7 @@ public class RequestProcessor {
 	private static final Logger log = LogManager.getLogger(RequestProcessor.class);
     private  ExecutorService  executorService  = Executors.newFixedThreadPool(10);
     private DataHandle handle=new DataHandle();
-   
+    
 	public void ProcessorRequest(final SelectionKey key){
 		
         //获得线程并执行
@@ -33,27 +34,37 @@ public class RequestProcessor {
 
 	public  void read(final SelectionKey key) {
 		// 服务器可读取消息:得到事件发生的Socket通道
-		log.debug("新消息来了，准备开始读，key为"+key.toString());		
+		log.debug("新消息来了，准备开始读，key为" + key.toString());
 		SocketChannel readChannel = (SocketChannel) key.channel();
+
+		// 创建读取的缓冲区
+		ByteBuffer buffer = ByteBuffer.allocate(100);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		int len = 0;
+		while (true) {
+			buffer.clear();
+			try {
+				len = readChannel.read(buffer);
+
+			} catch (IOException e) {
+				log.debug("read时候IO异常");
+			}
+			if (len == -1)
+				break;// 说明终端没有断开连接就关闭了
+			if (len == 0)
+				break;
+			buffer.flip();
+			while (buffer.hasRemaining()) {
+				baos.write(buffer.get());
+
+			}
+		}
+		byte[] data = baos.toByteArray();
+
+		handle.handle(data, readChannel);
+        
 		
-				// 创建读取的缓冲区
-				ByteBuffer buffer = ByteBuffer.allocate(100);
-				
-					try {
-						readChannel.read(buffer);
-					} catch (IOException e) {
-						
-					}
-					
-						
-					
-					byte[] data = buffer.array();
-				
-				handle.handle(data,readChannel); 
-           //将下一个读放进队列里面，并在主线程里面注册下一次读
-		if(data[0]!=0) {
-				NIOServer.addQueen(key);
-		}
-           
-		}
+		NIOServer.addQueen(key);
+
 	}
+}

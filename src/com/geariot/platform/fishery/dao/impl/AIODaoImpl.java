@@ -104,4 +104,10 @@ public class AIODaoImpl implements AIODao {
 		return (AIO) query.uniqueResult();
 	}
 
+	@Override
+	public void updateByPondId(int pondId) {
+		String sql = "update aio set pondId = 0 where pondId = :pondId";
+		getSession().createSQLQuery(sql).setInteger("pondId", pondId).executeUpdate();
+	}
+
 }

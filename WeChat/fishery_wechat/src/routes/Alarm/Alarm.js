@@ -11,35 +11,35 @@ function Alarm(props) {
         <div className="alarm-list">
             <div className="list-title">小鱼塘1-传感器1</div>
             <div className="list-info">
-                <div className="info-state">溶氧数据异常</div>
+                <div className="info-state"><div className="info-circle"></div>溶氧数据异常</div>
                 <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
             </div>
         </div>
         <div className="alarm-list">
             <div className="list-title">小鱼塘1-传感器1</div>
             <div className="list-info">
-                <div className="info-state">溶氧数据异常</div>
+                <div className="info-state"><div className="info-circle"></div>溶氧数据异常</div>
                 <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
             </div>
         </div>
         <div className="alarm-list">
             <div className="list-title">小鱼塘1-传感器1</div>
             <div className="list-info">
-                <div className="info-state">溶氧数据异常</div>
+                <div className="info-state"><div className="info-circle"></div>溶氧数据异常</div>
                 <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
             </div>
         </div>
         <div className="alarm-list">
             <div className="list-title">小鱼塘1-传感器1</div>
             <div className="list-info">
-                <div className="info-state">溶氧数据异常</div>
+                <div className="info-state"><div className="info-circle"></div>溶氧数据异常</div>
                 <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
             </div>
         </div>
         <div className="alarm-list">
             <div className="list-title">小鱼塘1-传感器1</div>
             <div className="list-info">
-                <div className="info-state">溶氧数据异常</div>
+                <div className="info-state"><div className="info-circle"></div>溶氧数据异常</div>
                 <div className="info-span">溶氧数值过低，鱼儿没法生存啦~</div>                
             </div>
         </div>

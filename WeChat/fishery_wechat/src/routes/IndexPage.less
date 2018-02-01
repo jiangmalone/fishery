@@ -225,8 +225,20 @@ i{
   }
 
 .fade-enter.fade-enter-active {
-opacity: 1;
-transition: opacity 250ms ease-in;
+    opacity: 1;
+    transition: opacity 250ms ease-in;
+}
+
+.act-enter {
+    opacity: 1;
+    z-index: 1;
+  }
+
+.act-enter.act-enter-active {
+    opacity: 1;
+}
+.right-leave {
+    opacity: 0;
 }
 // .fade-out {
 //     opacity: 1;

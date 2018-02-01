@@ -97,8 +97,13 @@ public class SensorDaoImpl implements SensorDao {
 
 	@Override
 	public void updateSensor(Sensor sensor) {
-		// TODO Auto-generated method stub
 		this.getSession().merge(sensor);
+	}
+
+	@Override
+	public void updateByPondId(int pondId) {
+		String sql = "update sensor set pondId = 0 , port_status = '00' where pondId = :pondId";
+		getSession().createSQLQuery(sql).setInteger("pondId", pondId).executeUpdate();
 	}
 
 }

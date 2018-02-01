@@ -90,7 +90,7 @@ public class CMDUtils {
 		selfTest.setCreateDate(new Date());
 		logger.debug("设备号为:" + deviceSn + "的设备自检分析完毕，是第" + way + "路，准备存入数据库");
 		service.save(selfTest);
-		response(19, data, readChannel);
+		response(20, data, readChannel);
 	}
 
 	// 下位机设限上传给服务器
@@ -160,22 +160,15 @@ public class CMDUtils {
 		byte[] byteWaterTemp = new byte[4];
 		CommonUtils.arrayHandle(data, byteWaterTemp, 11, 0, 4);
 		float waterTemp = CommonUtils.byte2float(byteWaterTemp, 0);
-		String receiveTime = sdf.format(new Date());
-		// byte check3 = data[15];
-		// String suffix3 = CommonUtils.printHexStringMerge(data,16,4);
-		// SocketSerivce service =(SocketSerivce)
-		// ApplicationUtil.getBean("socketSerivce");
 		Sensor_Data sData = new Sensor_Data();
 		sData.setDevice_sn(deviceSn);
 		sData.setWay(way);
 		sData.setOxygen(oxygen);
 		sData.setWater_temperature(waterTemp);
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路的溶氧值为:" + oxygen + "水温:" + waterTemp);
-		try {
-			sData.setReceiveTime(sdf.parse(receiveTime));
-		} catch (ParseException e) {
-			logger.debug("日期转换错误");
-		}
+
+		sData.setReceiveTime(new Date());
+
 		service.update(sData);
 
 		response(16, data, readChannel);
@@ -214,11 +207,9 @@ public class CMDUtils {
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
 		alarm.setWay(way);
-		try {
-			alarm.setCreateDate(sdf.parse(sdf.format(new Date())));
-		} catch (ParseException e) {
-			logger.debug("日期转换错误");
-		}
+
+		alarm.setCreateDate(new Date());
+
 		alarm.setAlarmType(1);
 		service.save(alarm);
 
@@ -258,11 +249,9 @@ public class CMDUtils {
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
 		alarm.setWay(way);
-		try {
-			alarm.setCreateDate(sdf.parse(sdf.format(new Date())));
-		} catch (ParseException e) {
-			logger.debug("日期转换错误");
-		}
+		
+		alarm.setCreateDate(new Date());
+		
 		alarm.setAlarmType(2);
 		service.save(alarm);
 		response(8, data, readChannel);
@@ -302,11 +291,9 @@ public class CMDUtils {
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
 		alarm.setWay(way);
-		try {
-			alarm.setCreateDate(sdf.parse(sdf.format(new Date())));
-		} catch (ParseException e) {
-			logger.debug("日期转换错误");
-		}
+		
+		alarm.setCreateDate(new Date());
+		
 		alarm.setAlarmType(3);
 		service.save(alarm);
 		response(8, data, readChannel);
@@ -345,11 +332,9 @@ public class CMDUtils {
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
 		alarm.setWay(way);
-		try {
-			alarm.setCreateDate(sdf.parse(sdf.format(new Date())));
-		} catch (ParseException e) {
-			logger.debug("日期转换错误");
-		}
+		
+		alarm.setCreateDate(new Date());
+		
 		alarm.setAlarmType(4);
 		service.save(alarm);
 		response(8, data, readChannel);
@@ -515,7 +500,6 @@ public class CMDUtils {
 		byte[] bytePhValue = new byte[4];
 		CommonUtils.arrayHandle(data, bytePhValue, 15, 0, 4);
 		float phValue = CommonUtils.byte2float(bytePhValue, 0);
-		String receiveTime = sdf.format(new Date());
 
 		Sensor_Data sData = new Sensor_Data();
 		sData.setDevice_sn(deviceSn);
@@ -525,11 +509,9 @@ public class CMDUtils {
 		sData.setpH_value(phValue);
 		logger.debug(
 				"服务器接收设备编号和路分别为:" + deviceSn + "第" + way + "路，溶氧值为:" + oxygen + "水温为:" + waterTemp + "ph值为:" + phValue);
-		try {
-			sData.setReceiveTime(sdf.parse(receiveTime));
-		} catch (ParseException e) {
-			logger.debug("日期转换错误");
-		}
+		
+		sData.setReceiveTime(new Date());
+		
 		service.save(sData);
 
 		response(16, data, readChannel);

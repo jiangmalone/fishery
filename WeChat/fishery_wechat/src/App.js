@@ -3,6 +3,7 @@ const Router = require('react-router-dom');
 const Route = Router.Route;
 const Switch = Router.Switch;
 const Redirect = Router.Redirect;
+import $ from 'jquery';
 import { connect } from 'dva';
 import CSSTransitionGroup from "react-addons-css-transition-group";
 import IndexPage from './routes/IndexPage';
@@ -49,7 +50,7 @@ class App extends React.Component {
     componentDidMount() {
         console.log(this.props.login)
         console.log(window.location)
-        if(window.location.hash.indexOf('login')==-1&&(window.location.hash!=='#/')&&(window.location.hash!=='#/main')){
+        if (window.location.hash.indexOf('login') == -1 && (window.location.hash !== '#/') && (window.location.hash !== '#/main')) {
             verifyIsLogin({
                 phone: window.localStorage.getItem('phone')
             }).then((res) => {
@@ -69,12 +70,40 @@ class App extends React.Component {
                 console.log(error)
             })
         }
-        
+        let oldX=0,newX=0;
+        $('#root').on('touchstart',  (event) =>{
+            //起始位置
+            //之前写成changedtouches了忘了大写
+            oldX = event.changedTouches[0].clientX
+        });
+        $('#root').on('touchend',  (event)=> {
+            //新的位置
+            newX = event.changedTouches[0].clientX
+            //取绝对值,再来比 以免上滑动失效和左滑动生效（上滑动y的差值是负的，左同理）
+            let endX = newX - oldX
+            if(endX>40){
+                this.props.dispatch({
+                    type: 'global/changeState',
+                    payload: {
+                        transitionName: 'act'
+                    }
+                })
+            }
+            if(endX<-40){
+                this.props.dispatch({
+                    type: 'global/changeState',
+                    payload: {
+                        transitionName: 'act'
+                    }
+                })
+            }
+        });
+
     }
 
 
     render() {
-        return (<div style={{height:'100%'}}>
+        return (<div style={{ height: '100%' }}>
             {!this.props.login && <Redirect to={{
                 pathname: '/login',
                 state: { from: this.props.location },
@@ -111,7 +140,7 @@ class App extends React.Component {
                     {/* <Route component={NotFound}/> */}
                 </div>
             </CSSTransitionGroup>
-        </div> 
+        </div>
         )
     }
 }

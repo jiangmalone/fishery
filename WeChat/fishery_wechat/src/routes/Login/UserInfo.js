@@ -11,7 +11,6 @@ class UserInfo extends React.Component {
 
     constructor(props) {
         super(props)
-        console.log(window.localStorage.getItem('sex'));
         this.state = {
             form: {
                 name: window.localStorage.getItem('name') ? window.localStorage.getItem('name') : '',

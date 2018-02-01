@@ -71,13 +71,16 @@ class LoginIndex extends React.Component {
             headimgurl: getParameterByName('headimgurl'),
         }).then((res) => {
             if (res.data.code == '0') {
-                window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'))
-                window.localStorage.setItem('openid', getParameterByName('openid'))
-                window.localStorage.setItem('id', res.data.data.id)
-                window.localStorage.setItem('relation', res.data.data.relation)
+                window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'));
+                window.localStorage.setItem('openid', getParameterByName('openid'));
+                window.localStorage.setItem('id', res.data.data.id);
+                window.localStorage.setItem('relation', res.data.data.relation);
+                if( res.data.data.name) {
+                    window.localStorage.setItem('name', res.data.data.name);
+                }
                 window.localStorage.setItem("phone", res.data.data.phone);
-                window.localStorage.setItem("sex", res.data.data.sex && res.data.data.sex != 'null' ? res.data.data.sex : '');
-                window.localStorage.setItem("life", res.data.data.life && res.data.data.life != 'undefined' ? res.data.data.life : '');
+                window.localStorage.setItem("sex", res.data.data.sex ? res.data.data.sex : '');
+                window.localStorage.setItem("life", res.data.data.life ? res.data.data.life : '');
                 this.props.dispatch({
                     type: 'global/changeState',
                     payload: {

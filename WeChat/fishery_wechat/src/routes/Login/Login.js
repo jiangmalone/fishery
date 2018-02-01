@@ -134,10 +134,10 @@ class LoginIndex extends React.Component {
                     {this.state.allowSend ? '获取短信验证码' : `${this.state.wait}s后重发`}
                 </div>
             </div>
-            <div style={{ width: '5.5rem', height: '1rem', fontSize: '.4rem', textAlign: 'center', color: "#fff", borderRadius: '5rem', lineHeight: '1rem', margin: '0 auto', background: '#35b4e8', marginTop: '1rem' }} onClick={() => { this.onlogin() }}>
+            <div className='login-button' onClick={() => { this.onlogin() }}>
                 登&nbsp;&nbsp;录
             </div>
-            <div style={{ textAlign: 'center', color: "#fff", lineHeight: '0.98rem', fontSize: '.18rem' }}>
+            <div style={{ textAlign: 'center', color: "#8f8f8f", lineHeight: '0.8rem', fontSize: '.28rem' }}>
                 为了防止用户信息被盗,请使用本机号码
             </div>
         </div>

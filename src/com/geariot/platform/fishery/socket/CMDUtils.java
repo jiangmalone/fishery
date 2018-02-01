@@ -90,7 +90,7 @@ public class CMDUtils {
 		selfTest.setCreateDate(new Date());
 		logger.debug("设备号为:" + deviceSn + "的设备自检分析完毕，是第" + way + "路，准备存入数据库");
 		service.save(selfTest);
-		response(19, data, readChannel);
+		response(20, data, readChannel);
 	}
 
 	// 下位机设限上传给服务器

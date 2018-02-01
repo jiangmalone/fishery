@@ -19,7 +19,7 @@ public class RequestProcessor {
 	private static final Logger log = LogManager.getLogger(RequestProcessor.class);
     private  ExecutorService  executorService  = Executors.newFixedThreadPool(10);
     private DataHandle handle=new DataHandle();
-   
+    
 	public void ProcessorRequest(final SelectionKey key){
 		
         //获得线程并执行
@@ -62,7 +62,8 @@ public class RequestProcessor {
 		byte[] data = baos.toByteArray();
 
 		handle.handle(data, readChannel);
-
+        
+		
 		NIOServer.addQueen(key);
 
 	}

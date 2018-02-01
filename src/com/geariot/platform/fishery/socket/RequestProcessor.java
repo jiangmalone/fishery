@@ -31,7 +31,7 @@ public class RequestProcessor {
         });
     } 
 
-	public void read(final SelectionKey key) {
+	public  void read(final SelectionKey key) {
 		// 服务器可读取消息:得到事件发生的Socket通道
 		log.debug("新消息来了，准备开始读，key为" + key.toString());
 		SocketChannel readChannel = (SocketChannel) key.channel();
@@ -59,4 +59,4 @@ public class RequestProcessor {
 		}
 
 	}
-}
+	}

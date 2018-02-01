@@ -31,29 +31,32 @@ public class RequestProcessor {
         });
     } 
 
-	public  void read(final SelectionKey key) {
+	public void read(final SelectionKey key) {
 		// 服务器可读取消息:得到事件发生的Socket通道
-		log.debug("新消息来了，准备开始读，key为"+key.toString());		
+		log.debug("新消息来了，准备开始读，key为" + key.toString());
 		SocketChannel readChannel = (SocketChannel) key.channel();
-		
-				// 创建读取的缓冲区
-				ByteBuffer buffer = ByteBuffer.allocate(100);
-				
-					try {
-						readChannel.read(buffer);
-					} catch (IOException e) {
-						
-					}
-					
-						
-					
-					byte[] data = buffer.array();
-				
-				handle.handle(data,readChannel); 
-           //将下一个读放进队列里面，并在主线程里面注册下一次读
-		if(data[0]!=0) {
-				NIOServer.addQueen(key);
+
+		// 创建读取的缓冲区
+		ByteBuffer buffer = ByteBuffer.allocate(100);
+
+		try {
+			readChannel.read(buffer);
+		} catch (IOException e) {
+
 		}
-           
+
+		byte[] data = buffer.array();
+		if (data[0] == 0)// 如果读到的都是0是因为终端没有断开连接就关闭电源了
+		{
+			log.debug("此设备异常关闭");
+			return;
 		}
+		handle.handle(data, readChannel);
+		// 将下一个读放进队列里面，并在主线程里面注册下一次读
+
+		if (data[0] != 0) {
+			NIOServer.addQueen(key);
+		}
+
 	}
+}

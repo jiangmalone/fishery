@@ -56,7 +56,7 @@ class AddPond extends PureComponent {
     render() {
         const { getFieldProps, getFieldError, validateFields } = this.props.form;
         return (
-            <div className="body-bac" style={{ height:'110%' }}>
+            <div className="body-bac" style={{ height:'120%' }}>
                 <NavBar title={!this.props.match.params.id ? "添加塘口" : '修改塘口'} />
                 <List className="addPond-list">
                     <InputItem

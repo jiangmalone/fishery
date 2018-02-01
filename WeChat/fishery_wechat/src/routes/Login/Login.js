@@ -71,13 +71,16 @@ class LoginIndex extends React.Component {
             headimgurl: getParameterByName('headimgurl'),
         }).then((res) => {
             if (res.data.code == '0') {
-                window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'))
-                window.localStorage.setItem('openid', getParameterByName('openid'))
-                window.localStorage.setItem('id', res.data.data.id)
-                window.localStorage.setItem('relation', res.data.data.relation)
+                window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'));
+                window.localStorage.setItem('openid', getParameterByName('openid'));
+                window.localStorage.setItem('id', res.data.data.id);
+                window.localStorage.setItem('relation', res.data.data.relation);
+                if( res.data.data.name) {
+                    window.localStorage.setItem('name', res.data.data.name);
+                }
                 window.localStorage.setItem("phone", res.data.data.phone);
-                window.localStorage.setItem("sex", res.data.data.sex && res.data.data.sex != 'null' ? res.data.data.sex : '');
-                window.localStorage.setItem("life", res.data.data.life && res.data.data.life != 'undefined' ? res.data.data.life : '');
+                window.localStorage.setItem("sex", res.data.data.sex ? res.data.data.sex : '');
+                window.localStorage.setItem("life", res.data.data.life ? res.data.data.life : '');
                 this.props.dispatch({
                     type: 'global/changeState',
                     payload: {
@@ -133,10 +136,10 @@ class LoginIndex extends React.Component {
                     {this.state.allowSend ? '获取短信验证码' : `${this.state.wait}s后重发`}
                 </div>
             </div>
-            <div style={{ width: '5.5rem', height: '1rem', fontSize: '.4rem', textAlign: 'center', color: "#fff", borderRadius: '5rem', lineHeight: '1rem', margin: '0 auto', background: '#35b4e8', marginTop: '1rem' }} onClick={() => { this.onlogin() }}>
+            <div className='login-button' onClick={() => { this.onlogin() }}>
                 登&nbsp;&nbsp;录
             </div>
-            <div style={{ textAlign: 'center', color: "#fff", lineHeight: '0.98rem', fontSize: '.18rem' }}>
+            <div style={{ textAlign: 'center', color: "#8f8f8f", lineHeight: '0.8rem', fontSize: '.28rem' }}>
                 为了防止用户信息被盗,请使用本机号码
             </div>
         </div>

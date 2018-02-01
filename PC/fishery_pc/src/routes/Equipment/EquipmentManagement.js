@@ -11,7 +11,8 @@ import Switch from 'antd/lib/switch';
 @connect(state => ({
     list: state.equipment.list,
     loading: state.equipment.loading,
-    pagination: state.equipment.pagination
+    pagination: state.equipment.pagination,
+    showAddModal: state.equipment.showAddModal
 }))
 
 export default class EquipmentManagement extends React.Component {
@@ -51,6 +52,12 @@ export default class EquipmentManagement extends React.Component {
                 }
             })
         }
+        this.props.dispatch({
+            type: 'equipment/changeModal',
+            payload: {
+                showAddModal: true,
+            }
+        })
         this.setState({
             showAddModal: true,
             mode: mode,
@@ -89,7 +96,7 @@ export default class EquipmentManagement extends React.Component {
         this.props.dispatch({
             type: 'equipment/changeModal',
             payload: {
-                formData: { fields: formData }
+                formData: { fields: formData },
             }
         })
         this.showAddModal('modify', index, record.device_sn)
@@ -121,6 +128,12 @@ export default class EquipmentManagement extends React.Component {
     onCancel = () => {
         this.setState({
             showAddModal: false
+        })
+        this.props.dispatch({
+            type: 'equipment/changeModal',
+            payload: {
+                showAddModal: false,
+            }
         })
     }
 
@@ -350,7 +363,7 @@ export default class EquipmentManagement extends React.Component {
                 </Card>
                 <AddEquipment
                     modifyId={this.state.modifyId}
-                    visible={this.state.showAddModal}
+                    visible={this.props.showAddModal}
                     onOk={this.onOk}
                     wrapClassName='vertical-center-modal'
                     onCancel={this.onCancel}

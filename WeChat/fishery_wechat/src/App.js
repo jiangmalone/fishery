@@ -105,7 +105,7 @@ class App extends React.Component {
                     <Route location={this.props.location} path="/myEquipment" component={MyEquipment} />
                     <Route location={this.props.location} exact path="/equipmentManagement/:data" component={EquipmentManagement} />
                     <Route location={this.props.location} exact path="/bindEquipment/:data" component={BindEquipment} />
-                    <Route location={this.props.location} exact path="/sensorDetail/:device_sn" component={SensorDetail} />
+                    <Route location={this.props.location} exact path="/sensorDetail/:device_sn/:way" component={SensorDetail} />
                     <Route location={this.props.location} exact path="/address" component={AddAddress} />
                     <Route location={this.props.location} path="/login" component={Login} />
                     {/* <Route component={NotFound}/> */}

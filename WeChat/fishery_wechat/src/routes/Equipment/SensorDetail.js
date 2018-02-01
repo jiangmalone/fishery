@@ -32,6 +32,7 @@ class SensorDetail extends React.Component {
     constructor(props) {
         super(props)
         const device_sn = this.props.match.params.device_sn;
+        const way = this.props.match.params.way;
         this.state = {
             animating: false,
             realTimeData: {
@@ -49,7 +50,8 @@ class SensorDetail extends React.Component {
             sensors: [],
             //以下是设备的一些信息
             device_sn: device_sn,
-            name: '传感器',
+            way: way,
+            name: '',
             status: '',
         }
     }
@@ -60,27 +62,11 @@ class SensorDetail extends React.Component {
         this.getAllEquipment();
     }
 
-    // getTime = (type) => {       //0 今天   1近七天
-    //     let today = new Date(), startTime, endTime = moment(today).format('YYYY-MM-DD HH:mm');
-    //     today.setHours(0);
-    //     today.setMinutes(0);
-    //     today.setSeconds(0);
-    //     today.setMilliseconds(0);
-    //     if (type == 0) {
-    //         startTime = moment(today).format('YYYY-MM-DD HH:mm');
-    //     } else {
-    //         let times = (Date.parse(today) / 1000) - (24 * 60 * 60 * 6);
-    //         let newDate = new Date();
-    //         startTime = moment(newDate.setTime(times * 1000)).format('YYYY-MM-DD HH:mm');
-    //     }
-    //     return { startTime, endTime }
-    // }
-
-
     getDataToday = () => {
         this.setState({ animating: true })
         getDataToday({
             device_sn: this.state.device_sn,
+            way: this.state.way
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
@@ -103,6 +89,7 @@ class SensorDetail extends React.Component {
         this.setState({ animating: true })
         getDataToday({
             device_sn: this.state.device_sn,
+            way: this.state.way,
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
@@ -125,6 +112,7 @@ class SensorDetail extends React.Component {
         this.setState({ animating: true })
         getRealTimeData({
             device_sn: this.state.device_sn,
+            way: this.state.way
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
@@ -154,16 +142,29 @@ class SensorDetail extends React.Component {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
                 const data = res.data;
-                if (data.sensor && data.sensor.length > 0) {
-                    let sensors = [];
+                let equipments = [];
+                if (data.sensor && data.sensor.length > 0 ) {
                     data.sensor.map((item, index) => {
-                        sensors.push({
+                        equipments.push({
                             name: item.name,
-                            device_sn: item.device_sn
+                            device_sn: item.device_sn+ '0'
                         })
                     })
-                    this.setState({ sensors: sensors })
                 }
+                if (data.aio && data.aio.length > 0) {
+                    data.aio.map((item,index) => {
+                        equipments.push({
+                            name: item.name + '(1路)',
+                            device_sn: item.device_sn + '1',
+                        })
+                        equipments.push({
+                            name: item.name + '(2路)',
+                            device_sn: item.device_sn + '2',
+                        })
+                    })
+                }
+
+                this.setState({ sensors: equipments })
             } else {
                 Toast.fail(res.data.msg, 1);
             }
@@ -176,9 +177,10 @@ class SensorDetail extends React.Component {
 
     onSelect = (opt) => {
         this.setState({
-            device_sn: opt.props.value,
+            device_sn: opt.props.value.substr(0, opt.props.value.length-1),
             isShowMore: false,
             isSelectToday: true,
+            way: opt.props.value.charAt(opt.props.value.length - 1)
         }, () => {
             this.getDataToday();
             this.getRealTimeData();
@@ -218,7 +220,8 @@ class SensorDetail extends React.Component {
         console.log('calibration');
         console.log(this.state.device_sn);
         serverCheck({
-            device_sn: this.state.device_sn
+            device_sn: this.state.device_sn,
+            way: this.state.way,
         }).then(res => {
             if (res.data && res.data.code == 0) {
                 Toast.success('校准成功', 1);
@@ -251,7 +254,7 @@ class SensorDetail extends React.Component {
                         }
                     })
                 }}></i>
-                {this.state.name}
+                {this.state.name + (this.state.way != 0 ? ('(' +  this.state.way + '路)'): '')}
                 <i className="right-item-none list" onClick={() => {
                     this.setState({ isShowMore: !this.state.isShowMore })
                 }} ></i>
@@ -285,7 +288,8 @@ class SensorDetail extends React.Component {
                     <span>当前状态</span>
                     <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
                 </div>
-                <img src={correct} className='correct' onClick={() => {this.serverCheck()}} />
+                {(this.state.way != 0) &&
+                 <img src={correct} className='correct' onClick={() => {this.serverCheck()}} />}
             </div>
             {this.state.isShowDetail && <div className='detail'>
                 <div>实时溶氧：&nbsp;&nbsp; {this.state.realTimeData.oxygen}</div>

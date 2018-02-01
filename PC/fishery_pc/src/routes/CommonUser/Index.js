@@ -234,8 +234,8 @@ class UserList extends PureComponent {
             key: 'phone',
         }, {
             title: '养殖年限',
-            dataIndex: 'life',
-            key: 'life',
+            // dataIndex: 'life',
+            // key: 'life',
             render: (text, record, index) => {
                 console.log(record.life)
                 return <span>{record.life && record.life != 'undefined' ? record.life : ''}</span>

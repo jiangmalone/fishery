@@ -109,9 +109,12 @@ class AutoOxygenationSetting extends React.Component {
         }).then(res => {
             console.log(res);
             if (res.data.code == 0) {
-                const form = {
-
-                }
+                this.props.form.setFieldsValue({
+                    low_limit: res.data.low_limit || 0,
+                    up_limit: res.data.up_limit || 0,
+                    high_limit: res.data.high_limit || 0,
+                })
+                this.setState({timeSections: res.data.timerList});
             } else {
                 Toast.fail(res.data.msg, 1);
             }

@@ -1,7 +1,6 @@
 import { queryEquipment, companyFindEquipment, addEquipment, modifyEquipment, delEquipments} from '../services/equipment'
 import update from 'immutability-helper'
 import {message} from 'antd';
-
 export default {
   namespace: 'equipment',
 
@@ -10,7 +9,8 @@ export default {
     loading: false,
     pagination: { current: 1 },
     modalvisible: false,
-    formData: { fields: {} }
+    formData: { fields: {} },
+    showAddModal: false,
   },
 
   effects: {
@@ -81,6 +81,12 @@ export default {
             relation: payload.relation
           }
         })
+        yield put({
+          type: 'changeModal',
+          payload: {
+            showAddModal: false,
+          }
+        })
       } else {
         message.error(response.msg, 1);
       }
@@ -96,6 +102,13 @@ export default {
             data: response.data,
           },
         });
+
+        yield put({
+          type: 'changeModal',
+          payload: {
+            showAddModal: false,
+          }
+        })
       } else {
         message.error(response.msg, 1);
       }

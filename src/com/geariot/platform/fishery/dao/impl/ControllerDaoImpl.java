@@ -92,7 +92,7 @@ public class ControllerDaoImpl implements ControllerDao {
 
 	@Override
 	public void updateByPondId(int pondId) {
-		String sql = "update controller set pondId = 0 and port_status = '0000' where pondId = :pondId";
+		String sql = "update controller set pondId = 0 , port_status = '0000' where pondId = :pondId";
 		getSession().createSQLQuery(sql).setInteger("pondId", pondId).executeUpdate();
 	}
 

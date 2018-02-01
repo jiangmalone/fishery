@@ -102,7 +102,7 @@ public class SensorDaoImpl implements SensorDao {
 
 	@Override
 	public void updateByPondId(int pondId) {
-		String sql = "update sensor set pondId = 0 and port_status = '00' where pondId = :pondId";
+		String sql = "update sensor set pondId = 0 , port_status = '00' where pondId = :pondId";
 		getSession().createSQLQuery(sql).setInteger("pondId", pondId).executeUpdate();
 	}
 

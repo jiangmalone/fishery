@@ -346,8 +346,8 @@ class Main extends React.Component {
                 {ponds}
             </div> : <div  className='nodata' onClick={this.gotoAddPond} >
             <div className='img-404'  />
+            <span className='add-span' >您还没有添加渔塘呢~</span>
             <div className='img-add' ></div>
-            <span className='add-span' >添加塘口</span>
             </div>}
             <BottomTabBar nowTab={1} />
             <ActivityIndicator

@@ -331,7 +331,7 @@ class EquipmentManagement extends React.Component {
             <NavBar title={"设备管理"} />
             <div className='header-line' >
                 <div className='name'>
-                    {this.state.name}(编号:{this.state.device_sn})
+                    {this.state.name}
                 </div>
                 <div className='state' >
                     <img src={this.state.state == 0 ? offline : online} />

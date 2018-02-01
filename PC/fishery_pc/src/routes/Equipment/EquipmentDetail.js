@@ -1,47 +1,52 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Row, Col, Card, Input, Icon, Button, Table, message, Select, Modal, Popconfirm } from 'antd';
+import { Row, Col, Card, Input, Icon, Button, Table, message, Select, Modal, Popconfirm, Radio, Switch, TimePicker } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { realTimeData, getAllEquipment } from '../../services/equipment';
+import { realTimeData, getAllEquipment, aeratorOnOff } from '../../services/equipment';
 import { bindState } from '../../services/bind';
 import { queryPond } from '../../services/pond';
 import { pondWithSensorOrAIO, delSensorOrAIOBind, sensorWithController, delBind } from "../../services/bind";
 import { userInfo } from 'os';
 const Option = Select.Option;
-
+const format = 'HH:mm';
 export default class EquipmentDetail extends React.Component {
 
     constructor(props) {
         super(props);
-        let type = this.props.match.params.device_sn.slice(0, 2);
+        let type = this.props.match.params.device_sn.slice(0, 2), way;
         if (type == '01' || type == '02') {
             type = 2;
+            way = 1;
         } else if (type == '03') {
             type = 1;
+            way = 0;
         } else {
             type = 0;
+            way = 0;
         }
         // type  0 控制器 1 传感器 2 一体机
         this.state = {
             loading: false,
             ponds: [],
             realTimeData: [
-            //     {
-            //     receiveTime: '',
-            //     oxygen: '',
-            //     water_temperature: '',
-            //     pH_value: ''
-            // }
-        ],
+            ],
             bindList: [],
             type: type,
             portIndex: '',
             controllers: [],   //设备列表
             ports: [],      //和设备联动的端口号
             selectControllerId: 0,
-            selectPort: 0
-
+            selectPort: 0,
+            way: way,
+            oxygenVisible: false,
+            oxygenSetForm: {
+                low_limit: '',
+                up_limit: '',
+                high_limit: ''
+            },
+            timeSections: [['', '']],
+            isOpen: false  //当前路的增氧是否打开
         }
     }
 
@@ -53,7 +58,9 @@ export default class EquipmentDetail extends React.Component {
     }
 
     getInfo = () => {
-        bindState({ device_sn: this.props.match.params.device_sn }).then((res) => {
+        bindState({
+            device_sn: this.props.match.params.device_sn
+        }).then((res) => {
             if (res.code == '0') {
                 let state = '正常';
                 switch (res.data.status) {
@@ -113,13 +120,14 @@ export default class EquipmentDetail extends React.Component {
     }
     getRealTimeData = () => {
         realTimeData({
-            device_sn: this.props.match.params.device_sn
+            device_sn: this.props.match.params.device_sn,
+            way: this.state.way
         }).then(res => {
             if (res.code == 0) {
                 if (res.data) {
                     this.setState({ realTimeData: [res.data] })
                 } else {
-                    this.setState({realTimeData: []})
+                    this.setState({ realTimeData: [] })
                 }
             } else {
                 message(res.msg, 2);
@@ -292,6 +300,68 @@ export default class EquipmentDetail extends React.Component {
         });
     }
 
+    handleWayChange = (way) => {
+        this.setState({ way: way }, this.getRealTimeData())
+    }
+
+    setTimeOxygen = () => {
+
+    }
+
+    onOxygenSetFormChange = (type, value) => {
+        if (type) {
+            let oxygenSetForm = this.state.oxygenSetForm;
+            oxygenSetForm[type] = value;
+            this.setState({oxygenSetForm: oxygenSetForm});
+        }
+    }
+
+    handleOxygenSetCancel = () => {
+        this.setState({
+            oxygenVisible: false,
+            oxygenSetForm: {
+                low_limit: '',
+                up_limit: '',
+                high_limit: ''
+            },
+        })
+    }
+
+    handleOxygenSetOk = () => {
+        this.setState({
+            oxygenVisible: false
+        })
+
+    }
+
+    handleOxygenOpenOrClose = () => {
+        // this.setState({isOpen: !this.state.isOpen})
+        aeratorOnOff({
+            device_sn: this.props.match.params.device_sn,
+            way: this.state.way,
+            openOrclose: this.state.isOpen ? 1 : 0
+        }).then((res) => {
+            if (res.code == '0') {
+                this.setState({isOpen: !this.state.isOpen})
+                if (onOff) {
+                    message.success('开启增氧机成功!', 1)
+                } else {
+                    message.success('关闭增氧机成功', 1)
+                }
+            } else {
+                message.error(res.msg, 1)
+            }
+        }).catch((error) => {
+            console.log(error);
+            message.error('开关发生错误，请重试!', 1);
+        });
+    }
+
+    timeOnChange = (time, timeString) =>  {
+        console.log(time, timeString);
+    }
+      
+
     render() {
         const realTimeColumns = [
             {
@@ -379,7 +449,8 @@ export default class EquipmentDetail extends React.Component {
         let data = {
             device_sn: this.props.match.params.device_sn,
             deviceName: this.state.deviceName,
-            status: this.state.status
+            status: this.state.status,
+            way: this.state.way
         }
         data = JSON.stringify(data);
         console.log(data);
@@ -395,7 +466,7 @@ export default class EquipmentDetail extends React.Component {
                         <Col span={8}>绑定塘口: &nbsp;  <Select
                             showSearch
                             style={{ width: 200 }}
-                            disabled = {this.state.pondId > 0?true:false}
+                            disabled={this.state.pondId > 0 ? true : false}
                             placeholder="选择一个塘口"
                             optionFilterProp="children"
                             onChange={(v) => {
@@ -407,10 +478,25 @@ export default class EquipmentDetail extends React.Component {
                         >
                             {pondOptions}
                             <Option value={0}>无</Option>
-                        </Select></Col><Col span={8}>{this.state.pondId > 0 && <Popconfirm title="确认要解绑嘛?" onConfirm={() =>this.disBind()}><Button>解绑</Button></Popconfirm>}</Col></Row>}
+                        </Select></Col>
+                        <Col span={8}>{this.state.pondId > 0 && <Popconfirm title="确认要解绑嘛?" onConfirm={() => this.disBind()}><Button>解绑</Button></Popconfirm>}</Col>
+                        {this.state.way != 0 && <Col span={3}>
+                            <Radio.Group value={this.state.way} onChange={e => this.handleWayChange(e.target.value)} >
+                                <Radio.Button value={1} >1路</Radio.Button>
+                                <Radio.Button value={2}>2路</Radio.Button>
+                                {/* <Radio.Button value="small">区间</Radio.Button> */}
+                            </Radio.Group>
+                        </Col>}
+
+                        {this.state.way != 0 && <Col span={2} offset={2} >
+                            <Button onClick={() => {this.setState({oxygenVisible: true})}} >自动增氧设置</Button>
+                        </Col>
+                        }
+
+                    </Row>}
 
                 </Card>
-                <Card
+                {this.state.type != 0 && <Card
                     bodyStyle={{ marginTop: 15 }}
                     title="最新数据"
                     bordered
@@ -427,7 +513,7 @@ export default class EquipmentDetail extends React.Component {
                     <Col span={4} offset={2} style={{ paddingTop: 40 }}>
                         <Link to={`/equipment/water-quality/${data}`}><Button size="large">水质曲线</Button></Link>
                     </Col>
-                </Card>
+                </Card>}
                 {this.state.type != 2 && <Card
                     bodyStyle={{ marginTop: 15 }}
                     title="绑定关系"
@@ -476,8 +562,81 @@ export default class EquipmentDetail extends React.Component {
                         </Select>
                     </Row>
                 </Modal >
-                <Button type="primary" style={{float:'right'}} onClick={()=>{history.back()}}>
-                   返回上一页
+                <Modal title='增氧设置'
+                    visible={this.state.oxygenVisible}
+                    onOk={this.handleOxygenSetOk}
+                    onCancel={this.handleOxygenSetCancel}
+                    optionFilterProp="children"
+                    okText="确认"
+                    cancelText="取消">
+                    <Row gutter={18} style={{ marginBottom: '10px'}}>
+                        <Col span={8} style={{ textAlign: 'right' }}>
+                            增氧方式:
+                            </Col>
+                        <Col span={8}>
+                            增氧机{this.state.way}路
+                        </Col>
+                    </Row>
+                    <Row gutter={18} style={{ paddingBottom: '10px', borderBottom: '1px solid #dcdcdc' }}>
+                        <Col span={8} style={{ textAlign: 'right' }}>
+                            开关控制:
+                            </Col>
+                        <Col span={8}>
+                        <Switch checked={this.state.isOpen}  onChange={this.handleOxygenOpenOrClose} />
+                        </Col>
+                    </Row>
+                    <Row gutter={18} style={{ marginBottom: '10px', marginTop: '20px' }}>
+                        <Col span={8} style={{ textAlign: 'right' }}>
+                            溶氧下限:
+                            </Col>
+                        <Col span={8}>
+                            <Input value={this.state.oxygenSetForm.low_limit} onChange={(e) => this.onOxygenSetFormChange('low_limit', e.target.value)} />
+                        </Col>
+                        <Col  span={1}>
+                        mg/l
+                        </Col>
+                    </Row>
+                    <Row gutter={18} style={{ marginBottom: '10px' }}>
+                        <Col span={8} style={{ textAlign: 'right' }}>
+                            溶氧上限:
+                            </Col>
+                        <Col span={8}>
+                            <Input value={this.state.oxygenSetForm.up_limit} onChange={(e) => this.onOxygenSetFormChange('up_limit', e.target.value)} />
+                        </Col>
+                        <Col  span={1}>
+                        mg/l
+                        </Col>
+                    </Row>
+                    <Row gutter={18} style={{ marginBottom: '10px' }}>
+                        <Col span={8} style={{ textAlign: 'right' }}>
+                            溶氧高限:
+                            </Col>
+                        <Col span={8}>
+                            <Input value={this.state.oxygenSetForm.high_limit} onChange={(e) => this.onOxygenSetFormChange('high_limit', e.target.value)} />
+                        </Col>
+                        <Col  span={1}>
+                        mg/l
+                        </Col>
+                    </Row>
+                    <Row gutter={18} style={{ marginBottom: '10px' }}>
+                        <Col span={8} style={{ textAlign: 'right' }}>
+                            定时开启:
+                            </Col>
+                        <Col span={7}>
+                        <TimePicker format={format} minuteStep={30} onChange={this.timeOnChange} />
+                        </Col>
+                        
+                        <Col  span={1} style={{paddingLeft: '5px'}} >
+                        —
+                        </Col>
+                        <Col  span={7}>
+                        <TimePicker format={format} minuteStep={30} onChange={this.timeOnChange}  />
+                        </Col>
+                    </Row>
+                    
+                </Modal >
+                <Button type="primary" style={{ float: 'right' }} onClick={() => { history.back() }}>
+                    返回上一页
                 </Button>
             </PageHeaderLayout>
         );

@@ -30,7 +30,8 @@ export default class WaterQualityCurve extends React.Component {
             device_sn: data.device_sn,
             name: data.deviceName,
             status: data.status,
-            selectTime: 'today'
+            selectTime: 'today',
+            way: data.way
         }
     }
 
@@ -41,6 +42,7 @@ export default class WaterQualityCurve extends React.Component {
     getDataToday = () => {
         getDataToday({
             device_sn: this.state.device_sn,
+            way: this.state.way
         }).then((res) => {
             if (res && res.code == 0) {
                 let oxygens = [], phs = [], temperatures = [];
@@ -83,6 +85,7 @@ export default class WaterQualityCurve extends React.Component {
     getDataSevent = () => {
         getDataAll({
             device_sn: this.state.device_sn,
+            way: this.state.way
         }).then((res) => {
             if (res && res.code == 0) {
                 let oxygens = [], phs = [], temperatures = [];

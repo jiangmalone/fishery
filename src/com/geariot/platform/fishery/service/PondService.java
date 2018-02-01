@@ -26,6 +26,7 @@ import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
+import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
@@ -71,7 +72,14 @@ public class PondService {
 		}
 	}
 
+	private void changeControllerPortStatusClose(Controller controller, int port) {
+		StringBuffer sb = new StringBuffer(controller.getPort_status());
+		sb.setCharAt(port - 1, '0');
+		controller.setPort_status(sb.toString());
+	}
+	
 	public Map<String, Object> delPonds(Integer... pondIds) {
+		Controller controller = null;
 		for (Integer pondId : pondIds) {
 			// 删除塘口时需要先将塘口的鱼种子表置为空,否则无法删除
 			pondDao.findPondByPondId(pondId).setFish_categorys(null);
@@ -79,14 +87,18 @@ public class PondService {
 			aioDao.updateByPondId(pondId);
 			List<Sensor> sensors = sensorDao.findSensorsByPondId(pondId);
 			for(Sensor sensor : sensors){
+				List<Sensor_Controller> sensor_Controllers = sensor_ControllerDao.list(sensor.getId());
+				for(Sensor_Controller sensor_Controller : sensor_Controllers){
+					controller = controllerDao.findControllerById(sensor_Controller.getControllerId());
+					if(controller == null){
+						continue;
+					}else{
+						changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
+					}
+				}
 				sensor_ControllerDao.delete(sensor.getId());
 			}
-			List<Controller> controllers = controllerDao.findByPondId(pondId);
-			for(Controller controller : controllers){
-				sensor_ControllerDao.deleteController(controller.getId());
-			}
 			sensorDao.updateByPondId(pondId);
-			controllerDao.updateByPondId(pondId);
 		}
 		return RESCODE.SUCCESS.getJSONRES();
 	}

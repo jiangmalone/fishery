@@ -1,4 +1,5 @@
 package com.geariot.platform.fishery.socket;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -38,25 +39,31 @@ public class RequestProcessor {
 
 		// 创建读取的缓冲区
 		ByteBuffer buffer = ByteBuffer.allocate(100);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		int len = 0;
+		while (true) {
+			buffer.clear();
+			try {
+				len = readChannel.read(buffer);
 
-		try {
-			readChannel.read(buffer);
-		} catch (IOException e) {
+			} catch (IOException e) {
+				log.debug("read时候IO异常");
+			}
+			if (len == -1)
+				break;// 说明终端没有断开连接就关闭了
+			if (len == 0)
+				break;
+			buffer.flip();
+			while (buffer.hasRemaining()) {
+				baos.write(buffer.get());
 
+			}
 		}
+		byte[] data = baos.toByteArray();
 
-		byte[] data = buffer.array();
-		if (data[0] == 0)// 如果读到的都是0是因为终端没有断开连接就关闭电源了
-		{
-			log.debug("此设备异常关闭");
-			return;
-		}
 		handle.handle(data, readChannel);
-		// 将下一个读放进队列里面，并在主线程里面注册下一次读
 
-		if (data[0] != 0) {
-			NIOServer.addQueen(key);
-		}
+		NIOServer.addQueen(key);
 
 	}
-	}
+}

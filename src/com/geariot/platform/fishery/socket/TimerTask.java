@@ -30,17 +30,17 @@ public class TimerTask {
 	@Autowired
 	private WXUserDao wxuserDao;
 	private static Logger logger = Logger.getLogger(TimerTask.class);
-
+	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 	@Scheduled(cron = "0 0/30 * * * ?") // 每半小时执行一次
 	public void judgeTime() {
 
 		List<Timer> lt = timerDao.findAllTimer();
-
+		AIO aio=null;
 		if (!lt.isEmpty()) {
-			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+			
 			String now = sdf.format(new Date());
 			for (Timer timer : lt) {
-				AIO aio = aioDao.findAIOByDeviceSns(timer.getDevice_sn());
+				aio = aioDao.findAIOByDeviceSns(timer.getDevice_sn());
 				if (aio == null)
 					return;
 				if (now.compareTo(timer.getStartTime()) <= 5 && now.compareTo(timer.getStartTime()) >= 0) {
@@ -51,7 +51,7 @@ public class TimerTask {
 						if (aio.getRelation() != null && aio.getRelation().contains("WX")) {
 							WechatSendMessageUtils.sendWechatOxygenOnOffMessages(
 									"设备编号为 " + timer.getDevice_sn() + " 的增氧机在定时时间为:" + timer.getStartTime() + "打开失败",
-									wxuserDao.findUserById(Integer.parseInt(aio.getRelation().substring(2)))
+									wxuserDao.findUserByRelation(aio.getRelation())
 											.getOpenId());
 						}
 					}
@@ -63,7 +63,7 @@ public class TimerTask {
 						if (aio.getRelation() != null && aio.getRelation().contains("WX")) {
 							WechatSendMessageUtils.sendWechatOxygenOnOffMessages(
 									"设备编号为 " + timer.getDevice_sn() + " 的增氧机在定时时间为:" + timer.getStartTime() + "关闭失败",
-									wxuserDao.findUserById(Integer.parseInt(aio.getRelation().substring(2)))
+									wxuserDao.findUserByRelation(aio.getRelation())
 											.getOpenId());
 						}
 					}

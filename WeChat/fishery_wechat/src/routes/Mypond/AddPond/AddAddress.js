@@ -83,12 +83,12 @@ class MapModal extends PureComponent {
     render() {
         return (
             <div style={{ width: '100%', height: '100%' }}>
-                <NavBar title={"我的地图"} />
+                <NavBar title={"塘口位置"} />
                 <Map amapkey={'ae721b47f9c198651a4bfecec901aa8c'} version={'1.4.2'}
                     events={this.amapEvents} >
                 </Map>
-                <div style={{ position: 'absolute', top: '0.88rem', zIndex: '1000', background: 'rgba(0,0,0,0.5)', color: '#fff', width: '100%' }}>
-                    <textarea id="keyword" ref="keyword" name="keyword" style={{ padding: '.2rem 0', marginLeft: '.1rem', verticalAlign: 'middle', background: 'none', border: 'none', display: 'inline-block', width: '6rem', color: '#FFF' }} placeholder={`定位地址：${this.state.address.formattedAddress ? this.state.address.formattedAddress : '无'} `} />
+                <div style={{ position: 'absolute', top: '0.88rem', zIndex: '1000', background: 'rgba(0,0,0,0.5)', color: '#fff', width: '100%',borderRadius:'.5rem' }}>
+                    <textarea id="keyword" ref="keyword" name="keyword" style={{ padding: '.2rem 0', marginLeft: '.2rem', verticalAlign: 'middle', background: 'none', border: 'none', display: 'inline-block', width: '6rem', color: '#FFF' }} placeholder={`定位地址：${this.state.address.formattedAddress ? this.state.address.formattedAddress : '无,请输入您的塘口位置'} `} />
                     <div style={{ width: '1rem', marginLeft: '.1rem', height: '.6rem', display: 'inline-block', background: '#fff', verticalAlign: 'middle', borderRadius: '.1rem', color: '#1f1f1f', lineHeight: '.6rem', textAlign: 'center' }} onClick={() => { this.saveAddress() }}>确定</div>
                 </div>
             </div>

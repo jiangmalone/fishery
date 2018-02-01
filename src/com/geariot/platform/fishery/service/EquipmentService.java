@@ -21,6 +21,7 @@ import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.dao.LimitDao;
 import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.SensorDao;
+import com.geariot.platform.fishery.dao.Sensor_ControllerDao;
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
@@ -30,6 +31,7 @@ import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Sensor;
+import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.entities.WXUser;
@@ -76,6 +78,9 @@ public class EquipmentService {
 	
 	@Autowired
 	private AeratorStatusDao statusDao;
+	
+	@Autowired
+	private Sensor_ControllerDao sensor_ControllerDao;
 
 	private String type = "";
 	private String relation = "";
@@ -124,14 +129,60 @@ public class EquipmentService {
 			if (devices.equals("01") || devices.equals("02")) {
 				aioDao.delete(device);
 			} else if (devices.equals("03")) {
+				int sensorId = sensorDao.findSensorByDeviceSns(device).getId();
 				sensorDao.delete(device);
+				List<Sensor_Controller> list = sensor_ControllerDao.list(sensorId);
+				for(Sensor_Controller sensor_Controller : list){
+					controller = controllerDao.findControllerById(sensor_Controller.getControllerId());
+					if(controller == null){
+						continue;
+					}else{
+						changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
+					}
+				}
+				sensor_ControllerDao.delete(sensorId);
 			} else if (devices.equals("04")) {
+				int controllerId = controllerDao.findControllerByDeviceSns(device).getId();
 				controllerDao.delete(device);
+				List<Sensor_Controller> list = sensor_ControllerDao.controller(controllerId);
+				for(Sensor_Controller sensor_Controller : list){
+					sensor = sensorDao.findSensorById(sensor_Controller.getSensorId());
+					if(sensor == null){
+						continue;
+					}else{
+						changeSensorPortStatusClose(sensor, sensor_Controller.getSensor_port());
+					}
+				}
+				sensor_ControllerDao.deleteController(controllerId);
 			} else {
 				return RESCODE.DELETE_ERROR.getJSONRES();
 			}
 		}
 		return RESCODE.SUCCESS.getJSONRES();
+	}
+	
+	private void changeSensorPortStatusClose(Sensor sensor, int port) {
+		StringBuffer sb = new StringBuffer(sensor.getPort_status());
+		sb.setCharAt(port - 1, '0');
+		sensor.setPort_status(sb.toString());
+	}
+
+	private void changeSensorPortStatusOn(Sensor sensor, int port) {
+		StringBuffer sb = new StringBuffer(sensor.getPort_status());
+		sb.setCharAt(port - 1, '1');
+		sensor.setPort_status(sb.toString());
+	}
+
+	private void changeControllerPortStatusOn(Controller controller, int port) {
+		StringBuffer sb = new StringBuffer(controller.getPort_status());
+		sb.setCharAt(port - 1, '1');
+		controller.setPort_status(sb.toString());
+	}
+
+	private void changeControllerPortStatusClose(Controller controller, int port) {
+		StringBuffer sb = new StringBuffer(controller.getPort_status());
+		sb.setCharAt(port - 1, '0');
+		controller.setPort_status(sb.toString());
 	}
 
 	public boolean exportData(String device_sn, String startTime, String endTime, HttpServletResponse response) {

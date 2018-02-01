@@ -285,7 +285,7 @@ class SensorDetail extends React.Component {
             <div className='state-head'  >
                 <div className='state-div' onClick={this.changeDetailShowState}>
                     <img src={this.state.status == 0 ? offline : online} style={{ marginLeft: 0 }} />
-                    <span>当前状态</span>
+                    <span>实时数据</span>
                     <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
                 </div>
                 {(this.state.way != 0) &&

@@ -27,4 +27,7 @@ public interface ControllerDao {
 
 	long queryControllerByNameAndRelationCount(String relation, String name);
 
+	void updateByPondId(int pondId);
+	
+	List<Controller> findByPondId(int pondId);
 }

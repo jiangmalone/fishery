@@ -87,8 +87,21 @@ public class ControllerDaoImpl implements ControllerDao {
 
 	@Override
 	public void updateController(Controller controller) {
-		// TODO Auto-generated method stub
 		this.getSession().merge(controller);
+	}
+
+	@Override
+	public void updateByPondId(int pondId) {
+		String sql = "update controller set pondId = 0 and port_status = '0000' where pondId = :pondId";
+		getSession().createSQLQuery(sql).setInteger("pondId", pondId).executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Controller> findByPondId(int pondId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
+		Query query = queryUtils.addInteger("pondId", pondId).getQuery();
+		return query.list();
 	}
 
 } 

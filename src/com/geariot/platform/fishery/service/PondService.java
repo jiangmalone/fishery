@@ -14,12 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.AeratorStatusDao;
+import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.dao.FishCateDao;
 import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.SensorDao;
+import com.geariot.platform.fishery.dao.Sensor_ControllerDao;
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.AeratorStatus;
+import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
@@ -44,9 +47,15 @@ public class PondService {
 
 	@Autowired
 	private AIODao aioDao;
+	
+	@Autowired
+	private ControllerDao controllerDao;
 
 	@Autowired
 	private Sensor_DataDao sensor_DataDao;
+	
+	@Autowired
+	private Sensor_ControllerDao sensor_ControllerDao;
 	
 	@Autowired
 	private AeratorStatusDao statusDao;
@@ -67,6 +76,17 @@ public class PondService {
 			// 删除塘口时需要先将塘口的鱼种子表置为空,否则无法删除
 			pondDao.findPondByPondId(pondId).setFish_categorys(null);
 			pondDao.delete(pondId);
+			aioDao.updateByPondId(pondId);
+			List<Sensor> sensors = sensorDao.findSensorsByPondId(pondId);
+			for(Sensor sensor : sensors){
+				sensor_ControllerDao.delete(sensor.getId());
+			}
+			List<Controller> controllers = controllerDao.findByPondId(pondId);
+			for(Controller controller : controllers){
+				sensor_ControllerDao.deleteController(controller.getId());
+			}
+			sensorDao.updateByPondId(pondId);
+			controllerDao.updateByPondId(pondId);
 		}
 		return RESCODE.SUCCESS.getJSONRES();
 	}

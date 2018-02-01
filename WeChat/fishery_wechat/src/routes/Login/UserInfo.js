@@ -11,6 +11,7 @@ class UserInfo extends React.Component {
 
     constructor(props) {
         super(props)
+        console.log(window.localStorage.getItem('sex'));
         this.state = {
             form: {
                 name: window.localStorage.getItem('name') ? window.localStorage.getItem('name') : '',
@@ -23,7 +24,7 @@ class UserInfo extends React.Component {
 
     handlaSexClick = (type) => {
         let form = this.state.form;
-        form['sex'] = type ;
+        form['sex'] = type;
         this.setState({
             form: form
         })
@@ -84,6 +85,7 @@ class UserInfo extends React.Component {
     }
 
     render() {
+        console.log(this.state.form.sex)
         return <div className='user-info-bg' style={{ height: window.document.body.clientHeight }} >
             <Flex justify='center'>
                 <img className='avater' src={window.localStorage.getItem('headimgurl')} />

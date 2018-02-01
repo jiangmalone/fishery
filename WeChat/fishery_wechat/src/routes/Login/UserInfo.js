@@ -72,10 +72,10 @@ class UserInfo extends React.Component {
                 life: form.years
             }).then((res) => {
                 if (res.data.code == 0) {
-                    window.localStorage.setItem("name", form.name);
-                    window.localStorage.setItem("phone", form.phone);
-                    window.localStorage.setItem("sex", form.sex);
-                    window.localStorage.setItem("life", form.life);
+                    window.localStorage.setItem("name", res.data.data.name);
+                    window.localStorage.setItem("phone", res.data.data.phone);
+                    window.localStorage.setItem("sex", res.data.data.sex);
+                    window.localStorage.setItem("life", res.data.data.life);
                     this.props.history.push(`/main`)
                 } else {
                     Toast.fail(res.data.msg, 1);

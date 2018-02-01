@@ -233,6 +233,7 @@ class UserInfo extends PureComponent {
             visible: modalVisible,
             wrapClassName: 'vertical-center-modal',
             address: address,
+            modifyId:this.state.modifyId,
             fishCategories: fishCategories,
             onCancel: () => {
                 this.props.dispatch({
@@ -328,7 +329,6 @@ class UserInfo extends PureComponent {
                 title: '设备状态',
                 dataIndex: 'status',
                 render: (text, record, index) => {
-
                     switch (text) {
                         case 0: text = '正常'; break;
                         case 1: text = '离线'; break;

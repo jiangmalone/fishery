@@ -33,7 +33,6 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 }
             })
             onOk(obj)
-
         }}
         onCancel={onCancel}
         wrapClassName={wrapClassName}

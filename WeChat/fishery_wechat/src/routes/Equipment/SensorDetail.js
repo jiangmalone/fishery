@@ -265,7 +265,7 @@ class SensorDetail extends React.Component {
                     overlay={overlayAry}
                     align={{
                         overflow: { adjustY: 0, adjustX: 0 },
-                        offset: [-26, -30],
+                        offset: [-20, -10],
                     }}
 
                     onVisibleChange={this.handleVisibleChange}
@@ -276,6 +276,8 @@ class SensorDetail extends React.Component {
                         padding: '0 15px',
                         marginRight: '-15px',
                         display: 'flex',
+                        maxHeight:'.3rem',
+                        overflow:'srcoll',
                         alignItems: 'center',
                     }}
                     >

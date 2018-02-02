@@ -128,6 +128,7 @@ public class EquipmentService {
 			}
 			if (devices.equals("01") || devices.equals("02")) {
 				aioDao.delete(device);
+				statusDao.delete(device);
 			} else if (devices.equals("03")) {
 				int sensorId = sensorDao.findSensorByDeviceSns(device).getId();
 				sensorDao.delete(device);

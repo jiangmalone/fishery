@@ -330,6 +330,7 @@ public class EquipmentService {
 	}
 
 	private Map<String, Object> doubleConditionQuery(String device_sn, String userName, int from, int number) {
+		List<Equipment> equipments = new ArrayList<>();
 		List<Company> companies = companyDao.companies(userName);
 		List<WXUser> wxUsers = wxUserDao.wxUsers(userName);
 		List<String> relations = new ArrayList<>();
@@ -339,11 +340,15 @@ public class EquipmentService {
 		for (WXUser wxUser : wxUsers) {
 			relations.add(wxUser.getRelation());
 		}
-		List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
-		shareDealMethod(equipments);
-		long count = pondDao.adminFindEquipmentCountDouble(device_sn, relations);
-		int size = (int) Math.ceil(count / (double) number);
-		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+		if (relations.isEmpty()) {
+			return RESCODE.SUCCESS.getJSONRES(equipments, 0, 0);
+		} else {
+			equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
+			shareDealMethod(equipments);
+			long count = pondDao.adminFindEquipmentCountDouble(device_sn, relations);
+			int size = (int) Math.ceil(count / (double) number);
+			return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+		}
 	}
 
 	private Map<String, Object> deviceSnConditionQuery(String device_sn, int from, int number) {

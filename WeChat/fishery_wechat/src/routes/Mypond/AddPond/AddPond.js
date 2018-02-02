@@ -56,7 +56,7 @@ class AddPond extends PureComponent {
     render() {
         const { getFieldProps, getFieldError, validateFields } = this.props.form;
         return (
-            <div className="body-bac" style={{ height:'120%' }}>
+            <div className="body-bac" style={{ height: '120%' }}>
                 <NavBar title={!this.props.match.params.id ? "添加塘口" : '修改塘口'} />
                 <List className="addPond-list">
                     <InputItem
@@ -70,7 +70,14 @@ class AddPond extends PureComponent {
                         className="addpond-input"
                         error={!!getFieldError('name')}
                         placeholder="请输入塘口名称"
-                    ><span style={{color:'red'}}>*</span>塘口名称</InputItem>
+                    ><span style={{ color: 'red' }}>*</span>塘口名称</InputItem>
+                    <InputItem
+                        {...getFieldProps('water_source') }
+                        clear
+                        className="addpond-input"
+                        error={!!getFieldError('water_source')}
+                        placeholder="请输入池塘水源"
+                    >池塘水源</InputItem>
                     <InputItem
                         {...getFieldProps('area') }
                         clear
@@ -107,13 +114,6 @@ class AddPond extends PureComponent {
                         error={!!getFieldError('sediment_thickness')}
                         placeholder="请输入底泥厚度"
                     >底泥厚度(cm)</InputItem>
-                    <InputItem
-                        {...getFieldProps('water_source') }
-                        clear
-                        className="addpond-input"
-                        error={!!getFieldError('water_source')}
-                        placeholder="请输入池塘水源"
-                    >池塘水源</InputItem>
                     <Item arrow="horizontal" onClick={() => {
                         this.props.history.push('/addFish');
                         this.props.dispatch({

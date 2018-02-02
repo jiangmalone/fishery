@@ -41,4 +41,12 @@ public class AeratorStatusDaoImpl implements AeratorStatusDao{
 		return (AeratorStatus) query.uniqueResult();
 	}
 
+	@Override
+	public void delete(String device_sn) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from AeratorStatus");
+		Query query = queryUtils.addString("device_sn", device_sn)
+				.getQuery();
+		query.executeUpdate();
+	}
+
 }

@@ -95,7 +95,7 @@ export const getNavData = app => {
             component: dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail')),
           },
           {
-            // name: '塘口管理',
+            name: '塘口管理',
             path: 'pondManage',
             isSideMenu: false,
             children: [
@@ -103,6 +103,7 @@ export const getNavData = app => {
                 path: ':relation',
                 component: dynamicWrapper(app, ['pond'], () => import('../routes/pondManage/Index')),
               }, {
+                name: '塘口详情',
                 path: 'detail/:id',
                 component: dynamicWrapper(app, ['pond'], () => import('../routes/pondManage/Detail')),
               }

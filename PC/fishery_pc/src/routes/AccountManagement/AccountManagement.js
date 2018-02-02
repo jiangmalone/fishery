@@ -32,7 +32,6 @@ export default class CompanyUserDetail extends React.Component {
                 password: this.state.password,
                 adminId: 1
             }).then(response => {
-                console.log(response);
                 if (response.code == 0) {
                     message.success("修改成功！");
                     this.setState({

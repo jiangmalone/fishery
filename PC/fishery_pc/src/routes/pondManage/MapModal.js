@@ -10,13 +10,11 @@ class MapModal extends PureComponent {
         };
         this.amapEvents = {
             created: (map) => {
-                console.log(map)
                 AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], () => {
                     var autoOptions = {
                         input: "keyword"//使用联想输入的input的id
                     };
                     var autocomplete = new AMap.Autocomplete(autoOptions);
-                    console.log(autocomplete)
 
                     var placeSearch = new AMap.PlaceSearch({
                         map: map
@@ -34,13 +32,11 @@ class MapModal extends PureComponent {
                         }
                     });
                 })
-                console.log('高德地图 Map 实例创建成功；如果你要亲自对实例进行操作，可以从这里开始。比如：');
             }
         };
         this.mapPlugins = ['ToolBar'];
         this.toolEvents = {
             created: (tool) => {
-                console.log(tool)
                 this.tool = tool;
             },
             draw: ({ obj }) => {

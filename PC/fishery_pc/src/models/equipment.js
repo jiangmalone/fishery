@@ -51,7 +51,6 @@ export default {
         for (let item of response.data) {
           item.key = item.device_sn
         }
-        console.log(response.data)
         yield put({
           type: 'appendList',
           payload: {

@@ -234,7 +234,6 @@ export default class EquipmentManagement extends React.Component {
                 dataIndex: 'index',
                 key: 'index',
                 render: (text, record, index) => {
-                    // console.log(record);
                     return <span>{index + 1}</span>
                 }
             },

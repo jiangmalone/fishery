@@ -12,7 +12,7 @@ import Mapmoal from '../pondManage/MapModal.js';
 import { queryPond, addPond, modifyPond, delPonds, pondEquipment, pondFish } from '../../services/pond.js';
 const Search = Input.Search;
 @connect(state => {
-    console.log(state); return ({
+    return ({
         list: state.userDetail.list,
         loading: state.userDetail.loading,
         pagination: state.userDetail.pagination,
@@ -63,7 +63,6 @@ class UserInfo extends PureComponent {
             number: 10
         }).then((response) => {
             if (response.code == '0') {
-                console.log(response.data)
                 for (let item of response.data) {
                     item.key = item.id
                 }
@@ -82,7 +81,6 @@ class UserInfo extends PureComponent {
             page: page,
             number: 10
         }).then((res) => {
-            console.log(res)
             for (let item of res.data) {
                 item.key = item.id
             }
@@ -149,9 +147,7 @@ class UserInfo extends PureComponent {
 
     modifyInfo = (record, index, isDetail) => {
         let formData = {}
-        console.log(record)
         for (let key in record) {
-            console.log(key)
             formData[key] = {
                 value: record[key],
                 name: key

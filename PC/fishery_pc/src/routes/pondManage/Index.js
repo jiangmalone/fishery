@@ -41,9 +41,7 @@ class PondList extends PureComponent {
 
     modifyInfo = (record, index, isDetail) => {
         let formData = {}
-        console.log(record)
         for (let key in record) {
-            console.log(key)
             formData[key] = {
                 value: record[key],
                 name: key
@@ -109,7 +107,6 @@ class PondList extends PureComponent {
         this.setState({
             selectedRowKeys: []
         })
-        console.log(this.props.pagination)
         this.props.dispatch({
             type: 'pond/deletePond',
             payload: {
@@ -162,7 +159,6 @@ class PondList extends PureComponent {
                 });
             },
             onOk: (values) => {
-                console.log(!this.state.modifyId, this.state.modifyId !== 0)
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
                     values.relation = this.props.match.params.relation;
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
@@ -256,7 +252,6 @@ class PondList extends PureComponent {
                         return obj.key !== changableRow.key;
                     });
                 }
-                console.log(origKeys)
                 this.setState({
                     selectedRowKeys: origKeys,
                     selectedRows: origRows

@@ -23,7 +23,6 @@ export default {
     effects: {
         *fetchFishList({ payload }, { call, put }) {
             const response = yield call(pondFish);
-            console.log(response)
             if (response.code == '0') {
                 yield put({
                     type: 'changeModal',
@@ -42,7 +41,6 @@ export default {
                 payload: true,
             });
             const response = yield call(queryPond, payload);
-            console.log(response)
             if (response.code == "0") {
                 for (let item of response.data) {
                     item.key = item.id
@@ -75,7 +73,6 @@ export default {
         },
         *fetchDetail({ payload }, { call, put }) {
             const response = yield call(pondDetail, payload);
-            console.log(response)
             if (response.code == "0") {
                 yield put({
                     type: 'changeModal',
@@ -91,7 +88,6 @@ export default {
                 payload: true,
             });
             const response = yield call(pondEquipment, payload);
-            console.log(response)
             if (response.code == "0") {
                 for (let item of response.data) {
                     item.key = item.id
@@ -195,7 +191,6 @@ export default {
             };
         },
         changeModal(state, action) {
-            console.log(action)
             return { ...state, ...action.payload };
         },
     },

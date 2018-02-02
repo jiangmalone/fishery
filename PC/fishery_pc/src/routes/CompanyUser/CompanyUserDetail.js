@@ -114,7 +114,12 @@ export default class CompanyUserDetail extends React.Component {
                         visible={(item.longitude == 0 && item.latitude == 0) ? false : true}
                         key={index}
                     >
-                        <div className={styles.mapMakerIcon} onClick={() => { this.setState({ selectMarker: item.id }) }} ></div>
+                        <div className={styles.mapMakerIcon} onClick={() => {
+                            if (this.state.selectMarker == item.id) {
+                                this.setState({ selectMarker: 0 })
+                            } else {
+                                this.setState({ selectMarker: item.id })
+                            }}} ></div>
                         {this.state.selectMarker == item.id && <div className={styles.mapMaker} onClick={() => { this.props.history.push(`/userManage/pondManage/detail/${item.id}`) }}>塘口名称: <a >{item.name}</a></div>}
                     </Marker>)
         })

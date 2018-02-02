@@ -51,9 +51,7 @@ class UserList extends PureComponent {
 
     modifyInfo = (record, index) => {
         let formData = {}
-        console.log(record)
         for (let key in record) {
-            console.log(key)
             formData[key] = {
                 value: record[key],
                 name: key
@@ -173,7 +171,6 @@ class UserList extends PureComponent {
                 //state里面记住这两个变量就好
                 let origKeys = []
                 let origRows = this.state.selectedRows;
-                console.log(selectedRows)
                  //去掉数组里面的undefined
                 for(var i=0;i<this.state.selectedRowKeys.length;i++){
                     if(typeof(this.state.selectedRowKeys[i])!='undefined'){
@@ -199,7 +196,6 @@ class UserList extends PureComponent {
                     });
                 }
             
-                console.log(origKeys)
                 this.setState({
                     selectedRowKeys: origKeys,
                     selectedRows: origRows
@@ -225,7 +221,6 @@ class UserList extends PureComponent {
             // dataIndex: 'sex',
             // key: 'sex',
             render: (text, record, index) => {
-                console.log(record.sex)
                 return <span>{record.sex && record.sex != 'null' ? record.sex : ''}</span>
             }
         }, {
@@ -237,7 +232,6 @@ class UserList extends PureComponent {
             // dataIndex: 'life',
             // key: 'life',
             render: (text, record, index) => {
-                console.log(record.life)
                 return <span>{record.life && record.life != 'undefined' ? record.life : ''}</span>
             }
         }, {

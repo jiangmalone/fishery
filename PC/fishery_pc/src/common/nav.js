@@ -12,18 +12,13 @@ export const getNavData = app => {
   const type = window.localStorage.getItem('authority');
   let authority, mainComponent,companyDetailComponent;
   if (type == 0) {
-    console.log('我是超级管理员')
     authority = true;
     mainComponent = dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Picture'));
     companyDetailComponent = dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail'))
   } else {
-    console.log('我不是超级管理员')
     authority = false;
     mainComponent = dynamicWrapper(app, [], () => import('../routes/CompanyUser/CompanyUserDetail'));
     companyDetailComponent = dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Picture'))
-  }
-  if (authority) {
-    
   }
   return [
   {

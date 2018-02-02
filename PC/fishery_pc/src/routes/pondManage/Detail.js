@@ -17,7 +17,6 @@ const Search = Input.Search;
 
 class PondDetail extends PureComponent {
     componentDidMount() {
-        console.log(this.props.match)
         this.props.dispatch({
             type: 'pond/fetchDetail',
             payload: {
@@ -50,7 +49,6 @@ class PondDetail extends PureComponent {
             pondId: this.props.match.params.id
         }).then(
             (res) => {
-                console.log(res)
                 if (res.code == '0') {
                     this.props.dispatch({
                         type: 'pond/fetchEquipment',
@@ -97,7 +95,6 @@ class PondDetail extends PureComponent {
             dataIndex: 'device_sn',
             key: 'device_sn',
             render: (text, record, index) => {
-                console.log(record)
                 return <Link to={`/equipment/detail/${record.device_sn}/${record.relation}/${record.sensorId}`}>{text}</Link>
             }
         }, {

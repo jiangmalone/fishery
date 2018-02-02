@@ -29,7 +29,6 @@ export async function modifyWXUser(params) {
 
 export async function delWXUser(params) {
   // params = stringify(params).replace(/\%.*?$/,'')
-  // console.log(params)
   let str = ''
   for(let item of params.WXUserIds) {
     str= 'WXUserIds='+item+'&'+str
@@ -43,7 +42,6 @@ export async function wxuserDetail(params){
 }
 
 export async function relationDetail(params){
-  console.log(params)
   return request(`/api/usermanagement/relationDetail?${stringify(params)}`)
 }
 
@@ -68,14 +66,11 @@ export async function modifyCompany(params) {
 }
 
 export async function delCompany(params) {
-  console.log('network dele')
-  console.log(params)
   let str = ''
   for(let item of params.companyIds) {
     str= 'companyIds='+item+'&'+str
   }
   str = str.slice(0,-1)
-  console.log(str)
   return request(`/api/usermanagement/delCompany?${str}`)
 }
 

@@ -75,7 +75,6 @@ export default {
       }
     },
     *addAccount({ payload }, { call, put }) {
-      console.log(222)
       const response = yield call(addAccount2, payload.data);
       if (response.code == '0') {
         message.success('新增企业账户成功', 1);

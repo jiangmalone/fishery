@@ -204,9 +204,6 @@ export default class CompanyUserDetail extends React.Component {
                             />}
                     </Row>
                 </Card>
-                <Button type="primary" style={{ float: 'right',marginTop:'10px' }} onClick={() => { history.back() }}>
-                    返回上一页
-                </Button>
             </PageHeaderLayout>
         );
     }

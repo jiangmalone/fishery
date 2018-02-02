@@ -72,7 +72,9 @@ class AddPond extends PureComponent {
                         placeholder="请输入塘口名称"
                     ><span style={{ color: 'red' }}>*</span>塘口名称</InputItem>
                     <InputItem
-                        {...getFieldProps('water_source') }
+                        {...getFieldProps('water_source',{
+                            initialValue:''
+                        }) }
                         clear
                         className="addpond-input"
                         error={!!getFieldError('water_source')}

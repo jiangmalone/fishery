@@ -49,7 +49,7 @@ class AutoOxygenationSetting extends React.Component {
             }   
         }
         for (let i = 0; i < timeSections.length; i++) {
-            if (!timeSections[i][0] || !timeSections[i][0]) {
+            if (!timeSections[i][0] || !timeSections[i][1]) {
                 Toast.fail('有未填写完整的时间段，请填写后提交！', 1);
                 return;
             }

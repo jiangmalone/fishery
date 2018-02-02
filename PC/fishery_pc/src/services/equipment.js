@@ -63,3 +63,10 @@ export async function realTimeData(params) {
 export async function aeratorOnOff(params) {        //开关增氧机
     return request(`/api/equipment/aeratorOnOff?${stringify(params)}`);
 }
+
+export async function autoSet(params) {             //设置定时增氧
+    return request('/api/equipment/autoSet', {
+        method: 'POST',
+        body: params
+    });
+}

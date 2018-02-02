@@ -111,7 +111,7 @@ public class EquipmentControllerTest {
 	@Test
 	public void adminEquipmentTest() throws Exception {
 		mockMvc.perform(get("/equipment/adminFindEquipment").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("page", "1").param("number", "2").param("device_sn", "0001").param("companyName", "小易")).andDo(print()).andExpect(status().is2xxSuccessful());
+				.param("page", "1").param("number", "10").param("userName", "杨威")).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test

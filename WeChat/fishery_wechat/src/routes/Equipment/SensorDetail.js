@@ -277,7 +277,6 @@ class SensorDetail extends React.Component {
                         marginRight: '-15px',
                         display: 'flex',
                         maxHeight:'.3rem',
-                        overflow:'srcoll',
                         alignItems: 'center',
                     }}
                     >

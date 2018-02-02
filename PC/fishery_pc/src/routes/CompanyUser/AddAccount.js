@@ -14,7 +14,7 @@ const formItemLayout = {
     },
 };
 
-function AddAccount({ visible, form, onOk, onCancel, wrapClassName, modifyId }) {
+function AddAccount({ visible, form, onOk, onCancel, wrapClassName, modifyId,formData2 }) {
     const { getFieldDecorator, validateFieldsAndScroll } = form;
     let checkPassword = (rule, value, callback) => {
         if (value && value !== form.getFieldValue('password')) {
@@ -43,9 +43,9 @@ function AddAccount({ visible, form, onOk, onCancel, wrapClassName, modifyId }) 
             <FormItem label="账号" {...formItemLayout} style={{ width: '100%' }}>
                 {getFieldDecorator('account', {
                     rules: [
-                        { required: true, message: '请填写企业名称' },
+                        { required: true, message: '请填写企业账号名称' },
                     ],
-                })(<Input style={{ width: 200 }} />)}
+                })(<Input style={{ width: 200 }} disabled={formData2.fields.account&&formData2.fields.account.isSave?true:false}/>)}
             </FormItem>
             <FormItem label="名称" {...formItemLayout} style={{ width: '100%' }}  >
                 {getFieldDecorator('name')(<Input style={{ width: 200 }} disabled />)}

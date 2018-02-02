@@ -60,7 +60,8 @@ export default class CompanyUserList extends React.Component {
         for (let key in record) {
             formData[key] = {
                 value: record[key],
-                name: key
+                name: key,
+                isSave:record[key]?true:false
             }
         }
         this.props.dispatch({
@@ -120,7 +121,8 @@ export default class CompanyUserList extends React.Component {
         for (let key in record) {
             formData[key] = {
                 value: record[key],
-                name: key
+                name: key,
+               
             }
         }
         this.props.dispatch({

@@ -15,7 +15,7 @@ import { getDataToday, getRealTimeData, myEquipment, getDataSevenday, serverChec
 
 const cols = {
     'ph': { min: 0 },
-    'receiveTime': { }
+    'receiveTime': {}
 };
 const oCols = {
     'o': { min: 0 },
@@ -24,7 +24,7 @@ const oCols = {
 
 const waterCols = {
     '温度': { min: 0 },
-    'receiveTime': { }
+    'receiveTime': {}
 };
 
 class SensorDetail extends React.Component {
@@ -71,8 +71,8 @@ class SensorDetail extends React.Component {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
                 this.setState({
-                    oData : res.data.oxygens,
-                    phData : res.data.phs,
+                    oData: res.data.oxygens,
+                    phData: res.data.phs,
                     waterData: res.data.temperatures
                 })
             } else {
@@ -94,8 +94,8 @@ class SensorDetail extends React.Component {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
                 this.setState({
-                    oData : res.data.oxygens,
-                    phData : res.data.phs,
+                    oData: res.data.oxygens,
+                    phData: res.data.phs,
                     waterData: res.data.temperatures
                 })
             } else {
@@ -143,16 +143,16 @@ class SensorDetail extends React.Component {
             if (res.data && res.data.code == 0) {
                 const data = res.data;
                 let equipments = [];
-                if (data.sensor && data.sensor.length > 0 ) {
+                if (data.sensor && data.sensor.length > 0) {
                     data.sensor.map((item, index) => {
                         equipments.push({
                             name: item.name,
-                            device_sn: item.device_sn+ '0'
+                            device_sn: item.device_sn + '0'
                         })
                     })
                 }
                 if (data.aio && data.aio.length > 0) {
-                    data.aio.map((item,index) => {
+                    data.aio.map((item, index) => {
                         equipments.push({
                             name: item.name + '(1路)',
                             device_sn: item.device_sn + '1',
@@ -177,7 +177,7 @@ class SensorDetail extends React.Component {
 
     onSelect = (opt) => {
         this.setState({
-            device_sn: opt.props.value.substr(0, opt.props.value.length-1),
+            device_sn: opt.props.value.substr(0, opt.props.value.length - 1),
             isShowMore: false,
             isSelectToday: true,
             way: opt.props.value.charAt(opt.props.value.length - 1)
@@ -254,34 +254,35 @@ class SensorDetail extends React.Component {
                         }
                     })
                 }}></i>
-                {this.state.name + (this.state.way != 0 ? ('(' +  this.state.way + '路)'): '')}
+                {this.state.name + (this.state.way != 0 ? ('(' + this.state.way + '路)') : '')}
                 <i className="right-item-none list" onClick={() => {
                     this.setState({ isShowMore: !this.state.isShowMore })
                 }} ></i>
-            </div>
-            <Popover
-                mask
-                overlayClassName="fortest"
-                overlayStyle={{ color: 'currentColor' }}
-                visible={this.state.isShowMore}
-                overlay={overlayAry}
-                align={{
-                    overflow: { adjustY: 0, adjustX: 0 },
-                    offset: [-26, 50],
-                }}
-                onVisibleChange={this.handleVisibleChange}
-                onSelect={this.onSelect}
-            >
-                <div style={{
-                    height: '100%',
-                    padding: '0 15px',
-                    marginRight: '-15px',
-                    display: 'flex',
-                    alignItems: 'center',
-                }}
+                <Popover
+                    mask
+                    overlayStyle={{ color: 'currentColor', position: 'fixed' }}
+                    visible={this.state.isShowMore}
+                    overlay={overlayAry}
+                    align={{
+                        overflow: { adjustY: 0, adjustX: 0 },
+                        offset: [-26, -30],
+                    }}
+
+                    onVisibleChange={this.handleVisibleChange}
+                    onSelect={this.onSelect}
                 >
-                </div>
-            </Popover>
+                    <div style={{
+                        height: '100%',
+                        padding: '0 15px',
+                        marginRight: '-15px',
+                        display: 'flex',
+                        alignItems: 'center',
+                    }}
+                    >
+                    </div>
+                </Popover>
+            </div>
+
             <div className='state-head'  >
                 <div className='state-div' onClick={this.changeDetailShowState}>
                     <img src={this.state.status == 0 ? offline : online} style={{ marginLeft: 0 }} />
@@ -289,7 +290,7 @@ class SensorDetail extends React.Component {
                     <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
                 </div>
                 {(this.state.way != 0) &&
-                 <img src={correct} className='correct' onClick={() => {this.serverCheck()}} />}
+                    <img src={correct} className='correct' onClick={() => { this.serverCheck() }} />}
             </div>
             {this.state.isShowDetail && <div className='detail'>
                 <div>实时溶氧：&nbsp;&nbsp; {this.state.realTimeData.oxygen}</div>

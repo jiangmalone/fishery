@@ -23,7 +23,7 @@ export default {
       ],
       proxy: {
         "/api": {
-          "target": "http://172.17.3.103:8080/fishery/api/",//杨威
+          "target": "http://172.17.3.135:8080/fishery/api/",//杨威
           // "target": "http://172.17.3.158:8081/freelycar_wechat/api/",//小付
 
 

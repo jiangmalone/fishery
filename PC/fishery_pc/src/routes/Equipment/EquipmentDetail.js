@@ -120,6 +120,7 @@ export default class EquipmentDetail extends React.Component {
         })
     }
     getRealTimeData = () => {
+
         realTimeData({
             device_sn: this.props.match.params.device_sn,
             way: this.state.way
@@ -297,7 +298,7 @@ export default class EquipmentDetail extends React.Component {
     }
 
     handleWayChange = (way) => {
-        this.setState({ way: way }, this.getRealTimeData())
+        this.setState({ way: way }, () => this.getRealTimeData())
     }
 
     setTimeOxygen = () => {

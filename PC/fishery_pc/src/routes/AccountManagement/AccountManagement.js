@@ -10,7 +10,7 @@ export default class CompanyUserDetail extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "杨威",
+            name: window.localStorage.getItem('company'),
             account: window.localStorage.getItem('account'),
             password: "",
             passwordAgain: "",

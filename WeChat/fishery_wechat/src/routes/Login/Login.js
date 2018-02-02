@@ -54,6 +54,11 @@ class LoginIndex extends React.Component {
         }
     }
 
+    componentDidMount(){
+        window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'));
+        window.localStorage.setItem('openid', getParameterByName('openid'));
+    }
+
     componentWillUnmount() {
         clearInterval(this.timer)
     }
@@ -71,8 +76,7 @@ class LoginIndex extends React.Component {
             headimgurl: getParameterByName('headimgurl'),
         }).then((res) => {
             if (res.data.code == '0') {
-                window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'));
-                window.localStorage.setItem('openid', getParameterByName('openid'));
+            
                 window.localStorage.setItem('id', res.data.data.id);
                 window.localStorage.setItem('relation', res.data.data.relation);
                 if( res.data.data.name) {

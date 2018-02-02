@@ -52,7 +52,7 @@ class MyPond extends PureComponent {
                 if (buttonIndex == 0) {
                     this.deletePond(index, id)
                 }
-                this.setState({ clicked: BUTTONS[buttonIndex], edit: !this.state.edit });
+                this.setState({ clicked: BUTTONS[buttonIndex] });
             });
     }
 
@@ -191,11 +191,10 @@ class MyPond extends PureComponent {
                         })
                     }}></i>
                     我的塘口
-                    <i className={this.state.edit ? 'edit' : 'right-item-none'} onClick={() => { this.setState({ edit: !this.state.edit }) }}></i>
+                    <i className={this.state.edit ? 'edit' : 'right-item-none'} onClick={() => { this.setState({ edit: !this.state.edit }) }}>{this.props.list.length > 0?'取消':''}</i>
                 </div>
                 {this.props.list.length > 0 && <div className="mypond-bac"></div>}
                 {this.props.list.length > 0 && ponds}
-                {!this.state.edit && this.props.list.length > 0 && <div onClick={() => { this.setState({ edit: !this.state.edit }) }} className="addPond-btn">取消</div>}
                 {this.props.list.length > 0 && <div className="btn_add" onClick={() => {
                      this.props.dispatch({
                         type: 'global/changeState',

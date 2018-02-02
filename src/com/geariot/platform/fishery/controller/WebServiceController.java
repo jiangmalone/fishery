@@ -94,8 +94,8 @@ public class WebServiceController {
 
 	// OAuth2.0授权后的 重定向
 	@RequestMapping(value = "/wechatlogin")
-	public String wechatLogin(String htmlPage, String code) {
-		return getWechatInfo(htmlPage, code);
+	public String wechatLogin(String htmlPage, String code, boolean isAuth) {
+		return getWechatInfo(htmlPage, code, isAuth);
 	}
 
 	// 微信jsapi
@@ -126,7 +126,7 @@ public class WebServiceController {
 		return jsSDKConfig.toString();
 	}
 
-	public String getWechatInfo(String htmlPage, String code) {
+	public String getWechatInfo(String htmlPage, String code, boolean isAuth) {
 		String wechatInfo = WechatLoginUse.wechatInfo(code);
 		JSONObject resultJson;
 		try {
@@ -137,6 +137,10 @@ public class WebServiceController {
 				headimgurl = URLEncoder.encode(headimgurl, "utf-8");
 				String ret = BASEURL + htmlPage;
 				boolean wxUser = webServiceService.isExistUserOpenId(openId);
+				if(isAuth){
+					ret = BASEURL + "login?openid=" + openId + "&headimgurl=" + headimgurl;
+					return "redirect:"+ret;
+				}
 				if (!wxUser) {
 					ret = BASEURL + "login?openid=" + openId + "&headimgurl=" + headimgurl;
 					return "redirect:" + ret;

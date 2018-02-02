@@ -16,7 +16,7 @@ import { delBind, pondWithSensorOrAIO, delSensorOrAIOBind, bindState } from '../
 const CustomChildren = props => (
     <div
         onClick={props.onClick}
-        style={{ backgroundColor: '#fff'}}
+        style={{ backgroundColor: '#fff' }}
     >
         <div className="test" style={{ display: 'flex', height: '45px', lineHeight: '45px' }}>
             {/* <div style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{props.children}</div> */}
@@ -31,7 +31,7 @@ class EquipmentManagement extends React.Component {
         super(props);
         let equipmentData = JSON.parse(this.props.match.params.data)
         let type = equipmentData.device_sn.substring(0, 2);
-        if(type == '01' || type == '02') {
+        if (type == '01' || type == '02') {
             type = 2;
         } else if (type == '03') {
             type = 1;
@@ -47,7 +47,7 @@ class EquipmentManagement extends React.Component {
             id: id,
             device_sn: device_sn,
             ponds: [],      // 所有的塘口
-            pickerValue:[], // 选择需要绑定的塘口
+            pickerValue: [], // 选择需要绑定的塘口
             bindPond: {},   // 现在绑定的塘口
             portsData: [],
             name: '',
@@ -93,11 +93,11 @@ class EquipmentManagement extends React.Component {
                 })
                 let difference = standardPorts.filter(x => bindPorts.indexOf(x) == -1).concat(bindPorts.filter(x => standardPorts.indexOf(x) == -1));
                 difference.map((item, index) => {
-                    portBinds.push({port: item});
+                    portBinds.push({ port: item });
                 })
                 res.data.data.portBinds = portBinds;
                 this.setState({
-                    portsData : res.data.data.portBinds,
+                    portsData: res.data.data.portBinds,
                     name: res.data.data.deviceName,
                     state: res.data.data.status,
                 });
@@ -110,7 +110,7 @@ class EquipmentManagement extends React.Component {
                     })
                 }
 
-                this.setState({pickerValue: []})
+                this.setState({ pickerValue: [] })
             } else {
                 Toast.fail(res.data.msg, 1);
             }
@@ -228,13 +228,13 @@ class EquipmentManagement extends React.Component {
         this.props.history.push(`/bindEquipment/${data}`);
     }
 
-     // 获得塘口的绑定信息
-     getPond = () => {
+    // 获得塘口的绑定信息
+    getPond = () => {
         return <div className='port-content' >
             <div className='prot-name-line' >
                 <div className='pondLeft'>绑定塘口</div>
                 <div className='pondName' >
-                {Object.keys(this.state.bindPond).length == 0 ?  (<Picker
+                    {Object.keys(this.state.bindPond).length == 0 ? (<Picker
                         title="选择地区"
                         extra="请选择(可选)"
                         data={this.state.ponds}
@@ -246,10 +246,10 @@ class EquipmentManagement extends React.Component {
                         <CustomChildren></CustomChildren>
                     </Picker>) : this.state.bindPond.name}
                 </div>
-                {Object.keys(this.state.bindPond).length == 0  ? 
-                    (<div className='right binded' onClick={() => { this.bindPond()}} > 绑定 </div>) : 
-                    (<div className='right unbinded' onClick={() => {this.unBindPond()}} > 解绑 </div>)
-                    
+                {Object.keys(this.state.bindPond).length == 0 ?
+                    (<div className='right binded' onClick={() => { this.bindPond() }} > 绑定 </div>) :
+                    (<div className='right unbinded' onClick={() => { this.unBindPond() }} > 解绑 </div>)
+
                 }
             </div>
         </div>
@@ -270,7 +270,7 @@ class EquipmentManagement extends React.Component {
                 this.setState({ animating: false });
                 if (res.data && res.data.code == 0) {
                     Toast.success('绑定成功！', 1);
-                    
+
                     setTimeout(() => {
                         this.bindState();
                     }, 1000);
@@ -311,8 +311,8 @@ class EquipmentManagement extends React.Component {
             this.setState({ animating: false });
             if (res.data && res.data.code == 0) {
                 Toast.success('解绑成功！', 1);
-                this.setState({bindPond: {}});
-                
+                this.setState({ bindPond: {} });
+
             } else {
                 Toast.fail(res.data.msg, 1);
             }
@@ -347,6 +347,7 @@ class EquipmentManagement extends React.Component {
                 text="Loading..."
                 animating={this.state.animating}
             />
+
         </div>
     }
 }

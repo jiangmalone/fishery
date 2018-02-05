@@ -811,7 +811,7 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	public Map<String, Object> modifyEquipments(String device_sns,String name) {
+	public Map<String, Object> modifyEquipment(String device_sns,String name) {
 		String type=null;
 		try {
 			type=device_sns.substring(0, 2);

@@ -375,7 +375,7 @@ public class CMDUtils {
 	// 增氧机打开和关闭时间记录
 	public static void oxygenTimeCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way)
 			throws IOException {
-		// preHandle(key);
+		
 		/*
 		 * byte power6 = data[7]; byte[] byteTime = new byte[5];
 		 * CommonUtils.arrayHandle(data, byteTime, 8, 0, 5); String time =

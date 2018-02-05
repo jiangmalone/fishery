@@ -24,11 +24,17 @@ public class AlarmMessageDaoImpl implements AlarmMessageDao {
 		// TODO Auto-generated method stub
              getSession().save(am);
 	}
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<AlarmMessage> queryAlarmMessageByDeviceSn(String deviceSn) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from AlarmMessage");
 		Query query = queryUtils.addString("deviceSn", deviceSn).getQuery();
 		return query.list();
+	}
+	@Override
+	public void updateStatus(AlarmMessage am) {
+		// TODO Auto-generated method stub
+		getSession().merge(am);
 	}
 	
 

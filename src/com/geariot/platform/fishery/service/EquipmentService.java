@@ -783,16 +783,19 @@ public class EquipmentService {
 		if(null==dataAlarm) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
-		if(dataAlarm.isWatch()) {
-			return RESCODE.IS_WATCH.getJSONRES();
-		}
+		
 		List<AlarmMessage>  amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());
 	
-		dataAlarm.setWatch(true);
-		daDao.updateStatus(dataAlarm);
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("alarmMessageList", amlist);
+       
 		return map;
+	}
+
+	public Map<String, Object> alarmIsRead(AlarmMessage am) {
+		am.setWatch(true);
+		
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 }

@@ -13,6 +13,7 @@ private int id;
 private String deviceSn;
 private String message;
 private Date createDate;
+private boolean isWatch;
 
 
 @Id
@@ -40,6 +41,12 @@ public Date getCreateDate() {
 }
 public void setCreateDate(Date createDate) {
 	this.createDate = createDate;
+}
+public boolean isWatch() {
+	return isWatch;
+}
+public void setWatch(boolean isWatch) {
+	this.isWatch = isWatch;
 }
 
 

@@ -19,7 +19,7 @@ public class DataAlarm {
 	private String deviceSn;
 	private int way;
 	private String relation;// 绑定的用户，WX微信用户，CO企业用户
-	private boolean isWatch;// 是否已读
+	//private boolean isWatch;// 是否已读
 	private List<AlarmMessage> message;
 	private int pondId;// 绑定的塘口ID
 	private Date createDate;
@@ -58,13 +58,13 @@ public class DataAlarm {
 		this.relation = relation;
 	}
 
-	public boolean isWatch() {
+	/*public boolean isWatch() {
 		return isWatch;
 	}
 
 	public void setWatch(boolean isWatch) {
 		this.isWatch = isWatch;
-	}
+	}*/
 
 	@OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "DataalarmId", foreignKey = @ForeignKey(name = "none"))

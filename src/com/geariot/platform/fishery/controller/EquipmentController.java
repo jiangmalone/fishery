@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.geariot.platform.fishery.entities.AlarmMessage;
 import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Timer;
@@ -119,6 +120,11 @@ public class EquipmentController {
 	@RequestMapping(value ="/queryAlarm", method = RequestMethod.GET)
 	public Map<String, Object> queryAlarm(String openId){
 		return equipmentService.queryAlarm(openId);
+	}
+	
+	@RequestMapping(value ="/alarmIsRead", method = RequestMethod.GET)
+	public Map<String, Object> alarmIsRead(AlarmMessage am){
+		return equipmentService.alarmIsRead(am);
 	}
 	
 	

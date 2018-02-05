@@ -10,4 +10,6 @@ public interface AlarmMessageDao {
 	void save(AlarmMessage am);
 	
 	List<AlarmMessage> queryAlarmMessageByDeviceSn(String deviceSn);
+	
+	void updateStatus(AlarmMessage am);
 }

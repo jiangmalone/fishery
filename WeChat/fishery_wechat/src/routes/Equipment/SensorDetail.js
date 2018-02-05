@@ -290,13 +290,8 @@ class SensorDetail extends React.Component {
                     <span>最新数据</span>
                     <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
                 </div>
-<<<<<<< HEAD
                 {(this.state.way != 0 && this.state.status == 0) &&
                  <img src={correct} className='correct' onClick={() => {this.serverCheck()}} />}
-=======
-                {(this.state.way != 0) &&
-                    <img src={correct} className='correct' onClick={() => { this.serverCheck() }} />}
->>>>>>> 711c528db126be30d642f59b6f47347f936c5dbf
             </div>
             {this.state.isShowDetail && <div className='detail'>
                 <div>实时溶氧：&nbsp;&nbsp; {this.state.realTimeData.oxygen}</div>

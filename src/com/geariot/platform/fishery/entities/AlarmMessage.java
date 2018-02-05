@@ -14,6 +14,7 @@ private String deviceSn;
 private String message;
 private Date createDate;
 private boolean isWatch;
+private int alarmType;//报警类型，0代表溶氧值，1代表温度，2代表PH
 
 
 @Id
@@ -47,6 +48,12 @@ public boolean isWatch() {
 }
 public void setWatch(boolean isWatch) {
 	this.isWatch = isWatch;
+}
+public int getAlarmType() {
+	return alarmType;
+}
+public void setAlarmType(int alarmType) {
+	this.alarmType = alarmType;
 }
 
 

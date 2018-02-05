@@ -34,6 +34,7 @@ import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
+import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.entities.Sensor_Data;
@@ -785,10 +786,22 @@ public class EquipmentService {
 		}
 		
 		List<AlarmMessage>  amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());
-	
+	   int pondId=dataAlarm.getPondId();
+		Pond pond=pondDao.findPondByPondId(pondId);
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("alarmMessageList", amlist);
-       
+		if(pond!=null) {
+		map.put("pond", pond);
+		}else {
+			map.put("pond", null);
+		}
+		AIO aio=aioDao.findAIOByDeviceSns(dataAlarm.getDeviceSn());
+		if(aio!=null) {
+		map.put("deviceName",aio.getName());
+		}else {
+			map.put("deviceName", null);
+		}
+		
 		return map;
 	}
 
@@ -799,7 +812,8 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> modifyEquipments(String device_sns,String name) {
-		
+		String type=null;
+		//if(device_sns.substring(0,2).equals("01")||de)
 		
 		
 		return null;

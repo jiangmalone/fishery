@@ -40,6 +40,7 @@ public class JudgeAlarmRangeUtils {
 		am.setCreateDate(new Date());
 		am.setDeviceSn(deviceSn);
 		am.setMessage(message);
+		am.setAlarmType(0);
 		service.save(am);
 		}
 		
@@ -69,6 +70,7 @@ public class JudgeAlarmRangeUtils {
 			am.setCreateDate(new Date());
 			am.setDeviceSn(deviceSn);
 			am.setMessage(message);
+			am.setAlarmType(1);
 			service.save(am);
 			}
 	}
@@ -106,6 +108,7 @@ public class JudgeAlarmRangeUtils {
 			am.setCreateDate(new Date());
 			am.setDeviceSn(deviceSn);
 			am.setMessage(message);
+			am.setAlarmType(2);
 			service.save(am);
 			}
 	}

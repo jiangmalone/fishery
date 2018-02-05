@@ -90,6 +90,10 @@ public class SocketSerivce {
 	@Autowired
 	private DataAlarmDao daDao;
 	
+	public Pond findPondById(int id) {
+		return pondDao.findPondByPondId(id);
+	}
+	
 	public AeratorStatus findByDeviceSnAndWay(String deviceSn,int way) {
 	return	aeratorStatusDao.findByDeviceSnAndWay(deviceSn, way);
 	}

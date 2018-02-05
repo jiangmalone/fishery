@@ -21,8 +21,9 @@ public class DataAlarm {
 	private String relation;// 绑定的用户，WX微信用户，CO企业用户
 	//private boolean isWatch;// 是否已读
 	private List<AlarmMessage> message;
-	private int pondId;// 绑定的塘口ID
+	private String pondName;// 绑定的塘口ID
 	private Date createDate;
+	private String deviceName;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -76,12 +77,22 @@ public class DataAlarm {
 		this.message = message;
 	}
 
-	public int getPondId() {
-		return pondId;
+
+
+	public String getPondName() {
+		return pondName;
 	}
 
-	public void setPondId(int pondId) {
-		this.pondId = pondId;
+	public void setPondName(String pondName) {
+		this.pondName = pondName;
+	}
+
+	public String getDeviceName() {
+		return deviceName;
+	}
+
+	public void setDeviceName(String deviceName) {
+		this.deviceName = deviceName;
 	}
 
 	public Date getCreateDate() {

@@ -785,12 +785,12 @@ public class EquipmentService {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
 		
-		List<AlarmMessage>  amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());
-	   int pondId=dataAlarm.getPondId();
-		Pond pond=pondDao.findPondByPondId(pondId);
+		//List<AlarmMessage>  amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());
+	   //int pondId=dataAlarm.getPondId();
+		//Pond pond=pondDao.findPondByPondId(pondId);
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-		map.put("alarmMessageList", amlist);
-		if(pond!=null) {
+		//map.put("alarmMessageList", amlist);
+		/*if(pond!=null) {
 		map.put("pond", pond);
 		}else {
 			map.put("pond", null);
@@ -800,7 +800,8 @@ public class EquipmentService {
 		map.put("deviceName",aio.getName());
 		}else {
 			map.put("deviceName", null);
-		}
+		}*/
+		map.put("dataAlarm", dataAlarm);
 		
 		return map;
 	}
@@ -811,26 +812,33 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	public Map<String, Object> modifyEquipment(String device_sns,String name) {
+	public Map<String, Object> modifyEquipment(String device_sn,String name) {
 		String type=null;
+		Map<String, Object> map=null;
 		try {
-			type=device_sns.substring(0, 2);
+			type=device_sn.substring(0, 2);
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
 		if(type.equals("01")||type.equals("02")) {
-			AIO aio=aioDao.findAIOByDeviceSns(device_sns);
+			AIO aio=aioDao.findAIOByDeviceSns(device_sn);
 			aio.setName(name);
+			map=RESCODE.SUCCESS.getJSONRES();
+			map.put("aio", aio);
 		}else if(type.equals("03")) {
-			Sensor sensor=sensorDao.findSensorByDeviceSns(device_sns);
+			Sensor sensor=sensorDao.findSensorByDeviceSns(device_sn);
 			sensor.setName(name);
+			map=RESCODE.SUCCESS.getJSONRES();
+			map.put("sensor", sensor);
 		}else if(type.equals("04")) {
-			Controller controller=controllerDao.findControllerByDeviceSns(device_sns);
+			Controller controller=controllerDao.findControllerByDeviceSns(device_sn);
 			controller.setName(name);
+			map=RESCODE.SUCCESS.getJSONRES();
+			map.put("controller", controller);
 		}
 		
+	    return map;
 		
-		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 }

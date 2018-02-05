@@ -25,6 +25,7 @@ import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Limit_Install;
+import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
@@ -199,7 +200,13 @@ public class CMDUtils {
 		da.setDeviceSn(deviceSn);
 		da.setRelation(relation);
 		da.setWay(way);
-		da.setPondId(pondId);
+		da.setDeviceName(aio.getName());
+		Pond pond=service.findPondById(pondId);
+		if(pond!=null) {
+		da.setPondName(pond.getName());
+		}else {
+			da.setPondName(null);
+		}
 		service.save(da);
 		service.update(sData);
 
@@ -377,20 +384,25 @@ public class CMDUtils {
 			throws IOException {
 		
 		/*
-		 * byte power6 = data[7]; byte[] byteTime = new byte[5];
-		 * CommonUtils.arrayHandle(data, byteTime, 8, 0, 5); String time =
-		 * "20"+Integer.toString(byteTime[0]&
-		 * 0xFF)+Integer.toString(byteTime[1]&
-		 * 0xFF)+Integer.toString(byteTime[2]&
-		 * 0xFF)+Integer.toString(byteTime[3]&
-		 * 0xFF)+Integer.toString(byteTime[4]& 0xFF); long timeLong = 0; try {
-		 * Date date = CommonUtils.stringToDate(time,"yyyyMMddHHmm"); timeLong =
-		 * date.getTime(); } catch (ParseException e) { e.printStackTrace();
-		 * return; } byte check6 = data[13]; String suffix6 =
-		 * CommonUtils.printHexStringMerge(data,14,4);
-		 */
-		logger.debug("增氧机开关记录");
-		response(14, data, readChannel);
+		byte power6 = data[7];
+		byte[] byteTime = new byte[5];
+		CommonUtils.arrayHandle(data, byteTime, 8, 0, 5);
+		String time = "20" + Integer.toString(byteTime[0] & 0xFF) + Integer.toString(byteTime[1] & 0xFF)
+				+ Integer.toString(byteTime[2] & 0xFF) + Integer.toString(byteTime[3] & 0xFF)
+				+ Integer.toString(byteTime[4] & 0xFF);
+		long timeLong = 0;
+		try {
+			Date date = CommonUtils.stringToDate(time, "yyyyMMddHHmm");
+			timeLong = date.getTime();
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return;
+		}
+		byte check6 = data[13];
+		String suffix6 = CommonUtils.printHexStringMerge(data, 14, 4);
+		 
+		logger.debug("增氧机开关记录");*/
+		response(8, data, readChannel);
 	}
 
 	// 参数operation=1为打开增氧机，为0是关闭增氧机
@@ -566,7 +578,13 @@ public class CMDUtils {
 		da.setDeviceSn(deviceSn);
 		da.setRelation(relation);
 		da.setWay(way);
-		da.setPondId(pondId);
+		da.setDeviceName(aio.getName());
+		Pond pond=service.findPondById(pondId);
+		if(pond!=null) {
+		da.setPondName(pond.getName());
+		}else {
+			da.setPondName(null);
+		}
 		service.save(da);
 		service.save(sData);
 

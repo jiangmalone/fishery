@@ -36,5 +36,11 @@ public class DataAlarmDaoImpl implements DataAlarmDao {
 		Query query = queryUtils.addString("relation", relation).getQuery();
 		return (DataAlarm) query.uniqueResult();
 	}
+	@Override
+	public void updateStatus(DataAlarm da) {
+		// TODO Auto-generated method stub
+		getSession().merge(da);
+	}
+
 
 }

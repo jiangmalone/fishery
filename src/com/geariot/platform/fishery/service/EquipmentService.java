@@ -771,18 +771,25 @@ public class EquipmentService {
 	public Map<String, Object> queryAlarm(String openId) {
 		// TODO Auto-generated method stub
 		WXUser wxuser=wxUserDao.findUserByOpenId(openId);
-		String relation=null;
-		if(null!=wxuser) {
-			relation=wxuser.getRelation();
+		
+		if(null==wxuser) {
+			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
+		}
+		String relation=wxuser.getRelation();
+		if(null==relation) {
+			return RESCODE.NO_BIND_RELATION.getJSONRES();
 		}
 		DataAlarm dataAlarm=daDao.findDataAlarmByRelation(relation);
+		if(null==dataAlarm) {
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}
 		if(dataAlarm.isWatch()) {
 			return RESCODE.IS_WATCH.getJSONRES();
 		}
-		List<AlarmMessage> amlist=null;
-		if(null!=dataAlarm) {
-		 amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());
-		}
+		List<AlarmMessage>  amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());
+	
+		dataAlarm.setWatch(true);
+		daDao.updateStatus(dataAlarm);
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("alarmMessageList", amlist);
 		return map;

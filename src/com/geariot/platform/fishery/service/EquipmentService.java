@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.AeratorStatusDao;
+import com.geariot.platform.fishery.dao.AlarmMessageDao;
 import com.geariot.platform.fishery.dao.CompanyDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
+import com.geariot.platform.fishery.dao.DataAlarmDao;
 import com.geariot.platform.fishery.dao.LimitDao;
 import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.SensorDao;
@@ -27,8 +29,10 @@ import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.AeratorStatus;
+import com.geariot.platform.fishery.entities.AlarmMessage;
 import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
+import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Controller;
@@ -81,6 +85,12 @@ public class EquipmentService {
 
 	@Autowired
 	private Sensor_ControllerDao sensor_ControllerDao;
+	
+	@Autowired
+	private DataAlarmDao daDao;
+	
+	@Autowired
+	private AlarmMessageDao amDao;
 
 	private String type = "";
 	private String relation = "";
@@ -756,6 +766,18 @@ public class EquipmentService {
 		}
 
 		return RESCODE.DEVICESNS_INVALID.getJSONRES();
+	}
+
+	public Map<String, Object> queryAlarm(DataAlarm da) {
+		// TODO Auto-generated method stub
+		DataAlarm dataAlarm=daDao.findDataAlarmById(da.getId());
+		List<AlarmMessage> amlist=null;
+		if(null!=dataAlarm) {
+		 amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());
+		}
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+		map.put("alarmMessageList", amlist);
+		return map;
 	}
 
 }

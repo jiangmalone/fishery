@@ -6,5 +6,6 @@ public interface DataAlarmDao {
 	
 	void save(DataAlarm dataAlarm);
 
+	DataAlarm findDataAlarmById(int id);
 
 }

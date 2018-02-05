@@ -14,4 +14,6 @@ public interface AeratorStatusDao {
 	void save(AeratorStatus status);
 	
 	AeratorStatus findByDeviceSnAndWay(String device_sn, int way);
+	
+	void delete(String device_sn);
 }

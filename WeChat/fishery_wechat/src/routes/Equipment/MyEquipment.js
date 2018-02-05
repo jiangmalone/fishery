@@ -220,7 +220,7 @@ class MyEquipment extends React.Component {
                 我的设备
                 <i className={this.state.isEdit ? 'right-item-none' : "edit"}
                     onClick={() => this.setState({ isEdit: !this.state.isEdit })} >
-                    {this.state.isEdit && "取消"}
+                    {this.state.isEdit && "完成"}
                 </i>
             </div>
             <div className='equipment-type'>

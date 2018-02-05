@@ -58,7 +58,18 @@ public class AdminService {
 			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
 		}else{
 			if(exist.getPassword().equals(MD5.compute(password))){
-				return RESCODE.SUCCESS.getJSONRES(exist);
+				Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(exist);
+				if(exist.getCompanyId()>0){
+					Company com = companyDao.findCompanyById(exist.getCompanyId());
+					if(com == null){
+						map.put("company", "");
+					}else{
+						map.put("company", com.getName());
+					}
+				}else{
+					map.put("company", "");
+				}
+				return map;
 			}else{
 				return RESCODE.PSW_ERROR.getJSONRES();
 			}

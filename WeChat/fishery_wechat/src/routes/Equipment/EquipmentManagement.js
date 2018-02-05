@@ -235,7 +235,7 @@ class EquipmentManagement extends React.Component {
                 <div className='pondLeft'>绑定塘口</div>
                 <div className='pondName' >
                     {Object.keys(this.state.bindPond).length == 0 ? (<Picker
-                        title="选择地区"
+                        title="选择塘口"
                         extra="请选择(可选)"
                         data={this.state.ponds}
                         cols={1}

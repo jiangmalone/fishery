@@ -175,7 +175,6 @@ class MyEquipment extends React.Component {
 
     getAllInOne = (allInOnes) => {
         let aio = allInOnes.map((allInOne, index) => {
-            console.log(allInOne)
             return (
                 <div key={allInOne.id}>
                     {this.state.isEdit &&
@@ -218,7 +217,7 @@ class MyEquipment extends React.Component {
                     })
                 }}></i>
                 我的设备
-                <i className={this.state.isEdit ? 'right-item-none' : "edit"}
+                <i className={this.state.isEdit ? 'cancle-edit' : "edit"}
                     onClick={() => this.setState({ isEdit: !this.state.isEdit })} >
                     {this.state.isEdit && "完成"}
                 </i>

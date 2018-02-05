@@ -23,11 +23,11 @@ public class JudgeAlarmRangeUtils {
 				if(openId!=null)
 				WechatSendMessageUtils.sendWechatAlarmMessages(WechatAlarmMessage.DO_DANGER, openId);
 				message=WechatAlarmMessage.DO_DANGER;
-			}else if(DO>ar.getFish_DO_high_limit()||DO>ar.getLobster_DO_high_limit()||DO>ar.getCrab_DO_high_limit()) {
+			}/*else if(DO>ar.getFish_DO_high_limit()||DO>ar.getLobster_DO_high_limit()||DO>ar.getCrab_DO_high_limit()) {
 				if(openId!=null)
 					WechatSendMessageUtils.sendWechatAlarmMessages(WechatAlarmMessage.DO_NORMAL, openId);
 				message=WechatAlarmMessage.DO_NORMAL;
-			}else if((DO>=ar.getFish_DO_low_limit()&&DO<=ar.getFish_DO_high_limit())||(DO>=ar.getLobster_DO_low_limit()&&DO<=ar.getLobster_DO_high_limit())
+			}*/else if((DO>=ar.getFish_DO_low_limit()&&DO<=ar.getFish_DO_high_limit())||(DO>=ar.getLobster_DO_low_limit()&&DO<=ar.getLobster_DO_high_limit())
 					||(DO>=ar.getCrab_DO_low_limit()&&DO<=ar.getCrab_DO_high_limit())) {
 				if(openId!=null)
 					WechatSendMessageUtils.sendWechatAlarmMessages(WechatAlarmMessage.DO_WARNING, openId);
@@ -35,12 +35,13 @@ public class JudgeAlarmRangeUtils {
 			}
 			
 		}
-		
+		if(message!=null) {
 		AlarmMessage am=new AlarmMessage();
 		am.setCreateDate(new Date());
 		am.setDeviceSn(deviceSn);
 		am.setMessage(message);
 		service.save(am);
+		}
 		
 	}
 
@@ -55,20 +56,21 @@ public class JudgeAlarmRangeUtils {
 				if(openId!=null)
 					WechatSendMessageUtils.sendWechatAlarmMessages(WechatAlarmMessage.HIGH_WATER_WARNING, openId);
 				message=WechatAlarmMessage.HIGH_WATER_WARNING;
-			}else if((waterTem>=ar.getFish_water_tem_low_limit()&&waterTem<=ar.getFish_water_tem_high_limit())||(waterTem>=ar.getLobster_water_tem_low_limit()&&waterTem<=ar.getLobster_water_tem_high_limit())
+			}/*else if((waterTem>=ar.getFish_water_tem_low_limit()&&waterTem<=ar.getFish_water_tem_high_limit())||(waterTem>=ar.getLobster_water_tem_low_limit()&&waterTem<=ar.getLobster_water_tem_high_limit())
 					||(waterTem>=ar.getCrab_water_tem_low_limit()&&waterTem<=ar.getCrab_water_tem_high_limit())) {
 				if(openId!=null)
 					WechatSendMessageUtils.sendWechatAlarmMessages(WechatAlarmMessage.WATER_NORMAL, openId);
 				message=WechatAlarmMessage.WATER_NORMAL;
-			}
+			}*/
 		}
 		
-		
-		AlarmMessage am=new AlarmMessage();
-		am.setCreateDate(new Date());
-		am.setDeviceSn(deviceSn);
-		am.setMessage(message);
-		service.save(am);
+		if(message!=null) {
+			AlarmMessage am=new AlarmMessage();
+			am.setCreateDate(new Date());
+			am.setDeviceSn(deviceSn);
+			am.setMessage(message);
+			service.save(am);
+			}
 	}
 
 	public static void judgePH(int type, float ph,String openId,String deviceSn) {
@@ -91,20 +93,21 @@ public class JudgeAlarmRangeUtils {
 					WechatSendMessageUtils.sendWechatAlarmMessages(WechatAlarmMessage.HIGH_PH_WARNING, openId);
 				message=WechatAlarmMessage.HIGH_PH_WARNING;
 			}
-			else if((ph>=ar.getFish_ph_low_to_middle_limit()&&ph<=ar.getFish_ph_middle_to_high_limit())||(ph>=ar.getLobster_ph_low_to_middle_limit()&&ph<=ar.getLobster_ph_middle_to_high_limit())||
+			/*else if((ph>=ar.getFish_ph_low_to_middle_limit()&&ph<=ar.getFish_ph_middle_to_high_limit())||(ph>=ar.getLobster_ph_low_to_middle_limit()&&ph<=ar.getLobster_ph_middle_to_high_limit())||
 					(ph>=ar.getCrab_ph_low_to_middle_limit()&&ph<=ar.getCrab_ph_middle_to_high_limit())) {
 				if(openId!=null)
 					WechatSendMessageUtils.sendWechatAlarmMessages(WechatAlarmMessage.PH_NORMAL, openId);
 				message=WechatAlarmMessage.PH_NORMAL;
-			}
+			}*/
 		}
 		
-		
-		AlarmMessage am=new AlarmMessage();
-		am.setCreateDate(new Date());
-		am.setDeviceSn(deviceSn);
-		am.setMessage(message);
-		service.save(am);
+		if(message!=null) {
+			AlarmMessage am=new AlarmMessage();
+			am.setCreateDate(new Date());
+			am.setDeviceSn(deviceSn);
+			am.setMessage(message);
+			service.save(am);
+			}
 	}
 	
 }

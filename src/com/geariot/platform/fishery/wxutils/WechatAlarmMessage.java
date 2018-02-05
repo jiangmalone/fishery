@@ -4,11 +4,11 @@ public class WechatAlarmMessage {
 
 	
 	
-	public static final String DO_NORMAL="水体溶氧正常";
+	//public static final String DO_NORMAL="水体溶氧正常";
 	
-	public static final String WATER_NORMAL="水温适宜";
+	//public static final String WATER_NORMAL="水温适宜";
 	
-	public static final String PH_NORMAL="PH正常";	
+	//public static final String PH_NORMAL="PH正常";	
 	
 	public static final String DO_WARNING="水体溶氧偏低，及时增氧";
 		

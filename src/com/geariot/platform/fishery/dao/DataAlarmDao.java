@@ -8,4 +8,5 @@ public interface DataAlarmDao {
 
 	DataAlarm findDataAlarmById(int id);
 
+	DataAlarm findDataAlarmByRelation(String relation);
 }

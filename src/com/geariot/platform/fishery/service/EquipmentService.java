@@ -768,9 +768,17 @@ public class EquipmentService {
 		return RESCODE.DEVICESNS_INVALID.getJSONRES();
 	}
 
-	public Map<String, Object> queryAlarm(DataAlarm da) {
+	public Map<String, Object> queryAlarm(String openId) {
 		// TODO Auto-generated method stub
-		DataAlarm dataAlarm=daDao.findDataAlarmById(da.getId());
+		WXUser wxuser=wxUserDao.findUserByOpenId(openId);
+		String relation=null;
+		if(null!=wxuser) {
+			relation=wxuser.getRelation();
+		}
+		DataAlarm dataAlarm=daDao.findDataAlarmByRelation(relation);
+		if(dataAlarm.isWatch()) {
+			return RESCODE.IS_WATCH.getJSONRES();
+		}
 		List<AlarmMessage> amlist=null;
 		if(null!=dataAlarm) {
 		 amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());

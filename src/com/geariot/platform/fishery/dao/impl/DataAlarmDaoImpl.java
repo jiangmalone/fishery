@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.DataAlarmDao;
+import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.utils.QueryUtils;
@@ -27,6 +28,12 @@ public class DataAlarmDaoImpl implements DataAlarmDao {
 	public DataAlarm findDataAlarmById(int id) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from DataAlarm");
 		Query query = queryUtils.addInteger("id", id).getQuery();
+		return (DataAlarm) query.uniqueResult();
+	}
+	@Override
+	public DataAlarm findDataAlarmByRelation(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from DataAlarm");
+		Query query = queryUtils.addString("relation", relation).getQuery();
 		return (DataAlarm) query.uniqueResult();
 	}
 

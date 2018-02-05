@@ -117,8 +117,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/queryAlarm", method = RequestMethod.GET)
-	public Map<String, Object> queryAlarm(DataAlarm da){
-		return equipmentService.queryAlarm(da);
+	public Map<String, Object> queryAlarm(String openId){
+		return equipmentService.queryAlarm(openId);
 	}
 	
 	

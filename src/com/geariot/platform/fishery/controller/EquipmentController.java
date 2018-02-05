@@ -36,8 +36,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value = "/modifyEquipments", method = RequestMethod.GET)
-	public Map<String, Object> modifyEquipments(String device_sns,String name) {
-		return equipmentService.modifyEquipments(device_sns,name);
+	public Map<String, Object> modifyEquipments(String device_sn,String name) {
+		return equipmentService.modifyEquipments(device_sn,name);
 	}
 	
 	

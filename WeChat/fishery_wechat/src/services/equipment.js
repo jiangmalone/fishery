@@ -2,6 +2,14 @@ import post from '../utils/post';
 import get from '../utils/get';
 export default {
 
+    queryAlarm: (params) => {
+        return get('api/equipment/queryAlarm', params);
+    },
+
+    AlarmIsRead: (params) => {
+        return get('api/equipment/alarmIsRead', params)
+    },
+    
     queryEquipment: (params) => {
         return get('api/equipment/query', params);
     },
@@ -55,7 +63,7 @@ export default {
     autoSet: (params) => {
         return post('api/equipment/autoSet', params)
     },
-    
+
     queryAeratorData: (params) => {
         return get('api/equipment/queryAeratorData', params)
     },

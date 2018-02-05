@@ -18,6 +18,16 @@ public class WechatSendMessageUtils {
         });
 	}
 	
+	public static void  sendWechatAlarmMessages(final String message,final String openId) {
+		executorService.submit(new Runnable() {
+
+            @Override
+            public void run(){
+            	WechatTemplateMessage.alarmMSG(message, openId);
+            }
+        });
+	}
+	
 	public static void sendWechatOxygenOnOffMessages(final String msg,final String openId) {
 		executorService.submit(new Runnable() {
 

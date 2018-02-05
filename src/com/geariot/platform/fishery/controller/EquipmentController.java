@@ -34,6 +34,13 @@ public class EquipmentController {
 	public Map<String, Object> delEquipment(String... device_sns) {
 		return equipmentService.delEquipment(device_sns);
 	}
+	
+	@RequestMapping(value = "/modifyEquipments", method = RequestMethod.GET)
+	public Map<String, Object> modifyEquipments(String device_sns,String name) {
+		return equipmentService.modifyEquipments(device_sns,name);
+	}
+	
+	
 
 	/*@RequestMapping(value = "/timer", method = RequestMethod.POST)
 	public Map<String, Object> setTimer(@RequestBody Timer... timer) {

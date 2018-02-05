@@ -794,8 +794,15 @@ public class EquipmentService {
 
 	public Map<String, Object> alarmIsRead(AlarmMessage am) {
 		am.setWatch(true);
-		
+		amDao.updateStatus(am);
 		return RESCODE.SUCCESS.getJSONRES();
+	}
+
+	public Map<String, Object> modifyEquipments(String device_sns,String name) {
+		
+		
+		
+		return null;
 	}
 
 }

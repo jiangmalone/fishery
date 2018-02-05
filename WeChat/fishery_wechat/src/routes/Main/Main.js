@@ -213,14 +213,15 @@ class Main extends React.Component {
     }
 
     getEquipment = (sensor) => {
+
         return <div className='equipment' key={sensor.id}  >
             <div onClick={() => this.checkEquipment(sensor.device_sn, 0)} >
                 <div className='line border-line' >
                     <div className='name' >
                         {sensor.name}
                     </div>
-                    <div className={sensor.status ? 'right-text normal-state' : 'right-text unnormal-state'}>
-                        {sensor.status ? '正常' : '异常'}
+                    <div className={sensor.status ? 'right-text unnormal-state' : 'right-text normal-state'}>
+                        {sensor.status ? '异常' : '正常' }
                     </div>
                 </div>
                 <div className='line' >
@@ -259,8 +260,8 @@ class Main extends React.Component {
                     <div className='name' >
                         {aio.name}
                     </div>
-                    <div className={aio.status ? 'right-text normal-state' : 'right-text unnormal-state'}>
-                        {aio.status ? '正常' : '异常'}
+                    <div className={aio.status ? 'right-text unnormal-state' :  'right-text normal-state' }>
+                        {aio.status ? '异常' : '正常' }
                     </div>
                 </div>
                 <div className='line' >

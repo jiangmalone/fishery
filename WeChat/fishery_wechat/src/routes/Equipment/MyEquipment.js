@@ -192,7 +192,7 @@ class MyEquipment extends React.Component {
                             {allInOne.name}
                         </div>
                         <div className='right-imgs'>
-                            <div className={(allInOne.status == 1) ? 'online' : 'offline'} >
+                            <div className={(allInOne.pondId == 0) ? 'offline' : 'online'} >
                             </div>
                         </div>
                     </div>

@@ -284,11 +284,11 @@ class SensorDetail extends React.Component {
             </Popover>
             <div className='state-head'  >
                 <div className='state-div' onClick={this.changeDetailShowState}>
-                    <img src={this.state.status == 0 ? offline : online} style={{ marginLeft: 0 }} />
+                    <img src={this.state.status == 0 ? online : offline} style={{ marginLeft: 0 }} />
                     <span>最新数据</span>
                     <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
                 </div>
-                {(this.state.way != 0) &&
+                {(this.state.way != 0 && this.state.status == 0) &&
                  <img src={correct} className='correct' onClick={() => {this.serverCheck()}} />}
             </div>
             {this.state.isShowDetail && <div className='detail'>

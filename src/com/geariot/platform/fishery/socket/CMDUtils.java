@@ -8,8 +8,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -20,12 +22,16 @@ import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Alarm;
 import com.geariot.platform.fishery.entities.Broken;
 import com.geariot.platform.fishery.entities.Controller;
+import com.geariot.platform.fishery.entities.DataAlarm;
+import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Limit_Install;
+import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.entities.WXUser;
+import com.geariot.platform.fishery.model.AlarmRange;
 import com.geariot.platform.fishery.model.BrokenMSG;
 import com.geariot.platform.fishery.model.EntityModel;
 import com.geariot.platform.fishery.model.EntityType;
@@ -33,6 +39,8 @@ import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
+import com.geariot.platform.fishery.utils.JudgeAlarmRangeUtils;
+import com.geariot.platform.fishery.utils.LoadAlarmRange;
 import com.geariot.platform.fishery.utils.StringUtils;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 import com.geariot.platform.fishery.wxutils.WechatTemplateMessage;
@@ -44,6 +52,7 @@ public class CMDUtils {
 	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	private static Map<String, String> feedback = new ConcurrentHashMap<String, String>();
     private static BrokenMSG bs=new BrokenMSG();
+
 	public static Map<String, SocketChannel> getclientMap() {
 		return clientMap;
 	}
@@ -168,7 +177,37 @@ public class CMDUtils {
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路的溶氧值为:" + oxygen + "水温:" + waterTemp);
 
 		sData.setReceiveTime(new Date());
-
+		 AIO aio=service.findAIOByDeviceSn(deviceSn);
+		 String relation=null;
+		 String openId=null;
+		 Integer pondId=null;
+		if(null!=aio) {
+				pondId=(Integer)aio.getPondId();
+			}
+		 if(null!=aio) {
+			relation= aio.getRelation();
+		 }
+		 if(relation.contains("WX")) {
+			 WXUser wxuser=service.findWXUserByRelation(relation);
+			 if(null!=wxuser) {
+				openId= wxuser.getOpenId();
+			 }
+		 } 
+		doJudge(deviceSn, waterTemp, oxygen,-1,openId);//判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
+		logger.debug("判断数据极限范围已完毕，准备存入数据库");
+		DataAlarm da=new DataAlarm();
+		da.setCreateDate(new Date());
+		da.setDeviceSn(deviceSn);
+		da.setRelation(relation);
+		da.setWay(way);
+		da.setDeviceName(aio.getName());
+		Pond pond=service.findPondById(pondId);
+		if(pond!=null) {
+		da.setPondName(pond.getName());
+		}else {
+			da.setPondName(null);
+		}
+		service.save(da);
 		service.update(sData);
 
 		response(16, data, readChannel);
@@ -343,22 +382,27 @@ public class CMDUtils {
 	// 增氧机打开和关闭时间记录
 	public static void oxygenTimeCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way)
 			throws IOException {
-		// preHandle(key);
+		
 		/*
-		 * byte power6 = data[7]; byte[] byteTime = new byte[5];
-		 * CommonUtils.arrayHandle(data, byteTime, 8, 0, 5); String time =
-		 * "20"+Integer.toString(byteTime[0]&
-		 * 0xFF)+Integer.toString(byteTime[1]&
-		 * 0xFF)+Integer.toString(byteTime[2]&
-		 * 0xFF)+Integer.toString(byteTime[3]&
-		 * 0xFF)+Integer.toString(byteTime[4]& 0xFF); long timeLong = 0; try {
-		 * Date date = CommonUtils.stringToDate(time,"yyyyMMddHHmm"); timeLong =
-		 * date.getTime(); } catch (ParseException e) { e.printStackTrace();
-		 * return; } byte check6 = data[13]; String suffix6 =
-		 * CommonUtils.printHexStringMerge(data,14,4);
-		 */
-		logger.debug("增氧机开关记录");
-		response(14, data, readChannel);
+		byte power6 = data[7];
+		byte[] byteTime = new byte[5];
+		CommonUtils.arrayHandle(data, byteTime, 8, 0, 5);
+		String time = "20" + Integer.toString(byteTime[0] & 0xFF) + Integer.toString(byteTime[1] & 0xFF)
+				+ Integer.toString(byteTime[2] & 0xFF) + Integer.toString(byteTime[3] & 0xFF)
+				+ Integer.toString(byteTime[4] & 0xFF);
+		long timeLong = 0;
+		try {
+			Date date = CommonUtils.stringToDate(time, "yyyyMMddHHmm");
+			timeLong = date.getTime();
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return;
+		}
+		byte check6 = data[13];
+		String suffix6 = CommonUtils.printHexStringMerge(data, 14, 4);
+		 
+		logger.debug("增氧机开关记录");*/
+		response(8, data, readChannel);
 	}
 
 	// 参数operation=1为打开增氧机，为0是关闭增氧机
@@ -511,7 +555,37 @@ public class CMDUtils {
 				"服务器接收设备编号和路分别为:" + deviceSn + "第" + way + "路，溶氧值为:" + oxygen + "水温为:" + waterTemp + "ph值为:" + phValue);
 		
 		sData.setReceiveTime(new Date());
-		
+		AIO aio=service.findAIOByDeviceSn(deviceSn);
+		 String relation=null;
+		 String openId=null;
+		 Integer pondId=null;
+		if(null!=aio) {
+				pondId=(Integer)aio.getPondId();
+			}
+		 if(null!=aio) {
+			relation= aio.getRelation();
+		 }
+		 if(relation.contains("WX")) {
+			 WXUser wxuser=service.findWXUserByRelation(relation);
+			 if(null!=wxuser) {
+				openId= wxuser.getOpenId();
+			 }
+		 } 
+		doJudge(deviceSn, waterTemp, oxygen,phValue,openId);
+		logger.debug("判断数据极限范围已完毕，准备存入数据库");
+		DataAlarm da=new DataAlarm();
+		da.setCreateDate(new Date());
+		da.setDeviceSn(deviceSn);
+		da.setRelation(relation);
+		da.setWay(way);
+		da.setDeviceName(aio.getName());
+		Pond pond=service.findPondById(pondId);
+		if(pond!=null) {
+		da.setPondName(pond.getName());
+		}else {
+			da.setPondName(null);
+		}
+		service.save(da);
 		service.save(sData);
 
 		response(16, data, readChannel);
@@ -687,15 +761,34 @@ public class CMDUtils {
 		brokenlist.add(broken);
 		service.save(broken);
 	}
+	
+	
+	public static void doJudge(String deviceSn,float waterTemp,float oxygen,float ph,String openId) {
+		List<Fish_Category> fishCategorys=service.queryFishCategorysByDeviceSn(deviceSn);
+		 logger.debug("准备根据上传的数据判断水温和溶氧值是否正常");
+		
+		 Set<Integer> typeset=new HashSet<Integer>();
+		if(!fishCategorys.isEmpty()) {
+		for(Fish_Category category:fishCategorys) {
+			typeset.add(category.getType());
+		}
+		}
+		for(Integer typetemp:typeset) {
+		if(typeset.contains(typetemp)) {
+			JudgeAlarmRangeUtils.judgeDO(typetemp, oxygen,openId,deviceSn);
+			JudgeAlarmRangeUtils.judgeWaterTem(typetemp, waterTemp,openId,deviceSn);
+			if(-1!=ph)//ph不等于-1说明支持ph功能，然后判断，否则不判断
+			JudgeAlarmRangeUtils.judgePH(typetemp, ph,openId,deviceSn);
+		}
+		}
+	}
 
 	// while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
 	public static Map<String, Object> responseToBrowser(String order, String deviceSn) {
-		// long start=System.currentTimeMillis();
 
 		String lockObject = order + deviceSn;
 		logger.debug("生成锁对象" + lockObject);
-		// long end=0;
-		// while(true) {
+
 		Map<String, String> map = getFeedback();
 		map.put(deviceSn, lockObject);
 		long start = System.currentTimeMillis();
@@ -718,15 +811,8 @@ public class CMDUtils {
 				e.printStackTrace();
 			}
 		}
-		/*
-		 * if(order.equals(map.get(deviceSn))) { map.remove(deviceSn); return
-		 * RESCODE.SUCCESS.getJSONRES(); }
-		 */
+
 		return RESCODE.SUCCESS.getJSONRES();
 
-		/*
-		 * end=System.currentTimeMillis(); if(end-start>=10000) { return
-		 * RESCODE.NOT_RECEIVED.getJSONRES(); } }
-		 */
 	}
 }

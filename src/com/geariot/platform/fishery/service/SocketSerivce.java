@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.AeratorStatusDao;
 import com.geariot.platform.fishery.dao.AlarmDao;
+import com.geariot.platform.fishery.dao.AlarmMessageDao;
 import com.geariot.platform.fishery.dao.BrokenDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
+import com.geariot.platform.fishery.dao.DataAlarmDao;
 import com.geariot.platform.fishery.dao.LimitDao;
+import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.SelfTestDao;
 import com.geariot.platform.fishery.dao.SensorDao;
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
@@ -24,9 +27,13 @@ import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Alarm;
+import com.geariot.platform.fishery.entities.AlarmMessage;
 import com.geariot.platform.fishery.entities.Broken;
 import com.geariot.platform.fishery.entities.Controller;
+import com.geariot.platform.fishery.entities.DataAlarm;
+import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Limit_Install;
+import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
@@ -74,12 +81,33 @@ public class SocketSerivce {
 	@Autowired
 	private AeratorStatusDao aeratorStatusDao;
 	
+	@Autowired
+	private PondDao pondDao;
+	
+	@Autowired
+	private AlarmMessageDao amDao;
+	
+	@Autowired
+	private DataAlarmDao daDao;
+	
+	public Pond findPondById(int id) {
+		return pondDao.findPondByPondId(id);
+	}
+	
 	public AeratorStatus findByDeviceSnAndWay(String deviceSn,int way) {
 	return	aeratorStatusDao.findByDeviceSnAndWay(deviceSn, way);
 	}
 	
 	public void save(SelfTest selfTest) {
 		selfTestDao.save(selfTest);
+	}
+	
+	public void save(DataAlarm da) {
+		daDao.save(da);
+	}
+	
+	public void save(AlarmMessage am) {
+		amDao.save(am);
 	}
 	
 	public void save(Limit_Install limit_Install) {
@@ -132,5 +160,17 @@ public class SocketSerivce {
 	
 	public void updateController(Controller controller) {
 		controllerDao.updateController(controller);
+	}
+	
+	public List<Fish_Category> queryFishCategorysByDeviceSn(String deviceSn){
+		AIO aio=findAIOByDeviceSn(deviceSn);
+		Integer pondId=null;
+		if(null!=aio) {
+			pondId=(Integer)aio.getPondId();
+		}
+		Pond pond=pondDao.findPondByPondId(pondId);
+		
+		return pond.getFish_categorys();
+		
 	}
 }

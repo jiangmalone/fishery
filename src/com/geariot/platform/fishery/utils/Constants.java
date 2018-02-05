@@ -20,7 +20,9 @@ public class Constants {
 	public static final String RESPONSE_AMOUNT_KEY = "amount";
 	public static final int PORT = 5678;
 	public static final int POOL_SIZE = 20;
-
+    public static final int FISH=0;
+    public static final int LOBSTER=1;
+    public static final int CRAB=2;
 
 	private static final String RELOAD_FISH_KEY = "reload_fish";
 	public static boolean RELOAD_FISH;

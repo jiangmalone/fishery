@@ -1,0 +1,41 @@
+{
+  
+        "fish_DO_low_limit": " 2 ",
+        "fish_DO_high_limit": " 4 ",
+        "fish_water_tem_low_limit": " 10 ",
+        "fish_water_tem_high_limit": " 30 ",
+        "fish_ph_low_limit": " 4.5 ",
+        "fish_ph_low_to_middle_limit": "6.5",
+        "fish_ph_middle_to_high_limit": "9",
+        "fish_ph_high_limit": " 10.2 ",
+      
+    
+   
+        "lobster_DO_low_limit": " 2 ",
+        "lobster_DO_high_limit": " 5 ",
+ 
+     
+        "lobster_water_tem_low_limit": " 18 ",
+        "lobster_water_tem_high_limit": " 30 ",
+    
+      
+        "lobster_ph_low_limit": " 6.5 ",
+        "lobster_ph_low_to_middle_limit": "7.8",
+        "lobster_ph_middle_to_high_limit": "8.5",
+        "lobster_ph_high_limit": " 9.2 ",
+    
+  
+        "crab_DO_low_limit": " 2.5 ",
+        "crab_DO_high_limit": " 5 ",
+     
+        "crab_water_tem_low_limit": " 18 ",
+        "crab_water_tem_high_limit": " 30 ",
+      
+        "crab_ph_low_limit": " 6 ",
+        "crab_ph_low_to_middle_limit": "6.8",
+        "crab_ph_middle_to_high_limit": "8.3",
+        "crab_ph_high_limit": " 9 "
+      
+    
+
+}

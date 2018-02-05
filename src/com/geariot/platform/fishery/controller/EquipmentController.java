@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.geariot.platform.fishery.entities.AlarmMessage;
+import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.ParamBody;
@@ -32,6 +34,13 @@ public class EquipmentController {
 	public Map<String, Object> delEquipment(String... device_sns) {
 		return equipmentService.delEquipment(device_sns);
 	}
+	
+	@RequestMapping(value = "/modifyEquipment", method = RequestMethod.GET)
+	public Map<String, Object> modifyEquipment(String device_sn,String name) {
+		return equipmentService.modifyEquipment(device_sn,name);
+	}
+	
+	
 
 	/*@RequestMapping(value = "/timer", method = RequestMethod.POST)
 	public Map<String, Object> setTimer(@RequestBody Timer... timer) {
@@ -114,4 +123,16 @@ public class EquipmentController {
 	public Map<String, Object> queryAeratorData(String device_sn,int way){
 		return equipmentService.queryAeratorData(device_sn,way);
 	}
+	
+	@RequestMapping(value ="/queryAlarm", method = RequestMethod.GET)
+	public Map<String, Object> queryAlarm(String openId){
+		return equipmentService.queryAlarm(openId);
+	}
+	
+	@RequestMapping(value ="/alarmIsRead", method = RequestMethod.GET)
+	public Map<String, Object> alarmIsRead(AlarmMessage am){
+		return equipmentService.alarmIsRead(am);
+	}
+	
+	
 }

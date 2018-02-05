@@ -16,6 +16,8 @@ public class WechatTemplateMessage {
 	private static final Logger log = LogManager.getLogger(WechatTemplateMessage.class);
 	private static final String OXYGEN_ON_OFF_TEMPLATE_ID="L-MhZftW-sTPMCKBR3kNK_l9oZnVfwdYq_RyxLwueFo";
 	
+	private static final String ALARM_TEMPLATE_ID=null;
+
 	private static String invokeTemplateMessage(JSONObject params){
 		StringEntity entity = new StringEntity(params.toString(),"utf-8"); //解决中文乱码问题   
 		String result = HttpRequest.postCall(WechatConfig.WECHAT_TEMPLATE_MESSAGE_URL + 
@@ -60,6 +62,20 @@ public class WechatTemplateMessage {
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
 		log.debug("增氧机开闭失败信息结果："+result);
+		
+	}
+	
+	public static void alarmMSG(String msg,String openId) {
+		log.debug("向微信用户发送溶氧值，水温，ph信息····");
+		JSONObject params=new JSONObject();
+		JSONObject data=new JSONObject();
+		params.put("touser", openId);
+		params.put("template_id", ALARM_TEMPLATE_ID);
+		data.put("first", keywordFactory("报警信息","#173177"));
+		data.put("报警详细信息", keywordFactory(msg,"#173177"));
+		params.put("data", data);
+		String result=invokeTemplateMessage(params);
+		log.debug("报警信息结果："+result);
 		
 	}
 	

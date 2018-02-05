@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.AeratorStatusDao;
+import com.geariot.platform.fishery.dao.AlarmMessageDao;
 import com.geariot.platform.fishery.dao.CompanyDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
+import com.geariot.platform.fishery.dao.DataAlarmDao;
 import com.geariot.platform.fishery.dao.LimitDao;
 import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.SensorDao;
@@ -27,9 +29,12 @@ import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.AeratorStatus;
+import com.geariot.platform.fishery.entities.AlarmMessage;
 import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
+import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
+import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.entities.Sensor_Data;
@@ -81,6 +86,12 @@ public class EquipmentService {
 
 	@Autowired
 	private Sensor_ControllerDao sensor_ControllerDao;
+	
+	@Autowired
+	private DataAlarmDao daDao;
+	
+	@Autowired
+	private AlarmMessageDao amDao;
 
 	private String type = "";
 	private String relation = "";
@@ -756,6 +767,78 @@ public class EquipmentService {
 		}
 
 		return RESCODE.DEVICESNS_INVALID.getJSONRES();
+	}
+
+	public Map<String, Object> queryAlarm(String openId) {
+		// TODO Auto-generated method stub
+		WXUser wxuser=wxUserDao.findUserByOpenId(openId);
+		
+		if(null==wxuser) {
+			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
+		}
+		String relation=wxuser.getRelation();
+		if(null==relation) {
+			return RESCODE.NO_BIND_RELATION.getJSONRES();
+		}
+		DataAlarm dataAlarm=daDao.findDataAlarmByRelation(relation);
+		if(null==dataAlarm) {
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}
+		
+		//List<AlarmMessage>  amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());
+	   //int pondId=dataAlarm.getPondId();
+		//Pond pond=pondDao.findPondByPondId(pondId);
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
+		//map.put("alarmMessageList", amlist);
+		/*if(pond!=null) {
+		map.put("pond", pond);
+		}else {
+			map.put("pond", null);
+		}
+		AIO aio=aioDao.findAIOByDeviceSns(dataAlarm.getDeviceSn());
+		if(aio!=null) {
+		map.put("deviceName",aio.getName());
+		}else {
+			map.put("deviceName", null);
+		}*/
+		map.put("dataAlarm", dataAlarm);
+		
+		return map;
+	}
+
+	public Map<String, Object> alarmIsRead(AlarmMessage am) {
+		am.setWatch(true);
+		amDao.updateStatus(am);
+		return RESCODE.SUCCESS.getJSONRES();
+	}
+
+	public Map<String, Object> modifyEquipment(String device_sn,String name) {
+		String type=null;
+		Map<String, Object> map=null;
+		try {
+			type=device_sn.substring(0, 2);
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
+		if(type.equals("01")||type.equals("02")) {
+			AIO aio=aioDao.findAIOByDeviceSns(device_sn);
+			aio.setName(name);
+			map=RESCODE.SUCCESS.getJSONRES();
+			map.put("aio", aio);
+		}else if(type.equals("03")) {
+			Sensor sensor=sensorDao.findSensorByDeviceSns(device_sn);
+			sensor.setName(name);
+			map=RESCODE.SUCCESS.getJSONRES();
+			map.put("sensor", sensor);
+		}else if(type.equals("04")) {
+			Controller controller=controllerDao.findControllerByDeviceSns(device_sn);
+			controller.setName(name);
+			map=RESCODE.SUCCESS.getJSONRES();
+			map.put("controller", controller);
+		}
+		
+	    return map;
+		
 	}
 
 }

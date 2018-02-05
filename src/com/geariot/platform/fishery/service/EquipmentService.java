@@ -813,10 +813,24 @@ public class EquipmentService {
 
 	public Map<String, Object> modifyEquipments(String device_sns,String name) {
 		String type=null;
-		//if(device_sns.substring(0,2).equals("01")||de)
+		try {
+			type=device_sns.substring(0, 2);
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
+		if(type.equals("01")||type.equals("02")) {
+			AIO aio=aioDao.findAIOByDeviceSns(device_sns);
+			aio.setName(name);
+		}else if(type.equals("03")) {
+			Sensor sensor=sensorDao.findSensorByDeviceSns(device_sns);
+			sensor.setName(name);
+		}else if(type.equals("04")) {
+			Controller controller=controllerDao.findControllerByDeviceSns(device_sns);
+			controller.setName(name);
+		}
 		
 		
-		return null;
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 }

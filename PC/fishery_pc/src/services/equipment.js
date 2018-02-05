@@ -41,10 +41,7 @@ export async function addEquipment(params) {
 }
 
 export async function modifyEquipment(params) {
-    return request('/api/equipment/modify', {
-        method: 'POST',
-        body: params
-    });
+    return request(`/api/equipment/modifyEquipment?${stringify(params)}`);
 }
 
 export async function delEquipments(params) {

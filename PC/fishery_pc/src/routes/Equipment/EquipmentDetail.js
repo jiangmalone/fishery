@@ -216,7 +216,8 @@ export default class EquipmentDetail extends React.Component {
             pondId: this.state.pondId,
             type: type
         }).then((res) => {
-            this.getInfo()
+            this.getInfo();
+            this.queryEquipment();
         }).catch((error) => {
             console.log(error)
         })

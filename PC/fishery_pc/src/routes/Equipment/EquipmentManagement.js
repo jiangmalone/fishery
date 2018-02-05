@@ -43,8 +43,8 @@ export default class EquipmentManagement extends React.Component {
         });
     }
 
-    showAddModal = (mode = 'add', index, id) => {
-        if (!id && id != 0) {    //新增的话，清空之前可能有的数据
+    showAddModal = (mode = 'add', index, device_sn) => {
+        if (!device_sn && device_sn != 0) {    //新增的话，清空之前可能有的数据
             this.props.dispatch({
                 type: 'equipment/changeModal',
                 payload: {
@@ -62,7 +62,7 @@ export default class EquipmentManagement extends React.Component {
             showAddModal: true,
             mode: mode,
             index: index,
-            modifyId: id
+            modifyId: device_sn
         })
     }
 
@@ -111,7 +111,8 @@ export default class EquipmentManagement extends React.Component {
                 payload: values,
             });
         } else {
-            values.id = this.state.modifyId
+            // console.log(values)
+            // values.device_sn = this.state.modifyId
             this.props.dispatch({
                 type: 'equipment/modifyEquipment',
                 payload: {

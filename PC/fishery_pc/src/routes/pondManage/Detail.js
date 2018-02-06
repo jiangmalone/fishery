@@ -118,7 +118,7 @@ class PondDetail extends PureComponent {
             }
         }];
         let pondFishs = ''
-        if(pondInfo.pondFishs.length>0) {
+        if(pondInfo.pondFishs&&pondInfo.pondFishs.length>0) {
             for(let item of pondInfo.pondFishs) {
                 pondFishs = pondFishs + item.fish_name + '、';
             }

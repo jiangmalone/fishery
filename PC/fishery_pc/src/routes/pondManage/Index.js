@@ -319,10 +319,15 @@ class PondList extends PureComponent {
             key: 'depth',
         }, {
             title: '品种',
-            dataIndex: 'fish_categorys',
-            key: 'fish_categorys',
+            dataIndex: 'pondFishs',
+            key: 'pondFishs',
             render: (text, record, index) => {
-                return <span>{text ? text.join(',') : ''}</span>
+                let fish = ''
+                for (let item of text) {
+                    fish = fish + item.fish_name + "、";
+                }
+
+                return <span>{fish ? fish.slice(0,-1) : ''}</span>
             }
         }, {
             title: '池塘水源',

@@ -177,12 +177,14 @@ class PondList extends PureComponent {
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location ? this.props.address.location.lat : '';
                     values.longitude = this.props.address.location ? this.props.address.location.lng : '';
-                    for (let item of values.pondFishs) {
-                        let index = item.indexOf('-');
-                        newFishs.push({
-                            type: Number(item.slice(index + 1)),
-                            fish_name: item.slice(0, -index)
-                        })
+                    if (values.pondFishs) {
+                        for (let item of values.pondFishs) {
+                            let index = item.indexOf('-');
+                            newFishs.push({
+                                type: Number(item.slice(index + 1)),
+                                fish_name: item.slice(0, -index)
+                            })
+                        }
                     }
                     values.pondFishs = newFishs
                     this.props.dispatch({
@@ -196,13 +198,17 @@ class PondList extends PureComponent {
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location.lat;
                     values.longitude = this.props.address.location.lng;
-                    for (let item of values.pondFishs) {
-                        let index = item.indexOf('-');
-                        modifyFishes.push({
-                            type: Number(item.slice(index + 1)),
-                            fish_name: item.slice(0, -index)
-                        })
+                    values.relation = this.props.match.params.relation;
+                    if (values.pondFishs) {
+                        for (let item of values.pondFishs) {
+                            let index = item.indexOf('-');
+                            modifyFishes.push({
+                                type: Number(item.slice(index + 1)),
+                                fish_name: item.slice(0, -index)
+                            })
+                        }
                     }
+
                     values.pondFishs = modifyFishes
                     this.props.dispatch({
                         type: 'pond/modifyPond',

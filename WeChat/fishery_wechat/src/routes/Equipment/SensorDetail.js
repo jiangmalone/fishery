@@ -60,7 +60,10 @@ class SensorDetail extends React.Component {
         this.getDataToday();
         this.getRealTimeData();
         this.getAllEquipment();
+        window.scrollTo(0, 0);
     }
+
+
 
     getDataToday = () => {
         this.setState({ animating: true })

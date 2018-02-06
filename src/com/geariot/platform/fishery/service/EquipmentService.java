@@ -793,7 +793,7 @@ public class EquipmentService {
 		if(null==da) {
 		return RESCODE.NOT_FOUND.getJSONRES();
 		}
-		da.setWatch(true);
+		da.setIsWatch(1);
 		//daDao.updateStatus(da);
 		return RESCODE.SUCCESS.getJSONRES();
 	}

@@ -30,6 +30,7 @@ import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.EightInteger;
 import com.geariot.platform.fishery.utils.FishCateList;
 
@@ -82,7 +83,7 @@ public class PondService {
 		Controller controller = null;
 		for (Integer pondId : pondIds) {
 			// 删除塘口时需要先将塘口的鱼种子表置为空,否则无法删除
-			pondDao.findPondByPondId(pondId).setFish_categorys(null);
+			pondDao.findPondByPondId(pondId).setPondFishs(null);   
 			pondDao.delete(pondId);
 			aioDao.updateByPondId(pondId);
 			List<Sensor> sensors = sensorDao.findSensorsByPondId(pondId);
@@ -159,6 +160,12 @@ public class PondService {
 		for (String string : fish_cate) {
 			category = new Fish_Category();
 			category.setFish_name(string);
+			if(string.contains("虾"))
+			category.setType(Constants.LOBSTER);
+			else if(string.contains("蟹"))
+				category.setType(Constants.CRAB);
+			else
+				category.setType(Constants.FISH);
 			logger.debug("鱼种名称:" + string);
 			fishCateDao.save(category);
 		}

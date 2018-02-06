@@ -107,7 +107,7 @@ class MyPond extends PureComponent {
                 address: record.address,
                 latitude: record.latitude,
                 longitude: record.longitude,
-                selectedFishes:record.fish_categorys
+                selectedFishes:record.pondFishs
             }
         })
         this.props.dispatch({
@@ -161,7 +161,7 @@ class MyPond extends PureComponent {
                             <span className="content-info">
                                 <i className="content-info-img poolFish-img" />
                                 <span className="content-info-value">
-                                    {item.fish_categorys.length > 0 ? `${item.fish_categorys[0]},${item.fish_categorys[1]}...` : ''}
+                                    {item.pondFishs.length > 0 ? `${item.pondFishs[0].fish_name},${item.pondFishs[1].fish_name}...` : ''}
                                 </span>
                             </span>
                             <span className="content-info">

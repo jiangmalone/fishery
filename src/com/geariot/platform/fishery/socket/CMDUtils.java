@@ -26,6 +26,7 @@ import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Pond;
+import com.geariot.platform.fishery.entities.PondFish;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
@@ -193,21 +194,20 @@ public class CMDUtils {
 				openId= wxuser.getOpenId();
 			 }
 		 } 
-		doJudge(deviceSn, waterTemp, oxygen,-1,openId);//判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
-		logger.debug("判断数据极限范围已完毕，准备存入数据库");
-		DataAlarm da=new DataAlarm();
-		da.setCreateDate(new Date());
-		da.setDeviceSn(deviceSn);
-		da.setRelation(relation);
-		da.setWay(way);
-		da.setDeviceName(aio.getName());
-		Pond pond=service.findPondById(pondId);
-		if(pond!=null) {
-		da.setPondName(pond.getName());
-		}else {
-			da.setPondName(null);
-		}
-		service.save(da);
+		 DataAlarm da=new DataAlarm();
+			da.setCreateDate(new Date());
+			da.setDeviceSn(deviceSn);
+			da.setRelation(relation);
+			da.setWay(way);
+			da.setDeviceName(aio.getName());
+			Pond pond=service.findPondById(pondId);
+			if(pond!=null) {
+			da.setPondName(pond.getName());
+			}else {
+				da.setPondName(null);
+			}
+		doJudge(deviceSn, waterTemp, oxygen,-1,openId,da);//判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
+		
 		service.update(sData);
 
 		response(16, data, readChannel);
@@ -571,21 +571,20 @@ public class CMDUtils {
 				openId= wxuser.getOpenId();
 			 }
 		 } 
-		doJudge(deviceSn, waterTemp, oxygen,phValue,openId);
-		logger.debug("判断数据极限范围已完毕，准备存入数据库");
-		DataAlarm da=new DataAlarm();
-		da.setCreateDate(new Date());
-		da.setDeviceSn(deviceSn);
-		da.setRelation(relation);
-		da.setWay(way);
-		da.setDeviceName(aio.getName());
-		Pond pond=service.findPondById(pondId);
-		if(pond!=null) {
-		da.setPondName(pond.getName());
-		}else {
-			da.setPondName(null);
-		}
-		service.save(da);
+		 DataAlarm da=new DataAlarm();
+			da.setCreateDate(new Date());
+			da.setDeviceSn(deviceSn);
+			da.setRelation(relation);
+			da.setWay(way);
+			da.setDeviceName(aio.getName());
+			Pond pond=service.findPondById(pondId);
+			if(pond!=null) {
+			da.setPondName(pond.getName());
+			}else {
+				da.setPondName(null);
+			}
+		doJudge(deviceSn, waterTemp, oxygen,phValue,openId,da);
+		
 		service.save(sData);
 
 		response(16, data, readChannel);
@@ -763,22 +762,22 @@ public class CMDUtils {
 	}
 	
 	
-	public static void doJudge(String deviceSn,float waterTemp,float oxygen,float ph,String openId) {
-		List<Fish_Category> fishCategorys=service.queryFishCategorysByDeviceSn(deviceSn);
+	public static void doJudge(String deviceSn,float waterTemp,float oxygen,float ph,String openId,DataAlarm da) {
+		List<PondFish> fishCategorys=service.queryFishCategorysByDeviceSn(deviceSn);
 		 logger.debug("准备根据上传的数据判断水温和溶氧值是否正常");
 		
 		 Set<Integer> typeset=new HashSet<Integer>();
 		if(!fishCategorys.isEmpty()) {
-		for(Fish_Category category:fishCategorys) {
+		for(PondFish category:fishCategorys) {
 			typeset.add(category.getType());
 		}
 		}
 		for(Integer typetemp:typeset) {
 		if(typeset.contains(typetemp)) {
-			JudgeAlarmRangeUtils.judgeDO(typetemp, oxygen,openId,deviceSn);
-			JudgeAlarmRangeUtils.judgeWaterTem(typetemp, waterTemp,openId,deviceSn);
+			JudgeAlarmRangeUtils.judgeDO(typetemp, oxygen,openId,deviceSn,da);
+			JudgeAlarmRangeUtils.judgeWaterTem(typetemp, waterTemp,openId,deviceSn,da);
 			if(-1!=ph)//ph不等于-1说明支持ph功能，然后判断，否则不判断
-			JudgeAlarmRangeUtils.judgePH(typetemp, ph,openId,deviceSn);
+			JudgeAlarmRangeUtils.judgePH(typetemp, ph,openId,deviceSn,da);
 		}
 		}
 	}

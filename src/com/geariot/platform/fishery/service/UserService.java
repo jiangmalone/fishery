@@ -34,6 +34,9 @@ public class UserService {
     @Autowired
     private PondDao pondDao;
     
+    @Autowired
+    private PondService pondService;
+    
 	public Map<String, Object> addWXUser(WXUser wxuser) {
 		WXUser exist = wxuserDao.findUserByOpenId(wxuser.getOpenId());
 		if (exist != null) {
@@ -63,6 +66,13 @@ public class UserService {
 			if (exist == null) {
 				return RESCODE.DELETE_ERROR.getJSONRES();
 			} else {
+				List<Pond> ponds = pondDao.queryPondByNameAndRelation(exist.getRelation(), null);
+				List<Integer> pondIds = new ArrayList<>();
+				for(Pond pond : ponds){
+					pondIds.add(pond.getId());
+				}
+				Integer[] obj = (Integer[])pondIds.toArray();
+				pondService.delPonds(obj);
 				companyDao.deleteCompany(companyId);
 			}
 		}
@@ -75,6 +85,13 @@ public class UserService {
 			if (exist == null) {
 				return RESCODE.DELETE_ERROR.getJSONRES();
 			} else {
+				List<Pond> ponds = pondDao.queryPondByNameAndRelation(exist.getRelation(), null);
+				List<Integer> pondIds = new ArrayList<>();
+				for(Pond pond : ponds){
+					pondIds.add(pond.getId());
+				}
+				Integer[] obj = (Integer[])pondIds.toArray();
+				pondService.delPonds(obj);
 				wxuserDao.deleteUser(WXUserId);
 			}
 		}

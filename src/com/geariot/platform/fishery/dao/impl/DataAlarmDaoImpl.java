@@ -52,7 +52,7 @@ public class DataAlarmDaoImpl implements DataAlarmDao {
 						.addInteger("isWatch",0)
 						.getQuery();*/
 		return getSession().createSQLQuery(hql).setString("relation", relation).setResultTransformer(Transformers.TO_LIST).setCacheable(Constants.SELECT_CACHE).list();
-		//return query.list();
+		//return query.list(); 
 	}
 
 

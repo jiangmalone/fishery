@@ -29,9 +29,9 @@ import com.geariot.platform.fishery.entities.Alarm;
 import com.geariot.platform.fishery.entities.Broken;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.DataAlarm;
-import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Pond;
+import com.geariot.platform.fishery.entities.PondFish;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
@@ -157,7 +157,7 @@ public class SocketSerivce {
 		controllerDao.updateController(controller);
 	}
 	
-	public List<Fish_Category> queryFishCategorysByDeviceSn(String deviceSn){
+	public List<PondFish> queryFishCategorysByDeviceSn(String deviceSn){
 		AIO aio=findAIOByDeviceSn(deviceSn);
 		Integer pondId=null;
 		if(null!=aio) {
@@ -165,7 +165,7 @@ public class SocketSerivce {
 		}
 		Pond pond=pondDao.findPondByPondId(pondId);
 		
-		return pond.getFish_categorys();
+		return pond.getPondFishs();
 		
 	}
 }

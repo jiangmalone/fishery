@@ -6,6 +6,7 @@ import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd';
 import { Link } from 'react-router-dom';
 import Addmodal from './Addmodal.js';
 import Mapmoal from './MapModal.js';
+import { pondFish } from '../../services/pond';
 
 const Search = Input.Search;
 @connect(state => ({
@@ -45,6 +46,16 @@ class PondList extends PureComponent {
             formData[key] = {
                 value: record[key],
                 name: key
+            }
+            if (key = 'pondFishs') {
+                let modifyFishes = []
+                for (let item of record['pondFishs']) {
+                    modifyFishes.push(item.fish_name + '-' + item.type)
+                }
+                formData[key] = {
+                    value: modifyFishes,
+                    name: key
+                }
             }
         }
         this.props.dispatch({
@@ -140,7 +151,7 @@ class PondList extends PureComponent {
             visible: modalVisible,
             wrapClassName: 'vertical-center-modal',
             address: address,
-            modifyId:this.state.modifyId,
+            modifyId: this.state.modifyId,
             fishCategories: fishCategories,
             onCancel: () => {
                 this.props.dispatch({
@@ -160,19 +171,45 @@ class PondList extends PureComponent {
             },
             onOk: (values) => {
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
+
+                    let newFishs = []
                     values.relation = this.props.match.params.relation;
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location ? this.props.address.location.lat : '';
                     values.longitude = this.props.address.location ? this.props.address.location.lng : '';
+                    if (values.pondFishs) {
+                        for (let item of values.pondFishs) {
+                            let index = item.indexOf('-');
+                            newFishs.push({
+                                type: Number(item.slice(index + 1)),
+                                fish_name: item.slice(0, -index)
+                            })
+                        }
+                    }
+                    values.pondFishs = newFishs
                     this.props.dispatch({
                         type: 'pond/addPond',
                         payload: values,
                     });
                 } else {
+
+                    let modifyFishes = []
                     values.id = this.state.modifyId;
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location.lat;
                     values.longitude = this.props.address.location.lng;
+                    values.relation = this.props.match.params.relation;
+                    if (values.pondFishs) {
+                        for (let item of values.pondFishs) {
+                            let index = item.indexOf('-');
+                            modifyFishes.push({
+                                type: Number(item.slice(index + 1)),
+                                fish_name: item.slice(0, -index)
+                            })
+                        }
+                    }
+
+                    values.pondFishs = modifyFishes
                     this.props.dispatch({
                         type: 'pond/modifyPond',
                         payload: {
@@ -334,7 +371,7 @@ class PondList extends PureComponent {
                     />
                     <Mapmoal {...mapModalProps} />
                 </Card>
-                <Button type="primary" style={{ float: 'right',marginTop:'10px' }} onClick={() => { history.back() }}>
+                <Button type="primary" style={{ float: 'right', marginTop: '10px' }} onClick={() => { history.back() }}>
                     返回上一页
                 </Button>
             </PageHeaderLayout>

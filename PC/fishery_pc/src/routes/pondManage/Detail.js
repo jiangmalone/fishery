@@ -5,6 +5,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { Table, Card, Row, Col, Input, Button, Popconfirm } from 'antd'
 import { Link } from 'react-router-dom'
 import { delSensorOrAIOBind } from '../../services/bind.js'
+import { pondFish } from '../../services/pond';
 
 
 const Search = Input.Search;
@@ -116,6 +117,13 @@ class PondDetail extends PureComponent {
                 </span>
             }
         }];
+        let pondFishs = ''
+        if(pondInfo.pondFishs.length>0) {
+            for(let item of pondInfo.pondFishs) {
+                pondFishs = pondFishs + item.fish_name + '、';
+            }
+        }
+  
         return (
             <PageHeaderLayout>
                 <Card title="塘口信息" bordered={false} style={{ marginBottom: '20px' }}>
@@ -125,7 +133,7 @@ class PondDetail extends PureComponent {
                         <Col span={4}>深度（m）：{pondInfo.depth || ''}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>养殖品种：{pondInfo.fish_categorys ? pondInfo.fish_categorys.join(',') : ''}</Col>
+                        <Col span={4}>养殖品种：{ pondFishs?pondFishs.slice(0,-1):''}</Col>
                         <Col span={4}>池塘水源：{pondInfo.water_source || ''}</Col>
                         <Col span={4}>底泥厚度(cm)：{pondInfo.sediment_thickness || ''}</Col>
                     </Row>

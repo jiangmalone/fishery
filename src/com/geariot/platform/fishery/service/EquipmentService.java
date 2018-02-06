@@ -3,6 +3,7 @@ package com.geariot.platform.fishery.service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -609,7 +610,7 @@ public class EquipmentService {
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd");
 		for (Sensor_Data sensor_Data : list) {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
@@ -669,7 +670,7 @@ public class EquipmentService {
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd");
 		for (Sensor_Data sensor_Data : list) {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
@@ -679,6 +680,14 @@ public class EquipmentService {
 			oxygens.add(oxygen);
 			temperatures.add(temperature);
 		}
+	  for(int i=0;i<phs.size();i++) {
+		 
+			  if(0==phs.get(i).getReceiveTime().compareTo(phs.get(i+1).getReceiveTime())) {
+				  
+			  }
+		  
+	  }
+		
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
 		map.put("oxygens", oxygens);

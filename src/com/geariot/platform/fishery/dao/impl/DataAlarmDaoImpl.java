@@ -1,5 +1,6 @@
 package com.geariot.platform.fishery.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.DataAlarmDao;
 import com.geariot.platform.fishery.entities.DataAlarm;
+import com.geariot.platform.fishery.socket.DataHandle;
 import com.geariot.platform.fishery.utils.Constants;
+import com.geariot.platform.fishery.utils.DateHandler;
 import com.geariot.platform.fishery.utils.QueryUtils;
 @Repository
 public class DataAlarmDaoImpl implements DataAlarmDao {
@@ -46,13 +49,11 @@ public class DataAlarmDaoImpl implements DataAlarmDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DataAlarm> queryDataAlarm(String relation) {
-		String hql="select * from DataAlarm where relation = :relation and DATE_SUB(CURDATE(),INTERVAL 3 Day) <= date(createDate) order by isWatch";
-		/*QueryUtils queryUtils = new QueryUtils(getSession(), hql);
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from DataAlarm");
 		Query query = queryUtils.addString("relation", relation)
-						.addInteger("isWatch",0)
-						.getQuery();*/
-		return getSession().createSQLQuery(hql).setString("relation", relation).setResultTransformer(Transformers.TO_LIST).setCacheable(Constants.SELECT_CACHE).list();
-		//return query.list(); 
+				.addDateInScope("createDate", DateHandler.threeDays(DateHandler.toCalendar(new Date())).getTime(), new Date())
+				.addOrderByAsc("isWatch").getQuery();
+		return query.list();
 	}
 
 

@@ -129,8 +129,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/alarmIsRead", method = RequestMethod.GET)
-	public Map<String, Object> alarmIsRead(DataAlarm da){
-		return equipmentService.alarmIsRead(da);
+	public Map<String, Object> alarmIsRead(Integer id){
+		return equipmentService.alarmIsRead(id);
 	}
 	
 	

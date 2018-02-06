@@ -788,9 +788,10 @@ public class EquipmentService {
 		return map;
 	}
 
-	public Map<String, Object> alarmIsRead(DataAlarm da) {
+	public Map<String, Object> alarmIsRead(Integer id) {
+		DataAlarm da=daDao.findDataAlarmById(id);
 		da.setWatch(true);
-		daDao.updateStatus(da);
+		//daDao.updateStatus(da);
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 

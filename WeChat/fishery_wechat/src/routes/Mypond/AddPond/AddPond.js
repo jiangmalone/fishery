@@ -33,28 +33,33 @@ class AddPond extends PureComponent {
     submit = () => {
         this.props.form.validateFields((error, value) => {
             if (!error) {
-            }
-            value.relation = window.localStorage.getItem('relation');
-            value.address = this.props.address;
-            value.longitude = this.props.longitude;
-            value.latitude = this.props.latitude;
-            value.fish_categorys = this.props.selectedFishes
-            if (this.props.match.params.id) {
-                value.id = this.props.match.params.id;
-                this.props.dispatch({
-                    type: 'pond/modifyPond',
-                    payload: value
-                })
-            } else {
-                this.props.dispatch({
-                    type: 'pond/addPond',
-                    payload: value
-                })
+                value.relation = window.localStorage.getItem('relation');
+                value.address = this.props.address;
+                value.longitude = this.props.longitude;
+                value.latitude = this.props.latitude;
+                value.pondFishs = this.props.selectedFishes
+                if (this.props.match.params.id) {
+                    value.id = this.props.match.params.id;
+                    this.props.dispatch({
+                        type: 'pond/modifyPond',
+                        payload: value
+                    })
+                } else {
+                    this.props.dispatch({
+                        type: 'pond/addPond',
+                        payload: value
+                    })
+                }
             }
         })
     }
     render() {
         const { getFieldProps, getFieldError, validateFields } = this.props.form;
+        let fishes = '';
+        for (let item of this.props.selectedFishes) {
+            fishes = fishes + item.fish_name + '、';
+        }
+        fishes.slice(0, -1);
         return (
             <div className="body-bac" style={{ height: '120%' }}>
                 <NavBar title={!this.props.match.params.id ? "添加塘口" : '修改塘口'} />
@@ -72,8 +77,8 @@ class AddPond extends PureComponent {
                         placeholder="请输入塘口名称"
                     ><span style={{ color: 'red' }}>*</span>塘口名称</InputItem>
                     <InputItem
-                        {...getFieldProps('water_source',{
-                            initialValue:''
+                        {...getFieldProps('water_source', {
+                            initialValue: ''
                         }) }
                         clear
                         className="addpond-input"
@@ -124,7 +129,7 @@ class AddPond extends PureComponent {
                                 transitionName: 'left'
                             }
                         })
-                    }} extra={<span>{this.props.selectedFishes ? this.props.selectedFishes.join(',') : ''}</span>} >
+                    }} extra={<span>{this.props.selectedFishes.length > 0 ? fishes : ''}</span>} >
                         品种
                     </Item>
                     <Item extra={<span>{this.props.address}<img src={require('../../../img/earth.png')} /></span>} onClick={() => {

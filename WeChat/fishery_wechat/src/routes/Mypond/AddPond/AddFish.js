@@ -32,7 +32,7 @@ class AddFish extends Component {
 
     selectFish(item, index) {
         let existIndex = this.state.selectedFish.findIndex((value) => {
-            return value == item.fish_name;
+            return value.fish_name == item.fish_name;
         });
         if (existIndex >= 0) {
             this.setState({
@@ -41,7 +41,7 @@ class AddFish extends Component {
             this[`span${index}`].className = "fish-name-selected "
         } else {
             this.setState({
-                selectedFish: update(this.state.selectedFish, { $push: [item.fish_name] })
+                selectedFish: update(this.state.selectedFish, { $push: [{fish_name:item.fish_name,type:item.type}] })
             })
             this[`span${index}`].className = "fish-name-selected active"
         }
@@ -60,7 +60,7 @@ class AddFish extends Component {
     render() {
         let hasSelected = ''
         for (let item of this.state.selectedFish) {
-            hasSelected = hasSelected + item + '、';
+            hasSelected = hasSelected + item.fish_name + '、';
         }
         hasSelected = hasSelected.slice(0, -1)
         const fishs = this.props.fishes.map((item, index) => {

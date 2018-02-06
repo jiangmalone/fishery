@@ -43,6 +43,7 @@ export default {
         *queryFish({ payload }, { call, put }) {
             const fishes = yield call(fishType);
             if (fishes.data.code == '0') {
+                console.log(fishes.data.data)
                 yield put({ type: 'changeState', payload: { fishes: fishes.data.data } })
             }
         },
@@ -61,7 +62,7 @@ export default {
                         formData: {
                             fields: {}
                         },
-                        selectedFishes:[],
+                        selectedFishes: [],
                         address: ''
                     }
                 })

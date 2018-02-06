@@ -67,8 +67,8 @@ public class PondDaoImpl implements PondDao {
 	}
 
 	@Override
-	public void merge(Pond pond) {
-		getSession().merge(pond);
+	public void update(Pond pond) {
+		getSession().update(pond);
 	}
 
 	@SuppressWarnings("unchecked")

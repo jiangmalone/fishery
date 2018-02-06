@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -604,6 +605,13 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.sevenData(device_sn);
 		}
+		
+		List<Sensor_Data> splitlist=new ArrayList<>();
+		int i=0;
+		while(i<2016) {
+			splitlist.add(list.get(i));
+			i=i+14;
+		}
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
@@ -611,7 +619,7 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-		for (Sensor_Data sensor_Data : list) {
+		for (Sensor_Data sensor_Data : splitlist) {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 			temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -665,6 +673,13 @@ public class EquipmentService {
 			list = sensor_DataDao.sevenData(device_sn);
 		}
 		
+		List<Sensor_Data> splitlist=new ArrayList<>();
+		int i=0;
+		while(i<2016) {
+			splitlist.add(list.get(i));
+			i=i+14;
+		}
+		
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
@@ -672,7 +687,7 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-		for (Sensor_Data sensor_Data : list) {
+		for (Sensor_Data sensor_Data : splitlist) {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 			temperature = new Temperature(sensor_Data.getWater_temperature(),

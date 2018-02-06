@@ -7,17 +7,19 @@ package com.geariot.platform.fishery.entities;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class Pond {
@@ -28,7 +30,7 @@ public class Pond {
 	private String address;				//塘口位置
 	private float longitude;			//塘口经度
 	private float latitude;				//塘口纬度
-	private List<Fish_Category> fish_categorys;	//塘口鱼种
+	private List<PondFish> pondFishs;	//塘口鱼种
 	private String water_source;		//塘口水源
 	private float sediment_thickness;	//底泥厚度
 	private float depth;				//塘口深度
@@ -105,13 +107,13 @@ public class Pond {
 	public void setRelation(String relation) {
 		this.relation = relation;
 	}
-	@ElementCollection(fetch=FetchType.EAGER, targetClass = String.class)
-	@CollectionTable(name = "pond_FishCate")
-	public List<Fish_Category> getFish_categorys() {
-		return fish_categorys;
+	@OneToMany(cascade = {CascadeType.ALL},orphanRemoval=true,fetch=FetchType.EAGER)
+	@JoinColumn(name="pondId", foreignKey=@ForeignKey(name="none"))
+	public List<PondFish> getPondFishs() {
+		return pondFishs;
 	}
-	public void setFish_categorys(List<Fish_Category> fish_categorys) {
-		this.fish_categorys = fish_categorys;
+	public void setPondFishs(List<PondFish> pondFishs) {
+		this.pondFishs = pondFishs;
 	}
 	@Transient
 	public List<Sensor> getSensors() {

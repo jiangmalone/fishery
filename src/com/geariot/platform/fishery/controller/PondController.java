@@ -31,6 +31,7 @@ public class PondController {
 	
 	@RequestMapping(value = "/modifyPond" , method = RequestMethod.POST)
 	public Map<String,Object> modifyPond(@RequestBody Pond pond){
+		System.out.println(pond);
 		return pondService.modifyPond(pond);
 	}
 	

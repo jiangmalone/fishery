@@ -3,7 +3,6 @@ package com.geariot.platform.fishery.service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.AeratorStatusDao;
-import com.geariot.platform.fishery.dao.AlarmMessageDao;
 import com.geariot.platform.fishery.dao.CompanyDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.dao.DataAlarmDao;
@@ -29,12 +27,10 @@ import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.AeratorStatus;
-import com.geariot.platform.fishery.entities.AlarmMessage;
 import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.entities.Limit_Install;
-import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.entities.Sensor_Data;
@@ -47,7 +43,6 @@ import com.geariot.platform.fishery.model.PH;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.model.Temperature;
 import com.geariot.platform.fishery.socket.CMDUtils;
-import com.geariot.platform.fishery.socket.TimerTask;
 import com.geariot.platform.fishery.utils.DataExportExcel;
 
 @Service
@@ -90,8 +85,7 @@ public class EquipmentService {
 	@Autowired
 	private DataAlarmDao daDao;
 	
-	@Autowired
-	private AlarmMessageDao amDao;
+
 
 	private String type = "";
 	private String relation = "";
@@ -780,28 +774,23 @@ public class EquipmentService {
 		if(null==relation) {
 			return RESCODE.NO_BIND_RELATION.getJSONRES();
 		}
-		DataAlarm dataAlarm=daDao.findDataAlarmByRelation(relation);
-		if(null==dataAlarm) {
+		List<DataAlarm> dalist=daDao.queryDataAlarm(relation);
+		if(null==dalist) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
 		
 		
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		
-		List<AlarmMessage> amlist=dataAlarm.getMessage();
-		for(AlarmMessage am:amlist) {
-			if(am.isWatch()) {
-				amlist.remove(am);
-			}
-		}
-		map.put("dataAlarm", dataAlarm);
+		
+		map.put("dataAlarm", dalist);
 		
 		return map;
 	}
 
-	public Map<String, Object> alarmIsRead(AlarmMessage am) {
-		am.setWatch(true);
-		amDao.updateStatus(am);
+	public Map<String, Object> alarmIsRead(DataAlarm da) {
+		da.setWatch(true);
+		daDao.updateStatus(da);
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 

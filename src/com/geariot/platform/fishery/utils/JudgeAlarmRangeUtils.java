@@ -1,10 +1,8 @@
 package com.geariot.platform.fishery.utils;
 
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 
-import com.geariot.platform.fishery.entities.AlarmMessage;
+import com.geariot.platform.fishery.entities.DataAlarm;
 import com.geariot.platform.fishery.model.AlarmRange;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.wxutils.WechatAlarmMessage;
@@ -16,8 +14,9 @@ public class JudgeAlarmRangeUtils {
     private static AlarmRange ar=LoadAlarmRange.getAlarmRange();
     private static Logger logger = Logger.getLogger(JudgeAlarmRangeUtils.class);
     
-	public static void judgeDO(int type, float DO,String openId,String deviceSn) {
+	public static void judgeDO(int type, float DO,String openId,String deviceSn,DataAlarm da) {
           String message=null;
+         
 		if(Constants.FISH==type||Constants.LOBSTER==type||Constants.CRAB==type) {
 			if(DO<ar.getFish_DO_low_limit()||DO<ar.getLobster_DO_low_limit()||DO<ar.getCrab_DO_low_limit()) {
 				if(openId!=null)
@@ -36,18 +35,17 @@ public class JudgeAlarmRangeUtils {
 			
 		}
 		if(message!=null) {
-		AlarmMessage am=new AlarmMessage();
-		am.setCreateDate(new Date());
-		am.setDeviceSn(deviceSn);
-		am.setMessage(message);
-		am.setAlarmType(0);
-		service.save(am);
+			da.setAlarmType(0);
+			da.setMessage(message);
+			
+			service.save(da);
 		}
 		
 	}
 
-	public static void judgeWaterTem(int type, float waterTem,String openId,String deviceSn) {
+	public static void judgeWaterTem(int type, float waterTem,String openId,String deviceSn,DataAlarm da) {
 		String message=null;
+		
 		if(Constants.FISH==type||Constants.LOBSTER==type||Constants.CRAB==type) {//是鱼
 			if(waterTem<ar.getFish_water_tem_low_limit()||waterTem<ar.getLobster_water_tem_low_limit()||waterTem<ar.getCrab_water_tem_low_limit()) {
 				if(openId!=null)
@@ -66,17 +64,16 @@ public class JudgeAlarmRangeUtils {
 		}
 		
 		if(message!=null) {
-			AlarmMessage am=new AlarmMessage();
-			am.setCreateDate(new Date());
-			am.setDeviceSn(deviceSn);
-			am.setMessage(message);
-			am.setAlarmType(1);
-			service.save(am);
+			
+			da.setAlarmType(1);
+			da.setMessage(message);
+			service.save(da);
 			}
 	}
 
-	public static void judgePH(int type, float ph,String openId,String deviceSn) {
+	public static void judgePH(int type, float ph,String openId,String deviceSn,DataAlarm da) {
 		String message=null;
+		
 		if(Constants.FISH==type||Constants.LOBSTER==type||Constants.CRAB==type) {//是鱼
 			if((ph<ar.getFish_ph_low_limit()||ph>ar.getFish_ph_high_limit())||(ph<ar.getLobster_ph_low_limit()||ph>ar.getLobster_ph_high_limit())||
 					(ph<ar.getCrab_ph_low_limit()||ph>ar.getCrab_ph_high_limit())) {
@@ -104,12 +101,11 @@ public class JudgeAlarmRangeUtils {
 		}
 		
 		if(message!=null) {
-			AlarmMessage am=new AlarmMessage();
-			am.setCreateDate(new Date());
-			am.setDeviceSn(deviceSn);
-			am.setMessage(message);
-			am.setAlarmType(2);
-			service.save(am);
+			
+			da.setAlarmType(2);
+			da.setMessage(message);
+			
+			service.save(da);
 			}
 	}
 	

@@ -785,22 +785,15 @@ public class EquipmentService {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
 		
-		//List<AlarmMessage>  amlist=amDao.queryAlarmMessageByDeviceSn(dataAlarm.getDeviceSn());
-	   //int pondId=dataAlarm.getPondId();
-		//Pond pond=pondDao.findPondByPondId(pondId);
+		
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-		//map.put("alarmMessageList", amlist);
-		/*if(pond!=null) {
-		map.put("pond", pond);
-		}else {
-			map.put("pond", null);
+		
+		List<AlarmMessage> amlist=dataAlarm.getMessage();
+		for(AlarmMessage am:amlist) {
+			if(am.isWatch()) {
+				amlist.remove(am);
+			}
 		}
-		AIO aio=aioDao.findAIOByDeviceSns(dataAlarm.getDeviceSn());
-		if(aio!=null) {
-		map.put("deviceName",aio.getName());
-		}else {
-			map.put("deviceName", null);
-		}*/
 		map.put("dataAlarm", dataAlarm);
 		
 		return map;

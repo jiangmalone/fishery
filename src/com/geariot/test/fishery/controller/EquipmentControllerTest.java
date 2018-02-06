@@ -132,4 +132,14 @@ public class EquipmentControllerTest {
 				.param("device_sn", "010001")
 				.param("way", "1")).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
+	
+	@Test
+	public void queryAlarmTest() throws Exception {
+		mockMvc.perform(get("/equipment/queryAlarm").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("openId", "11")
+				//.param("id", "1")
+				//.param("device_sn", "010001")
+				//.param("relation", "WX1")
+				).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
 }

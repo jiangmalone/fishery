@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.DataAlarmDao;
 import com.geariot.platform.fishery.entities.DataAlarm;
+import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.QueryUtils;
 @Repository
 public class DataAlarmDaoImpl implements DataAlarmDao {
@@ -50,7 +51,7 @@ public class DataAlarmDaoImpl implements DataAlarmDao {
 		Query query = queryUtils.addString("relation", relation)
 						.addInteger("isWatch",0)
 						.getQuery();*/
-		return getSession().createSQLQuery(hql).setString("relation", relation).setResultTransformer(Transformers.aliasToBean(DataAlarm.class)).list();
+		return getSession().createSQLQuery(hql).setString("relation", relation).setResultTransformer(Transformers.aliasToBean(DataAlarm.class)).setCacheable(Constants.SELECT_CACHE).list();
 		//return query.list();
 	}
 

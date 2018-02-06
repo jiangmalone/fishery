@@ -9,7 +9,7 @@ import javax.persistence.Id;
 public class PondFish {
 
 	private int id;
-	private String fishName;
+	private String fish_name;
 	private int type;
 	
 	@Id
@@ -20,11 +20,12 @@ public class PondFish {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getFishName() {
-		return fishName;
+	
+	public String getFish_name() {
+		return fish_name;
 	}
-	public void setFishName(String fishName) {
-		this.fishName = fishName;
+	public void setFish_name(String fish_name) {
+		this.fish_name = fish_name;
 	}
 	public int getType() {
 		return type;

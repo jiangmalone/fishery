@@ -22,7 +22,7 @@ public interface PondDao {
 	
 	int delete(int pondId);
 	
-	void merge(Pond pond);
+	void update(Pond pond);
 	
 	Pond findPondByPondId(int pondId);
 	

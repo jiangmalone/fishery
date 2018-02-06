@@ -116,13 +116,13 @@ public class PondService {
 		} else {
 			if (pondDao.checkPondExistByNameAndRelation(pond.getName(), pond.getRelation())) {
 				if (pond.getName().equals(exist.getName())) {
-					pondDao.merge(pond);
+					pondDao.update(pond);
 					return RESCODE.SUCCESS.getJSONRES(pond);
 				} else {
 					return RESCODE.POND_NAME_EXIST.getJSONRES();
 				}
 			} else {
-				pondDao.merge(pond);
+				pondDao.update(pond);
 				return RESCODE.SUCCESS.getJSONRES(pond);
 			}
 		}

@@ -46,11 +46,13 @@ public class DataAlarmDaoImpl implements DataAlarmDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DataAlarm> queryDataAlarm(String relation) {
-		QueryUtils queryUtils = new QueryUtils(getSession(), "from DataAlarm");
+		String hql="select * from DataAlarm where relation = :relation and DATE_SUB(CURDATE(),INTERVAL 3 Day) <= date(createDate) order by isWatch";
+		/*QueryUtils queryUtils = new QueryUtils(getSession(), hql);
 		Query query = queryUtils.addString("relation", relation)
 						.addInteger("isWatch",0)
-						.getQuery();
-		return query.list();
+						.getQuery();*/
+		return getSession().createSQLQuery(hql).setString("relation", relation).list();
+		//return query.list();
 	}
 
 

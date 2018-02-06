@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.AeratorStatusDao;
 import com.geariot.platform.fishery.dao.AlarmDao;
-import com.geariot.platform.fishery.dao.AlarmMessageDao;
 import com.geariot.platform.fishery.dao.BrokenDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.dao.DataAlarmDao;
@@ -27,7 +26,6 @@ import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Alarm;
-import com.geariot.platform.fishery.entities.AlarmMessage;
 import com.geariot.platform.fishery.entities.Broken;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.DataAlarm;
@@ -84,8 +82,7 @@ public class SocketSerivce {
 	@Autowired
 	private PondDao pondDao;
 	
-	@Autowired
-	private AlarmMessageDao amDao;
+	
 	
 	@Autowired
 	private DataAlarmDao daDao;
@@ -106,9 +103,7 @@ public class SocketSerivce {
 		daDao.save(da);
 	}
 	
-	public void save(AlarmMessage am) {
-		amDao.save(am);
-	}
+	
 	
 	public void save(Limit_Install limit_Install) {
 		limitDao.save(limit_Install);

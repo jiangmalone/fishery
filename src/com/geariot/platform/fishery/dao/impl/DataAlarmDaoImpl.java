@@ -1,5 +1,7 @@
 package com.geariot.platform.fishery.dao.impl;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -40,6 +42,15 @@ public class DataAlarmDaoImpl implements DataAlarmDao {
 	public void updateStatus(DataAlarm da) {
 		// TODO Auto-generated method stub
 		getSession().merge(da);
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DataAlarm> queryDataAlarm(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from DataAlarm");
+		Query query = queryUtils.addString("relation", relation)
+						.addInteger("isWatch",0)
+						.getQuery();
+		return query.list();
 	}
 
 

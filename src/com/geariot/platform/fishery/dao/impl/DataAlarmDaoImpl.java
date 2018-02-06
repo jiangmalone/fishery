@@ -51,7 +51,7 @@ public class DataAlarmDaoImpl implements DataAlarmDao {
 		Query query = queryUtils.addString("relation", relation)
 						.addInteger("isWatch",0)
 						.getQuery();*/
-		return getSession().createSQLQuery(hql).setString("relation", relation).setResultTransformer(Transformers.aliasToBean(DataAlarm.class)).setCacheable(Constants.SELECT_CACHE).list();
+		return getSession().createSQLQuery(hql).setString("relation", relation).setResultTransformer(Transformers.TO_LIST).setCacheable(Constants.SELECT_CACHE).list();
 		//return query.list();
 	}
 

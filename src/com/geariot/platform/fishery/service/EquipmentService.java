@@ -664,6 +664,7 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.sevenData(device_sn);
 		}
+		
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
@@ -680,13 +681,7 @@ public class EquipmentService {
 			oxygens.add(oxygen);
 			temperatures.add(temperature);
 		}
-	  for(int i=0;i<phs.size();i++) {
-		 
-			  if(0==phs.get(i).getReceiveTime().compareTo(phs.get(i+1).getReceiveTime())) {
-				  
-			  }
-		  
-	  }
+	  
 		
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);

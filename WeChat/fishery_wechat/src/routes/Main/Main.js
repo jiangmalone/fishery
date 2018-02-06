@@ -133,9 +133,9 @@ class Main extends React.Component {
             this.setState({ animating: false });
             if (res.data.code == '0') {
                 let ponds = this.state.ponds
-                ponds[pondIndex].aio[aioIndex].openState = onOff;
+                ponds[pondIndex].aio[aioIndex].on_off = openOrclose;
                 this.setState({ ponds: ponds })
-                if (onOff) {
+                if (openOrclose) {
                     Toast.success('开启增氧机成功!', 1)
                 } else {
                     Toast.success('关闭增氧机成功', 1)
@@ -298,8 +298,8 @@ class Main extends React.Component {
                 <button className={aio.timed ? 'auto-button do-auto' : 'auto-button'} onClick={() => this.showActionSheet(aio.device_sn, aio.way, aio.timed, pondIndex, aioIndex)} >定时</button>
                 <Switch
                     nanme='watertem'
-                    checked={aio.openState}
-                    onClick={() => { this.changeAeratorOnOff(aio.device_sn, aio.way, !aio.openState, pondIndex, aioIndex) }}
+                    checked={aio.onoff}
+                    onClick={() => { this.changeAeratorOnOff(aio.device_sn, aio.way, !aio.onoff, pondIndex, aioIndex) }}
                     className='state-switch'
                 />
             </div>

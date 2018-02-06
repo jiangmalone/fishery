@@ -50,7 +50,7 @@ public class DataAlarmDaoImpl implements DataAlarmDao {
 	@Override
 	public List<DataAlarm> queryDataAlarm(String relation) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from DataAlarm");
-		Query query = queryUtils.addString("relaion", relation)
+		Query query = queryUtils.addString("relation", relation)
 				.addDateInScope("createDate", DateHandler.threeDays(DateHandler.toCalendar(new Date())).getTime(), new Date())
 				.addOrderByAsc("isWatch").getQuery();
 		return query.list();

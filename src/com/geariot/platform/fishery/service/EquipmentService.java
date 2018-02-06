@@ -609,7 +609,13 @@ public class EquipmentService {
 		List<Sensor_Data> splitlist=new ArrayList<>();
 		int i=0;
 		while(i<2016) {
-			splitlist.add(list.get(i));
+			try {
+				splitlist.add(list.get(i));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				break;
+			}
+			
 			i=i+14;
 		}
 		List<PH> phs = new ArrayList<>();
@@ -676,7 +682,12 @@ public class EquipmentService {
 		List<Sensor_Data> splitlist=new ArrayList<>();
 		int i=0;
 		while(i<2016) {
-			splitlist.add(list.get(i));
+			try {
+				splitlist.add(list.get(i));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				break;
+			}
 			i=i+14;
 		}
 		

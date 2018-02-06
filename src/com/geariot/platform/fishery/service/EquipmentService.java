@@ -790,6 +790,9 @@ public class EquipmentService {
 
 	public Map<String, Object> alarmIsRead(Integer id) {
 		DataAlarm da=daDao.findDataAlarmById(id);
+		if(null==da) {
+		return RESCODE.NOT_FOUND.getJSONRES();
+		}
 		da.setWatch(true);
 		//daDao.updateStatus(da);
 		return RESCODE.SUCCESS.getJSONRES();

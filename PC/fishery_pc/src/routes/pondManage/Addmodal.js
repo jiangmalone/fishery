@@ -21,7 +21,7 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
     //     children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
     // }
     children = fishCategories.map((item, index) => {
-        return <Option key={item.id} value={item.fish_name}>{item.fish_name}</Option>
+        return <Option key={item.id} value={item.type}>{item.fish_name}</Option>
     })
     return <Modal title={modifyId ? "修改塘口":"新增塘口"}
         visible={visible}
@@ -59,9 +59,10 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 {getFieldDecorator('depth', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="m" />)}m
             </FormItem>
             <FormItem label="养殖品种" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('fish_categorys')(<Select
+                {getFieldDecorator('pondFishs')(<Select
                     mode="tags"
                     placeholder="请选择"
+                    labelInValue
                     style={{ width: '200px' }}
                 >
                     {children}
@@ -92,8 +93,8 @@ let AddModalForm = Form.create({
             depth: Form.createFormField({
                 ...props.formData.fields.depth
             }),
-            fish_categorys: Form.createFormField({
-                ...props.formData.fields.fish_categorys
+            pondFishs: Form.createFormField({
+                ...props.formData.fields.pondFishs
             }),
             address: Form.createFormField({
                 ...props.formData.fields.address

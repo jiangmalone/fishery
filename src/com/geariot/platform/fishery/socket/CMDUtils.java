@@ -402,7 +402,7 @@ public class CMDUtils {
 		String suffix6 = CommonUtils.printHexStringMerge(data, 14, 4);
 		 
 		logger.debug("增氧机开关记录");*/
-		response(8, data, readChannel);
+		response(14, data, readChannel);
 	}
 
 	// 参数operation=1为打开增氧机，为0是关闭增氧机

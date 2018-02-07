@@ -59,29 +59,6 @@ export default class WaterQualityCurve extends React.Component {
             way: this.state.way
         }).then((res) => {
             if (res && res.code == 0) {
-                // let oxygens = [], phs = [], temperatures = [];
-                // res.oxygens.map((oxygen, index) => {
-                //     oxygens.push({
-                //         x: new Date(Date.parse(oxygen.receiveTime.replace(/-/g, "/"))),
-                //         y1: oxygen.oxygen
-                //     })
-                // })
-                // res.phs.map((ph, index) => {
-                //     phs.push({
-                //         // x: new Date().getTime(ph.receiveTime),
-                //         x: new Date(Date.parse(ph.receiveTime.replace(/-/g, "/"))),
-                //         // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
-                //         y1: ph.ph
-                //     })
-                // })
-                // res.temperatures.map((temperature, index) => {
-                //     temperatures.push({
-                //         // x: new Date().getTime(temperature.receiveTime),
-                //         x: new Date(Date.parse(temperature.receiveTime.replace(/-/g, "/"))),
-                //         // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
-                //         y1: temperature.temperature
-                //     })
-                // })
                 this.setState({
                     oxygens: res.oxygens,
                     phs: res.phs,

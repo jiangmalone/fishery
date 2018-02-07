@@ -119,7 +119,7 @@ export default {
                     }
                 })
             } else {
-                message.error(response.msg,1)
+                message.error(response.msg, 1)
             }
         },
         *modifyPond({ payload }, { call, put }) {

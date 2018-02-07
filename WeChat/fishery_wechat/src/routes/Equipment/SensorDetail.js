@@ -257,7 +257,9 @@ class SensorDetail extends React.Component {
                         }
                     })
                 }}></i>
-                {this.state.name + (this.state.way != 0 ? ('(' + this.state.way + '路)') : '')}
+                <span>
+                    {this.state.name + ((this.state.way != 0) ? ('-' + this.state.way + '路') : '')}
+                </span>
                 <i className="right-item-none list" onClick={() => {
                     this.setState({ isShowMore: !this.state.isShowMore })
                 }} ></i>
@@ -270,8 +272,6 @@ class SensorDetail extends React.Component {
                         overflow: { adjustY: 0, adjustX: 0 },
                         offset: [-20, -10],
                     }}
-
-                    // onVisibleChange={this.handleVisibleChange}
                     onSelect={this.onSelect}
                 >
                     <div style={{
@@ -279,7 +279,7 @@ class SensorDetail extends React.Component {
                         padding: '0 15px',
                         marginRight: '-15px',
                         display: 'flex',
-                        maxHeight:'.3rem',
+                        maxHeight: '.3rem',
                         alignItems: 'center',
                     }}
                     >
@@ -294,7 +294,7 @@ class SensorDetail extends React.Component {
                     <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
                 </div>
                 {(this.state.way != 0 && this.state.status == 0) &&
-                 <img src={correct} className='correct' onClick={() => {this.serverCheck()}} />}
+                    <img src={correct} className='correct' onClick={() => { this.serverCheck() }} />}
             </div>
             {this.state.isShowDetail && <div className='detail'>
                 <div>实时溶氧：&nbsp;&nbsp; {this.state.realTimeData.oxygen}</div>

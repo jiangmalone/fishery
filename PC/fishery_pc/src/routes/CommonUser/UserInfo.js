@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { Table, Card, Row, Col, Input, Button, Popconfirm,message } from 'antd';
+import { Table, Card, Row, Col, Input, Button, Popconfirm, message } from 'antd';
 import { wxuserDetail, relationDetail } from '../../services/user.js';
 import { myEquipment } from '../../services/equipment.js';
 import { Link } from 'react-router-dom';
@@ -32,7 +32,7 @@ class UserInfo extends PureComponent {
             userInfo: {},
             pondPagination: {},
             euipPagination: {},
-            modifyId:''
+            modifyId: ''
         }
     }
     componentDidMount() {
@@ -196,10 +196,17 @@ class UserInfo extends PureComponent {
             key: 'depth',
         }, {
             title: '品种',
-            dataIndex: 'fish_categorys',
-            key: 'fish_categorys',
+            dataIndex: 'pondFishs',
+            key: 'pondFishs',
             render: (text, record, index) => {
-                return <div>{text ? text.join(',') : ''}</div>
+                let fishs = '';
+                if(text.length>0) {
+                    for (let item of text) {
+                        fishs = fishs + item.fish_name + '、'
+                    }
+                    fishs = fishs.slice(0,-1);
+                }
+                return <div>{text ? fishs : ''}</div>
             }
         }, {
             title: '池塘水源',
@@ -229,7 +236,7 @@ class UserInfo extends PureComponent {
             visible: modalVisible,
             wrapClassName: 'vertical-center-modal',
             address: address,
-            modifyId:this.state.modifyId,
+            modifyId: this.state.modifyId,
             fishCategories: fishCategories,
             onCancel: () => {
                 this.props.dispatch({
@@ -253,11 +260,11 @@ class UserInfo extends PureComponent {
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location ? this.props.address.location.lat : '';
                     values.longitude = this.props.address.location ? this.props.address.location.lng : '';
-                    addPond(values).then((response)=>{
+                    addPond(values).then((response) => {
                         if (response.code == '0') {
                             this.onSearchUserPond();
                         } else {
-                            message.error(response.msg,1)
+                            message.error(response.msg, 1)
                         }
                     })
                 } else {
@@ -266,7 +273,7 @@ class UserInfo extends PureComponent {
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location.lat;
                     values.longitude = this.props.address.location.lng;
-                    modifyPond(values).then((response)=>{
+                    modifyPond(values).then((response) => {
                         if (response.code == '0') {
                             this.onSearchUserPond();
                         }
@@ -353,9 +360,9 @@ class UserInfo extends PureComponent {
                 </Card>
 
                 <Card title="塘口信息" bordered={false} style={{ marginBottom: '20px' }}>
-                    <Button onClick={()=>{
+                    <Button onClick={() => {
                         this.showAddModal()
-                    }} style={{marginBottom:'10px'}}>新增塘口</Button>
+                    }} style={{ marginBottom: '10px' }}>新增塘口</Button>
                     <Table loading={loading}
                         dataSource={this.state.pondList}
                         columns={columns}

@@ -7,6 +7,7 @@ import java.nio.channels.SocketChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -140,15 +141,16 @@ public class CMDUtils {
 		}
 		byte[] request = null;
 		String temp = StringUtils.add(limit.getDevice_sn(), limit.getWay(), 2)
-				.append(Integer.toHexString(Float.floatToIntBits(limit.getHigh_limit())))
-				.append(Integer.toHexString(Float.floatToIntBits(limit.getUp_limit())))
-				.append(Integer.toHexString(Float.floatToIntBits(limit.getLow_limit()))).append("          ")
+				.append(CommonUtils.reverse(Integer.toHexString(Float.floatToIntBits(limit.getHigh_limit()))))
+				.append(CommonUtils.reverse(Integer.toHexString(Float.floatToIntBits(limit.getUp_limit()))))
+				.append(CommonUtils.reverse(Integer.toHexString(Float.floatToIntBits(limit.getLow_limit())))).append("          ")
 				.toString();
 
 		request = CommonUtils.toByteArray(temp);
+	
 		request[19] = CommonUtils.arrayMerge(request, 2, 17);
 		CommonUtils.addSuffix(request, 20);
-
+		
 		ByteBuffer outBuffer = ByteBuffer.wrap(request);
 
 		try {

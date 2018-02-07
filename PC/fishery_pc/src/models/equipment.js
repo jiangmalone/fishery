@@ -47,19 +47,26 @@ export default {
         payload: true,
       });
       const response = yield call(companyFindEquipment, payload);
-      if (response.code == "0") {
-        for (let item of response.data) {
-          item.key = item.device_sn
-        }
-        yield put({
-          type: 'appendList',
-          payload: {
-            list: Array.isArray(response.data) ? response.data : [],
-            pagination: {
-              total: response.realSize,
-            }
+      if (response.code == "0" || response.code == '2') {
+        if (response.data && response.data.length > 0) {
+          for (let item of response.data) {
+            item.key = item.device_sn
           }
-        });
+        } else {
+          response.data = [];
+        }
+        console.log(response.data);
+        yield put({
+            type: 'appendList',
+            payload: {
+              list: Array.isArray(response.data) ? response.data : [],
+              pagination: {
+                total: response.realSize,
+              }
+            }
+          });
+         
+        
       } else if (response.code) {
         message.error(response.msg, 1);
       } 

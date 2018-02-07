@@ -45,6 +45,7 @@ export default class EquipmentDetail extends React.Component {
                 up_limit: '',
                 high_limit: ''
             },
+            user:'',
             timeSections: [['', '']],
             timeSectionsString: [['', '']],
             isOpen: false  //当前路的增氧是否打开
@@ -76,8 +77,6 @@ export default class EquipmentDetail extends React.Component {
                     pondId: res.data.pondId,
                     status: state
                 })
-
-
                 let portBinds = res.data.portBinds;
                 let standardPorts = [];
                 let bindPorts = [];
@@ -120,7 +119,6 @@ export default class EquipmentDetail extends React.Component {
         })
     }
     getRealTimeData = () => {
-
         realTimeData({
             device_sn: this.props.match.params.device_sn,
             way: this.state.way
@@ -164,7 +162,7 @@ export default class EquipmentDetail extends React.Component {
                         controller = { name: item.name, id: item.id, ports: usefulPorts };
                         controllers.push(controller);
                     })
-                    this.setState({ controllers: controllers })
+                    this.setState({ controllers: controllers ,user:res.user})
                 }
             } else {
                 message.error(res.msg, 1);
@@ -310,7 +308,7 @@ export default class EquipmentDetail extends React.Component {
         if (type) {
             let oxygenSetForm = this.state.oxygenSetForm;
             oxygenSetForm[type] = value;
-            this.setState({oxygenSetForm: oxygenSetForm});
+            this.setState({ oxygenSetForm: oxygenSetForm });
         }
     }
 
@@ -348,7 +346,7 @@ export default class EquipmentDetail extends React.Component {
         if (timeSections.length == 1) {
             if (timeSections[0][0] == '' && timeSections[0][1] == '') {
                 timeSections = [];
-            }   
+            }
         }
         for (let i = 0; i < timeSections.length; i++) {
             if (!timeSections[i][0] || !timeSections[i][1]) {
@@ -356,46 +354,46 @@ export default class EquipmentDetail extends React.Component {
                 return;
             }
             for (let j = i + 1; j < timeSections.length; j++) {
-                if (timeSections[i][0] < timeSections[j][0] && timeSections[i][1] > timeSections[j][0] || 
-                    timeSections[j][0] < timeSections[i][0] && timeSections[j][1] > timeSections[i][0] 
+                if (timeSections[i][0] < timeSections[j][0] && timeSections[i][1] > timeSections[j][0] ||
+                    timeSections[j][0] < timeSections[i][0] && timeSections[j][1] > timeSections[i][0]
                 ) {
                     message.warn('时间段不能交错，请修改后提交！', 1);
                     return;
                 }
-           }
+            }
         }
 
         let timers = [];
-                oxygenSetForm.device_sn = this.props.match.params.device_sn;
-                oxygenSetForm.way = this.state.way;
-                timeSections.map((item, index) => {
-                    timers.push({
-                        startTime: item[0],
-                        endTime: item[1],
-                        way: this.state.way,
-                        device_sn: this.props.match.params.device_sn,                                                                       
-                    })
-                })
+        oxygenSetForm.device_sn = this.props.match.params.device_sn;
+        oxygenSetForm.way = this.state.way;
+        timeSections.map((item, index) => {
+            timers.push({
+                startTime: item[0],
+                endTime: item[1],
+                way: this.state.way,
+                device_sn: this.props.match.params.device_sn,
+            })
+        })
 
-                autoSet({
-                    limit_Install:oxygenSetForm,
-                    timers: timers
-                }).then(res => {
-                    if (res.code == 0) {
-                        message.success('设置成功', 1);
-                        this.setState({
-                            oxygenVisible: false,
-                            timeSections: [['', '']],
-                            timeSectionsString: [['', '']],
-                        })
-                    } else {
-                        message.error(res.msg, 1)
-                    }
-                    console.log(res);
-                }).catch(error => {
-                    console.log(error)
-                    message.error('设置失败，请重试!', 1)
+        autoSet({
+            limit_Install: oxygenSetForm,
+            timers: timers
+        }).then(res => {
+            if (res.code == 0) {
+                message.success('设置成功', 1);
+                this.setState({
+                    oxygenVisible: false,
+                    timeSections: [['', '']],
+                    timeSectionsString: [['', '']],
                 })
+            } else {
+                message.error(res.msg, 1)
+            }
+            console.log(res);
+        }).catch(error => {
+            console.log(error)
+            message.error('设置失败，请重试!', 1)
+        })
     }
 
     handleOxygenOpenOrClose = () => {
@@ -406,7 +404,7 @@ export default class EquipmentDetail extends React.Component {
             openOrclose: this.state.isOpen ? 1 : 0
         }).then((res) => {
             if (res.code == '0') {
-                this.setState({isOpen: !this.state.isOpen})
+                this.setState({ isOpen: !this.state.isOpen })
                 if (onOff) {
                     message.success('开启增氧机成功!', 1)
                 } else {
@@ -421,7 +419,7 @@ export default class EquipmentDetail extends React.Component {
         });
     }
 
-    timeOnChange = (time, timeString, index, aryIndex) =>  {
+    timeOnChange = (time, timeString, index, aryIndex) => {
         console.log(time, timeString, index, aryIndex);
         let timeSections = this.state.timeSections;
         let timeSectionsString = this.state.timeSectionsString;
@@ -429,15 +427,15 @@ export default class EquipmentDetail extends React.Component {
         let timeSectionString = timeSectionsString[index];
 
         if (aryIndex == 0) {
-            if(timeSection[1]) {
-                if(timeSection[1] < time) {
+            if (timeSection[1]) {
+                if (timeSection[1] < time) {
                     message.error('开始时间不能大于等于结束时间', 1);
                     return;
                 }
             }
         } else if (aryIndex == 1) {
-            if(timeSection[0]) {
-                if(timeSection[0] > time) {
+            if (timeSection[0]) {
+                if (timeSection[0] > time) {
                     message.error('开始时间不能大于等于结束时间', 1);
                     return;
                 }
@@ -445,9 +443,9 @@ export default class EquipmentDetail extends React.Component {
         }
         timeSection[aryIndex] = time;
         timeSectionString[aryIndex] = timeString;
-        this.setState({timeSections: timeSections, timeSectionsString: timeSectionsString});
+        this.setState({ timeSections: timeSections, timeSectionsString: timeSectionsString });
     }
-    
+
     addTimeSection = () => {
         let timeSections = this.state.timeSections
         let timeSectionsString = this.state.timeSectionsString;
@@ -462,8 +460,8 @@ export default class EquipmentDetail extends React.Component {
     deleteTimeSeciton = (index) => {
         let timeSections = this.state.timeSections
         let timeSectionsString = this.state.timeSectionsString;
-        timeSections.splice(index,1);
-        timeSectionsString.splice(index,1);
+        timeSections.splice(index, 1);
+        timeSectionsString.splice(index, 1);
         this.setState({
             timeSections: timeSections,
             timeSectionsString: timeSectionsString,
@@ -559,34 +557,35 @@ export default class EquipmentDetail extends React.Component {
             way: this.state.way
         }
         data = JSON.stringify(data);
-       
+
         const times = this.state.timeSections.map((item, index) => {
             return <Row gutter={18} style={{ marginBottom: '10px' }}>
-                    <Col span={4} >
+                <Col span={4} >
                     {index == 0 ? <Button type="primary" shape="circle" icon="plus" onClick={this.addTimeSection} /> :
                         <Button type='danger' shape="circle" icon='minus' onClick={() => this.deleteTimeSeciton(index)} />
-                        }
-                    </Col>
-                    <Col span={4} style={{ textAlign: 'right', verticalAlign: 'middle' }}>
+                    }
+                </Col>
+                <Col span={4} style={{ textAlign: 'right', verticalAlign: 'middle' }}>
                     定时开启:
                     </Col>
-                    <Col span={7}>
+                <Col span={7}>
                     <TimePicker format={format} minuteStep={30} value={item[0]} onChange={(time, timeStr) => this.timeOnChange(time, timeStr, index, 0)} />
-                    </Col>
-                    {/* onChange={time => this.handleTimeChange(time, index, 0 ) */}
-                    <Col  span={1} style={{paddingLeft: '5px'}} >
-                        —
+                </Col>
+                {/* onChange={time => this.handleTimeChange(time, index, 0 ) */}
+                <Col span={1} style={{ paddingLeft: '5px' }} >
+                    —
                         </Col>
-                    {/*  onChange={time => this.handleTimeChange(time, index, 1 )} */}
-                    <Col  span={7}>
-                        <TimePicker format={format} minuteStep={30} value={item[1]} onChange={(time, timeStr) => this.timeOnChange(time, timeStr, index, 1)}  />
-                    </Col>
-                </Row>
+                {/*  onChange={time => this.handleTimeChange(time, index, 1 )} */}
+                <Col span={7}>
+                    <TimePicker format={format} minuteStep={30} value={item[1]} onChange={(time, timeStr) => this.timeOnChange(time, timeStr, index, 1)} />
+                </Col>
+            </Row>
         })
         return (
             <PageHeaderLayout >
                 <Card bordered={false}>
-                    <Row style={{ fontSize: 17 }}>
+                    <Row style={{ fontSize: 17 }}>所有者：{this.state.user}</Row>
+                    <Row style={{ fontSize: 17 ,marginTop: 20}}>
                         <Col span={8}>设备编号: &nbsp;&nbsp; {this.props.match.params.device_sn}</Col>
                         <Col span={8}>设备名称: &nbsp; {this.state.deviceName}</Col>
                         <Col span={8}>设备状态: &nbsp; {this.state.status}</Col>
@@ -618,7 +617,7 @@ export default class EquipmentDetail extends React.Component {
                         </Col>}
 
                         {this.state.way != 0 && <Col span={2} offset={2} >
-                            <Button onClick={() => {this.setState({oxygenVisible: true})}} >自动增氧设置</Button>
+                            <Button onClick={() => { this.setState({ oxygenVisible: true }) }} >自动增氧设置</Button>
                         </Col>
                         }
 
@@ -698,7 +697,7 @@ export default class EquipmentDetail extends React.Component {
                     optionFilterProp="children"
                     okText="确认"
                     cancelText="取消">
-                    <Row gutter={18} style={{ marginBottom: '10px'}}>
+                    <Row gutter={18} style={{ marginBottom: '10px' }}>
                         <Col span={8} style={{ textAlign: 'right' }}>
                             增氧方式:
                             </Col>
@@ -711,7 +710,7 @@ export default class EquipmentDetail extends React.Component {
                             开关控制:
                             </Col>
                         <Col span={8}>
-                        <Switch checked={this.state.isOpen}  onChange={this.handleOxygenOpenOrClose} />
+                            <Switch checked={this.state.isOpen} onChange={this.handleOxygenOpenOrClose} />
                         </Col>
                     </Row>
                     <Row gutter={18} style={{ marginBottom: '10px', marginTop: '20px' }}>
@@ -721,8 +720,8 @@ export default class EquipmentDetail extends React.Component {
                         <Col span={8}>
                             <Input value={this.state.oxygenSetForm.low_limit} onChange={(e) => this.onOxygenSetFormChange('low_limit', e.target.value)} />
                         </Col>
-                        <Col  span={1}>
-                        mg/l
+                        <Col span={1}>
+                            mg/l
                         </Col>
                     </Row>
                     <Row gutter={18} style={{ marginBottom: '10px' }}>
@@ -732,8 +731,8 @@ export default class EquipmentDetail extends React.Component {
                         <Col span={8}>
                             <Input value={this.state.oxygenSetForm.up_limit} onChange={(e) => this.onOxygenSetFormChange('up_limit', e.target.value)} />
                         </Col>
-                        <Col  span={1}>
-                        mg/l
+                        <Col span={1}>
+                            mg/l
                         </Col>
                     </Row>
                     <Row gutter={18} style={{ marginBottom: '10px' }}>
@@ -743,8 +742,8 @@ export default class EquipmentDetail extends React.Component {
                         <Col span={8}>
                             <Input value={this.state.oxygenSetForm.high_limit} onChange={(e) => this.onOxygenSetFormChange('high_limit', e.target.value)} />
                         </Col>
-                        <Col  span={1}>
-                        mg/l
+                        <Col span={1}>
+                            mg/l
                         </Col>
                     </Row>
                     {times}
@@ -763,7 +762,7 @@ export default class EquipmentDetail extends React.Component {
                         <TimePicker format={format} minuteStep={30} onChange={this.timeOnChange}  />
                         </Col>
                     </Row> */}
-                    
+
                 </Modal >
                 <Button type="primary" style={{ float: 'right' }} onClick={() => { history.back() }}>
                     返回上一页

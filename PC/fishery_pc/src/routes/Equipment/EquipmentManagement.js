@@ -12,7 +12,8 @@ import Switch from 'antd/lib/switch';
     list: state.equipment.list,
     loading: state.equipment.loading,
     pagination: state.equipment.pagination,
-    showAddModal: state.equipment.showAddModal
+    showAddModal: state.equipment.showAddModal,
+    user: state.equipment.user
 }))
 
 export default class EquipmentManagement extends React.Component {
@@ -335,6 +336,12 @@ export default class EquipmentManagement extends React.Component {
                         </Col>
                         <Col span={2}>
                             <Button type="primary" onClick={this.doSearch} >查询</Button>
+                        </Col>
+
+                    </Row>
+                    <Row>
+                        <Col span={5} style={{ height: '32px', lineHeight: '32px' }}>
+                            所有者：{this.props.user}
                         </Col>
                     </Row>
                 </Card>

@@ -147,7 +147,13 @@ class AutoOxygenationSetting extends React.Component {
     handleTimeChange = (time, index, aryIndex) => {
         let timeSections = this.state.timeSections;
         let timeSection = timeSections[index];
-
+        const min = time.minute();
+        if (min < 30) {
+            time.minute(0);
+        } else {
+            time.minute(30);
+        }
+        console.log(time.minute());
         if (aryIndex == 0) {
             if(timeSection[1]) {
                 if(timeSection[1] < time) {

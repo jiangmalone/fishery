@@ -10,11 +10,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.geariot.platform.fishery.dao.AIODao;
+import com.geariot.platform.fishery.dao.AeratorStatusDao;
 import com.geariot.platform.fishery.dao.CompanyDao;
+import com.geariot.platform.fishery.dao.ControllerDao;
+import com.geariot.platform.fishery.dao.LimitDao;
 import com.geariot.platform.fishery.dao.PondDao;
+import com.geariot.platform.fishery.dao.PondFishDao;
+import com.geariot.platform.fishery.dao.SensorDao;
+import com.geariot.platform.fishery.dao.Sensor_ControllerDao;
+import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
+import com.geariot.platform.fishery.dao.impl.LimitDaoImpl;
+import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Company;
+import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Pond;
+import com.geariot.platform.fishery.entities.Sensor;
+import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
@@ -33,6 +47,30 @@ public class UserService {
     
     @Autowired
     private PondDao pondDao;
+    
+    @Autowired
+    private AIODao aioDao;
+    
+    @Autowired
+    private AeratorStatusDao aeratorStatusDao;
+    
+    @Autowired
+    private LimitDao limitDao;
+    
+    @Autowired
+    private SensorDao sensorDao;
+    
+    @Autowired
+    private TimerDao timerDao;
+    
+    @Autowired
+    private ControllerDao controllerDao;
+    
+    @Autowired
+    private Sensor_ControllerDao sensor_ControllerDao;
+    
+    @Autowired
+    private PondFishDao pondFishDao;
     
     @Autowired
     private PondService pondService;
@@ -66,13 +104,31 @@ public class UserService {
 			if (exist == null) {
 				return RESCODE.DELETE_ERROR.getJSONRES();
 			} else {
-				List<Pond> ponds = pondDao.queryPondByNameAndRelation(exist.getRelation(), null);
-				List<Integer> pondIds = new ArrayList<>();
-				for(Pond pond : ponds){
-					pondIds.add(pond.getId());
+				List<AIO> aios = aioDao.queryAIOByNameAndRelation(exist.getRelation(), null);
+				for(AIO aio : aios){
+					aeratorStatusDao.delete(aio.getDevice_sn());
+					limitDao.delete(aio.getDevice_sn());
+					timerDao.delete(aio.getDevice_sn());
 				}
-				Integer[] obj = (Integer[])pondIds.toArray(new Integer[pondIds.size()]);
-				pondService.delPonds(obj);
+				aioDao.deleteByRelation(exist.getRelation());
+				//删除控制器和传感器前需要将之间的绑定关系删掉,再删两者
+				List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(exist.getRelation(), null);
+				for(Sensor sensor : sensors){
+					limitDao.delete(sensor.getDevice_sn());
+					timerDao.delete(sensor.getDevice_sn());
+					sensor_ControllerDao.delete(sensor.getId());
+				}
+				List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(exist.getRelation(), null);
+				for(Controller Controller : controllers){
+					sensor_ControllerDao.deleteController(Controller.getId());
+				}
+				sensorDao.deleteByRelation(exist.getRelation());
+				controllerDao.deleteByRelation(exist.getRelation());
+				List<Pond> ponds = pondDao.queryPondByNameAndRelation(exist.getRelation(), null);
+				for(Pond pond : ponds){
+					pondFishDao.deleteByPondId(pond.getId());
+				}
+				pondDao.deleteByRelation(exist.getRelation());
 				companyDao.deleteCompany(companyId);
 			}
 		}
@@ -85,13 +141,32 @@ public class UserService {
 			if (exist == null) {
 				return RESCODE.DELETE_ERROR.getJSONRES();
 			} else {
-				List<Pond> ponds = pondDao.queryPondByNameAndRelation(exist.getRelation(), null);
-				List<Integer> pondIds = new ArrayList<>();
-				for(Pond pond : ponds){
-					pondIds.add(pond.getId());
+				//删名下一体机前需要将AeratorStatus记录删掉
+				List<AIO> aios = aioDao.queryAIOByNameAndRelation(exist.getRelation(), null);
+				for(AIO aio : aios){
+					aeratorStatusDao.delete(aio.getDevice_sn());
+					limitDao.delete(aio.getDevice_sn());
+					timerDao.delete(aio.getDevice_sn());
 				}
-				Integer[] obj = (Integer[])pondIds.toArray(new Integer[pondIds.size()]);
-				pondService.delPonds(obj);
+				aioDao.deleteByRelation(exist.getRelation());
+				//删除控制器和传感器前需要将之间的绑定关系删掉,再删两者
+				List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(exist.getRelation(), null);
+				for(Sensor sensor : sensors){
+					limitDao.delete(sensor.getDevice_sn());
+					timerDao.delete(sensor.getDevice_sn());
+					sensor_ControllerDao.delete(sensor.getId());
+				}
+				List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(exist.getRelation(), null);
+				for(Controller Controller : controllers){
+					sensor_ControllerDao.deleteController(Controller.getId());
+				}
+				sensorDao.deleteByRelation(exist.getRelation());
+				controllerDao.deleteByRelation(exist.getRelation());
+				List<Pond> ponds = pondDao.queryPondByNameAndRelation(exist.getRelation(), null);
+				for(Pond pond : ponds){
+					pondFishDao.deleteByPondId(pond.getId());
+				}
+				pondDao.deleteByRelation(exist.getRelation());
 				wxuserDao.deleteUser(WXUserId);
 			}
 		}

@@ -14,6 +14,8 @@ public interface AIODao {
 	
 	int delete(String deviceSns);
 	
+	void deleteByRelation(String relation);
+	
 	void updateByPondId(int pondId);
 
 	AIO findAIOById(int AIOId);

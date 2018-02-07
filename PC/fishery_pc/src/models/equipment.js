@@ -98,7 +98,7 @@ export default {
           type: 'modifyList',
           payload: {
             index: payload.index,
-            data: response.sensor,
+            data: response.equipment,
           },
         });
 

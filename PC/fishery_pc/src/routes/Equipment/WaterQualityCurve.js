@@ -2,15 +2,29 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import { Row, Col, Card, Input, Icon, Button, Table, Radio, DatePicker, message } from 'antd';
-const {RangePicker} = DatePicker;
+const { RangePicker } = DatePicker;
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { TimelineChart } from '../../components/Charts';
 import Trend from '../../components/Trend';
 import NumberInfo from '../../components/NumberInfo';
 import { getDataToday, getDataAll } from '../../services/equipment';
+import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
 import moment from 'moment';
 import numeral from 'numeral';
 const chartData = [];
+const cols = {
+    'ph': { min: 0 },
+    'receiveTime': {}
+};
+const oCols = {
+    'o': { min: 0 },
+    'receiveTime': {}
+};
+
+const waterCols = {
+    '温度': { min: 0 },
+    'receiveTime': {}
+};
 for (let i = 0; i < 20; i += 1) {
     chartData.push({
         x: (new Date().getTime()) + (1000 * 60 * 30 * i),
@@ -45,33 +59,33 @@ export default class WaterQualityCurve extends React.Component {
             way: this.state.way
         }).then((res) => {
             if (res && res.code == 0) {
-                let oxygens = [], phs = [], temperatures = [];
-                res.oxygens.map((oxygen, index) => {
-                    oxygens.push({
-                        x: new Date(Date.parse(oxygen.receiveTime.replace(/-/g, "/"))),
-                        y1: oxygen.oxygen
-                    })
-                })
-                res.phs.map((ph, index) => {
-                    phs.push({
-                        // x: new Date().getTime(ph.receiveTime),
-                        x: new Date(Date.parse(ph.receiveTime.replace(/-/g, "/"))),
-                        // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
-                        y1: ph.ph
-                    })
-                })
-                res.temperatures.map((temperature, index) => {
-                    temperatures.push({
-                        // x: new Date().getTime(temperature.receiveTime),
-                        x: new Date(Date.parse(temperature.receiveTime.replace(/-/g, "/"))),
-                        // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
-                        y1: temperature.temperature
-                    })
-                })
+                // let oxygens = [], phs = [], temperatures = [];
+                // res.oxygens.map((oxygen, index) => {
+                //     oxygens.push({
+                //         x: new Date(Date.parse(oxygen.receiveTime.replace(/-/g, "/"))),
+                //         y1: oxygen.oxygen
+                //     })
+                // })
+                // res.phs.map((ph, index) => {
+                //     phs.push({
+                //         // x: new Date().getTime(ph.receiveTime),
+                //         x: new Date(Date.parse(ph.receiveTime.replace(/-/g, "/"))),
+                //         // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
+                //         y1: ph.ph
+                //     })
+                // })
+                // res.temperatures.map((temperature, index) => {
+                //     temperatures.push({
+                //         // x: new Date().getTime(temperature.receiveTime),
+                //         x: new Date(Date.parse(temperature.receiveTime.replace(/-/g, "/"))),
+                //         // x: (new Date().getTime()) + (1000 * 60 * 30 * index),
+                //         y1: temperature.temperature
+                //     })
+                // })
                 this.setState({
-                    oxygens : oxygens,
-                    phs : phs,
-                    temperatures: temperatures
+                    oxygens: res.oxygens,
+                    phs: res.phs,
+                    temperatures: res.temperatures
                 })
             } else {
                 message.error(res.msg, 1);
@@ -88,29 +102,32 @@ export default class WaterQualityCurve extends React.Component {
             way: this.state.way
         }).then((res) => {
             if (res && res.code == 0) {
-                let oxygens = [], phs = [], temperatures = [];
-                res.oxygens.map((oxygen, index) => {
-                    oxygens.push({
-                        x: new Date(Date.parse(oxygen.receiveTime.replace(/-/g, "/"))),
-                        y1: oxygen.oxygen
-                    })
-                })
-                res.phs.map((ph, index) => {
-                    phs.push({
-                        x: new Date(Date.parse(ph.receiveTime.replace(/-/g, "/"))),
-                        y1: ph.ph
-                    })
-                })
-                res.temperatures.map((temperature, index) => {
-                    temperatures.push({
-                        x: new Date(Date.parse(temperature.receiveTime.replace(/-/g, "/"))),
-                        y1: temperature.temperature
-                    })
-                })
+                // let oxygens = [], phs = [], temperatures = [];
+                // res.oxygens.map((oxygen, index) => {
+                //     oxygens.push({
+                //         // x: new Date(Date.parse(oxygen.receiveTime.replace(/-/g, "/"))),
+                //         x: new Date(oxygen.receiveTime),
+                //         y1: oxygen.oxygen
+                //     })
+                // })
+                // res.phs.map((ph, index) => {
+                //     phs.push({
+                //         // x: new Date(Date.parse(ph.receiveTime.replace(/-/g, "/"))),
+                //         x: new Date(ph.receiveTime),
+                //         y1: ph.ph
+                //     })
+                // })
+                // res.temperatures.map((temperature, index) => {
+                //     temperatures.push({
+                //         // x: new Date(Date.parse(temperature.receiveTime.replace(/-/g, "/"))),
+                //         x: new Date(temperature.receiveTime),
+                //         y1: temperature.temperature
+                //     })
+                // })
                 this.setState({
-                    oxygens : oxygens,
-                    phs : phs,
-                    temperatures: temperatures
+                    oxygens: res.oxygens,
+                    phs: res.phs,
+                    temperatures: res.temperatures
                 })
             } else {
                 message.error(res.msg, 1);
@@ -122,7 +139,7 @@ export default class WaterQualityCurve extends React.Component {
     }
 
     handleTimeChange = (value) => {
-        this.setState({selectTime: value});
+        this.setState({ selectTime: value });
         if (value == 'today') {
             this.getDataToday();
         } else if (value == 'sevent') {
@@ -137,7 +154,7 @@ export default class WaterQualityCurve extends React.Component {
                         <Col span={10}>设备名称: &nbsp;&nbsp; {this.state.name}（编号:{this.state.device_sn}）</Col>
                         <Col span={5}>设备状态: &nbsp; {this.state.status}</Col>
                     </Row>
-                    <Row style={{marginTop: 20}}>
+                    <Row style={{ marginTop: 20 }}>
                         <Col span={7}>
                             <Radio.Group value={this.state.selectTime} onChange={e => this.handleTimeChange(e.target.value)} >
                                 <Radio.Button value="today" >今日</Radio.Button>
@@ -156,11 +173,21 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{ padding: 30, paddingTop: 0 }}>
                         <Col span={20}>
-                            {this.state.phs && this.state.phs.length > 0 ? <TimelineChart
-                                height={300}
-                                data={this.state.phs}
-                                titleMap={{ y1: 'PH值' }}
-                            /> : <span>暂无数据</span>}
+                            {this.state.phs && this.state.phs.length > 0 ?
+                                //  <TimelineChart
+                                //     height={300}
+                                //     data={this.state.phs}
+                                //     titleMap={{ y1: 'PH值' }}
+                                // /> 
+                                <Chart height={400} data={this.state.phs} scale={cols} forceFit>
+                                    <Axis name="time" />
+                                    <Axis name="ph" />
+                                    <Tooltip crosshairs={{ type: "y" }} />
+                                    <Geom type="line" position="receiveTime*ph" size={2} />
+                                    <Geom type='point' position="receiveTime*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                                </Chart>
+                                :
+                                <span>暂无数据</span>}
                         </Col>
                     </Row>
                     <Row style={{ fontSize: 25, paddingTop: 25 }}>
@@ -168,11 +195,20 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{ padding: 30, paddingTop: 0 }}>
                         <Col span={20}>
-                            {(this.state.oxygens && this.state.oxygens.length > 0) ?<TimelineChart
-                                height={300}
-                                data={this.state.oxygens}
-                                titleMap={{ y1: '溶氧' }}
-                            />: <span>暂无数据</span>}
+                            {(this.state.oxygens && this.state.oxygens.length > 0) ?
+                                //  <TimelineChart
+                                //     height={300}
+                                //     data={this.state.oxygens}
+                                //     titleMap={{ y1: '溶氧' }}
+                                // />
+                                <Chart height={400} data={this.state.oxygens} scale={oCols} forceFit>
+                                    <Axis name="time" />
+                                    <Axis name="o" />
+                                    <Tooltip crosshairs={{ type: "y" }} />
+                                    <Geom type="line" position="receiveTime*oxygen" size={2} />
+                                    <Geom type='point' position="receiveTime*oxygen" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                                </Chart>
+                                : <span>暂无数据</span>}
                         </Col>
                     </Row>
                     <Row style={{ fontSize: 25, paddingTop: 25 }}>
@@ -180,16 +216,25 @@ export default class WaterQualityCurve extends React.Component {
                     </Row>
                     <Row style={{ padding: 30 }}>
                         <Col span={20}>
-                            {(this.state.temperatures && this.state.temperatures.length > 0) ? <TimelineChart
-                                height={300}
-                                data={this.state.temperatures}
-                                titleMap={{ y1: '水温' }}
-                            />: <span>暂无数据</span>}
+                            {(this.state.temperatures && this.state.temperatures.length > 0) ?
+                                //  <TimelineChart
+                                //     height={300}
+                                //     data={this.state.temperatures}
+                                //     titleMap={{ y1: '水温' }}
+                                // /> 
+                                <Chart height={400} data={this.state.temperatures} scale={waterCols} forceFit>
+                                    <Axis name="time" />
+                                    <Axis name="温度" />
+                                    <Tooltip crosshairs={{ type: "y" }} />
+                                    <Geom type="line" position="receiveTime*temperature" size={2} />
+                                    <Geom type='point' position="receiveTime*temperature" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                                </Chart>
+                                : <span>暂无数据</span>}
                         </Col>
                     </Row>
                 </Card>
-                <Button type="primary" style={{float:'right'}} onClick={()=>{history.back()}}>
-                   返回上一页
+                <Button type="primary" style={{ float: 'right' }} onClick={() => { history.back() }}>
+                    返回上一页
                 </Button>
             </PageHeaderLayout>
         );

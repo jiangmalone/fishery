@@ -90,7 +90,7 @@ class SensorDetail extends React.Component {
 
     getDataSevenday = () => {
         this.setState({ animating: true })
-        getDataToday({
+        getDataSevenday({
             device_sn: this.state.device_sn,
             way: this.state.way,
         }).then((res) => {
@@ -271,7 +271,7 @@ class SensorDetail extends React.Component {
                         offset: [-20, -10],
                     }}
 
-                    onVisibleChange={this.handleVisibleChange}
+                    // onVisibleChange={this.handleVisibleChange}
                     onSelect={this.onSelect}
                 >
                     <div style={{

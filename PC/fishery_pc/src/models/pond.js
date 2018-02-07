@@ -126,6 +126,7 @@ export default {
 
             const response = yield call(modifyPond, payload.data);
             if (response.code == '0') {
+                response.data.key = response.data.id
                 yield put({
                     type: 'modifyList',
                     payload: {

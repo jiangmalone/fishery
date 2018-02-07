@@ -182,7 +182,7 @@ class PondList extends PureComponent {
                             let index = item.indexOf('-');
                             newFishs.push({
                                 type: Number(item.slice(index + 1)),
-                                fish_name: item.slice(0, -index)
+                                fish_name: item.slice(0, index)
                             })
                         }
                     }
@@ -195,7 +195,7 @@ class PondList extends PureComponent {
 
                     let modifyFishes = []
                     values.id = this.state.modifyId;
-                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
+                    values.address = (this.props.address.district ? this.props.address.district : '') + (this.props.address.address) + (this.props.address.name ? this.props.address.name : '');
                     values.latitude = this.props.address.location.lat;
                     values.longitude = this.props.address.location.lng;
                     values.relation = this.props.match.params.relation;
@@ -204,7 +204,7 @@ class PondList extends PureComponent {
                             let index = item.indexOf('-');
                             modifyFishes.push({
                                 type: Number(item.slice(index + 1)),
-                                fish_name: item.slice(0, -index)
+                                fish_name: item.slice(0, index)
                             })
                         }
                     }
@@ -327,7 +327,7 @@ class PondList extends PureComponent {
                     fish = fish + item.fish_name + "、";
                 }
 
-                return <span>{fish ? fish.slice(0,-1) : ''}</span>
+                return <span>{fish ? fish.slice(0, -1) : ''}</span>
             }
         }, {
             title: '池塘水源',

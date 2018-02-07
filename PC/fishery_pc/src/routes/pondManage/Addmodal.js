@@ -21,9 +21,9 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
     //     children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
     // }
     children = fishCategories.map((item, index) => {
-        return <Option key={item.id} value={item.fish_name+'-'+item.type}>{item.fish_name}</Option>
+        return <Option key={item.id} value={item.fish_name + '-' + item.type}>{item.fish_name}</Option>
     })
-    return <Modal title={modifyId ? "修改塘口":"新增塘口"}
+    return <Modal title={modifyId ? "修改塘口" : "新增塘口"}
         visible={visible}
         onOk={() => {
             let obj = {}
@@ -51,7 +51,7 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
             </FormItem>
             <FormItem label="塘口位置" {...formItemLayout} style={{ width: '100%' }} >
                 <div onClick={() => { showMapModal() }} style={{ cursor: 'pointer' }}>
-                    <span>{address&&address.address ? (address.district || '' + address.address || '' + address.name || '') : '(点击地图图标选取地理位置)'}</span>&nbsp;
+                    <span>{address && address.address ? ((address.district || '') + (address.address || '') + (address.name || '')) : '(点击地图图标选取地理位置)'}</span>&nbsp;
                 <i className="iconfont icon-address" style={{ fontSize: '20px', cursor: 'pointer', color: address ? '' : '#40a9ff' }} ></i>
                 </div>
             </FormItem>

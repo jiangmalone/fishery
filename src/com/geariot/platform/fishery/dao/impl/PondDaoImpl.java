@@ -330,4 +330,11 @@ public class PondDaoImpl implements PondDao {
 		return big.longValue();
 	}
 
+	@Override
+	public void deleteByRelation(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from Pond");
+		Query query = queryUtils.addString("relation", relation).getQuery();
+		query.executeUpdate();
+	}
+
 }

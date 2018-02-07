@@ -110,4 +110,11 @@ public class AIODaoImpl implements AIODao {
 		getSession().createSQLQuery(sql).setInteger("pondId", pondId).executeUpdate();
 	}
 
+	@Override
+	public void deleteByRelation(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from AIO");
+		Query query = queryUtils.addString("relation", relation).getQuery();
+		query.executeUpdate();
+	}
+
 }

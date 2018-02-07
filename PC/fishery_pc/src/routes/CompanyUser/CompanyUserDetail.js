@@ -56,7 +56,7 @@ export default class CompanyUserDetail extends React.Component {
 
     queryPond = () => {
         queryPond({
-            relation: this.state.relation ,
+            relation: this.state.relation,
             name: '',
             page: 1,
             number: 100
@@ -97,31 +97,32 @@ export default class CompanyUserDetail extends React.Component {
     getMarker = () => {
         return this.state.ponds.map((item, index) => {
             // if (!(item.longitude == 0 && item.latitude == 0)) {
-                
+
             // } 
             let offset = (0, 0)
-                if (this.state.selectMarker == item.id) {
-                    offset = { x: 0, y: -20 }
-                }
-                const position = {
-                    longitude: item.longitude,
-                    latitude: item.latitude
-                }
-                return (
-                    <Marker
-                        position={position}
-                        clickable='true'
-                        visible={(item.longitude == 0 && item.latitude == 0) ? false : true}
-                        key={index}
-                    >
-                        <div className={styles.mapMakerIcon} onClick={() => {
-                            if (this.state.selectMarker == item.id) {
-                                this.setState({ selectMarker: 0 })
-                            } else {
-                                this.setState({ selectMarker: item.id })
-                            }}} ></div>
-                        {this.state.selectMarker == item.id && <div className={styles.mapMaker} onClick={() => { this.props.history.push(`/userManage/pondManage/detail/${item.id}`) }}>塘口名称: <a >{item.name}</a></div>}
-                    </Marker>)
+            if (this.state.selectMarker == item.id) {
+                offset = { x: 0, y: -20 }
+            }
+            const position = {
+                longitude: item.longitude,
+                latitude: item.latitude
+            }
+            return (
+                <Marker
+                    position={position}
+                    clickable='true'
+                    visible={(item.longitude == 0 && item.latitude == 0) ? false : true}
+                    key={index}
+                >
+                    <div className={styles.mapMakerIcon} onClick={() => {
+                        if (this.state.selectMarker == item.id) {
+                            this.setState({ selectMarker: 0 })
+                        } else {
+                            this.setState({ selectMarker: item.id })
+                        }
+                    }} ></div>
+                    {this.state.selectMarker == item.id && <div className={styles.mapMaker} onClick={() => { this.props.history.push(`/userManage/pondManage/detail/${item.id}`) }}>塘口名称: <a >{item.name}</a></div>}
+                </Marker>)
         })
     }
 
@@ -155,10 +156,15 @@ export default class CompanyUserDetail extends React.Component {
             },
             {
                 title: '品种',
-                dataIndex: 'fish_categorys',
+                dataIndex: 'pondFishs',
+                key: 'pondFishs',
                 render: (text, record, index) => {
-                    return <span>{record.fish_categorys.join(',')}</span>
-                },
+                    let fish = ''
+                    for (let item of text) {
+                        fish = fish + item.fish_name + "、";
+                    }
+                    return <span>{fish ? fish.slice(0, -1) : ''}</span>
+                }
             }
         ];
 

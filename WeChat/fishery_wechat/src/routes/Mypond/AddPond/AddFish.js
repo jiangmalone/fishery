@@ -21,7 +21,7 @@ class AddFish extends Component {
         let indexArray = []
         for (let item of this.state.selectedFish) {
             indexArray.push(this.props.fishes.findIndex((value) => {
-                return value.fish_name == item
+                return value.fish_name == item.fish_name
             }))
         }
         for (let item of indexArray) {

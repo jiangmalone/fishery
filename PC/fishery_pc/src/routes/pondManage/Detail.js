@@ -13,7 +13,8 @@ const Search = Input.Search;
     pondList: state.pond.pondList,
     loading: state.pond.loading,
     pagination2: state.pond.pagination2,
-    pondInfo: state.pond.pondInfo
+    pondInfo: state.pond.pondInfo,
+    user: state.pond.user,
 }))
 
 class PondDetail extends PureComponent {
@@ -140,7 +141,7 @@ class PondDetail extends PureComponent {
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
                         <Col span={4}>塘口密度(㎏/㎡)：{pondInfo.density || ''}</Col>
                         <Col span={4}>塘口位置：{pondInfo.address || ''}</Col>
-                        <Col span={4}></Col>
+                        <Col span={4}>所有者：{this.props.user}</Col>
                     </Row>
                 </Card>
                 <Card title="绑定设备" bordered={false} style={{ marginBottom: '20px' }}>

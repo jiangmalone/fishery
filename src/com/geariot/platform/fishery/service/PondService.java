@@ -286,7 +286,24 @@ public class PondService {
 		if (pond == null) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
-			return RESCODE.SUCCESS.getJSONRES(pond);
+			Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(pond);
+			String relation = pond.getRelation();
+			if(relation!=null&&relation.length()>0){
+				if(relation.contains("WX")){
+					WXUser wxUser = wxUserDao.findUserByRelation(relation);
+					map.put("user", wxUser==null?"":wxUser.getName());
+					return map;
+				}
+				if(relation.contains("CO")){
+					Company company = companyDao.findCompanyByRelation(relation);
+					map.put("user", company==null?"":company.getName());
+					return map;
+				}
+				map.put("user", "");
+				return map;
+			}
+			map.put("user", "");
+			return map;
 		}
 	}
 

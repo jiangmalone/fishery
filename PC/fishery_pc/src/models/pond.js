@@ -17,7 +17,8 @@ export default {
         pondList: [],
         pagination2: { current: 1 },
         fishCategories: [],
-        pondInfo: {}
+        pondInfo: {},
+        user: ''
     },
 
     effects: {
@@ -49,6 +50,7 @@ export default {
                     type: 'appendList',
                     payload: {
                         list: Array.isArray(response.data) ? response.data : [],
+                        user: response.user,
                         pagination: {
                             total: response.realSize,
                         }
@@ -77,8 +79,9 @@ export default {
                 yield put({
                     type: 'changeModal',
                     payload: {
-                        pondInfo: response.data
-                    }
+                        pondInfo: response.data,
+                        user: response.user
+                    },
                 })
             }
         },
@@ -167,6 +170,7 @@ export default {
             return {
                 ...state,
                 list: action.payload.list,
+                user: action.payload.user,
                 pagination: { ...state.pagination, ...action.payload.pagination }
             };
         },

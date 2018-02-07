@@ -609,7 +609,13 @@ public class EquipmentService {
 		List<Sensor_Data> splitlist=new ArrayList<>();
 		int i=0;
 		while(i<2016) {
-			splitlist.add(list.get(i));
+			try {
+				splitlist.add(list.get(i));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				break;
+			}
+			
 			i=i+14;
 		}
 		List<PH> phs = new ArrayList<>();
@@ -676,7 +682,12 @@ public class EquipmentService {
 		List<Sensor_Data> splitlist=new ArrayList<>();
 		int i=0;
 		while(i<2016) {
-			splitlist.add(list.get(i));
+			try {
+				splitlist.add(list.get(i));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				break;
+			}
 			i=i+14;
 		}
 		
@@ -829,17 +840,17 @@ public class EquipmentService {
 			AIO aio=aioDao.findAIOByDeviceSns(device_sn);
 			aio.setName(name);
 			map=RESCODE.SUCCESS.getJSONRES();
-			map.put("aio", aio);
+			map.put("equipment", aio);
 		}else if(type.equals("03")) {
 			Sensor sensor=sensorDao.findSensorByDeviceSns(device_sn);
 			sensor.setName(name);
 			map=RESCODE.SUCCESS.getJSONRES();
-			map.put("sensor", sensor);
+			map.put("equipment", sensor);
 		}else if(type.equals("04")) {
 			Controller controller=controllerDao.findControllerByDeviceSns(device_sn);
 			controller.setName(name);
 			map=RESCODE.SUCCESS.getJSONRES();
-			map.put("controller", controller);
+			map.put("equipment", controller);
 		}
 		
 	    return map;

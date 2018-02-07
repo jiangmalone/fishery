@@ -104,4 +104,11 @@ public class ControllerDaoImpl implements ControllerDao {
 		return query.list();
 	}
 
+	@Override
+	public void deleteByRelation(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from Controller");
+		Query query = queryUtils.addString("relation", relation).getQuery();
+		query.executeUpdate();
+	}
+
 } 

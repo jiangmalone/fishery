@@ -85,9 +85,9 @@ public class CompanyControllerTest {
 
 	@Test
 	public void deleteUserTest() throws Exception{
-		mockMvc.perform(post("/usermanagement/delWXUser").
+		mockMvc.perform(get("/usermanagement/delWXUser").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("WXUserIds", "1")
+				.param("WXUserIds", "10")
 			
 				
 				)

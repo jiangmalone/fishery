@@ -30,4 +30,6 @@ public interface SensorDao {
 	List<Sensor> findSensorsByPondId(int pondId);
 	
 	void updateByPondId(int pondId);
+	
+	void deleteByRelation(String relation);
 }

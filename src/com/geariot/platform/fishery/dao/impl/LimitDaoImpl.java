@@ -31,7 +31,7 @@ public class LimitDaoImpl implements LimitDao {
 
 	@Override
 	public void delete(String device_sn) {
-		String hql = "delete from Limit_Install where device_sn in :device_sn";
+		String hql = "delete from Limit_Install where device_sn = :device_sn";
 		this.getSession().createQuery(hql).setString("device_sn",device_sn).executeUpdate();
 	}
 

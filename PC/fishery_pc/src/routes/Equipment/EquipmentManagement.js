@@ -77,7 +77,7 @@ export default class EquipmentManagement extends React.Component {
             payload: {
                 device_sns: idArray,
                 pagination: this.props.pagination,
-                relation: 'CO1'
+                relation: this.props.match.params.relation
             },
         });
         this.setState({

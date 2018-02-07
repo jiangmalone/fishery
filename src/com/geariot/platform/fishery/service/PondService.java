@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.AeratorStatusDao;
+import com.geariot.platform.fishery.dao.CompanyDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.dao.FishCateDao;
 import com.geariot.platform.fishery.dao.PondDao;
@@ -21,14 +22,17 @@ import com.geariot.platform.fishery.dao.PondFishDao;
 import com.geariot.platform.fishery.dao.SensorDao;
 import com.geariot.platform.fishery.dao.Sensor_ControllerDao;
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
+import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.AeratorStatus;
+import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.entities.Sensor_Data;
+import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.utils.Constants;
@@ -65,6 +69,12 @@ public class PondService {
 	
 	@Autowired
 	private PondFishDao pondfishDao;
+	
+	@Autowired
+	private WXUserDao wxUserDao;
+	
+	@Autowired
+	private CompanyDao companyDao;
 
 	private Logger logger = LogManager.getLogger(PondService.class);
 
@@ -133,7 +143,23 @@ public class PondService {
 		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, name, from, number);
 		long count = this.pondDao.queryPondByNameAndRelationCount(relation, name);
 		int size = (int) Math.ceil(count / (double) number);
-		return RESCODE.SUCCESS.getJSONRES(ponds, size, count);
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(ponds, size, count);
+		if(relation!=null&&relation.length()>0){
+			if(relation.contains("WX")){
+				WXUser wxUser = wxUserDao.findUserByRelation(relation);
+				map.put("user", wxUser==null?"":wxUser.getName());
+				return map;
+			}
+			if(relation.contains("CO")){
+				Company company = companyDao.findCompanyByRelation(relation);
+				map.put("user", company==null?"":company.getName());
+				return map;
+			}
+			map.put("user", "");
+			return map;
+		}
+		map.put("user", "");
+		return map;
 	}
 
 	public Map<String, Object> pondEquipment(int pondId, int page, int number) {

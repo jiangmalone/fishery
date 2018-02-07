@@ -52,7 +52,7 @@ public class TimerTask {
 							WechatSendMessageUtils.sendWechatOxygenOnOffMessages(
 									"设备编号为 " + timer.getDevice_sn() + " 的增氧机在定时时间为:" + timer.getStartTime() + "打开失败",
 									wxuserDao.findUserByRelation(aio.getRelation())
-											.getOpenId());
+											.getOpenId(),timer.getDevice_sn(),1);
 						}
 					}
 				}
@@ -64,7 +64,7 @@ public class TimerTask {
 							WechatSendMessageUtils.sendWechatOxygenOnOffMessages(
 									"设备编号为 " + timer.getDevice_sn() + " 的增氧机在定时时间为:" + timer.getStartTime() + "关闭失败",
 									wxuserDao.findUserByRelation(aio.getRelation())
-											.getOpenId());
+											.getOpenId(),timer.getDevice_sn(),0);
 						}
 					}
 				}

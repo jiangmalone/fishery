@@ -99,6 +99,7 @@ public class BindService {
 	}
 
 	public Map<String, Object> delPondWithSensorBind(String device_sn) {
+		Controller controller = null;
 		logger.debug("传感器设备,设备编号:" + device_sn + "尝试与相关塘口解除绑定...");
 		Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
 		if (sensor == null) {
@@ -112,6 +113,15 @@ public class BindService {
 				logger.debug("传感器设备,设备编号:" + device_sn + "与塘口,Id:" + sensor.getPondId() + "有绑定");
 				sensor.setPondId(0);
 				sensor.setPort_status("00");
+				List<Sensor_Controller> sensor_Controllers = sensor_ControllerDao.list(sensor.getId());
+				for(Sensor_Controller sensor_Controller : sensor_Controllers){
+					controller = controllerDao.findControllerById(sensor_Controller.getControllerId());
+					if(controller == null){
+						continue;
+					}else{
+						changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
+					}
+				}
 				int count = sensor_ControllerDao.delete(sensor.getId());
 				logger.debug("传感器设备,设备编号:" + device_sn + "已和塘口解除绑定,数据库中删除传感器与控制器绑定关系共" + count + "条。。。");
 				return RESCODE.SUCCESS.getJSONRES();

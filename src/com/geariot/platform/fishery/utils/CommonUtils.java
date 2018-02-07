@@ -149,6 +149,11 @@ public class CommonUtils {
 	}
 	
 	public static String reverse(String s) {  
-        return new StringBuilder(s).reverse().toString();  
+        String first=s.substring(0,2);
+        String second=s.substring(2,4);
+        String third=s.substring(4,6);
+        String forth=s.substring(6,8);
+	
+		return forth+third+second+first;
     }  
 }

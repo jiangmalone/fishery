@@ -147,4 +147,8 @@ public class CommonUtils {
 	    }
 	    return byteArray;
 	}
+	
+	public static String reverse(String s) {  
+        return new StringBuilder(s).reverse().toString();  
+    }  
 }

@@ -41,7 +41,7 @@ class AddFish extends Component {
             this[`span${index}`].className = "fish-name-selected "
         } else {
             this.setState({
-                selectedFish: update(this.state.selectedFish, { $push: [{fish_name:item.fish_name,type:item.type}] })
+                selectedFish: update(this.state.selectedFish, { $push: [{ fish_name: item.fish_name, type: item.type }] })
             })
             this[`span${index}`].className = "fish-name-selected active"
         }

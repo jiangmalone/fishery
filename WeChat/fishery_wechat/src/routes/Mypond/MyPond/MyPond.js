@@ -216,7 +216,7 @@ class MyPond extends PureComponent {
                 </div>}
                 {this.props.list.length == 0 && <div className="none-list">
                     <img src={require('../../../img/pool_error.png')} />
-                    <div>您还没有添加鱼塘呢~</div>
+                    <div>您还没有添加渔塘呢~</div>
                     <div className="btn_add1" onClick={() => { this.addPond() }}>
                     </div>
                 </div>}

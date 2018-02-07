@@ -22,7 +22,6 @@ class Alarm extends React.Component {
         queryAlarm({
             openId: window.localStorage.getItem('openid')
         }).then((res) => {
-            console.log(res)
             if (res.data.code == 0) {
                 this.setState({
                     alarms: res.data.dataAlarm
@@ -34,7 +33,6 @@ class Alarm extends React.Component {
     }
     IsRead = (id)=>{
         AlarmIsRead({id:id}).then((res)=>{
-            console.log(res)
             if(res.data.code == 0) {
                 this.queryAlarm();
             }

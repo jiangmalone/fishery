@@ -220,8 +220,6 @@ class SensorDetail extends React.Component {
     }
 
     serverCheck = () => {   //校准
-        console.log('calibration');
-        console.log(this.state.device_sn);
         serverCheck({
             device_sn: this.state.device_sn,
             way: this.state.way,

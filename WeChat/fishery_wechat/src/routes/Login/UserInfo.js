@@ -84,7 +84,6 @@ class UserInfo extends React.Component {
     }
 
     render() {
-        console.log(this.state.form.sex)
         return <div className='user-info-bg' style={{ height: window.document.body.clientHeight }} >
             <Flex justify='center'>
                 <img className='avater' src={window.localStorage.getItem('headimgurl')} />

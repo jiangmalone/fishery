@@ -26,9 +26,7 @@ export default {
             yield put({ type: 'save' });
         },
         *query({ payload }, { call, put }) {
-            console.log(payload)
             const data = yield call(query, payload)
-            console.log(data.data)
             if (data) {
                 yield put({
                     type: 'changeState',
@@ -39,9 +37,7 @@ export default {
             }
         },
         *score({ payload }, { call, put }) {
-            console.log(payload)
             const data = yield call(score, payload)
-            console.log(data.data)
             if (data) {
                 yield put({
                     type: 'changeScore',

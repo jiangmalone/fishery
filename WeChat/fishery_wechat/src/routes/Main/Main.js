@@ -170,7 +170,6 @@ class Main extends React.Component {
             'data-seed': 'logId',
         }, (buttonIndex) => {
             if (buttonIndex == (BUTTONS.length - 1)) {
-                console.log(state + '' + buttonIndex)
                 this.props.dispatch({
                     type: 'global/changeState',
                     payload: {
@@ -184,7 +183,6 @@ class Main extends React.Component {
                 const str = JSON.stringify(data)
                 this.props.history.push(`/autoOrxygenationSetting/${str}`);
             } else if (state && buttonIndex == 0) {
-                console.log('关闭这个傻逼的定时增氧功能');
                 this.closeTimeOrxygen(device_sn, way, pondIndex, aioIndex);
             }
         });

@@ -25,7 +25,6 @@ class PersonalCenter extends React.Component {
                 const data = res.data
                 if ((!data.aio || data.aio.length == 0) && (!data.controller || data.controller.length == 0) && (!data.sensor || data.sensor.length == 0)) {
                     this.setState({ equipmentNum: 0 })
-                    console.log('i get 0')
                 } else {
                     this.setState({ equipmentNum: 1 })
                 }

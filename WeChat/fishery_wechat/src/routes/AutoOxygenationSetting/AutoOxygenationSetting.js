@@ -77,7 +77,7 @@ class AutoOxygenationSetting extends React.Component {
                     })
                 })
 
-                console.log(this.props.form.getFieldsValue());
+                // console.log(this.props.form.getFieldsValue());
                 autoSet({
                     limit_Install:form,
                     timers: timers
@@ -96,7 +96,6 @@ class AutoOxygenationSetting extends React.Component {
                     } else {
                         Toast.fail(res.data.msg, 1)
                     }
-                    console.log(res);
                 }).catch(error => {
                     console.log(error)
                     Toast.fail('设置失败，请重试!', 1)
@@ -112,7 +111,6 @@ class AutoOxygenationSetting extends React.Component {
             device_sn: this.state.device_sn,
             way: this.state.way
         }).then(res => {
-            console.log(res);
             if (res.data.code == 0) {
                 this.props.form.setFieldsValue({
                     low_limit: res.data.oxyLowLimit || 0,
@@ -153,7 +151,6 @@ class AutoOxygenationSetting extends React.Component {
         } else {
             time.minute(30);
         }
-        console.log(time.minute());
         if (aryIndex == 0) {
             if(timeSection[1]) {
                 if(timeSection[1] < time) {

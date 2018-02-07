@@ -25,7 +25,6 @@ export default {
         *query({ payload }, { call, put }) {
             yield put({ type: 'showLoginLoading' });
             yield call(delay, 1000);
-            console.log(payload)
             const data = yield call(pondQuery, payload)
             if (data) {
                 yield put({

@@ -8,33 +8,33 @@ public class WechatSendMessageUtils {
 	//private static final Logger log = LogManager.getLogger(WechatSendMessageUtils.class);
     private static ExecutorService  executorService  = Executors.newFixedThreadPool(10);
 	
-	public static void  sendWechatMessages(final StringBuilder sb,final String openId) {
+	public static void  sendWechatMessages(final StringBuilder sb,final String openId,final String deviceSn) {
 		executorService.submit(new Runnable() {
 
             @Override
             public void run(){
-            	WechatTemplateMessage.sendBrokenMSG(sb,openId);
+            	WechatTemplateMessage.sendBrokenMSG(sb,openId,deviceSn);
             }
         });
 	}
 	
-	public static void  sendWechatAlarmMessages(final String message,final String openId) {
+	public static void  sendWechatAlarmMessages(final String message,final String openId,final String deviceSn) {
 		executorService.submit(new Runnable() {
 
             @Override
             public void run(){
-            	WechatTemplateMessage.alarmMSG(message, openId);
+            	WechatTemplateMessage.alarmMSG(message, openId,deviceSn);
             }
         });
 	}
 	
-	public static void sendWechatOxygenOnOffMessages(final String msg,final String openId) {
+	public static void sendWechatOxygenOnOffMessages(final String msg,final String openId,final String deviceSn,final int onOff) {
 		executorService.submit(new Runnable() {
 
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				WechatTemplateMessage.sendOxygenOnoffMSG(msg, openId);
+				WechatTemplateMessage.sendOxygenOnoffMSG(msg, openId,deviceSn,onOff);
 			}
 			
 		});

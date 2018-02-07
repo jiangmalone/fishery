@@ -735,7 +735,7 @@ public class CMDUtils {
 			
 			if (bs.getMSG()!= null) {
 				logger.debug("准备将故障信息推送给微信用户");
-				WechatSendMessageUtils.sendWechatMessages(bs.getMSG(), wxuser.getOpenId());
+				WechatSendMessageUtils.sendWechatMessages(bs.getMSG(), wxuser.getOpenId(),deviceSn);
 				// WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
 			}
 			bs.clear();

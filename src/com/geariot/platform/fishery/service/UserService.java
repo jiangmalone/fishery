@@ -71,7 +71,7 @@ public class UserService {
 				for(Pond pond : ponds){
 					pondIds.add(pond.getId());
 				}
-				Integer[] obj = (Integer[])pondIds.toArray();
+				Integer[] obj = (Integer[])pondIds.toArray(new Integer[pondIds.size()]);
 				pondService.delPonds(obj);
 				companyDao.deleteCompany(companyId);
 			}
@@ -90,7 +90,7 @@ public class UserService {
 				for(Pond pond : ponds){
 					pondIds.add(pond.getId());
 				}
-				Integer[] obj = (Integer[])pondIds.toArray();
+				Integer[] obj = (Integer[])pondIds.toArray(new Integer[pondIds.size()]);
 				pondService.delPonds(obj);
 				wxuserDao.deleteUser(WXUserId);
 			}

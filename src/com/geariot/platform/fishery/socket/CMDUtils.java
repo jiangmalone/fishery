@@ -725,14 +725,14 @@ public class CMDUtils {
 			break;
 		}
 
-		logger.debug("准备将故障信息推送给微信用户");
+		
 		// long start=System.currentTimeMillis();
 		WXUser wxuser = service.findWXUserByRelation(relation);
 		logger.debug(wxuser.getName());
 		if (wxuser != null) {
 			
 			if (bs.getMSG()!= null) {
-				logger.debug((bs.getMSG()==null)+"....>>>>>>>>");
+				logger.debug("准备将故障信息推送给微信用户");
 				WechatSendMessageUtils.sendWechatMessages(bs.getMSG(), wxuser.getOpenId());
 				// WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
 			}

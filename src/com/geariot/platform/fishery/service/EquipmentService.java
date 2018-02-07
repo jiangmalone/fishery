@@ -840,17 +840,17 @@ public class EquipmentService {
 			AIO aio=aioDao.findAIOByDeviceSns(device_sn);
 			aio.setName(name);
 			map=RESCODE.SUCCESS.getJSONRES();
-			map.put("aio", aio);
+			map.put("equipment", aio);
 		}else if(type.equals("03")) {
 			Sensor sensor=sensorDao.findSensorByDeviceSns(device_sn);
 			sensor.setName(name);
 			map=RESCODE.SUCCESS.getJSONRES();
-			map.put("sensor", sensor);
+			map.put("equipment", sensor);
 		}else if(type.equals("04")) {
 			Controller controller=controllerDao.findControllerByDeviceSns(device_sn);
 			controller.setName(name);
 			map=RESCODE.SUCCESS.getJSONRES();
-			map.put("controller", controller);
+			map.put("equipment", controller);
 		}
 		
 	    return map;

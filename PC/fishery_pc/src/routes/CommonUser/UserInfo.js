@@ -120,17 +120,19 @@ class UserInfo extends PureComponent {
                 }
             })
         } else {
-            this.props.dispatch({
-                type: 'pond/changeModal',
-                payload: {
-                    address: {
-                        address: record.address, location: {
-                            lat: record.latitude,
-                            lng: record.longitude
+            if(record.address){
+                this.props.dispatch({
+                    type: 'pond/changeModal',
+                    payload: {
+                        address: {
+                            address: record.address, location: {
+                                lat: record.latitude,
+                                lng: record.longitude
+                            }
                         }
                     }
-                }
-            })
+                })
+            }
         }
         this.props.dispatch({
             type: 'pond/changeModal',
@@ -151,6 +153,16 @@ class UserInfo extends PureComponent {
             formData[key] = {
                 value: record[key],
                 name: key
+            }
+            if (key = 'pondFishs') {
+                let modifyFishes = []
+                for (let item of record['pondFishs']) {
+                    modifyFishes.push(item.fish_name + '-' + item.type)
+                }
+                formData[key] = {
+                    value: modifyFishes,
+                    name: key
+                }
             }
         }
         this.props.dispatch({
@@ -256,10 +268,21 @@ class UserInfo extends PureComponent {
             },
             onOk: (values) => {
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
+                    let newFishs = []
                     values.relation = this.props.match.params.id;
                     values.address = this.props.address.district + this.props.address.address + this.props.address.name;
                     values.latitude = this.props.address.location ? this.props.address.location.lat : '';
                     values.longitude = this.props.address.location ? this.props.address.location.lng : '';
+                    if (values.pondFishs) {
+                        for (let item of values.pondFishs) {
+                            let index = item.indexOf('-');
+                            newFishs.push({
+                                type: Number(item.slice(index + 1)),
+                                fish_name: item.slice(0, index)
+                            })
+                        }
+                    }
+                    values.pondFishs = newFishs;
                     addPond(values).then((response) => {
                         if (response.code == '0') {
                             this.onSearchUserPond();
@@ -268,11 +291,23 @@ class UserInfo extends PureComponent {
                         }
                     })
                 } else {
+                    let modifyFishes = []
                     values.id = this.state.modifyId;
+                    values.address = (this.props.address.district ? this.props.address.district : '') + (this.props.address.address?this.props.address.address:'') + (this.props.address.name ? this.props.address.name : '');
+                    values.latitude = this.props.address.location?this.props.address.location.lat:'';
+                    values.longitude = this.props.address.location?this.props.address.location.lng:'';
                     values.relation = this.props.match.params.id;
-                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
-                    values.latitude = this.props.address.location.lat;
-                    values.longitude = this.props.address.location.lng;
+                    if (values.pondFishs) {
+                        for (let item of values.pondFishs) {
+                            let index = item.indexOf('-');
+                            modifyFishes.push({
+                                type: Number(item.slice(index + 1)),
+                                fish_name: item.slice(0, index)
+                            })
+                        }
+                    }
+
+                    values.pondFishs = modifyFishes
                     modifyPond(values).then((response) => {
                         if (response.code == '0') {
                             this.onSearchUserPond();

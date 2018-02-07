@@ -7,6 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.Pond;
+import com.geariot.platform.fishery.service.SocketSerivce;
+import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.HttpRequest;
 import com.geariot.platform.fishery.wxutils.WechatConfig;
 
@@ -17,7 +21,7 @@ public class WechatTemplateMessage {
 //	private static final Logger log = Logger.getLogger(WechatTemplateMessage.class);
 	private static final Logger log = LogManager.getLogger(WechatTemplateMessage.class);
 	private static final String ALARM_TEMPLATE_ID="rWbgpqTb6alKSu4Wusf7ItFq2FQRQrzk1CNQV0uyJ_4";
-	
+	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	//private static final String ALARM_TEMPLATE_ID=null;
 
 	private static String invokeTemplateMessage(JSONObject params){
@@ -47,9 +51,9 @@ public class WechatTemplateMessage {
 		params.put("template_id", SELFTEST_BROKEN_TEMPLATE_ID);
 		data.put("first", keywordFactory("故障信息","#173177"));
 		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
-		data.put("keyword2", keywordFactory("设备故障","#173177"));
+		data.put("keyword2", keywordFactory(sb.toString(),"#173177"));
 		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
-		params.put("remark", sb.toString());
+		params.put("remark", "请您及时处理");
 		String result=invokeTemplateMessage(params);
 		log.debug("故障消息结果:"+result);
 		//data.put(key, value);
@@ -73,7 +77,7 @@ public class WechatTemplateMessage {
 			data.put("keyword2", keywordFactory("增氧机关闭失败","#173177"));
 		}
 		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
-		params.put("remark", msg);
+		params.put("remark", "请您及时处理  ："+msg);
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
 		if(onOff==1) {
@@ -85,15 +89,25 @@ public class WechatTemplateMessage {
 	
 	public static void alarmMSG(String msg,String openId,String deviceSn) {
 		log.debug("向微信用户发送报警信息");
+		AIO aio=service.findAIOByDeviceSn(deviceSn);
+		Pond pond=null;
+		if(aio!=null) {
+		pond=service.findPondById(aio.getPondId());
+		}
+		
 		JSONObject params=new JSONObject();
 		JSONObject data=new JSONObject();
 		params.put("touser", openId);
 		params.put("template_id", ALARM_TEMPLATE_ID);
 		data.put("first", keywordFactory("报警信息","#173177"));
-		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
-		data.put("keyword2", keywordFactory("设备报警","#173177"));
+		if(pond!=null) {
+		data.put("keyword1", keywordFactory(pond.getName(),"#173177"));
+		}
+		data.put("keyword1", keywordFactory("报警的设备没有绑定塘口","#173177"));
+		data.put("keyword2", keywordFactory(deviceSn,"#173177"));
 		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
-		params.put("remark", msg);
+		data.put("keyword4", keywordFactory(msg,"#173177"));
+		params.put("remark", "请您及时处理");
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
 		log.debug("报警信息结果："+result);

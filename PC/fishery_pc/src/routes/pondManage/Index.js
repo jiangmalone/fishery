@@ -17,7 +17,7 @@ const Search = Input.Search;
     mapVisible: state.pond.mapVisible,
     address: state.pond.address,
     fishCategories: state.pond.fishCategories,
-    user:state.pond.user
+    user: state.pond.user
 }))
 
 class PondList extends PureComponent {
@@ -196,7 +196,7 @@ class PondList extends PureComponent {
 
                     let modifyFishes = []
                     values.id = this.state.modifyId;
-                    values.address = (this.props.address.district ? this.props.address.district : '') + (this.props.address.address?this.props.address.address:'') + (this.props.address.name ? this.props.address.name : '');
+                    values.address = (this.props.address.district ? this.props.address.district : '') + (this.props.address.address ? this.props.address.address : '') + (this.props.address.name ? this.props.address.name : '');
                     values.latitude = this.props.address.location.lat;
                     values.longitude = this.props.address.location.lng;
                     values.relation = this.props.match.params.relation;
@@ -357,8 +357,11 @@ class PondList extends PureComponent {
         return (
             <PageHeaderLayout>
                 <Card bordered={false}>
-                    <Row style={{ marginBottom: '48px' }}>
+                    <Row style={{ marginBottom: '20px' }}>
                         <Col span={12}>塘口名称：<Search style={{ width: 200 }} onSearch={value => this.onSearch(value)} enterButton="查询" /></Col>
+
+                    </Row>
+                    <Row style={{ marginBottom: '48px' }}>
                         <Col span={12}>所有者：{this.props.user}</Col>
                     </Row>
                     <Row style={{ marginBottom: '15px' }}>

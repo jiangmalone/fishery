@@ -1,6 +1,6 @@
-import { queryEquipment, companyFindEquipment, addEquipment, modifyEquipment, delEquipments} from '../services/equipment'
+import { queryEquipment, companyFindEquipment, addEquipment, modifyEquipment, delEquipments } from '../services/equipment'
 import update from 'immutability-helper'
-import {message} from 'antd';
+import { message } from 'antd';
 export default {
   namespace: 'equipment',
 
@@ -35,7 +35,7 @@ export default {
         });
       } else if (response.code) {
         message.error(response.msg, 1);
-      } 
+      }
       yield put({
         type: 'changeLoading',
         payload: false,
@@ -57,19 +57,20 @@ export default {
         }
         console.log(response.data);
         yield put({
-            type: 'appendList',
-            payload: {
-              list: Array.isArray(response.data) ? response.data : [],
-              pagination: {
-                total: response.realSize,
-              }
-            }
-          });
-         
-        
+          type: 'appendList',
+          payload: {
+            list: Array.isArray(response.data) ? response.data : [],
+            pagination: {
+              total: response.realSize,
+            },
+            user: response.user
+          }
+        });
+
+
       } else if (response.code) {
         message.error(response.msg, 1);
-      } 
+      }
       yield put({
         type: 'changeLoading',
         payload: false,
@@ -119,7 +120,7 @@ export default {
         message.error(response.msg, 1);
       }
     },
-    *delEquipments({ payload}, {call, put}) {
+    *delEquipments({ payload }, { call, put }) {
       const response = yield call(delEquipments, { device_sns: payload.device_sns });
       if (response.code == '0') {
         message.success('删除设备成功', 1);
@@ -142,12 +143,13 @@ export default {
       return {
         ...state,
         list: action.payload.list,
+        user: action.payload.user,
         pagination: { ...state.pagination, ...action.payload.pagination }
       };
     },
     addList(state, action) {
       let list = state.list;
-      if(action.payload) {
+      if (action.payload) {
         const item = action.payload;
         item.key = item.device_sn;
         list.unshift(item);
@@ -158,7 +160,7 @@ export default {
           formData: { fields: {} }
         };
       }
-      
+
     },
     modifyList(state, action) {
       return {

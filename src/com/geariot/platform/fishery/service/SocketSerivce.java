@@ -83,7 +83,6 @@ public class SocketSerivce {
 	private PondDao pondDao;
 	
 	
-	
 	@Autowired
 	private DataAlarmDao daDao;
 	
@@ -107,6 +106,15 @@ public class SocketSerivce {
 	
 	public void save(Limit_Install limit_Install) {
 		limitDao.save(limit_Install);
+	}
+	
+	public Limit_Install findLimitByDeviceSnAndWay(String deviceSn,int way) {
+		return limitDao.findLimitByDeviceSnsAndWay(deviceSn, way);
+		//return limitDao.findLimitByDeviceSns(deviceSn);
+	}
+	
+	public void updateLimit(Limit_Install limit_Install) {
+		limitDao.updateLimit(limit_Install);
 	}
 	
 	public void save(Alarm alarm) {

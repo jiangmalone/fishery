@@ -118,13 +118,22 @@ public class CMDUtils {
 		CommonUtils.arrayHandle(data, bytelow, 15, 0, 4);
 		float low = CommonUtils.byte2float(bytelow, 0);
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路的低限为:" + low + " 高限为:" + high + " 上限为:" + up);
-		Limit_Install limit = new Limit_Install();
-		limit.setDevice_sn(deviceSn);
-		limit.setWay(way);
-		limit.setUp_limit(up);
-		limit.setHigh_limit(high);
-		limit.setLow_limit(low);
-		service.save(limit);
+		Limit_Install limit=service.findLimitByDeviceSnAndWay(deviceSn, way);
+		if(limit==null) {
+			limit = new Limit_Install();
+			limit.setDevice_sn(deviceSn);
+			limit.setWay(way);
+			limit.setUp_limit(up);
+			limit.setHigh_limit(high);
+			limit.setLow_limit(low);
+			service.save(limit);
+		}else {
+			limit.setHigh_limit(high);
+			limit.setLow_limit(low);
+			limit.setUp_limit(up);
+			service.updateLimit(limit);
+		}
+		
 		response(20, data, readChannel);
 	}
 

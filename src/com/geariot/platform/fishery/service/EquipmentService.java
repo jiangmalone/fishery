@@ -318,6 +318,19 @@ public class EquipmentService {
 		result.put("sensor", sensors);
 		result.put("controller", controllers);
 		result.put("aio", aios);
+		if(relation!=null && relation.length()>0){
+			if(relation.contains("WX")){
+				WXUser wxUser = wxUserDao.findUserByRelation(relation);
+				result.put("user", wxUser==null?"":wxUser.getName());
+			}else if(relation.contains("CO")){
+				Company company = companyDao.findCompanyByRelation(relation);
+				result.put("user", company==null?"":company.getName());
+			}else{
+				result.put("user", "");
+			}
+		}else{
+			result.put("user", "");
+		}
 		return result;
 	}
 
@@ -558,12 +571,16 @@ public class EquipmentService {
 				}
 				long count = pondDao.adminFindEquipmentCountName(relations);
 				int size = (int) Math.ceil(count / (double) number);
-				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+				Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+				map.put("user", company.getName());
+				return map;
 			} else {
 				List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
 				long count = pondDao.adminFindEquipmentCountDouble(device_sn, relations);
 				int size = (int) Math.ceil(count / (double) number);
-				return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+				Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+				map.put("user", company.getName());
+				return map;
 			}
 		}
 	}
@@ -654,7 +671,7 @@ public class EquipmentService {
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
 		for (Sensor_Data sensor_Data : list) {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));

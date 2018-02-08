@@ -72,7 +72,7 @@
 		<Logger name="org.apache.commons.beanutils" level="Warn">
 		</Logger>
 		
-		<Root level="debug">
+		<Root level="OFF">
 			<AppenderRef ref="console" />
 		</Root>
 	</Loggers>

@@ -624,27 +624,14 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.sevenData(device_sn);
 		}
-
-		List<Sensor_Data> splitlist = new ArrayList<>();
-		int i = 0;
-		while (i < 2016) {
-			try {
-				splitlist.add(list.get(i));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				break;
-			}
-
-			i = i + 14;
-		}
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-		for (Sensor_Data sensor_Data : splitlist) {
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+		for (Sensor_Data sensor_Data : list) {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 			temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -697,27 +684,14 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.sevenData(device_sn);
 		}
-
-		List<Sensor_Data> splitlist = new ArrayList<>();
-		int i = 0;
-		while (i < 2016) {
-			try {
-				splitlist.add(list.get(i));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				break;
-			}
-			i = i + 14;
-		}
-
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-		for (Sensor_Data sensor_Data : splitlist) {
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+		for (Sensor_Data sensor_Data : list) {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 			temperature = new Temperature(sensor_Data.getWater_temperature(),

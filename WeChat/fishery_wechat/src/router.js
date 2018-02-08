@@ -5,7 +5,6 @@ import './routes/IndexPage.less'
 import Login from './routes/Login/Login';
 
 function RouterConfig({ history }) {
-
   return (
     <Router history={history} onUpdate={() => window.scrollTo(0, 0)}>
       <div style={{height:'100%'}}>

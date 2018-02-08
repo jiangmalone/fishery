@@ -15,16 +15,16 @@ import { getDataToday, getRealTimeData, myEquipment, getDataSevenday, serverChec
 
 const cols = {
     'ph': { min: 0 },
-    'receiveTime': {}
+    'receiveTime': {tickCount: 18}
 };
 const oCols = {
     'o': { min: 0 },
-    'receiveTime': {}
+    'receiveTime': {tickCount: 18}
 };
 
 const waterCols = {
     '温度': { min: 0 },
-    'receiveTime': {}
+    'receiveTime': {tickCount: 18}
 };
 
 class SensorDetail extends React.Component {

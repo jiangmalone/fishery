@@ -14,16 +14,20 @@ import numeral from 'numeral';
 const chartData = [];
 const cols = {
     'ph': { min: 0 },
-    'receiveTime': {}
+    'receiveTime': {tickCount: 18}
 };
 const oCols = {
     'o': { min: 0 },
-    'receiveTime': {}
+    'receiveTime': {tickCount: 18}
 };
 
 const waterCols = {
     '温度': { min: 0 },
-    'receiveTime': {}
+    'receiveTime': {tickCount: 18},
+    // sales:{
+    //     type:"linear",
+    //     tickCount:10,
+    //   },
 };
 for (let i = 0; i < 20; i += 1) {
     chartData.push({
@@ -160,7 +164,7 @@ export default class WaterQualityCurve extends React.Component {
                                     <Axis name="time" />
                                     <Axis name="ph" />
                                     <Tooltip crosshairs={{ type: "y" }} />
-                                    <Geom type="line" position="receiveTime*ph" size={2}  shape={'smooth'}  />
+                                    <Geom type="line" position="receiveTime*ph" size={2} shape={'smooth'} />
                                     {/* <Geom type='point' position="receiveTime*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} /> */}
                                 </Chart>
                                 :
@@ -182,7 +186,7 @@ export default class WaterQualityCurve extends React.Component {
                                     <Axis name="time" />
                                     <Axis name="o" />
                                     <Tooltip crosshairs={{ type: "y" }} />
-                                    <Geom type="line" position="receiveTime*oxygen" size={2}  shape={'smooth'}  />
+                                    <Geom type="line" position="receiveTime*oxygen" size={2} shape={'smooth'} />
                                     {/* <Geom type='point' position="receiveTime*oxygen" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} /> */}
                                 </Chart>
                                 : <span>暂无数据</span>}
@@ -203,7 +207,7 @@ export default class WaterQualityCurve extends React.Component {
                                     <Axis name="time" />
                                     <Axis name="温度" />
                                     <Tooltip crosshairs={{ type: "y" }} />
-                                    <Geom type="line" position="receiveTime*temperature" size={2}  shape={'smooth'} />
+                                    <Geom type="line" position="receiveTime*temperature" size={2} shape={'smooth'} />
                                     {/* <Geom type='point' position="receiveTime*temperature" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} /> */}
                                 </Chart>
                                 : <span>暂无数据</span>}

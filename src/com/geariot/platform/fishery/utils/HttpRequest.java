@@ -124,7 +124,6 @@ public class HttpRequest {
 	}
 	
 	public static String postCall(String interfaceName,HttpEntity entity,Map<String,Object> head){
-		log.debug("post调用远程接口， 接口名："+interfaceName);
 		CloseableHttpClient httpClient = getHttpClient();
 		CloseableHttpResponse response = null;
 		HttpPost httpPost = new HttpPost(interfaceName);
@@ -161,7 +160,6 @@ public class HttpRequest {
 	            }
 			}
 		}
-		log.debug("post调用结果：" + outResult);
 		return outResult;
 		
 	}
@@ -252,7 +250,6 @@ public class HttpRequest {
 				httpGet.setHeader(h.getKey(), h.getValue().toString());
 			}
 		}
-		log.debug("发起get请求 请求路径：" + interfaceName);
 		String outResult = null;
 		try {
 			response = httpClient.execute(httpGet);
@@ -275,7 +272,6 @@ public class HttpRequest {
 	            }
 			}
         }
-		log.debug("get请求结果：" + outResult);
 		return outResult;
 	}
 	

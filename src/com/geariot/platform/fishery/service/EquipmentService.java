@@ -11,6 +11,8 @@ import java.util.Random;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,8 @@ import com.geariot.platform.fishery.utils.DataExportExcel;
 @Transactional
 public class EquipmentService {
 
+	private static Logger logger = LogManager.getLogger(EquipmentService.class);
+
 	@Autowired
 	private AIODao aioDao;
 
@@ -83,11 +87,9 @@ public class EquipmentService {
 
 	@Autowired
 	private Sensor_ControllerDao sensor_ControllerDao;
-	
+
 	@Autowired
 	private DataAlarmDao daDao;
-	
-
 
 	private String type = "";
 	private String relation = "";
@@ -318,17 +320,17 @@ public class EquipmentService {
 		result.put("sensor", sensors);
 		result.put("controller", controllers);
 		result.put("aio", aios);
-		if(relation!=null && relation.length()>0){
-			if(relation.contains("WX")){
+		if (relation != null && relation.length() > 0) {
+			if (relation.contains("WX")) {
 				WXUser wxUser = wxUserDao.findUserByRelation(relation);
-				result.put("user", wxUser==null?"":wxUser.getName());
-			}else if(relation.contains("CO")){
+				result.put("user", wxUser == null ? "" : wxUser.getName());
+			} else if (relation.contains("CO")) {
 				Company company = companyDao.findCompanyByRelation(relation);
-				result.put("user", company==null?"":company.getName());
-			}else{
+				result.put("user", company == null ? "" : company.getName());
+			} else {
 				result.put("user", "");
 			}
-		}else{
+		} else {
 			result.put("user", "");
 		}
 		return result;
@@ -622,27 +624,14 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.sevenData(device_sn);
 		}
-		
-		List<Sensor_Data> splitlist=new ArrayList<>();
-		int i=0;
-		while(i<2016) {
-			try {
-				splitlist.add(list.get(i));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				break;
-			}
-			
-			i=i+14;
-		}
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-		for (Sensor_Data sensor_Data : splitlist) {
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+		for (Sensor_Data sensor_Data : list) {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 			temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -695,27 +684,14 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.sevenData(device_sn);
 		}
-		
-		List<Sensor_Data> splitlist=new ArrayList<>();
-		int i=0;
-		while(i<2016) {
-			try {
-				splitlist.add(list.get(i));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				break;
-			}
-			i=i+14;
-		}
-		
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-		for (Sensor_Data sensor_Data : splitlist) {
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+		for (Sensor_Data sensor_Data : list) {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 			temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -724,8 +700,7 @@ public class EquipmentService {
 			oxygens.add(oxygen);
 			temperatures.add(temperature);
 		}
-	  
-		
+
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
 		map.put("oxygens", oxygens);
@@ -734,46 +709,58 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> autoSet(Limit_Install limit_Install, Timer[] timers) {
-		String deviceSn;
+		String type;
 		try {
-			deviceSn = limit_Install.getDevice_sn().substring(0, 2);
-			if (timers == null) {
-				if (statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay()).isOn_off()) {
-					CMDUtils.serverOnOffOxygenCMD(limit_Install.getDevice_sn(), limit_Install.getWay(), 0);
+			type = limit_Install.getDevice_sn().substring(0, 2);
+			if (type.equals("01") || type.equals("02")) {
+				if (aioDao.findAIOByDeviceSns(limit_Install.getDevice_sn()) == null) {
+					return RESCODE.DEVICESNS_INVALID.getJSONRES();
 				}
-
-				timerDao.delete(limit_Install.getDevice_sn(), limit_Install.getWay());
-
-				return RESCODE.SUCCESS.getJSONRES();
+			} else if (type.equals("03")) {
+				if (sensorDao.findSensorByDeviceSns(limit_Install.getDevice_sn()) == null) {
+					return RESCODE.DEVICESNS_INVALID.getJSONRES();
+				}
+			} else {
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
 			Map<String, Object> map = CMDUtils.downLimitCMD(limit_Install);
 			if (!map.containsKey("0"))
 				return map;
-
+			Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(),
+					limit_Install.getWay());
+			logger.debug(limit_Install.toString());
+			if (install == null) {
+				logger.debug("111111111111111111111");
+				limitDao.save(limit_Install);
+			} else {
+				logger.debug("22222222222222222222222222");
+				install.setHigh_limit(limit_Install.getHigh_limit());
+				install.setLow_limit(limit_Install.getLow_limit());
+				install.setUp_limit(limit_Install.getUp_limit());
+			}
+			// 传空为了删除定时功能
+			if (timers == null) {
+				if (statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay()).isOn_off()) {
+					CMDUtils.serverOnOffOxygenCMD(limit_Install.getDevice_sn(), limit_Install.getWay(), 0);
+				}
+				timerDao.delete(limit_Install.getDevice_sn(), limit_Install.getWay());
+				return RESCODE.SUCCESS.getJSONRES();
+			} else {
+				AeratorStatus status = statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(),
+						limit_Install.getWay());
+				Timer timer = timers[0];
+				if (timers.length > 0) {
+					status.setTimed(true);
+				}
+				timerDao.delete(timer.getDevice_sn(), timer.getWay());
+				for (Timer timersave : timers) {
+					timerDao.save(timersave);
+				}
+				return RESCODE.SUCCESS.getJSONRES();
+			}
 		} catch (Exception e) {
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-		if (deviceSn.equals("01") || deviceSn.equals("02")) {
-			if (aioDao.findAIOByDeviceSns(limit_Install.getDevice_sn()) == null) {
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-			}
-		} else if (deviceSn.equals("03")) {
-			if (sensorDao.findSensorByDeviceSns(limit_Install.getDevice_sn()) == null) {
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-			}
-		} else
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		limitDao.updateLimit(limit_Install);
-		AeratorStatus status = statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
-		Timer timer = timers[0];
-		if (timers.length > 0) {
-			status.setTimed(true);
-		}
-		timerDao.delete(timer.getDevice_sn(), timer.getWay());
-		for (Timer timersave : timers) {
-			timerDao.save(timersave);
-		}
-		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	public Map<String, Object> queryAeratorData(String device_sn, int way) {
@@ -812,66 +799,64 @@ public class EquipmentService {
 
 	public Map<String, Object> queryAlarm(String openId) {
 		// TODO Auto-generated method stub
-		WXUser wxuser=wxUserDao.findUserByOpenId(openId);
-		
-		if(null==wxuser) {
+		WXUser wxuser = wxUserDao.findUserByOpenId(openId);
+
+		if (null == wxuser) {
 			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
 		}
-		String relation=wxuser.getRelation();
-		if(null==relation) {
+		String relation = wxuser.getRelation();
+		if (null == relation) {
 			return RESCODE.NO_BIND_RELATION.getJSONRES();
 		}
-		List<DataAlarm> dalist=daDao.queryDataAlarm(relation);
-		if(null==dalist) {
+		List<DataAlarm> dalist = daDao.queryDataAlarm(relation);
+		if (null == dalist) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
-		
-		
+
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-		
-		
+
 		map.put("dataAlarm", dalist);
-		
+
 		return map;
 	}
 
 	public Map<String, Object> alarmIsRead(Integer id) {
-		DataAlarm da=daDao.findDataAlarmById(id);
-		if(null==da) {
-		return RESCODE.NOT_FOUND.getJSONRES();
+		DataAlarm da = daDao.findDataAlarmById(id);
+		if (null == da) {
+			return RESCODE.NOT_FOUND.getJSONRES();
 		}
 		da.setIsWatch(1);
-		//daDao.updateStatus(da);
+		// daDao.updateStatus(da);
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	public Map<String, Object> modifyEquipment(String device_sn,String name) {
-		String type=null;
-		Map<String, Object> map=null;
+	public Map<String, Object> modifyEquipment(String device_sn, String name) {
+		String type = null;
+		Map<String, Object> map = null;
 		try {
-			type=device_sn.substring(0, 2);
+			type = device_sn.substring(0, 2);
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
-		if(type.equals("01")||type.equals("02")) {
-			AIO aio=aioDao.findAIOByDeviceSns(device_sn);
+		if (type.equals("01") || type.equals("02")) {
+			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
 			aio.setName(name);
-			map=RESCODE.SUCCESS.getJSONRES();
+			map = RESCODE.SUCCESS.getJSONRES();
 			map.put("equipment", aio);
-		}else if(type.equals("03")) {
-			Sensor sensor=sensorDao.findSensorByDeviceSns(device_sn);
+		} else if (type.equals("03")) {
+			Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
 			sensor.setName(name);
-			map=RESCODE.SUCCESS.getJSONRES();
+			map = RESCODE.SUCCESS.getJSONRES();
 			map.put("equipment", sensor);
-		}else if(type.equals("04")) {
-			Controller controller=controllerDao.findControllerByDeviceSns(device_sn);
+		} else if (type.equals("04")) {
+			Controller controller = controllerDao.findControllerByDeviceSns(device_sn);
 			controller.setName(name);
-			map=RESCODE.SUCCESS.getJSONRES();
+			map = RESCODE.SUCCESS.getJSONRES();
 			map.put("equipment", controller);
 		}
-		
-	    return map;
-		
+
+		return map;
+
 	}
 
 }

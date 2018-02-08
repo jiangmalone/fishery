@@ -18,8 +18,6 @@ import com.geariot.platform.fishery.utils.HttpRequest;
  */
 public class WechatConfig {
 
-	private static Logger log = LogManager.getLogger(WechatConfig.class);
-
 	// 自定义的token
 	public static final String TOKEN = "fishery2018";
 
@@ -77,9 +75,6 @@ public class WechatConfig {
 			e.printStackTrace();
 			throw new RuntimeException("WechatConfig#获取token的json字符串解析失败", e);
 		}
-
-		log.debug("新获取的token:" + obj.getString("access_token"));
-
 		return obj;
 
 	}
@@ -136,7 +131,6 @@ public class WechatConfig {
 		// 检查是否过期 我这里设置了1个半小时过期
 		JSONObject tokenJSON = cacheVariable.get("itoken");
 		if (tokenJSON != null && (System.currentTimeMillis() - tokenJSON.getLong("get_time")) < TIME_OUT) {
-			log.debug("从缓存中拿的itoken:" + tokenJSON.getString("access_token"));
 			return tokenJSON;
 		}
 		String tokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + APP_ID
@@ -150,7 +144,6 @@ public class WechatConfig {
 			e.printStackTrace();
 		}
 		cacheVariable.put("itoken", obj);
-		log.debug("新获取的itoken:" + obj.getString("access_token"));
 		return obj;
 	}
 
@@ -171,7 +164,6 @@ public class WechatConfig {
 		// 检查是否过期 我这里设置了1个半小时过期
 		JSONObject ticketJSON = cacheVariable.get("jsapi_ticket");
 		if (ticketJSON != null && (System.currentTimeMillis() - ticketJSON.getLong("get_time")) < TIME_OUT) {
-			log.debug("从缓存中拿的jsapi_ticket:" + ticketJSON.getString("ticket"));
 			return ticketJSON;
 		}
 
@@ -184,8 +176,6 @@ public class WechatConfig {
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-
-		log.debug("新获取的jsapi_ticket:" + jsonObject);
 		cacheVariable.put("jsapi_ticket", jsonObject);
 		return jsonObject;
 

@@ -807,11 +807,11 @@ public class CMDUtils {
 
 			try {
 				logger.debug("当前线程" + Thread.currentThread().getName() + "准备进入等待");
-				lockObject.wait(10000);
+				lockObject.wait(20000);
 				logger.debug("当前线程" + Thread.currentThread().getName() + "被唤醒或者超时");
 				map.remove(deviceSn);
 				end = System.currentTimeMillis();
-				if (end - start >= 10000) {
+				if (end - start >= 20000) {
 					logger.debug("等待反馈超时");
 					return RESCODE.NOT_RECEIVED.getJSONRES();
 				}

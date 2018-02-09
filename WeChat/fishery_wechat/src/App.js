@@ -23,7 +23,7 @@ import EquipmentManagement from './routes/Equipment/EquipmentManagement';
 import BindEquipment from './routes/Equipment/BindEquipment';
 import SensorDetail from './routes/Equipment/SensorDetail';
 import AddAddress from './routes/Mypond/AddPond/AddAddress';
-
+import isEmpty from './utils/isEmpty';
 import { verifyIsLogin } from './services/sms'
 let styles = {}
 
@@ -49,8 +49,10 @@ class App extends React.Component {
 
     componentDidMount() {
         window.scrollTo();
-        if(!window.localStorage.getItem('openid')) {
-            window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9871d8699143d59e&redirect_uri=http%3a%2f%2fwww.fisherymanager.net%2fapi%2fwebService%2fwechatlogin%3fhtmlPage%3dlogin%26isAuth%3dtrue&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
+        if (isEmpty(window.localStorage.getItem('openid') && isEmpty(window.localStorage.getItem('relation')))) {
+            window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9871d8699143d59e&redirect_uri=http%3a%2f%2fwww.fisherymanager.net%2fapi%2fwebService%2fwechatlogin%3fhtmlPage%3dlogin%26isAuth%3dtrue&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect" + '?v=' + (new Date().getTime());
+
+            // window.location.reload();
         }
         if (window.location.hash.indexOf('login') == -1 && (window.location.hash !== '#/') && (window.location.hash !== '#/main')) {
             verifyIsLogin({
@@ -72,18 +74,18 @@ class App extends React.Component {
                 console.log(error)
             })
         }
-        let oldX=0,newX=0;
-        $('#root').on('touchstart',  (event) =>{
+        let oldX = 0, newX = 0;
+        $('#root').on('touchstart', (event) => {
             //起始位置
             //之前写成changedtouches了忘了大写
             oldX = event.changedTouches[0].clientX
         });
-        $('#root').on('touchend',  (event)=> {
+        $('#root').on('touchend', (event) => {
             //新的位置
             newX = event.changedTouches[0].clientX
             //取绝对值,再来比 以免上滑动失效和左滑动生效（上滑动y的差值是负的，左同理）
             let endX = newX - oldX
-            if(endX>40){
+            if (endX > 40) {
                 this.props.dispatch({
                     type: 'global/changeState',
                     payload: {
@@ -91,7 +93,7 @@ class App extends React.Component {
                     }
                 })
             }
-            if(endX<-40){
+            if (endX < -40) {
                 this.props.dispatch({
                     type: 'global/changeState',
                     payload: {
@@ -119,6 +121,7 @@ class App extends React.Component {
                 transitionLeaveTimeout={400}
             // transitionAppear = {true}
             >
+
                 <div key={this.props.location.pathname} style={styles.content} >
 
                     <Route location={this.props.location} path="/alarm" component={Alarm} />

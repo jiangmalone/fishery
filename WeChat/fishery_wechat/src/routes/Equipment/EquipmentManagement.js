@@ -255,11 +255,11 @@ class EquipmentManagement extends React.Component {
         </div>
     }
 
-    // 绑定渔塘
+    // 绑定鱼塘
     bindPond = () => {
         const pickerValue = this.state.pickerValue;
         if (pickerValue.length < 1) {
-            Toast.fail('请选择渔塘！', 1);
+            Toast.fail('请选择鱼塘！', 1);
         } else {
             this.setState({ animating: true });
             pondWithSensorOrAIO({
@@ -284,14 +284,14 @@ class EquipmentManagement extends React.Component {
         }
     }
 
-    // 解绑渔塘
+    // 解绑鱼塘
     unBindPond = () => {
         const BUTTONS = ['解绑', '取消'];
         ActionSheet.showActionSheetWithOptions({
             options: BUTTONS,
             cancelButtonIndex: BUTTONS.length - 1,
             destructiveButtonIndex: BUTTONS.length - 2,
-            message: '您是否确定解绑该渔塘？',
+            message: '您是否确定解绑该鱼塘？',
             maskClosable: true,
             // wrapProps,
         }, (buttonIndex) => {

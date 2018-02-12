@@ -7,7 +7,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="javaClassName")
 public class Broken {
 private int id;
 private int entityModel;  //故障实体，0为水泵，1为PH，2为DO溶氧值，3为温度

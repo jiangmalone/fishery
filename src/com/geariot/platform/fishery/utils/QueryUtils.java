@@ -8,9 +8,6 @@ import java.util.Map;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.geariot.platform.fishery.utils.CommonUtils;
-import com.geariot.platform.fishery.utils.Constants;
-
 
 /**
  * query生成辅助

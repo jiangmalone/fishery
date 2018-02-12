@@ -1,7 +1,6 @@
 package com.geariot.platform.fishery.dao.impl;
 
 import org.hibernate.Query;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.Sensor_DataDao;
-import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.model.ExcelData;
 import com.geariot.platform.fishery.utils.Constants;

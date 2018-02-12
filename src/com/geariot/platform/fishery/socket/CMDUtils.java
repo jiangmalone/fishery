@@ -2,19 +2,15 @@ package com.geariot.platform.fishery.socket;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
@@ -24,16 +20,13 @@ import com.geariot.platform.fishery.entities.Alarm;
 import com.geariot.platform.fishery.entities.Broken;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.DataAlarm;
-import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.PondFish;
 import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
-import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.entities.WXUser;
-import com.geariot.platform.fishery.model.AlarmRange;
 import com.geariot.platform.fishery.model.BrokenMSG;
 import com.geariot.platform.fishery.model.EntityModel;
 import com.geariot.platform.fishery.model.EntityType;
@@ -42,10 +35,8 @@ import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
 import com.geariot.platform.fishery.utils.JudgeAlarmRangeUtils;
-import com.geariot.platform.fishery.utils.LoadAlarmRange;
 import com.geariot.platform.fishery.utils.StringUtils;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
-import com.geariot.platform.fishery.wxutils.WechatTemplateMessage;
 
 public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
@@ -555,7 +546,9 @@ public class CMDUtils {
 		byte[] bytePhValue = new byte[4];
 		CommonUtils.arrayHandle(data, bytePhValue, 15, 0, 4);
 		float phValue = CommonUtils.byte2float(bytePhValue, 0);
-
+		byte[] byteSaturation = new byte[4];
+		CommonUtils.arrayHandle(data, byteSaturation, 19, 0, 4);
+		float saturation = CommonUtils.byte2float(byteSaturation, 0);
 		Sensor_Data sData = new Sensor_Data();
 		sData.setDevice_sn(deviceSn);
 		sData.setWay(way);
@@ -563,7 +556,7 @@ public class CMDUtils {
 		sData.setWater_temperature(waterTemp);
 		sData.setpH_value(phValue);
 		logger.debug(
-				"服务器接收设备编号和路分别为:" + deviceSn + "第" + way + "路，溶氧值为:" + oxygen + "水温为:" + waterTemp + "ph值为:" + phValue);
+				"服务器接收设备编号和路分别为:" + deviceSn + "第" + way + "路，溶氧值为:" + oxygen + "水温为:" + waterTemp + "ph值为:" + phValue+"溶氧饱和值为:"+saturation);
 		sData.setReceiveTime(new Date());
 		service.save(sData);
 		
@@ -607,6 +600,7 @@ public class CMDUtils {
 		response[7] = CommonUtils.arrayMerge(response, 2, 5);
 		CommonUtils.arrayHandle(data, response, dataStart, 8, 4);
 		ByteBuffer outBuffer = ByteBuffer.wrap(response);
+		logger.debug(CommonUtils.printHexStringMerge(outBuffer.array(),0,outBuffer.array().length));
 		readChannel.write(outBuffer);// 将消息回送给客户端
 		// System.out.println("cmd代码处理完");
 	}

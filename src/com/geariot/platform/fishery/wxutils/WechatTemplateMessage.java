@@ -12,7 +12,6 @@ import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.HttpRequest;
-import com.geariot.platform.fishery.wxutils.WechatConfig;
 
 public class WechatTemplateMessage {
 	

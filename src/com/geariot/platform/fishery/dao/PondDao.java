@@ -5,7 +5,6 @@ package com.geariot.platform.fishery.dao;
 
 import java.util.List;
 
-import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.model.Equipment;

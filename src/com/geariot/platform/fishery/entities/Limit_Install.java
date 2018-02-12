@@ -10,7 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="javaClassName")
 public class Limit_Install {
 
 	private int id;						//数据库记录Id(自增)
@@ -57,14 +61,5 @@ public class Limit_Install {
 	public void setDevice_sn(String device_sn) {
 		this.device_sn = device_sn;
 	}
-	@Override
-	public String toString() {
-		return "Limit_Install [id=" + id + ", low_limit=" + low_limit + ", up_limit=" + up_limit + ", high_limit="
-				+ high_limit + ", device_sn=" + device_sn + ", way=" + way + ", getWay()=" + getWay() + ", getId()="
-				+ getId() + ", getLow_limit()=" + getLow_limit() + ", getUp_limit()=" + getUp_limit()
-				+ ", getHigh_limit()=" + getHigh_limit() + ", getDevice_sn()=" + getDevice_sn() + ", getClass()="
-				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
-	}
-	
-	
+
 }

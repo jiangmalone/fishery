@@ -16,15 +16,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+
+import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.service.WebServiceService;
+import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.HttpRequest;
 import com.geariot.platform.fishery.utils.MD5;
 import com.geariot.platform.fishery.wxutils.WechatConfig;
 import com.geariot.platform.fishery.wxutils.WechatLoginUse;
-import com.geariot.platform.fishery.entities.WXUser;
-import com.geariot.platform.fishery.model.RESCODE;
-import com.geariot.platform.fishery.service.WebServiceService;
-import com.geariot.platform.fishery.utils.Constants;
 
 @Controller
 @RequestMapping("/webService")

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.WXUserDao;
-import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.QueryUtils;

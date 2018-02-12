@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.geariot.platform.fishery.entities.Admin;
-import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.service.AdminService;
 
 /**

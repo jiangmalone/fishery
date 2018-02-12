@@ -3,8 +3,6 @@
  */
 package com.geariot.platform.fishery.model;
 
-import java.util.Date;
-
 /**
  * @author mxy940127
  *

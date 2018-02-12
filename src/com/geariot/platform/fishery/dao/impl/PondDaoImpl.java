@@ -6,7 +6,6 @@ package com.geariot.platform.fishery.dao.impl;
 
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.PondDao;
-import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.model.Equipment;
@@ -123,7 +121,6 @@ public class PondDaoImpl implements PondDao {
 		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
 		sb.append("from Controller c where c.pondId = :pondId) ");
 		sb.append("as total");
-		System.out.println(sb.toString());
 		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString())
 				.setInteger("pondId", pondId).uniqueResult();
 		return big.longValue();

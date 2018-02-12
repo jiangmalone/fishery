@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,10 +19,8 @@ public class RequestProcessor {
     private DataHandle handle=new DataHandle();
     
 	public void ProcessorRequest(final SelectionKey key){
-		
         //获得线程并执行
         executorService.submit(new Runnable() {
-
             @Override
             public void run(){ 
                 read(key);    
@@ -34,9 +30,7 @@ public class RequestProcessor {
 
 	public  void read(final SelectionKey key) {
 		// 服务器可读取消息:得到事件发生的Socket通道
-		log.debug("新消息来了，准备开始读，key为" + key.toString());
 		SocketChannel readChannel = (SocketChannel) key.channel();
-
 		// 创建读取的缓冲区
 		ByteBuffer buffer = ByteBuffer.allocate(100);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -60,11 +54,7 @@ public class RequestProcessor {
 			}
 		}
 		byte[] data = baos.toByteArray();
-
 		handle.handle(data, readChannel);
-        
-		
 		NIOServer.addQueen(key);
-
 	}
 }

@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.geariot.platform.fishery.entities.DataAlarm;
-import com.geariot.platform.fishery.entities.Limit_Install;
-import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.ParamBody;
 import com.geariot.platform.fishery.service.EquipmentService;
 import com.geariot.platform.fishery.socket.CMDUtils;

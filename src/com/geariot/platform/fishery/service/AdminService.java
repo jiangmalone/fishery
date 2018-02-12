@@ -16,8 +16,6 @@ import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.utils.MD5;
 
-import net.sf.json.JsonConfig;
-
 /**
  * @author mxy940127
  *

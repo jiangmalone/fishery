@@ -30,7 +30,6 @@ public class NIOServer {
         }
     }
 
-
 	/**
 	 * 获得一个ServerSocket通道，并对该通道做一些初始化的工作
 	 * 
@@ -100,9 +99,6 @@ public class NIOServer {
 							key.cancel();
 							// 调用读操作
 							requestProcessor.ProcessorRequest(key);
-							
-							
-                 
 						}
 						// 删除已选的key,以防重复处理
 						ite.remove();

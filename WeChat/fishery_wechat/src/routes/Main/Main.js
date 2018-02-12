@@ -296,7 +296,7 @@ class Main extends React.Component {
 
             <div className='line' >
                 <div className='name' >
-                    增氧机（{aio.way}路）
+                    增氧机({aio.way}路)
                 </div>
                 <button className={aio.timed ? 'auto-button do-auto' : 'auto-button'} onClick={() => this.showActionSheet(aio.device_sn, aio.way, aio.timed, pondIndex, aioIndex)} >定时</button>
                 <Switch

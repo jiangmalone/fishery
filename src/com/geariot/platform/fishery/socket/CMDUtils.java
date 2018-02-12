@@ -187,8 +187,9 @@ public class CMDUtils {
 		sData.setOxygen(oxygen);
 		sData.setWater_temperature(waterTemp);
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路的溶氧值为:" + oxygen + "水温:" + waterTemp);
-
 		sData.setReceiveTime(new Date());
+		service.update(sData);
+		
 		 AIO aio=service.findAIOByDeviceSn(deviceSn);
 		 String relation=null;
 		 String openId=null;
@@ -219,7 +220,6 @@ public class CMDUtils {
 			}
 		doJudge(deviceSn, waterTemp, oxygen,-1,openId,da);//判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
 		
-		service.update(sData);
 
 		response(16, data, readChannel);
 	}
@@ -564,8 +564,10 @@ public class CMDUtils {
 		sData.setpH_value(phValue);
 		logger.debug(
 				"服务器接收设备编号和路分别为:" + deviceSn + "第" + way + "路，溶氧值为:" + oxygen + "水温为:" + waterTemp + "ph值为:" + phValue);
-		
 		sData.setReceiveTime(new Date());
+		service.save(sData);
+		
+		
 		AIO aio=service.findAIOByDeviceSn(deviceSn);
 		 String relation=null;
 		 String openId=null;
@@ -595,9 +597,6 @@ public class CMDUtils {
 				da.setPondName(null);
 			}
 		doJudge(deviceSn, waterTemp, oxygen,phValue,openId,da);
-		
-		service.save(sData);
-
 		response(16, data, readChannel);
 	}
 

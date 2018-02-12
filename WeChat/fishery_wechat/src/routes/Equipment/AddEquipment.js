@@ -49,7 +49,10 @@ class AddEquipment extends React.Component {
                 if (res.resultStr) {
                     let result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
                     let arr = result.split(",");
-                    this.setState({ equipmentCode: arr[1] });
+                    this.setState({ equipmentCode: arr[1] },()=>{
+                        this.doAddEquipment();
+                    });
+
                 } else {
                     this.setState({ equipmentCode: '' });
                 }
@@ -59,7 +62,7 @@ class AddEquipment extends React.Component {
 
     doAddEquipment = () => {
         if (!this.state.equipmentCode) {
-            Toast.info('请输入设备编号!', 1);
+            Toast.info('请扫描设备条码!', 1);
             return;
         }
         this.props.dispatch({
@@ -77,7 +80,7 @@ class AddEquipment extends React.Component {
             <NavBar
                 title='添加设备'
             />
-            <div className='add-line'>
+            {/* <div className='add-line'>
                 <input
                     placeholder='请输入设备编号'
                     value={this.state.equipmentCode}
@@ -86,7 +89,7 @@ class AddEquipment extends React.Component {
                     })}
                 />
                 <div onClick={this.doAddEquipment}>添加</div>
-            </div>
+            </div> */}
             <div className='scan-block' onClick={this.scanEquipment}>
                 <img src={scan} />
                 <p>扫描设备条码添加</p>

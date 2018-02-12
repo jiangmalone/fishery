@@ -13,21 +13,17 @@ import moment from 'moment';
 import numeral from 'numeral';
 const chartData = [];
 const cols = {
-    'ph': { min: 0 },
-    'receiveTime': {tickCount: 18}
+    'ph': { min:0 },
+    'receiveTime': {tickCount: 18, nice: true}
 };
 const oCols = {
-    'o': { min: 0 },
-    'receiveTime': {tickCount: 18}
+    'o': { range: [0, 45] },
+    'receiveTime': {tickCount: 18,nice: true}
 };
 
 const waterCols = {
-    '温度': { min: 0 },
-    'receiveTime': {tickCount: 18},
-    // sales:{
-    //     type:"linear",
-    //     tickCount:10,
-    //   },
+    '温度': { range: [0, 45] },
+    'receiveTime': {tickCount: 18,nice: true},
 };
 for (let i = 0; i < 20; i += 1) {
     chartData.push({

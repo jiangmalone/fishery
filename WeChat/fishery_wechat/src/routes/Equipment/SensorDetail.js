@@ -14,7 +14,9 @@ import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
 import { getDataToday, getRealTimeData, myEquipment, getDataSevenday, serverCheck } from '../../services/equipment.js'; //接口
 
 const cols = {
+
     'ph': { min: 0 },
+    // 'ph': {range: [0, 20]},
     'receiveTime': {tickCount: 18}
 };
 const oCols = {
@@ -23,7 +25,9 @@ const oCols = {
 };
 
 const waterCols = {
+
     '温度': { min: 0 },
+    // '温度': {range: [0, 45]},
     'receiveTime': {tickCount: 18}
 };
 

@@ -16,6 +16,7 @@ class Alarm extends React.Component {
 
     componentDidMount() {
         this.queryAlarm()
+      
     }
 
     queryAlarm = ()=>{

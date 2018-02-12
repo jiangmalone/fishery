@@ -49,7 +49,6 @@ class AddEquipment extends React.Component {
                 if (res.resultStr) {
                     let result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
                     let arr = result.split(",");
-                    alert(arr[1]);
                     this.setState({ equipmentCode: arr[1] });
                 } else {
                     this.setState({ equipmentCode: '' });

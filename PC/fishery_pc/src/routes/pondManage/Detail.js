@@ -107,6 +107,16 @@ class PondDetail extends PureComponent {
             title: '设备状态',
             dataIndex: 'status',
             key: 'status',
+            render: (text, record, index) => {
+                switch (text) {
+                    case 0: text = '正常'; break;
+                    case 1: text = '离线'; break;
+                    case 2: text = '断电'; break;
+                    case 3: text = '缺相'; break;
+                    case 4: text = '数据异常'; break;
+                }
+                return <span>{text}</span>
+            }
         }, {
             title: '操作',
             dataIndex: 'keyword',

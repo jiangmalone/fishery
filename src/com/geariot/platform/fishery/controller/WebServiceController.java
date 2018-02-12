@@ -127,6 +127,7 @@ public class WebServiceController {
 	}
 
 	public String getWechatInfo(String htmlPage, String code, boolean isAuth) {
+		System.out.println(isAuth);
 		String wechatInfo = WechatLoginUse.wechatInfo(code);
 		JSONObject resultJson;
 		try {
@@ -137,6 +138,7 @@ public class WebServiceController {
 				headimgurl = URLEncoder.encode(headimgurl, "utf-8");
 				String ret = BASEURL + htmlPage;
 				boolean wxUser = webServiceService.isExistUserOpenId(openId);
+				System.out.println(wxUser);
 				if(isAuth){
 					ret = BASEURL + "login?openid=" + openId + "&headimgurl=" + headimgurl;
 					return "redirect:"+ret;

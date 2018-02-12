@@ -13,7 +13,7 @@ import { wxQuery } from '../../services/pondManage.js'; //接口
 import { getWeather } from '../../services/weather.js'; //接口
 import { aeratorOnOff } from '../../services/oxygenControl.js'; //接口
 import equipment, { autoSet } from '../../services/equipment.js'; //接口
-
+import isEmpty from '../../utils/isEmpty';
 class Main extends React.Component {
 
     constructor(props) {
@@ -30,6 +30,11 @@ class Main extends React.Component {
     }
 
     componentDidMount() {
+        if(isEmpty(window.localStorage.getItem('openid'))||isEmpty(window.localStorage.getItem('relation'))){
+            window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9871d8699143d59e&redirect_uri=http%3a%2f%2fwww.fisherymanager.net%2fapi%2fwebService%2fwechatlogin%3fhtmlPage%3dlogin%26isAuth%3dtrue&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"+'?v='+(new Date().getTime());
+        
+            // window.location.reload();
+        }
         this.getLocation(); //获得当前地理位置
         this.queryPonds();
         // var citysearch = new AMap.CitySearch();
@@ -345,7 +350,7 @@ class Main extends React.Component {
                 {ponds}
             </div> : <div  className='nodata' onClick={this.gotoAddPond} >
             <div className='img-404'  />
-            <span className='add-span' >您还没有添加渔塘呢~</span>
+            <span className='add-span' >您还没有添加鱼塘呢~</span>
             <div className='img-add' ></div>
             </div>}
             <BottomTabBar nowTab={1} />

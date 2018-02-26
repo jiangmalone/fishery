@@ -9,7 +9,7 @@
 		</Console>
 		<!-- 常规文件日志输出，debug等级 -->
 		<RollingFile name="date" fileName="C:/logs/fishery.log"
-			filePattern="C:/logs/freelycar-%d{yyyy-MM-dd}.log">
+			filePattern="C:/logs/fishery-%d{yyyy-MM-dd}.log">
 			<PatternLayout charset="UTF-8"
 				pattern="%d{yyyy-MM-dd HH:mm:ss} [%p]%c{1} - %m%n" />
 			<ThresholdFilter level="debug" />
@@ -21,7 +21,7 @@
 		</RollingFile>
 		<!-- org.apache.http连接日志输入，Warn等级 -->
 		<RollingFile name="http" fileName="C:/logs/fishery-http.log"
-			filePattern="C:/logs/freelycar-http-%d{yyyy-MM-dd}.log">
+			filePattern="C:/logs/fishery-http-%d{yyyy-MM-dd}.log">
 			<PatternLayout charset="UTF-8"
 				pattern="%d{yyyy-MM-dd HH:mm:ss} [%p]%c{1} - %m%n" />
 			<Append>true</Append>
@@ -33,7 +33,7 @@
 		</RollingFile>
 		<!-- org.hibernate连接日志输入，debug等级 -->
 		<RollingFile name="hibernate" fileName="C:/logs/fishery-sql.log"
-			filePattern="C:/logs/freelycar-sql-%d{yyyy-MM-dd HH:mm}.log">
+			filePattern="C:/logs/fishery-sql-%d{yyyy-MM-dd HH:mm}.log">
 			<PatternLayout charset="UTF-8"
 				pattern="%d{yyyy-MM-dd HH:mm:ss} [%p]%c{1} - %m%n" />
 			<Append>true</Append>

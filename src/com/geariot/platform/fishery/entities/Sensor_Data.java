@@ -22,10 +22,18 @@ public class Sensor_Data {
 	private int id;								//数据记录Id,自增
 	private float oxygen;						//溶氧量
 	private float water_temperature;			//水温
-	private float pH_value;						//ph值
+	private float pH_value;	                    //ph值
+	private float saturation;                     //溶氧饱和值
 	private Date receiveTime;					//上位机该条数据发送到服务器时间
 	private String device_sn;					//上位机设备编号
 	private int way;
+	
+	public float getSaturation() {
+		return saturation;
+	}
+	public void setSaturation(float saturation) {
+		this.saturation = saturation;
+	}
 	public int getWay() {
 		return way;
 	}

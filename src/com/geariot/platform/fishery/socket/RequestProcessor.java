@@ -55,6 +55,6 @@ public class RequestProcessor {
 		}
 		byte[] data = baos.toByteArray();
 		handle.handle(data, readChannel);
-		NIOServer.addQueen(key);
+		//NIOServer.addQueen(key);
 	}
 }

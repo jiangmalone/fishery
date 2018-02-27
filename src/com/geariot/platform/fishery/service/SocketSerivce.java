@@ -168,12 +168,13 @@ public class SocketSerivce {
 	public List<PondFish> queryFishCategorysByDeviceSn(String deviceSn){
 		AIO aio=findAIOByDeviceSn(deviceSn);
 		Integer pondId=null;
+		Pond pond=null;
 		if(null!=aio) {
 			pondId=(Integer)aio.getPondId();
+			pond=pondDao.findPondByPondId(pondId);
+			return pond.getPondFishs();
 		}
-		Pond pond=pondDao.findPondByPondId(pondId);
 		
-		return pond.getPondFishs();
-		
+		return null;
 	}
 }

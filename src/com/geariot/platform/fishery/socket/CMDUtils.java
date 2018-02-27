@@ -193,7 +193,6 @@ public class CMDUtils {
 			 WXUser wxuser=service.findWXUserByRelation(relation);
 			 if(null!=wxuser) {
 				openId= wxuser.getOpenId();
-				 
 			 }
 		 } 
 		 DataAlarm da=new DataAlarm();
@@ -201,8 +200,15 @@ public class CMDUtils {
 			da.setDeviceSn(deviceSn);
 			da.setRelation(relation);
 			da.setWay(way);
+			if(aio!=null) {
 			da.setDeviceName(aio.getName());
-			Pond pond=service.findPondById(pondId);
+			}else {
+				da.setDeviceName(null);
+			}
+			Pond pond=null;
+			if(pondId!=null) {
+			pond=service.findPondById(pondId);
+			}
 			if(pond!=null) {
 			da.setPondName(pond.getName());
 			}else {
@@ -581,8 +587,15 @@ public class CMDUtils {
 			da.setDeviceSn(deviceSn);
 			da.setRelation(relation);
 			da.setWay(way);
+			if(aio!=null) {
 			da.setDeviceName(aio.getName());
-			Pond pond=service.findPondById(pondId);
+			}else {
+				da.setDeviceName(null);
+			}
+			Pond pond=null;
+			if(pondId!=null) {
+			pond=service.findPondById(pondId);
+			}
 			if(pond!=null) {
 			da.setPondName(pond.getName());
 			}else {
@@ -770,7 +783,8 @@ public class CMDUtils {
 	public static void doJudge(String deviceSn,float waterTemp,float oxygen,float ph,String openId,DataAlarm da) {
 		List<PondFish> fishCategorys=service.queryFishCategorysByDeviceSn(deviceSn);
 		 logger.debug("准备根据上传的数据判断水温和溶氧值是否正常");
-		
+		if(fishCategorys==null)
+			return;
 		 Set<Integer> typeset=new HashSet<Integer>();
 		if(!fishCategorys.isEmpty()) {
 		for(PondFish category:fishCategorys) {

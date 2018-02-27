@@ -16,7 +16,7 @@ public class JudgeAlarmRangeUtils {
     
 	public static void judgeDO(int type, float DO,String openId,String deviceSn,DataAlarm da) {
           String message=null;
-         
+         //System.out.println(ar.getCrab_DO_high_limit());
 		if(Constants.FISH==type||Constants.LOBSTER==type||Constants.CRAB==type) {
 			if(DO<ar.getFish_DO_low_limit()||DO<ar.getLobster_DO_low_limit()||DO<ar.getCrab_DO_low_limit()) {
 				if(openId!=null)

@@ -193,22 +193,22 @@ public class CMDUtils {
 			 WXUser wxuser=service.findWXUserByRelation(relation);
 			 if(null!=wxuser) {
 				openId= wxuser.getOpenId();
-				 DataAlarm da=new DataAlarm();
-					da.setCreateDate(new Date());
-					da.setDeviceSn(deviceSn);
-					da.setRelation(relation);
-					da.setWay(way);
-					da.setDeviceName(aio.getName());
-					Pond pond=service.findPondById(pondId);
-					if(pond!=null) {
-					da.setPondName(pond.getName());
-					}else {
-						da.setPondName(null);
-					}
-				doJudge(deviceSn, waterTemp, oxygen,-1,openId,da);//判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
+				 
 			 }
 		 } 
-		
+		 DataAlarm da=new DataAlarm();
+			da.setCreateDate(new Date());
+			da.setDeviceSn(deviceSn);
+			da.setRelation(relation);
+			da.setWay(way);
+			da.setDeviceName(aio.getName());
+			Pond pond=service.findPondById(pondId);
+			if(pond!=null) {
+			da.setPondName(pond.getName());
+			}else {
+				da.setPondName(null);
+			}
+		doJudge(deviceSn, waterTemp, oxygen,-1,openId,da);//判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
 		
 
 		response(16, data, readChannel);
@@ -573,22 +573,22 @@ public class CMDUtils {
 			 WXUser wxuser=service.findWXUserByRelation(relation);
 			 if(null!=wxuser) {
 				openId= wxuser.getOpenId();
-				 DataAlarm da=new DataAlarm();
-					da.setCreateDate(new Date());
-					da.setDeviceSn(deviceSn);
-					da.setRelation(relation);
-					da.setWay(way);
-					da.setDeviceName(aio.getName());
-					Pond pond=service.findPondById(pondId);
-					if(pond!=null) {
-					da.setPondName(pond.getName());
-					}else {
-						da.setPondName(null);
-					}
-				doJudge(deviceSn, waterTemp, oxygen,phValue,openId,da);
+				
 			 }
 		 } 
-		
+		 DataAlarm da=new DataAlarm();
+			da.setCreateDate(new Date());
+			da.setDeviceSn(deviceSn);
+			da.setRelation(relation);
+			da.setWay(way);
+			da.setDeviceName(aio.getName());
+			Pond pond=service.findPondById(pondId);
+			if(pond!=null) {
+			da.setPondName(pond.getName());
+			}else {
+				da.setPondName(null);
+			}
+		doJudge(deviceSn, waterTemp, oxygen,phValue,openId,da);
 		
 		service.save(sData);
 		response(24, data, readChannel);

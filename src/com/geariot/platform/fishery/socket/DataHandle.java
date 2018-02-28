@@ -100,8 +100,9 @@ public class DataHandle {
 				case 2:
 					logger.debug("服务器设置三限的反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
 					String openId2 = service.findOpenIdByDeviceSn(deviceSn);
-					WechatSendMessageUtils.sendWechatLimitMessages("设置三限成功", openId2, deviceSn);
-					
+					String msg2=CMDUtils.msg.get(deviceSn+"2");
+					WechatSendMessageUtils.sendWechatLimitMessages("设置"+msg2+"成功", openId2, deviceSn);
+					CMDUtils.msg.remove(deviceSn+"2");
 					break;
 				case 3:
 					logger.debug("5分钟上传一次溶氧值和水温命令,设备编号为:" + deviceSn + "第" + way + "路");
@@ -121,7 +122,13 @@ public class DataHandle {
 				case 7:
 					logger.debug("服务器开关增氧机反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
 					String openId7 = service.findOpenIdByDeviceSn(deviceSn);
-					WechatSendMessageUtils.sendWechatOnOffMessages("更改增氧机开关状态操作成功", openId7, deviceSn);
+					String onOff=CMDUtils.msg.get(deviceSn+"7");
+					String msg7=null;
+					if(onOff.equals("1")) {
+					msg7="打开增氧机";}else {
+						msg7="关闭增氧机";
+					}
+					WechatSendMessageUtils.sendWechatOnOffMessages(msg7+"操作成功", openId7, deviceSn);
 					break;
 				case 8:
 					logger.debug("服务器一键自动反馈命令,设备编号为:" + deviceSn + "第" + way + "路");

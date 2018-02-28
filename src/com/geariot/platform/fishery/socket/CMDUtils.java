@@ -44,7 +44,7 @@ public class CMDUtils {
 	private static Map<String, SocketChannel> clientMap = new ConcurrentHashMap<String, SocketChannel>();
 	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
     private static BrokenMSG bs=new BrokenMSG();
-
+    public static Map<String,String> msg=new ConcurrentHashMap<String,String>();
 	public static Map<String, SocketChannel> getclientMap() {
 		return clientMap;
 	}
@@ -149,7 +149,8 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 		//return responseToBrowser("2", limit.getDevice_sn());
-		
+		msg.put(limit.getDevice_sn()+"2", "低限为:"+limit.getLow_limit()+"高限为:"+limit.getHigh_limit()+
+				"上限为:"+limit.getUp_limit());
         return RESCODE.SUCCESS.getJSONRES();
 	}
 
@@ -449,7 +450,7 @@ public class CMDUtils {
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-
+         msg.put(deviceSn+"7",String.valueOf(operation));
 		//return responseToBrowser("7", deviceSn);
 		 return RESCODE.SUCCESS.getJSONRES();
 	}
@@ -475,7 +476,7 @@ public class CMDUtils {
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-
+        
 		//return responseToBrowser("8", deviceSn);
 		 return RESCODE.SUCCESS.getJSONRES();	
 	}

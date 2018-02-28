@@ -677,22 +677,16 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-		//for (Sensor_Data sensor_Data : list) {
-		Sensor_Data sensor_Data=null;
-		for(int i=0;i<288;i=i+36) {
-			try {
-				sensor_Data = list.get(i);
-				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
-				temperature = new Temperature(sensor_Data.getWater_temperature(),
-						format.format(sensor_Data.getReceiveTime()));
-				phs.add(ph);
-				oxygens.add(oxygen);
-				temperatures.add(temperature);
-			} catch (Exception e) {
-				break;
-			}
-		
+		for (Sensor_Data sensor_Data : list) {
+			
+			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			temperature = new Temperature(sensor_Data.getWater_temperature(),
+					format.format(sensor_Data.getReceiveTime()));
+			phs.add(ph);
+			oxygens.add(oxygen);
+			temperatures.add(temperature);
+
 		}
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
@@ -765,10 +759,10 @@ public class EquipmentService {
 					limit_Install.getWay());
 			logger.debug(limit_Install.toString());
 			if (install == null) {
-				logger.debug("111111111111111111111");
+				
 				limitDao.save(limit_Install);
 			} else {
-				logger.debug("22222222222222222222222222");
+				
 				install.setHigh_limit(limit_Install.getHigh_limit());
 				install.setLow_limit(limit_Install.getLow_limit());
 				install.setUp_limit(limit_Install.getUp_limit());

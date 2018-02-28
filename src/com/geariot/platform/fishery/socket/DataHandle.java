@@ -100,7 +100,7 @@ public class DataHandle {
 				case 2:
 					logger.debug("服务器设置三限的反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
 					String openId2 = service.findOpenIdByDeviceSn(deviceSn);
-					WechatSendMessageUtils.sendWechatLimitMessages(null, openId2, deviceSn);
+					WechatSendMessageUtils.sendWechatLimitMessages("设置三限成功", openId2, deviceSn);
 					
 					break;
 				case 3:
@@ -121,12 +121,12 @@ public class DataHandle {
 				case 7:
 					logger.debug("服务器开关增氧机反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
 					String openId7 = service.findOpenIdByDeviceSn(deviceSn);
-					WechatSendMessageUtils.sendWechatOnOffMessages(null, openId7, deviceSn);
+					WechatSendMessageUtils.sendWechatOnOffMessages("更改增氧机开关状态操作成功", openId7, deviceSn);
 					break;
 				case 8:
 					logger.debug("服务器一键自动反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
 					String openId8 = service.findOpenIdByDeviceSn(deviceSn);
-					WechatSendMessageUtils.sendWechatSetAutoMessages(null, openId8, deviceSn);
+					WechatSendMessageUtils.sendWechatSetAutoMessages("一键自动成功", openId8, deviceSn);
 					break;
 				case 9:
 					logger.debug("溶氧值数据异常命令,设备编号为:" + deviceSn + "第" + way + "路");
@@ -143,12 +143,12 @@ public class DataHandle {
 				case 12: // 0C
 					logger.debug("服务器使用哪路传感器命令,设备编号为:" + deviceSn + "第" + way + "路");
 					String openId12 = service.findOpenIdByDeviceSn(deviceSn);
-					WechatSendMessageUtils.sendWechatSetPathMessages(null, openId12, deviceSn);
+					WechatSendMessageUtils.sendWechatSetPathMessages("更改传感器路数成功", openId12, deviceSn);
 					break;
 				case 13:// 0D
 					logger.debug("服务器校准命令,设备编号为:" + deviceSn + "第" + way + "路");
 					String openId13 = service.findOpenIdByDeviceSn(deviceSn);
-					WechatSendMessageUtils.sendWechatCheckMessages(null, openId13, deviceSn);
+					WechatSendMessageUtils.sendWechatCheckMessages("校准成功", openId13, deviceSn);
 					break;
 				default:
 					break;

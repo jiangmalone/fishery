@@ -43,20 +43,13 @@ public class CMDUtils {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static Map<String, SocketChannel> clientMap = new ConcurrentHashMap<String, SocketChannel>();
 	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-	private static Map<String, String> feedback = new ConcurrentHashMap<String, String>();
     private static BrokenMSG bs=new BrokenMSG();
 
 	public static Map<String, SocketChannel> getclientMap() {
 		return clientMap;
 	}
 
-	public static Map<String, String> getFeedback() {
-		return feedback;
-	}
-
-	public static void setFeedback(Map<String, String> feedback) {
-		CMDUtils.feedback = feedback;
-	}
+	
 
 	// 自检
 	public static void selfTestCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way)
@@ -71,16 +64,13 @@ public class CMDUtils {
 		byte[] byteLatitude = new byte[4];
 		CommonUtils.arrayHandle(data, byteLatitude, 12, 0, 4);
 		float latitude = CommonUtils.byte2float(byteLatitude, 0);
-		// SocketSerivce service =(SocketSerivce)
-		// ApplicationUtil.getBean("socketSerivce");
+		
 		byte[] status = new byte[2];
 		status[0] = data[16];// 传感器和水泵状态
 		status[1] = data[17];
 		List<Broken> brokenlist = new ArrayList<Broken>();
 		statusHandle(status, brokenlist, deviceSn);
 		byte gprs = data[18];
-		// byte check = data[18];
-		// String suffix0 = CommonUtils.printHexStringMerge(data,19,4);
 		SelfTest selfTest = new SelfTest();
 		selfTest.setDevice_sn(deviceSn);
 		selfTest.setPath(way);
@@ -158,8 +148,9 @@ public class CMDUtils {
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-		return responseToBrowser("2", limit.getDevice_sn());
-
+		//return responseToBrowser("2", limit.getDevice_sn());
+		
+        return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 5分钟一次上传溶氧和水温值
@@ -459,8 +450,8 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 
-		return responseToBrowser("7", deviceSn);
-
+		//return responseToBrowser("7", deviceSn);
+		 return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 服务器设置一键自动
@@ -485,7 +476,8 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 
-		return responseToBrowser("8", deviceSn);
+		//return responseToBrowser("8", deviceSn);
+		 return RESCODE.SUCCESS.getJSONRES();	
 	}
 
 	// 服务器设置设备使用哪路传感器，这个指令在前台尚未有调用的地方，先放在这
@@ -509,7 +501,8 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 
-		return responseToBrowser("12", deviceSn);
+		//return responseToBrowser("12", deviceSn);
+		 return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 服务器校准命令
@@ -535,7 +528,8 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 
-		return responseToBrowser("13", deviceSn);
+		//return responseToBrowser("13", deviceSn);
+		 return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 五分钟上传一次溶氧，水温和PH值信息
@@ -622,16 +616,16 @@ public class CMDUtils {
 	public static void statusHandle(byte[] status, List<Broken> brokenlist, String deviceSn) {
 		logger.debug("设备编号为:" + deviceSn + "的设备开机自检中，现在在进行故障分析");
 		String statusStr = CommonUtils.printHexStringMerge(status, 0, 2);
-		// System.out.println("分析故障信息");
+		 System.out.println("分析故障信息");
 		String relation = null;
 		String type = deviceSn.substring(0, 2);
-		//System.out.println(type);
+		System.out.println(type);
 		if (type.equals("01") || type.equals("02")) {
 			AIO aio = new AIO();
 			aio = service.findAIOByDeviceSn(deviceSn);
 			if (aio != null) {
 				relation = aio.getRelation();
-				//System.out.println(relation);
+				System.out.println(relation);
 			} else {
 				return;
 			}
@@ -652,7 +646,7 @@ public class CMDUtils {
 			}
 		}
 		//logger.debug("relation为:"+relation);
-		//System.out.println(statusStr);
+		System.out.println(statusStr);
 		/*
 		 * switch (statusStr.substring(0,1)) { case "0": //水泵关闭故障
 		 * selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP,
@@ -744,9 +738,8 @@ public class CMDUtils {
 		}
 
 		
-		// long start=System.currentTimeMillis();
 		WXUser wxuser = service.findWXUserByRelation(relation);
-		logger.debug(wxuser.getName());
+		//logger.debug(wxuser.getName());
 		if (wxuser != null) {
 			
 			if (bs.getMSG()!= null) {
@@ -756,9 +749,7 @@ public class CMDUtils {
 			}
 			bs.clear();
 		}
-		// long end=System.currentTimeMillis();
-		// System.out.println(end-start);
-
+		
 	}
 
 	public static void selfTestBrokenHandle(String relation, int entityModel, int entityType, String brokenmsg,
@@ -801,7 +792,7 @@ public class CMDUtils {
 		}
 	}
 
-	// while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
+/*	// while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
 	public static Map<String, Object> responseToBrowser(String order, String deviceSn) {
 
 		String lockObject = order + deviceSn;
@@ -832,5 +823,5 @@ public class CMDUtils {
 
 		return RESCODE.SUCCESS.getJSONRES();
 
-	}
+	}*/
 }

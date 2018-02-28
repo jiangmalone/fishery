@@ -599,14 +599,21 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-		for (Sensor_Data sensor_Data : list) {
-			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
-			temperature = new Temperature(sensor_Data.getWater_temperature(),
-					format.format(sensor_Data.getReceiveTime()));
-			phs.add(ph);
-			oxygens.add(oxygen);
-			temperatures.add(temperature);
+		//for (Sensor_Data sensor_Data : list) {
+		Sensor_Data sensor_Data=null;
+		for(int i=0;i<288;i=i+36) {
+			try {
+				sensor_Data=list.get(i);
+				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+				temperature = new Temperature(sensor_Data.getWater_temperature(),
+						format.format(sensor_Data.getReceiveTime()));
+				phs.add(ph);
+				oxygens.add(oxygen);
+				temperatures.add(temperature);
+			} catch (Exception e) {
+				break;
+			}
 		}
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
@@ -638,6 +645,17 @@ public class EquipmentService {
 			oxygens.add(oxygen);
 			temperatures.add(temperature);
 		}
+		List<Sensor_Data> splitlist=new ArrayList<>();
+		int i=0;
+		while(i<2016) {
+			try {
+				splitlist.add(list.get(i));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				break;
+			}
+			i=i+14;
+		}
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
 		map.put("oxygens", oxygens);
@@ -659,14 +677,22 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-		for (Sensor_Data sensor_Data : list) {
-			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
-			temperature = new Temperature(sensor_Data.getWater_temperature(),
-					format.format(sensor_Data.getReceiveTime()));
-			phs.add(ph);
-			oxygens.add(oxygen);
-			temperatures.add(temperature);
+		//for (Sensor_Data sensor_Data : list) {
+		Sensor_Data sensor_Data=null;
+		for(int i=0;i<288;i=i+36) {
+			try {
+				sensor_Data = list.get(i);
+				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+				temperature = new Temperature(sensor_Data.getWater_temperature(),
+						format.format(sensor_Data.getReceiveTime()));
+				phs.add(ph);
+				oxygens.add(oxygen);
+				temperatures.add(temperature);
+			} catch (Exception e) {
+				break;
+			}
+		
 		}
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
@@ -699,6 +725,17 @@ public class EquipmentService {
 			temperatures.add(temperature);
 		}
 
+		List<Sensor_Data> splitlist=new ArrayList<>();
+		int i=0;
+		while(i<2016) {
+			try {
+				splitlist.add(list.get(i));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				break;
+			}
+			i=i+14;
+		}
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
 		map.put("oxygens", oxygens);

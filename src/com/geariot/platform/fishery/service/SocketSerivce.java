@@ -165,6 +165,18 @@ public class SocketSerivce {
 		controllerDao.updateController(controller);
 	}
 	
+	
+	public String findOpenIdByDeviceSn(String deviceSn) {
+		AIO aio=findAIOByDeviceSn(deviceSn);
+		WXUser wxuser=null;
+		if(aio!=null&&aio.getRelation().contains("WX")) {
+			wxuser=findWXUserByRelation(aio.getRelation());
+			if(wxuser!=null)
+				return wxuser.getOpenId();
+		}
+		return null;
+	}
+	
 	public List<PondFish> queryFishCategorysByDeviceSn(String deviceSn){
 		AIO aio=findAIOByDeviceSn(deviceSn);
 		Integer pondId=null;

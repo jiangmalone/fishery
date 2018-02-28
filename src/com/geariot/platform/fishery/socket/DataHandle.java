@@ -17,12 +17,13 @@ import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
+import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 public class DataHandle {
 	private Map<String, String> beatMap = new ConcurrentHashMap<String, String>();
 	private SimpleDateFormat sdf = new SimpleDateFormat("mm");
 	private static Logger logger = Logger.getLogger(DataHandle.class);
-
+	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	public void handle(byte[] data, SocketChannel readChannel) {
 		if (data[6] != 6) {
 			logger.debug(CommonUtils.printHexStringMerge(data, 0, data.length) + "进入handle处理");
@@ -44,7 +45,7 @@ public class DataHandle {
 			// 每个设备心跳包发送的时间间隔为2分08秒，这里判断距离上一次时间是否大于5分钟，大于则说明离线
 			if (sdf.format(new Date()).compareTo(beatMap.get(deviceSn)) > 6) {
 				String judge = deviceSn.substring(0, 2);
-				SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+				
 				if (judge.equals("01") || judge.equals("02")) {
 					AIO aio = service.findAIOByDeviceSn(deviceSn);
 					aio.setStatus(1);
@@ -98,12 +99,9 @@ public class DataHandle {
 					break;
 				case 2:
 					logger.debug("服务器设置三限的反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String lockObject2 = CMDUtils.getFeedback().get(deviceSn);
-					synchronized (lockObject2) {
-						// map.put(deviceSn,String.valueOf(order));
-						logger.debug("当前线程为:" + Thread.currentThread().getName() + "准备唤醒等待" + lockObject2 + "的线程");
-						lockObject2.notify();
-					}
+					String openId2 = service.findOpenIdByDeviceSn(deviceSn);
+					WechatSendMessageUtils.sendWechatLimitMessages(null, openId2, deviceSn);
+					
 					break;
 				case 3:
 					logger.debug("5分钟上传一次溶氧值和水温命令,设备编号为:" + deviceSn + "第" + way + "路");
@@ -122,21 +120,13 @@ public class DataHandle {
 					break;
 				case 7:
 					logger.debug("服务器开关增氧机反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String lockObject7 = CMDUtils.getFeedback().get(deviceSn);
-					synchronized (lockObject7) {
-						// map.put(deviceSn,String.valueOf(order));
-						logger.debug("当前线程为:" + Thread.currentThread().getName() + "准备唤醒等待" + lockObject7 + "的线程");
-						lockObject7.notify();
-					}
+					String openId7 = service.findOpenIdByDeviceSn(deviceSn);
+					WechatSendMessageUtils.sendWechatOnOffMessages(null, openId7, deviceSn);
 					break;
 				case 8:
 					logger.debug("服务器一键自动反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String lockObject8 = CMDUtils.getFeedback().get(deviceSn);
-					synchronized (lockObject8) {
-						// map.put(deviceSn,String.valueOf(order));
-						logger.debug("当前线程为:" + Thread.currentThread().getName() + "准备唤醒等待" + lockObject8 + "的线程");
-						lockObject8.notify();
-					}
+					String openId8 = service.findOpenIdByDeviceSn(deviceSn);
+					WechatSendMessageUtils.sendWechatSetAutoMessages(null, openId8, deviceSn);
 					break;
 				case 9:
 					logger.debug("溶氧值数据异常命令,设备编号为:" + deviceSn + "第" + way + "路");
@@ -152,20 +142,13 @@ public class DataHandle {
 					break;
 				case 12: // 0C
 					logger.debug("服务器使用哪路传感器命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String lockObject12 = CMDUtils.getFeedback().get(deviceSn);
-					synchronized (lockObject12) {
-						// map.put(deviceSn,String.valueOf(order));
-						lockObject12.notify();
-					}
+					String openId12 = service.findOpenIdByDeviceSn(deviceSn);
+					WechatSendMessageUtils.sendWechatSetPathMessages(null, openId12, deviceSn);
 					break;
 				case 13:// 0D
 					logger.debug("服务器校准命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String lockObject13 = CMDUtils.getFeedback().get(deviceSn);
-					synchronized (lockObject13) {
-						// map.put(deviceSn,String.valueOf(order));
-						logger.debug("当前线程为:" + Thread.currentThread().getName() + "准备唤醒等待" + lockObject13 + "的线程");
-						lockObject13.notify();
-					}
+					String openId13 = service.findOpenIdByDeviceSn(deviceSn);
+					WechatSendMessageUtils.sendWechatCheckMessages(null, openId13, deviceSn);
 					break;
 				default:
 					break;

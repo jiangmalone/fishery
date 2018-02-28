@@ -42,6 +42,15 @@ public class RequestProcessor {
 
 			} catch (IOException e) {
 				log.debug("read时候IO异常");
+				key.cancel();
+				if(key.channel()!=null) {
+					try {
+						key.channel().close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						log.debug("关闭channel错误");
+					}
+				}
 			}
 			if (len == -1)
 				break;// 说明终端没有断开连接就关闭了

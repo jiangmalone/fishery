@@ -153,9 +153,9 @@ public class DataHandle {
 					WechatSendMessageUtils.sendWechatSetPathMessages("更改传感器路数成功", openId12, deviceSn);
 					break;
 				case 13:// 0D
-					logger.debug("服务器校准命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String openId13 = service.findOpenIdByDeviceSn(deviceSn);
-					WechatSendMessageUtils.sendWechatCheckMessages("校准成功", openId13, deviceSn);
+					logger.debug("服务器校准命令,设备编号为:" + deviceSn + "第" + way + "路");//自动校准不用推送
+					//String openId13 = service.findOpenIdByDeviceSn(deviceSn);
+					//WechatSendMessageUtils.sendWechatCheckMessages("校准成功", openId13, deviceSn);
 					break;
 				default:
 					break;

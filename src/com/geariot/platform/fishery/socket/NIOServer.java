@@ -96,7 +96,7 @@ public class NIOServer {
 							// 获得了可读的事件
 						} else if (key.isReadable()) {
 							// 取消读事件的监控 并在后面重新注册读，不然下一次读会阻塞
-							//key.cancel();
+							key.cancel();
 							// 调用读操作
 							requestProcessor.ProcessorRequest(key);
 						}

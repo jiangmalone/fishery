@@ -1,8 +1,10 @@
 package com.geariot.platform.fishery.socket;
 
+import java.nio.channels.SocketChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,20 @@ public class TimerTask {
 	private WXUserDao wxuserDao;
 	private static Logger logger = Logger.getLogger(TimerTask.class);
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+	
+	@Scheduled(cron="0 0 24 * * ?")//每天晚上24点启动自动校准
+	public void check() {
+		Map<String,SocketChannel> map= CMDUtils.getclientMap();
+		for(String deviceSn:map.keySet()) {
+			CMDUtils.serverCheckCMD(deviceSn, 1);//第一路和第二路都去校准，这里不判断了哪一路没开了
+			CMDUtils.serverCheckCMD(deviceSn, 2);
+		}
+		
+	}
+	
+	
+	
+	
 	@Scheduled(cron = "0 0/30 * * * ?") // 每半小时执行一次
 	public void judgeTime() {
 

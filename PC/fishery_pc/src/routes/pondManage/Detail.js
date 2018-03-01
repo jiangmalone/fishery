@@ -149,7 +149,7 @@ class PondDetail extends PureComponent {
                         <Col span={4}>底泥厚度(cm)：{pondInfo.sediment_thickness || ''}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>塘口密度(㎏/㎡)：{pondInfo.density || ''}</Col>
+                        <Col span={4}>塘口密度(㎏/亩)：{pondInfo.density || ''}</Col>
                         <Col span={4}>塘口位置：{pondInfo.address || ''}</Col>
                         <Col span={4}>所有者：{this.props.user}</Col>
                     </Row>

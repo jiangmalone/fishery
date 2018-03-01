@@ -74,7 +74,7 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 {getFieldDecorator('sediment_thickness', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="cm" />)}cm
             </FormItem>
             <FormItem label="塘口密度" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('density', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="kg/㎡" />)}kg/㎡
+                {getFieldDecorator('density', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="kg/亩" />)}kg/亩
             </FormItem>
         </Form>
     </Modal >

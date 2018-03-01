@@ -111,7 +111,7 @@ class AddPond extends PureComponent {
                         labelNumber='5'
                         error={!!getFieldError('density')}
                         placeholder="请输入塘口密度"
-                    >塘口密度(kg/㎡)</InputItem>
+                    >塘口密度(kg/亩)</InputItem>
                     <InputItem
                         {...getFieldProps('sediment_thickness') }
                         clear

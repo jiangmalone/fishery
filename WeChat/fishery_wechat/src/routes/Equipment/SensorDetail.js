@@ -13,22 +13,26 @@ import back_img from '../../img/back.png';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
 import { getDataToday, getRealTimeData, myEquipment, getDataSevenday, serverCheck } from '../../services/equipment.js'; //接口
 
-const cols = {
+const todayTimes = ["00:00", "01:00", "02:00", "03:00",
+                    "04:00", "05:00", "06:00", "07:00",
+                    "08:00", "09:00", "10:00", "11:00",
+                    "12:00", "13:00", "14:00", "15:00",
+                    "16:00", "17:00", "18:00", "19:00",
+                    "20:00", "21:00", "22:00", "23:00","24:00"];
 
+const cols = {
     'ph': { min: 0 },
     // 'ph': {range: [0, 20]},
-    'receiveTime': {tickCount: 18}
+    'receiveTime': { ticks:todayTimes}
 };
 const oCols = {
-    'o': { min: 0 },
-    'receiveTime': {tickCount: 18}
+    'oxygen': { min: 0 },
+    'receiveTime': {ticks:todayTimes}
 };
 
 const waterCols = {
-
-    '温度': { min: 0 },
-    // '温度': {range: [0, 45]},
-    'receiveTime': {tickCount: 18}
+    'temperature': { min: 0 },
+    'receiveTime': {ticks:todayTimes}
 };
 
 class SensorDetail extends React.Component {
@@ -77,10 +81,11 @@ class SensorDetail extends React.Component {
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
+                console.log(typeof res.data.oxygens[0]);
                 this.setState({
-                    oData: res.data.oxygens,
-                    phData: res.data.phs,
-                    waterData: res.data.temperatures
+                    oData: this.formartTodayData(res.data.oxygens),
+                    phData: this.formartTodayData(res.data.phs),
+                    waterData: this.formartTodayData(res.data.temperatures)
                 })
             } else {
                 Toast.fail(res.data.msg, 1);
@@ -90,6 +95,43 @@ class SensorDetail extends React.Component {
             Toast.fail('请求失败', 1);
             console.log(error)
         });
+    }
+
+    formartTodayData = (data) =>{
+        let formartData = data;
+        let times = ["00:00", "01:00", "02:00", "03:00",
+        "04:00", "05:00", "06:00", "07:00",
+        "08:00", "09:00", "10:00", "11:00",
+        "12:00", "13:00", "14:00", "15:00",
+        "16:00", "17:00", "18:00", "19:00",
+        "20:00", "21:00", "22:00", "23:00","24:00"];
+        for(let i = 1; i < formartData.length; i++) {
+            if (formartData[i-1]["receiveTime"] > times[0]) {
+                times.shift();
+            } else if (formartData[i-1]["receiveTime"] < times[0] &&formartData[i]["receiveTime"] > times[0]) {
+                if (formartData[i]["ph"]) {
+                    let value = (formartData[i - 1]["ph"] + formartData[i]["ph"]) / 2;
+                    let item = {'ph': value, 'receiveTime': times[0]};
+                    formartData.splice(i, 0, item);  
+                    i++;
+                    times.shift();
+                } else if (formartData[i]["oxygen"]) {
+                    let value = (formartData[i - 1]["oxygen"] + formartData[i]["oxygen"]) / 2;
+                    let item = {'oxygen': value, 'receiveTime': times[0]};
+                    formartData.splice(i, 0, item);  
+                    i++;
+                    times.shift();
+                } else if (formartData[i]["temperature"]) {
+                    let value = (formartData[i - 1]["temperature"] + formartData[i]["temperature"]) / 2;
+                    let item = {'temperature': value, 'receiveTime': times[0]};
+                    formartData.splice(i, 0, item);  
+                    i++;
+                    times.shift();
+                }
+            }
+        }
+        console.log(formartData)
+        return formartData;
     }
 
     getDataSevenday = () => {
@@ -212,9 +254,15 @@ class SensorDetail extends React.Component {
         } else {
             if (!this.state.isSelectToday) {
                 // this.getData(this.getTime(0));
+                cols["receiveTime"] = { ticks:todayTimes };
+                oCols["receiveTime"] = { ticks:todayTimes};
+                waterCols["receiveTime"] = { ticks:todayTimes};
                 this.getDataToday();
             } else {
                 // this.getData(this.getTime(1));
+                cols["receiveTime"] = { tickCount:18 };
+                oCols["receiveTime"] = { tickCount:18 };
+                waterCols["receiveTime"] = { tickCount:18 };
                 this.getDataSevenday();
             }
             this.setState({

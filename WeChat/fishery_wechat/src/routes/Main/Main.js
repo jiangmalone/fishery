@@ -193,6 +193,23 @@ class Main extends React.Component {
         });
     }
 
+    getStatusString = (status) => {
+        switch (status){
+            case 0 :
+                return '正常';
+            case 1 :
+                return '离线';
+            case 2 :
+                return '断电';
+            case 3 :
+                return '缺项';
+            case 4 :
+                return '数据异常';
+            default:
+                return '异常';
+        }
+    }
+
     closeTimeOrxygen = (device_sn, way) => {
         autoSet({
             limit_Install: {
@@ -224,7 +241,7 @@ class Main extends React.Component {
                         {sensor.name}
                     </div>
                     <div className={sensor.status ? 'right-text unnormal-state' : 'right-text normal-state'}>
-                        {sensor.status ? '异常' : '正常' }
+                        {this.getStatusString(sensor.status)}
                     </div>
                 </div>
                 <div className='line' >
@@ -264,7 +281,7 @@ class Main extends React.Component {
                         {aio.name}
                     </div>
                     <div className={aio.status ? 'right-text unnormal-state' :  'right-text normal-state' }>
-                        {aio.status ? '异常' : '正常' }
+                        {this.getStatusString(aio.status)}
                     </div>
                 </div>
                 <div className='line' >

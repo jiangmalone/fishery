@@ -229,7 +229,6 @@ class AutoOxygenationSetting extends React.Component {
                 </div>
             </Modal>
             <List className='os-list'>
-                <Item extra={<span style={{ minWidth: '100px', color: '#000' }} >10.26mg/L</span>}>控制器1<span>(增氧机1)</span></Item>
                 <InputItem
                     {...getFieldProps('low_limit', {
                         rules: [

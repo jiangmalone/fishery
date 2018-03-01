@@ -18,17 +18,17 @@ public class NIOServer {
 	private static final Logger log = LogManager.getLogger(NIOServer.class);
 	
 	  //存储SelectionKey的队列
-   // private static List<SelectionKey> Queen = new ArrayList<SelectionKey>();
+    private static List<SelectionKey> Queen = new ArrayList<SelectionKey>();
     private static Selector selector = null;
 
     //添加SelectionKey到队列
-   /* public static void addQueen(SelectionKey key){
+    public static void addQueen(SelectionKey key){
         synchronized (Queen) {
         	Queen.add(key);
             //唤醒主线程
             selector.wakeup();
         }
-    }*/
+    }
 
 	/**
 	 * 获得一个ServerSocket通道，并对该通道做一些初始化的工作
@@ -96,7 +96,7 @@ public class NIOServer {
 							// 获得了可读的事件
 						} else if (key.isReadable()) {
 							// 取消读事件的监控 并在后面重新注册读，不然下一次读会阻塞
-							//key.cancel();
+							key.cancel();
 							// 调用读操作
 							requestProcessor.ProcessorRequest(key);
 						}
@@ -108,7 +108,7 @@ public class NIOServer {
 					
 					
 				}
-			}/*else{
+			}else{
 				//因为前面取消了key的监听，下一次读会阻塞，所以一旦num=0就会跳转到这里重新注册读事件
                 synchronized (Queen) {
                     while(Queen.size() > 0){
@@ -119,7 +119,7 @@ public class NIOServer {
                         channel.register(selector, SelectionKey.OP_READ);
                     }
                 }
-            }*/
+            }
 		}
 		
 	}

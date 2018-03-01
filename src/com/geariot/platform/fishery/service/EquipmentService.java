@@ -1,8 +1,11 @@
 package com.geariot.platform.fishery.service;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -601,7 +604,7 @@ public class EquipmentService {
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
 		//for (Sensor_Data sensor_Data : list) {
 		Sensor_Data sensor_Data=null;
-		for(int i=0;i<288;i=i+36) {
+		for(int i=0;i<288;i=i+6) {
 			try {
 				sensor_Data=list.get(i);
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
@@ -677,11 +680,10 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-		//for (Sensor_Data sensor_Data : list) {
 		Sensor_Data sensor_Data=null;
-		for(int i=0;i<288;i=i+36) {
+		for(int i=0;i<288;i=i+6) {
 			try {
-				sensor_Data = list.get(i);
+				sensor_Data=list.get(i);
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 				temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -692,7 +694,6 @@ public class EquipmentService {
 			} catch (Exception e) {
 				break;
 			}
-		
 		}
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
@@ -765,10 +766,10 @@ public class EquipmentService {
 					limit_Install.getWay());
 			logger.debug(limit_Install.toString());
 			if (install == null) {
-				logger.debug("111111111111111111111");
+				
 				limitDao.save(limit_Install);
 			} else {
-				logger.debug("22222222222222222222222222");
+				
 				install.setHigh_limit(limit_Install.getHigh_limit());
 				install.setLow_limit(limit_Install.getLow_limit());
 				install.setUp_limit(limit_Install.getUp_limit());
@@ -814,16 +815,16 @@ public class EquipmentService {
 			Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 			Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
 			List<Timer> timer = timerDao.findTimerByDeviceSnAndWay(device_sn, way);
-			Sensor_Data sensor_data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
+			/*Sensor_Data sensor_data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
 			if (sensor_data != null) {
 				map.put("currentOxygens", sensor_data.getOxygen());
-			}
+			}*/
 			if (limit != null) {
 				map.put("oxyHighLimit", limit.getHigh_limit());
 				map.put("oxyUpLimit", limit.getUp_limit());
 				map.put("oxyLowLimit", limit.getLow_limit());
 			}
-			if (timer != null) {
+			if(timer!=null) {
 				map.put("timerList", timer);
 			}
 			return map;

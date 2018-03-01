@@ -1,8 +1,11 @@
 package com.geariot.platform.fishery.service;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -601,7 +604,7 @@ public class EquipmentService {
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
 		//for (Sensor_Data sensor_Data : list) {
 		Sensor_Data sensor_Data=null;
-		for(int i=0;i<288;i=i+36) {
+		for(int i=0;i<288;i=i+6) {
 			try {
 				sensor_Data=list.get(i);
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
@@ -677,16 +680,20 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-		for (Sensor_Data sensor_Data : list) {
-			
-			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
-			temperature = new Temperature(sensor_Data.getWater_temperature(),
-					format.format(sensor_Data.getReceiveTime()));
-			phs.add(ph);
-			oxygens.add(oxygen);
-			temperatures.add(temperature);
-
+		Sensor_Data sensor_Data=null;
+		for(int i=0;i<288;i=i+6) {
+			try {
+				sensor_Data=list.get(i);
+				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+				temperature = new Temperature(sensor_Data.getWater_temperature(),
+						format.format(sensor_Data.getReceiveTime()));
+				phs.add(ph);
+				oxygens.add(oxygen);
+				temperatures.add(temperature);
+			} catch (Exception e) {
+				break;
+			}
 		}
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);

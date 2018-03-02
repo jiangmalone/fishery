@@ -81,7 +81,7 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Sensor_Data> sevenData(String device_sn) {
-		String hql = "select * from sensor_data where device_sn = :device_sn and DATE_SUB(CURDATE(),INTERVAL 7 Day) <= date(receiveTime)";
+		String hql = "select * from sensor_data where device_sn = :device_sn and DATE_SUB(CURDATE(),INTERVAL 3 Day) <= date(receiveTime)";
 		return getSession().createSQLQuery(hql).setString("device_sn", device_sn).setResultTransformer(Transformers.aliasToBean(Sensor_Data.class)).setCacheable(Constants.SELECT_CACHE).list();
 	}
 
@@ -103,7 +103,7 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Sensor_Data> sevenData(String device_sn, int way) {
-		String hql = "select * from sensor_data where device_sn = :device_sn and way = :way and DATE_SUB(CURDATE(),INTERVAL 7 Day) <= date(receiveTime)";
+		String hql = "select * from sensor_data where device_sn = :device_sn and way = :way and DATE_SUB(CURDATE(),INTERVAL 3 Day) <= date(receiveTime)";
 		return getSession().createSQLQuery(hql).setString("device_sn", device_sn).setInteger("way", way).setResultTransformer(Transformers.aliasToBean(Sensor_Data.class)).setCacheable(Constants.SELECT_CACHE).list();
 	}
 

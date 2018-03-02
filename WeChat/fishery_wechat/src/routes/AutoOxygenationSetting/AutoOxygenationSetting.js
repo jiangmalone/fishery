@@ -182,6 +182,13 @@ class AutoOxygenationSetting extends React.Component {
         timeSection[aryIndex] = time;
         this.setState({timeSections: timeSections});
     }
+
+    deleteTimeSection = (index) =>{
+        let timeSections = this.state.timeSections;
+        timeSections.splice(index, 1);
+        this.setState({timeSections:timeSections});
+    }
+
     render() {
         const { getFieldProps, getFieldError } = this.props.form;
         const timeSections = this.state.timeSections;
@@ -210,7 +217,10 @@ class AutoOxygenationSetting extends React.Component {
                     {/* <span>&nbsp;结束时间</span> */}
                     <CustomChildren></CustomChildren>
                 </DatePicker>
-            </div>}>定时增氧</Item>
+            </div>}>{index != 0 && <div className='delete-button'
+                            onClick={() => this.deleteTimeSection(index)}
+                        >
+                        </div>}定时增氧</Item>
         })
         return (<form className='oxygen-set-bg' >
             <div className="nav-bar-title">

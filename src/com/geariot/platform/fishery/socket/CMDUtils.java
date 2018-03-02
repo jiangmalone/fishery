@@ -6,6 +6,7 @@ import java.nio.channels.SocketChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,8 @@ public class CMDUtils {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static Map<String, SocketChannel> clientMap = new ConcurrentHashMap<String, SocketChannel>();
 	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-    public static Map<String,String> msg=new ConcurrentHashMap<String,String>();
+	public static Map<String, String> msg = new ConcurrentHashMap<String, String>();
+
 	public static Map<String, SocketChannel> getclientMap() {
 		return clientMap;
 	}
@@ -62,7 +64,6 @@ public class CMDUtils {
 		byte[] byteLatitude = new byte[4];
 		CommonUtils.arrayHandle(data, byteLatitude, 12, 0, 4);
 		float latitude = CommonUtils.byte2float(byteLatitude, 0);
-		
 		byte[] status = new byte[2];
 		status[0] = data[16];// 传感器和水泵状态
 		status[1] = data[17];
@@ -80,21 +81,19 @@ public class CMDUtils {
 		selfTest.setCreateDate(new Date());
 		logger.debug("设备号为:" + deviceSn + "的设备自检分析完毕，是第" + way + "路，准备存入数据库");
 		service.save(selfTest);
-		AIO aio=service.findAIOByDeviceSn(deviceSn);
-		if(aio!=null) {
-			if(aio.getStatus()==1) {
-			aio.setStatus(0);
-			service.updateAIO(aio);
+		AIO aio = service.findAIOByDeviceSn(deviceSn);
+		if (aio != null) {
+			if (aio.getStatus() == 1) {
+				aio.setStatus(0);
+				service.updateAIO(aio);
 			}
 		}
-			
 		response(20, data, readChannel);
 	}
 
 	// 下位机设限上传给服务器
 	public static void uploadLimitCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way)
 			throws IOException {
-
 		byte[] byteHigh = new byte[4];
 		CommonUtils.arrayHandle(data, byteHigh, 7, 0, 4);
 		float high = CommonUtils.byte2float(byteHigh, 0);
@@ -105,8 +104,8 @@ public class CMDUtils {
 		CommonUtils.arrayHandle(data, bytelow, 15, 0, 4);
 		float low = CommonUtils.byte2float(bytelow, 0);
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路的低限为:" + low + " 高限为:" + high + " 上限为:" + up);
-		Limit_Install limit=service.findLimitByDeviceSnAndWay(deviceSn, way);
-		if(limit==null) {
+		Limit_Install limit = service.findLimitByDeviceSnAndWay(deviceSn, way);
+		if (limit == null) {
 			limit = new Limit_Install();
 			limit.setDevice_sn(deviceSn);
 			limit.setWay(way);
@@ -114,13 +113,12 @@ public class CMDUtils {
 			limit.setHigh_limit(high);
 			limit.setLow_limit(low);
 			service.save(limit);
-		}else {
+		} else {
 			limit.setHigh_limit(high);
 			limit.setLow_limit(low);
 			limit.setUp_limit(up);
 			service.updateLimit(limit);
 		}
-		
 		response(20, data, readChannel);
 	}
 
@@ -139,26 +137,20 @@ public class CMDUtils {
 		String temp = StringUtils.add(limit.getDevice_sn(), limit.getWay(), 2)
 				.append(CommonUtils.reverse(Integer.toHexString(Float.floatToIntBits(limit.getHigh_limit()))))
 				.append(CommonUtils.reverse(Integer.toHexString(Float.floatToIntBits(limit.getUp_limit()))))
-				.append(CommonUtils.reverse(Integer.toHexString(Float.floatToIntBits(limit.getLow_limit())))).append("          ")
-				.toString();
-
+				.append(CommonUtils.reverse(Integer.toHexString(Float.floatToIntBits(limit.getLow_limit()))))
+				.append("          ").toString();
 		request = CommonUtils.toByteArray(temp);
-	
 		request[19] = CommonUtils.arrayMerge(request, 2, 17);
 		CommonUtils.addSuffix(request, 20);
-		
 		ByteBuffer outBuffer = ByteBuffer.wrap(request);
-
 		try {
 			channel.write(outBuffer);
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-		//return responseToBrowser("2", limit.getDevice_sn());
-		System.out.println("22222");
-		msg.put(limit.getDevice_sn()+"2", "低限为:"+limit.getLow_limit()+"高限为:"+limit.getHigh_limit()+"上限为:"+limit.getUp_limit());
-		System.out.println("11111111111");
-       return RESCODE.SUCCESS.getJSONRES();
+		msg.put(limit.getDevice_sn() + "2",
+				"低限为:" + limit.getLow_limit() + "高限为:" + limit.getHigh_limit() + "上限为:" + limit.getUp_limit());
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 5分钟一次上传溶氧和水温值
@@ -179,46 +171,46 @@ public class CMDUtils {
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路的溶氧值为:" + oxygen + "水温:" + waterTemp);
 		sData.setReceiveTime(new Date());
 		service.update(sData);
-		
-		 AIO aio=service.findAIOByDeviceSn(deviceSn);
-		 String relation=null;
-		 String openId=null;
-		 Integer pondId=null;
-		if(null!=aio) {
-				pondId=(Integer)aio.getPondId();
-				relation= aio.getRelation();
+
+		AIO aio = service.findAIOByDeviceSn(deviceSn);
+		String relation = null;
+		String openId = null;
+		Integer pondId = null;
+		if (null != aio) {
+			pondId = (Integer) aio.getPondId();
+			relation = aio.getRelation();
+		}
+		if (relation != null && relation.contains("WX")) {
+			WXUser wxuser = service.findWXUserByRelation(relation);
+			if (null != wxuser) {
+				openId = wxuser.getOpenId();
 			}
-		 if(relation!=null&&relation.contains("WX")) {
-			 WXUser wxuser=service.findWXUserByRelation(relation);
-			 if(null!=wxuser) {
-				openId= wxuser.getOpenId();
-			 }
-		 } 
-		 DataAlarm da=new DataAlarm();
-			da.setCreateDate(new Date());
-			da.setDeviceSn(deviceSn);
-			da.setRelation(relation);
-			da.setWay(way);
-			if(aio!=null) {
+		}
+		DataAlarm da = new DataAlarm();
+		da.setCreateDate(new Date());
+		da.setDeviceSn(deviceSn);
+		da.setRelation(relation);
+		da.setWay(way);
+		if (aio != null) {
 			da.setDeviceName(aio.getName());
-			}else {
-				da.setDeviceName(null);
-			}
-			Pond pond=null;
-			if(pondId!=null) {
-			pond=service.findPondById(pondId);
-			}
-			if(pond!=null) {
+		} else {
+			da.setDeviceName(null);
+		}
+		Pond pond = null;
+		if (pondId != null) {
+			pond = service.findPondById(pondId);
+		}
+		if (pond != null) {
 			da.setPondName(pond.getName());
-			}else {
-				da.setPondName(null);
-			}
-		doJudge(deviceSn, waterTemp, oxygen,-1,openId,da);//判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
-		AIO aio2=service.findAIOByDeviceSn(deviceSn);
-		if(aio2!=null) {
-			if(aio2.getStatus()==1) {
-			aio2.setStatus(0);
-			service.updateAIO(aio2);
+		} else {
+			da.setPondName(null);
+		}
+		doJudge(deviceSn, waterTemp, oxygen, -1, openId, da);// 判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
+		AIO aio2 = service.findAIOByDeviceSn(deviceSn);
+		if (aio2 != null) {
+			if (aio2.getStatus() == 1) {
+				aio2.setStatus(0);
+				service.updateAIO(aio2);
 			}
 		}
 
@@ -231,7 +223,7 @@ public class CMDUtils {
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路缺相报警");
 		String judge = deviceSn.substring(0, 2);
 		if (judge.equals("01") || judge.equals("02")) {
-			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn,way);
+			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn, way);
 			if (aio == null) {
 				response(8, data, readChannel);
 				return;
@@ -240,11 +232,20 @@ public class CMDUtils {
 			service.updateAIO(aio);
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSn(deviceSn);
-			if(wxUser!=null && wxUser.getOpenId()!=null){
+			if (wxUser != null && wxUser.getOpenId() != null) {
 				WechatSendMessageUtils.sendWechatVoltageMessages("缺相报警", wxUser.getOpenId(), deviceSn);
-	        }
+			}
+			if (wxUser.getPhone() != null) {
+				String json = "{\"deviceName\":\"" + aio.getName() + "\",\"way\":" + Byte.toString(way) + "}";
+				try {
+					VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
+				} catch (ClientException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		} else if (judge.equals("03")) {
-			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn,way);
+			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn, way);
 			if (sensor == null) {
 				response(8, data, readChannel);
 				return;
@@ -253,11 +254,20 @@ public class CMDUtils {
 			service.updateSensor(sensor);
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSnSensor(deviceSn);
-			if(wxUser!=null && wxUser.getOpenId()!=null){
+			if (wxUser != null && wxUser.getOpenId() != null) {
 				WechatSendMessageUtils.sendWechatVoltageMessages("缺相报警", wxUser.getOpenId(), deviceSn);
-	        }
+			}
+			if (wxUser.getPhone() != null) {
+				String json = "{\"deviceName\":\"" + sensor.getName() + "\",\"way\":" + 0 + "}";
+				try {
+					VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
+				} catch (ClientException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		} else if (judge.equals("04")) {
-			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn,way);
+			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn, way);
 			if (controller == null) {
 				response(8, data, readChannel);
 				return;
@@ -266,9 +276,18 @@ public class CMDUtils {
 			service.updateController(controller);
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSnController(deviceSn);
-			if(wxUser!=null && wxUser.getOpenId()!=null){
+			if (wxUser != null && wxUser.getOpenId() != null) {
 				WechatSendMessageUtils.sendWechatVoltageMessages("缺相报警", wxUser.getOpenId(), deviceSn);
-	        }
+			}
+			if (wxUser.getPhone() != null) {
+				String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + 0 + "}";
+				try {
+					VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
+				} catch (ClientException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
@@ -280,8 +299,7 @@ public class CMDUtils {
 	}
 
 	// 220v断电报警
-	public static void voltageAlarmCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way)
-			throws IOException, ClientException {
+	public static void voltageAlarmCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way) throws IOException{
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路220V断电报警");
 		String judge = deviceSn.substring(0, 2);
 		if (judge.equals("01") || judge.equals("02")) {
@@ -294,11 +312,17 @@ public class CMDUtils {
 			service.updateAIO(aio);
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSn(deviceSn);
-			if(wxUser!=null && wxUser.getOpenId()!=null){
+			if (wxUser != null && wxUser.getOpenId() != null) {
 				WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", wxUser.getOpenId(), deviceSn);
-	        }
+			}
 			if(wxUser.getPhone()!=null){
-				VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", "param");
+				String json = "{\"deviceName\":\"" + aio.getName() + "\"}";
+				try {
+					VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
+				} catch (ClientException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		} else if (judge.equals("03")) {
 			Sensor sensor = service.findSensorByDeviceSn(deviceSn);
@@ -310,9 +334,18 @@ public class CMDUtils {
 			service.updateSensor(sensor);
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSnSensor(deviceSn);
-			if(wxUser!=null && wxUser.getOpenId()!=null){
+			if (wxUser != null && wxUser.getOpenId() != null) {
 				WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", wxUser.getOpenId(), deviceSn);
-	        }
+			}
+			if(wxUser.getPhone()!=null){
+				String json = "{\"deviceName\":\"" + sensor.getName() + "\"}";
+				try {
+					VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
+				} catch (ClientException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		} else if (judge.equals("04")) {
 			Controller controller = service.findControllerByDeviceSn(deviceSn);
 			if (controller == null) {
@@ -323,9 +356,18 @@ public class CMDUtils {
 			service.updateController(controller);
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSnController(deviceSn);
-			if(wxUser!=null && wxUser.getOpenId()!=null){
+			if (wxUser != null && wxUser.getOpenId() != null) {
 				WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", wxUser.getOpenId(), deviceSn);
-	        }
+			}
+			if(wxUser.getPhone()!=null){
+				String json = "{\"deviceName\":\"" + controller.getName() + "\"}";
+				try {
+					VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
+				} catch (ClientException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
@@ -343,7 +385,7 @@ public class CMDUtils {
 
 		String judge = deviceSn.substring(0, 2);
 		if (judge.equals("01") || judge.equals("02")) {
-			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn,way);
+			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn, way);
 			if (aio == null) {
 				response(8, data, readChannel);
 				return;
@@ -351,7 +393,7 @@ public class CMDUtils {
 			aio.setStatus(4);
 			service.updateAIO(aio);
 		} else if (judge.equals("03")) {
-			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn,way);
+			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn, way);
 			if (sensor == null) {
 				response(8, data, readChannel);
 				return;
@@ -359,7 +401,7 @@ public class CMDUtils {
 			sensor.setStatus(4);
 			service.updateSensor(sensor);
 		} else if (judge.equals("04")) {
-			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn,way);
+			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn, way);
 			if (controller == null) {
 				response(8, data, readChannel);
 				return;
@@ -382,7 +424,7 @@ public class CMDUtils {
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路取消所有报警");
 		String judge = deviceSn.substring(0, 2);
 		if (judge.equals("01") || judge.equals("02")) {
-			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn,way);
+			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn, way);
 			if (aio == null) {
 				response(8, data, readChannel);
 				return;
@@ -390,7 +432,7 @@ public class CMDUtils {
 			aio.setStatus(0);
 			service.updateAIO(aio);
 		} else if (judge.equals("03")) {
-			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn,way);
+			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn, way);
 			if (sensor == null) {
 				response(8, data, readChannel);
 				return;
@@ -398,7 +440,7 @@ public class CMDUtils {
 			sensor.setStatus(0);
 			service.updateSensor(sensor);
 		} else if (judge.equals("04")) {
-			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn,way);
+			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn, way);
 			if (controller == null) {
 				response(8, data, readChannel);
 				return;
@@ -409,9 +451,9 @@ public class CMDUtils {
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
 		alarm.setWay(way);
-		
+
 		alarm.setCreateDate(new Date());
-		
+
 		alarm.setAlarmType(4);
 		service.save(alarm);
 		response(8, data, readChannel);
@@ -420,26 +462,21 @@ public class CMDUtils {
 	// 增氧机打开和关闭时间记录
 	public static void oxygenTimeCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way)
 			throws IOException {
-		
+
 		/*
-		byte power6 = data[7];
-		byte[] byteTime = new byte[5];
-		CommonUtils.arrayHandle(data, byteTime, 8, 0, 5);
-		String time = "20" + Integer.toString(byteTime[0] & 0xFF) + Integer.toString(byteTime[1] & 0xFF)
-				+ Integer.toString(byteTime[2] & 0xFF) + Integer.toString(byteTime[3] & 0xFF)
-				+ Integer.toString(byteTime[4] & 0xFF);
-		long timeLong = 0;
-		try {
-			Date date = CommonUtils.stringToDate(time, "yyyyMMddHHmm");
-			timeLong = date.getTime();
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return;
-		}
-		byte check6 = data[13];
-		String suffix6 = CommonUtils.printHexStringMerge(data, 14, 4);
-		 
-		logger.debug("增氧机开关记录");*/
+		 * byte power6 = data[7]; byte[] byteTime = new byte[5];
+		 * CommonUtils.arrayHandle(data, byteTime, 8, 0, 5); String time = "20"
+		 * + Integer.toString(byteTime[0] & 0xFF) + Integer.toString(byteTime[1]
+		 * & 0xFF) + Integer.toString(byteTime[2] & 0xFF) +
+		 * Integer.toString(byteTime[3] & 0xFF) + Integer.toString(byteTime[4] &
+		 * 0xFF); long timeLong = 0; try { Date date =
+		 * CommonUtils.stringToDate(time, "yyyyMMddHHmm"); timeLong =
+		 * date.getTime(); } catch (ParseException e) { e.printStackTrace();
+		 * return; } byte check6 = data[13]; String suffix6 =
+		 * CommonUtils.printHexStringMerge(data, 14, 4);
+		 * 
+		 * logger.debug("增氧机开关记录");
+		 */
 		response(14, data, readChannel);
 	}
 
@@ -489,9 +526,9 @@ public class CMDUtils {
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-         msg.put(deviceSn+"7",String.valueOf(operation));
-		//return responseToBrowser("7", deviceSn);
-		 return RESCODE.SUCCESS.getJSONRES();
+		msg.put(deviceSn + "7", String.valueOf(operation));
+		// return responseToBrowser("7", deviceSn);
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 服务器设置一键自动
@@ -515,9 +552,9 @@ public class CMDUtils {
 		} catch (IOException e) {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
-        
-		//return responseToBrowser("8", deviceSn);
-		 return RESCODE.SUCCESS.getJSONRES();	
+
+		// return responseToBrowser("8", deviceSn);
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 服务器设置设备使用哪路传感器，这个指令在前台尚未有调用的地方，先放在这
@@ -541,8 +578,8 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 
-		//return responseToBrowser("12", deviceSn);
-		 return RESCODE.SUCCESS.getJSONRES();
+		// return responseToBrowser("12", deviceSn);
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 服务器校准命令
@@ -568,8 +605,8 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 
-		//return responseToBrowser("13", deviceSn);
-		 return RESCODE.SUCCESS.getJSONRES();
+		// return responseToBrowser("13", deviceSn);
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 五分钟上传一次溶氧，水温和PH值信息
@@ -595,54 +632,52 @@ public class CMDUtils {
 		sData.setWater_temperature(waterTemp);
 		sData.setpH_value(phValue);
 		sData.setSaturation(saturation);
-		logger.debug(
-				"服务器接收设备编号和路分别为:" + deviceSn + "第" + way + "路，溶氧值为:" + oxygen + "水温为:" + waterTemp + "ph值为:" + phValue+"溶氧饱和值为:"+saturation);
+		logger.debug("服务器接收设备编号和路分别为:" + deviceSn + "第" + way + "路，溶氧值为:" + oxygen + "水温为:" + waterTemp + "ph值为:"
+				+ phValue + "溶氧饱和值为:" + saturation);
 		sData.setReceiveTime(new Date());
-		
-		
-		
-		AIO aio=service.findAIOByDeviceSn(deviceSn);
-		 String relation=null;
-		 String openId=null;
-		 Integer pondId=null;
-		if(null!=aio) {
-				pondId=(Integer)aio.getPondId();
-				relation= aio.getRelation();
+
+		AIO aio = service.findAIOByDeviceSn(deviceSn);
+		String relation = null;
+		String openId = null;
+		Integer pondId = null;
+		if (null != aio) {
+			pondId = (Integer) aio.getPondId();
+			relation = aio.getRelation();
+		}
+		if (relation != null && relation.contains("WX")) {
+			WXUser wxuser = service.findWXUserByRelation(relation);
+			if (null != wxuser) {
+				openId = wxuser.getOpenId();
+
 			}
-		 if(relation!=null&&relation.contains("WX")) {
-			 WXUser wxuser=service.findWXUserByRelation(relation);
-			 if(null!=wxuser) {
-				openId= wxuser.getOpenId();
-				
-			 }
-		 } 
-		 DataAlarm da=new DataAlarm();
-			da.setCreateDate(new Date());
-			da.setDeviceSn(deviceSn);
-			da.setRelation(relation);
-			da.setWay(way);
-			if(aio!=null) {
+		}
+		DataAlarm da = new DataAlarm();
+		da.setCreateDate(new Date());
+		da.setDeviceSn(deviceSn);
+		da.setRelation(relation);
+		da.setWay(way);
+		if (aio != null) {
 			da.setDeviceName(aio.getName());
-			}else {
-				da.setDeviceName(null);
-			}
-			Pond pond=null;
-			if(pondId!=null) {
-			pond=service.findPondById(pondId);
-			}
-			if(pond!=null) {
+		} else {
+			da.setDeviceName(null);
+		}
+		Pond pond = null;
+		if (pondId != null) {
+			pond = service.findPondById(pondId);
+		}
+		if (pond != null) {
 			da.setPondName(pond.getName());
-			}else {
-				da.setPondName(null);
-			}
-		doJudge(deviceSn, waterTemp, oxygen,phValue,openId,da);
-		
+		} else {
+			da.setPondName(null);
+		}
+		doJudge(deviceSn, waterTemp, oxygen, phValue, openId, da);
+
 		service.save(sData);
-		AIO aio3=service.findAIOByDeviceSn(deviceSn);
-		if(aio3!=null) {
-			if(aio3.getStatus()==1) {
-			aio3.setStatus(0);
-			service.updateAIO(aio3);
+		AIO aio3 = service.findAIOByDeviceSn(deviceSn);
+		if (aio3 != null) {
+			if (aio3.getStatus() == 1) {
+				aio3.setStatus(0);
+				service.updateAIO(aio3);
 			}
 		}
 		response(24, data, readChannel);
@@ -655,15 +690,15 @@ public class CMDUtils {
 		response[7] = CommonUtils.arrayMerge(response, 2, 5);
 		CommonUtils.arrayHandle(data, response, dataStart, 8, 4);
 		ByteBuffer outBuffer = ByteBuffer.wrap(response);
-		logger.debug(CommonUtils.printHexStringMerge(outBuffer.array(),0,outBuffer.array().length));
+		logger.debug(CommonUtils.printHexStringMerge(outBuffer.array(), 0, outBuffer.array().length));
 		readChannel.write(outBuffer);// 将消息回送给客户端
-		
+
 	}
 
 	public static void statusHandle(byte[] status, List<Broken> brokenlist, String deviceSn) {
 		logger.debug("设备编号为:" + deviceSn + "的设备开机自检中，现在在进行故障分析");
 		String statusStr = CommonUtils.printHexStringMerge(status, 0, 2);
-		 System.out.println("分析故障信息");
+		System.out.println("分析故障信息");
 		String relation = null;
 		String type = deviceSn.substring(0, 2);
 		System.out.println(type);
@@ -692,22 +727,20 @@ public class CMDUtils {
 				return;
 			}
 		}
-		StringBuilder sb=new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
 		switch (statusStr.substring(1, 2)) {
-		
+
 		case "1":
 			// PH低限故障
 			sb.append("PH低限故障");
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.LOW_LIMIT_BROKEN, brokenlist,
-					deviceSn);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.LOW_LIMIT_BROKEN, brokenlist, deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现PH低限故障");
 			break;
 		case "2":
 			// PH高限故障
 			sb.append("PH高限故障");
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.HIGH_LIMIT_BROKEN, brokenlist,
-					deviceSn);
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.HIGH_LIMIT_BROKEN, brokenlist, deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现PH高限故障");
 			break;
 		default:
@@ -715,19 +748,19 @@ public class CMDUtils {
 		}
 
 		switch (statusStr.substring(2, 3)) {
-		
+
 		case "1":
 			// 溶氧值低限故障
-			sb.append( "溶氧值低限故障");
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.LOW_LIMIT_BROKEN,
-					brokenlist, deviceSn);
+			sb.append("溶氧值低限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.LOW_LIMIT_BROKEN, brokenlist,
+					deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现溶氧值低限故障");
 			break;
 		case "2":
 			// 溶氧值高限故障
-			sb.append( "溶氧值高限故障");
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.HIGH_LIMIT_BROKEN, 
-					brokenlist, deviceSn);
+			sb.append("溶氧值高限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.HIGH_LIMIT_BROKEN, brokenlist,
+					deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现PH高限故障");
 			break;
 		default:
@@ -735,51 +768,50 @@ public class CMDUtils {
 		}
 
 		switch (statusStr.substring(3, 4)) {
-		
+
 		case "1":
 			// 温度低限故障
-			sb.append( "温度低限故障");
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN, 
-					brokenlist, deviceSn);
+			sb.append("温度低限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN, brokenlist,
+					deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现温度低限故障");
 			// System.out.println("温度低限故障");
 			break;
 		case "2":
 			// 温度高限故障
-			sb.append( "温度高限故障");
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.HIGH_LIMIT_BROKEN, 
-					brokenlist, deviceSn);
+			sb.append("温度高限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.HIGH_LIMIT_BROKEN, brokenlist,
+					deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现温度高限故障");
 			break;
 		case "4":
 			// 温度断开故障
-			sb.append( "温度断开故障");
+			sb.append("温度断开故障");
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.TEMPORETURE_CLOSED_BROKEN,
-					 brokenlist, deviceSn);
+					brokenlist, deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现温度断开故障");
 			break;
 		default:
 			break;
 		}
 
-		
 		WXUser wxuser = service.findWXUserByRelation(relation);
-		
+
 		if (wxuser != null) {
-			if (sb.length()!=0) {
-				
-				logger.debug("准备将故障信息推送给微信用户"+sb.toString());
-				WechatSendMessageUtils.sendWechatMessages(sb, wxuser.getOpenId(),deviceSn);
-				
+			if (sb.length() != 0) {
+
+				logger.debug("准备将故障信息推送给微信用户" + sb.toString());
+				WechatSendMessageUtils.sendWechatMessages(sb, wxuser.getOpenId(), deviceSn);
+
 			}
-			
+
 		}
-		
+
 	}
 
-	public static void selfTestBrokenHandle(String relation, int entityModel, int entityType,
-			List<Broken> brokenlist, String deviceSn) {
-		
+	public static void selfTestBrokenHandle(String relation, int entityModel, int entityType, List<Broken> brokenlist,
+			String deviceSn) {
+
 		logger.debug("准备将故障信息保存到数据库");
 		Broken broken = new Broken();
 		broken.setCreateDate(new Date());
@@ -789,59 +821,50 @@ public class CMDUtils {
 		brokenlist.add(broken);
 		service.save(broken);
 	}
-	
-	
-	public static void doJudge(String deviceSn,float waterTemp,float oxygen,float ph,String openId,DataAlarm da) {
-		List<PondFish> fishCategorys=service.queryFishCategorysByDeviceSn(deviceSn);
-		 logger.debug("准备根据上传的数据判断水温和溶氧值是否正常");
-		if(fishCategorys==null)
+
+	public static void doJudge(String deviceSn, float waterTemp, float oxygen, float ph, String openId, DataAlarm da) {
+		List<PondFish> fishCategorys = service.queryFishCategorysByDeviceSn(deviceSn);
+		logger.debug("准备根据上传的数据判断水温和溶氧值是否正常");
+		if (fishCategorys == null)
 			return;
-		 Set<Integer> typeset=new HashSet<Integer>();
-		if(!fishCategorys.isEmpty()) {
-		for(PondFish category:fishCategorys) {
-			typeset.add(category.getType());
+		Set<Integer> typeset = new HashSet<Integer>();
+		if (!fishCategorys.isEmpty()) {
+			for (PondFish category : fishCategorys) {
+				typeset.add(category.getType());
+			}
 		}
-		}
-		for(Integer typetemp:typeset) {
-		if(typeset.contains(typetemp)) {
-			JudgeAlarmRangeUtils.judgeDO(typetemp, oxygen,openId,deviceSn,da);
-			JudgeAlarmRangeUtils.judgeWaterTem(typetemp, waterTemp,openId,deviceSn,da);
-			if(-1!=ph)//ph不等于-1说明支持ph功能，然后判断，否则不判断
-			JudgeAlarmRangeUtils.judgePH(typetemp, ph,openId,deviceSn,da);
-		}
+		for (Integer typetemp : typeset) {
+			if (typeset.contains(typetemp)) {
+				JudgeAlarmRangeUtils.judgeDO(typetemp, oxygen, openId, deviceSn, da);
+				JudgeAlarmRangeUtils.judgeWaterTem(typetemp, waterTemp, openId, deviceSn, da);
+				if (-1 != ph)// ph不等于-1说明支持ph功能，然后判断，否则不判断
+					JudgeAlarmRangeUtils.judgePH(typetemp, ph, openId, deviceSn, da);
+			}
 		}
 	}
 
-/*	// while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
-	public static Map<String, Object> responseToBrowser(String order, String deviceSn) {
-
-		String lockObject = order + deviceSn;
-		logger.debug("生成锁对象" + lockObject);
-
-		Map<String, String> map = getFeedback();
-		map.put(deviceSn, lockObject);
-		long start = System.currentTimeMillis();
-		long end = 0;
-		synchronized (lockObject) {
-
-			try {
-				logger.debug("当前线程" + Thread.currentThread().getName() + "准备进入等待");
-				lockObject.wait(20000);
-				logger.debug("当前线程" + Thread.currentThread().getName() + "被唤醒或者超时");
-				map.remove(deviceSn);
-				end = System.currentTimeMillis();
-				if (end - start >= 20000) {
-					logger.debug("等待反馈超时");
-					return RESCODE.NOT_RECEIVED.getJSONRES();
-				}
-
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return RESCODE.SUCCESS.getJSONRES();
-
-	}*/
+	/*
+	 * // while循环等待反馈将feedback状态变为true，检测到了就立即返回给浏览器，否则继续，或者等待时间超过10秒，返回失败
+	 * public static Map<String, Object> responseToBrowser(String order, String
+	 * deviceSn) {
+	 * 
+	 * String lockObject = order + deviceSn; logger.debug("生成锁对象" + lockObject);
+	 * 
+	 * Map<String, String> map = getFeedback(); map.put(deviceSn, lockObject);
+	 * long start = System.currentTimeMillis(); long end = 0; synchronized
+	 * (lockObject) {
+	 * 
+	 * try { logger.debug("当前线程" + Thread.currentThread().getName() + "准备进入等待");
+	 * lockObject.wait(20000); logger.debug("当前线程" +
+	 * Thread.currentThread().getName() + "被唤醒或者超时"); map.remove(deviceSn); end
+	 * = System.currentTimeMillis(); if (end - start >= 20000) {
+	 * logger.debug("等待反馈超时"); return RESCODE.NOT_RECEIVED.getJSONRES(); }
+	 * 
+	 * } catch (InterruptedException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } }
+	 * 
+	 * return RESCODE.SUCCESS.getJSONRES();
+	 * 
+	 * }
+	 */
 }

@@ -694,7 +694,7 @@ public class EquipmentService {
 				// TODO Auto-generated catch block
 				break;
 			}
-			i = i + 24;
+			i = i + 8;
 		}
 		if (!list.isEmpty()) {
 			addVirtualData(splitlist);
@@ -789,7 +789,7 @@ public class EquipmentService {
 				// TODO Auto-generated catch block
 				break;
 			}
-			i = i + 24;
+			i = i + 8;
 		}
 		addVirtualData(splitlist);
 		for (Sensor_Data sensor_Data : splitlist) {

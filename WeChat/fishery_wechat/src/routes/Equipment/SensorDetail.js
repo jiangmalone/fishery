@@ -14,24 +14,9 @@ import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
 import { getDataToday, getRealTimeData, myEquipment, getDataSevenday, serverCheck } from '../../services/equipment.js'; //接口
 
 const todayTimes = ["00:00", "03:00",
-                     "06:00", "09:00", 
-                    "12:00", "15:00",
-                    "18:00", "21:00","24:00"];
-
-const cols = {
-    'ph': { min: 0 },
-    // 'ph': {range: [0, 20]},
-    'receiveTime': { ticks:todayTimes}
-};
-const oCols = {
-    'oxygen': { min: 0 },
-    'receiveTime': {ticks:todayTimes}
-};
-
-const waterCols = {
-    'temperature': { min: 0 },
-    'receiveTime': {ticks:todayTimes}
-};
+    "06:00", "09:00",
+    "12:00", "15:00",
+    "18:00", "21:00", "24:00"];
 
 class SensorDetail extends React.Component {
 
@@ -39,6 +24,15 @@ class SensorDetail extends React.Component {
         super(props)
         const device_sn = this.props.match.params.device_sn;
         const way = this.props.match.params.way;
+
+        const now = new Date();
+        const last = new Date(now - 24 * 60 * 60 * 1000);
+        const lastlast = new Date(now - 2 * 24 * 60 * 60 * 1000)
+        const nowStr = (((now.getMonth() + 1) < 10)?"0"+ (now.getMonth() + 1): (now.getMonth() +1)) +'-' +  ((now.getDate() < 10)?"0"+ now.getDate() : now.getDate());
+        const lastStr = (((last.getMonth() +1) < 10)?"0"+ (last.getMonth() + 1): (last.getMonth() +1 )) +'-' +  ((last.getDate() < 10)?"0"+ last.getDate() : last.getDate());
+        const lastlastStr = (((lastlast.getMonth() + 1) < 10)?"0"+ (lastlast.getMonth() + 1): (lastlast.getMonth() +1 )) +'-' +  ((lastlast.getDate() < 10)?"0"+ lastlast.getDate() : lastlast.getDate());
+        let ary = [nowStr, lastStr, lastlastStr];
+
         this.state = {
             animating: false,
             realTimeData: {
@@ -59,6 +53,31 @@ class SensorDetail extends React.Component {
             way: way,
             name: '',
             status: '',
+            cols: {
+                'ph': { min: 0 },
+                'receiveTime': { ticks: todayTimes }
+            },
+            oCols: {
+                'oxygen': { min: 0 },
+                'receiveTime': { ticks: todayTimes }
+            },
+            waterCols: {
+                'temperature': { min: 0 },
+                'receiveTime': { ticks: todayTimes }
+            },
+            colsT: {
+                'ph': { min: 0 },
+                'receiveTime': { ticks: ary }
+            },
+            oColsT: {
+                'oxygen': { min: 0 },
+                'receiveTime': { ticks: ary }
+            },
+            waterColsT: {
+                'temperature': { min: 0 },
+                'receiveTime': { ticks: ary }
+            }
+
         }
     }
 
@@ -68,8 +87,6 @@ class SensorDetail extends React.Component {
         this.getAllEquipment();
         window.scrollTo(0, 0);
     }
-
-
 
     getDataToday = () => {
         this.setState({ animating: true })
@@ -95,33 +112,33 @@ class SensorDetail extends React.Component {
         });
     }
 
-    formartTodayData = (data) =>{
+    formartTodayData = (data) => {
         let formartData = data;
         let times = ["00:00", "03:00",
-        "06:00", "09:00", 
-       "12:00", "15:00",
-       "18:00", "21:00","24:00"];
+            "06:00", "09:00",
+            "12:00", "15:00",
+            "18:00", "21:00", "24:00"];
 
-        for(let i = 1; i < formartData.length; i++) {
-            if (formartData[i-1]["receiveTime"] > times[0]) {
+        for (let i = 1; i < formartData.length; i++) {
+            if (formartData[i - 1]["receiveTime"] > times[0]) {
                 times.shift();
-            } else if (formartData[i-1]["receiveTime"] < times[0] &&formartData[i]["receiveTime"] > times[0]) {
+            } else if (formartData[i - 1]["receiveTime"] < times[0] && formartData[i]["receiveTime"] > times[0]) {
                 if (formartData[i]["ph"]) {
                     let value = (formartData[i - 1]["ph"] + formartData[i]["ph"]) / 2;
-                    let item = {'ph': value, 'receiveTime': times[0]};
-                    formartData.splice(i, 0, item);  
+                    let item = { 'ph': value, 'receiveTime': times[0] };
+                    formartData.splice(i, 0, item);
                     i++;
                     times.shift();
                 } else if (formartData[i]["oxygen"]) {
                     let value = (formartData[i - 1]["oxygen"] + formartData[i]["oxygen"]) / 2;
-                    let item = {'oxygen': value, 'receiveTime': times[0]};
-                    formartData.splice(i, 0, item);  
+                    let item = { 'oxygen': value, 'receiveTime': times[0] };
+                    formartData.splice(i, 0, item);
                     i++;
                     times.shift();
                 } else if (formartData[i]["temperature"]) {
                     let value = (formartData[i - 1]["temperature"] + formartData[i]["temperature"]) / 2;
-                    let item = {'temperature': value, 'receiveTime': times[0]};
-                    formartData.splice(i, 0, item);  
+                    let item = { 'temperature': value, 'receiveTime': times[0] };
+                    formartData.splice(i, 0, item);
                     i++;
                     times.shift();
                 }
@@ -138,7 +155,8 @@ class SensorDetail extends React.Component {
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
-                this.getColsData(res.data.oxygens);
+
+                this.getColsData(res.data.oxygens, res.data.phs, res.data.temperatures);
                 this.setState({
                     oData: res.data.oxygens,
                     phData: res.data.phs,
@@ -154,20 +172,32 @@ class SensorDetail extends React.Component {
         });
     }
 
-    getColsData = (data) => {
-        let times = [];
-
-        data.map((item, index) => {
+    getColsData = (oxygens, phs, temperatures) => {
+        let timesAry = [];
+        oxygens.map((item, index) => {
             if (item.receiveTime.length < 7) {
-                times.push(item.receiveTime);
+                timesAry.push(item.receiveTime + '');
             }
         })
-        // this.getData(this.getTime(1));
-        cols.receiveTime = { ticks: times };
-        oCols.receiveTime = { ticks: times };
-        waterCols.receiveTime = { ticks: times };
+        let cols = this.state.colsT;
+        let oCols = this.state.oColsT;
+        let waterCols = this.state.waterColsT;
+        cols.receiveTime = { ticks: timesAry }
+        oCols.receiveTime = { ticks: timesAry }
+        waterCols.receiveTime = { ticks: timesAry }
+        console.log(cols)
+        this.setState({
+            colsT: cols,
+            oColsT: oCols,
+            waterColsT: waterCols
+        }, () => {
+            this.setState({
+                oData: oxygens,
+                phData: phs,
+                waterData: temperatures
+            })
+        })
     }
-
 
     getRealTimeData = () => {
         this.setState({ animating: true })
@@ -224,7 +254,6 @@ class SensorDetail extends React.Component {
                         })
                     })
                 }
-
                 this.setState({ sensors: equipments })
             } else {
                 Toast.fail(res.data.msg, 1);
@@ -264,21 +293,25 @@ class SensorDetail extends React.Component {
         if (state == this.state.isSelectToday) {
             return;
         } else {
-            if (!this.state.isSelectToday) {
-                // this.getData(this.getTime(0));
-                cols["receiveTime"] = { ticks:todayTimes };
-                oCols["receiveTime"] = { ticks:todayTimes};
-                waterCols["receiveTime"] = { ticks:todayTimes};
-                this.getDataToday();
-            } else {
-                // this.getData(this.getTime(1));
-                // cols["receiveTime"] = { tickCount:18 };
-                // oCols["receiveTime"] = { tickCount:18 };
-                // waterCols["receiveTime"] = { tickCount:18 };
-                this.getDataSevenday();
-            }
             this.setState({
                 isSelectToday: !this.state.isSelectToday,
+            }, () => {
+                if (this.state.isSelectToday) {
+                    let cols = this.state.cols;
+                    let oCols = this.state.oCols;
+                    let waterCols = this.state.waterCols;
+                    cols.receiveTime = { ticks: todayTimes }
+                    oCols.receiveTime = { ticks: todayTimes }
+                    waterCols.receiveTime = { ticks: todayTimes }
+                    this.setState({
+                        cols: cols,
+                        oCols: oCols,
+                        waterCols: waterCols
+                    })
+                    this.getDataToday();
+                } else {
+                    this.getDataSevenday();
+                }
             })
         }
     }
@@ -300,6 +333,7 @@ class SensorDetail extends React.Component {
     }
 
     render() {
+        console.log(this.state.waterColsT)
         const overlayAry = [];
         const sensors = this.state.sensors;
         sensors.map((sensor, index) => {
@@ -374,32 +408,29 @@ class SensorDetail extends React.Component {
             </div>
             <div className='chart-div'>
                 <p>PH变化曲线</p>
-                <Chart height={400} data={this.state.phData} scale={cols} forceFit>
+                <Chart height={400} data={this.state.phData} scale={this.state.isSelectToday ? this.state.cols : this.state.colsT} forceFit>
                     <Axis name="time" />
                     <Axis name="ph" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="receiveTime*ph" size={2} shape={'smooth'}  />
-                    {/* <Geom type='point' position="receiveTime*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} /> */}
+                    <Geom type="line" position="receiveTime*ph" size={2} shape={'smooth'} />
                 </Chart>
             </div>
             <div className='chart-div'>
                 <p>溶氧变化曲线</p>
-                <Chart height={400} data={this.state.oData} scale={oCols} forceFit>
+                <Chart height={400} data={this.state.oData} scale={this.state.isSelectToday ? this.state.oCols: this.state.oColsT} forceFit>
                     <Axis name="time" />
                     <Axis name="o" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="receiveTime*oxygen" size={2} shape={'smooth'}  />
-                    {/* <Geom type='point' position="receiveTime*oxygen" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} /> */}
+                    <Geom type="line" position="receiveTime*oxygen" size={2} shape={'smooth'} />
                 </Chart>
             </div>
             <div className='chart-div'>
                 <p>水温变化曲线</p>
-                <Chart height={400} data={this.state.waterData} scale={waterCols} forceFit>
+                <Chart height={400} data={this.state.waterData} scale={this.state.isSelectToday ? this.state.waterCols : this.state.waterColsT} forceFit>
                     <Axis name="time" />
                     <Axis name="温度" />
                     <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="receiveTime*temperature" size={2} shape={'smooth'}  />
-                    {/* <Geom type='point' position="receiveTime*temperature" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} /> */}
+                    <Geom type="line" position="receiveTime*temperature" size={2} shape={'smooth'} />
                 </Chart>
             </div>
             <ActivityIndicator

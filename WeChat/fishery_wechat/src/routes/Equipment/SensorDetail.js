@@ -13,12 +13,10 @@ import back_img from '../../img/back.png';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
 import { getDataToday, getRealTimeData, myEquipment, getDataSevenday, serverCheck } from '../../services/equipment.js'; //接口
 
-const todayTimes = ["00:00", "01:00", "02:00", "03:00",
-                    "04:00", "05:00", "06:00", "07:00",
-                    "08:00", "09:00", "10:00", "11:00",
-                    "12:00", "13:00", "14:00", "15:00",
-                    "16:00", "17:00", "18:00", "19:00",
-                    "20:00", "21:00", "22:00", "23:00","24:00"];
+const todayTimes = ["00:00", "03:00",
+                     "06:00", "09:00", 
+                    "12:00", "15:00",
+                    "18:00", "21:00","24:00"];
 
 const cols = {
     'ph': { min: 0 },
@@ -99,12 +97,11 @@ class SensorDetail extends React.Component {
 
     formartTodayData = (data) =>{
         let formartData = data;
-        let times = ["00:00", "01:00", "02:00", "03:00",
-        "04:00", "05:00", "06:00", "07:00",
-        "08:00", "09:00", "10:00", "11:00",
-        "12:00", "13:00", "14:00", "15:00",
-        "16:00", "17:00", "18:00", "19:00",
-        "20:00", "21:00", "22:00", "23:00","24:00"];
+        let times = ["00:00", "03:00",
+        "06:00", "09:00", 
+       "12:00", "15:00",
+       "18:00", "21:00","24:00"];
+
         for(let i = 1; i < formartData.length; i++) {
             if (formartData[i-1]["receiveTime"] > times[0]) {
                 times.shift();
@@ -130,7 +127,6 @@ class SensorDetail extends React.Component {
                 }
             }
         }
-        console.log(formartData)
         return formartData;
     }
 
@@ -142,6 +138,7 @@ class SensorDetail extends React.Component {
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
+                this.getColsData(res.data.oxygens);
                 this.setState({
                     oData: res.data.oxygens,
                     phData: res.data.phs,
@@ -156,6 +153,21 @@ class SensorDetail extends React.Component {
             console.log(error)
         });
     }
+
+    getColsData = (data) => {
+        let times = [];
+
+        data.map((item, index) => {
+            if (item.receiveTime.length < 7) {
+                times.push(item.receiveTime);
+            }
+        })
+        // this.getData(this.getTime(1));
+        cols.receiveTime = { ticks: times };
+        oCols.receiveTime = { ticks: times };
+        waterCols.receiveTime = { ticks: times };
+    }
+
 
     getRealTimeData = () => {
         this.setState({ animating: true })
@@ -260,9 +272,9 @@ class SensorDetail extends React.Component {
                 this.getDataToday();
             } else {
                 // this.getData(this.getTime(1));
-                cols["receiveTime"] = { tickCount:18 };
-                oCols["receiveTime"] = { tickCount:18 };
-                waterCols["receiveTime"] = { tickCount:18 };
+                // cols["receiveTime"] = { tickCount:18 };
+                // oCols["receiveTime"] = { tickCount:18 };
+                // waterCols["receiveTime"] = { tickCount:18 };
                 this.getDataSevenday();
             }
             this.setState({
@@ -357,7 +369,7 @@ class SensorDetail extends React.Component {
                     今 日
                 </div>
                 <div className={(!this.state.isSelectToday ? 'selected' : '') + ' right'} onClick={() => this.selectTime(false)}  >
-                    七 日
+                    三 日
                 </div>
             </div>
             <div className='chart-div'>

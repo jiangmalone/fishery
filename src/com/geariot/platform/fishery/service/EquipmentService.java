@@ -639,14 +639,27 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+		SimpleDateFormat isSameDay=new SimpleDateFormat("MM-dd");
+		String temp=null;
 		for (Sensor_Data sensor_Data : list) {
-			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			if(!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
+			temp=isSameDay.format(sensor_Data.getReceiveTime());
+			ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
 			temperature = new Temperature(sensor_Data.getWater_temperature(),
-					format.format(sensor_Data.getReceiveTime()));
+					isSameDay.format(sensor_Data.getReceiveTime()));
 			phs.add(ph);
 			oxygens.add(oxygen);
 			temperatures.add(temperature);
+			}else {
+				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+				temperature = new Temperature(sensor_Data.getWater_temperature(),
+						format.format(sensor_Data.getReceiveTime()));
+				phs.add(ph);
+				oxygens.add(oxygen);
+				temperatures.add(temperature);
+			}
 		}
 		List<Sensor_Data> splitlist=new ArrayList<>();
 		int i=0;
@@ -716,14 +729,27 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+		SimpleDateFormat isSameDay=new SimpleDateFormat("MM-dd");
+		String temp=null;
 		for (Sensor_Data sensor_Data : list) {
-			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+			if(!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
+			temp=isSameDay.format(sensor_Data.getReceiveTime());
+			ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
+			oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
 			temperature = new Temperature(sensor_Data.getWater_temperature(),
-					format.format(sensor_Data.getReceiveTime()));
+					isSameDay.format(sensor_Data.getReceiveTime()));
 			phs.add(ph);
 			oxygens.add(oxygen);
 			temperatures.add(temperature);
+			}else {
+				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+				temperature = new Temperature(sensor_Data.getWater_temperature(),
+						format.format(sensor_Data.getReceiveTime()));
+				phs.add(ph);
+				oxygens.add(oxygen);
+				temperatures.add(temperature);
+			}
 		}
 
 		List<Sensor_Data> splitlist=new ArrayList<>();

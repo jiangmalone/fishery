@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -608,7 +609,7 @@ public class EquipmentService {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		// for (Sensor_Data sensor_Data : list) {
 		Sensor_Data sensor_Data = null;
-		for (int i = 0; i < 288; i = i + 6) {
+		for (int i = RandomUtils.nextInt(6); i < 288; i = i + 6) {
 			try {
 				sensor_Data = list.get(i);
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
@@ -642,9 +643,9 @@ public class EquipmentService {
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-		SimpleDateFormat isSameDay = new SimpleDateFormat("MM-dd");
-		String temp = "";
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//SimpleDateFormat isSameDay = new SimpleDateFormat("MM-dd");
+		//String temp = "";
 		List<Sensor_Data> splitlist = new ArrayList<>();
 		int i = 0;
 		while (i < 2016) {
@@ -658,7 +659,7 @@ public class EquipmentService {
 		}
 		if (!list.isEmpty()) {
 			for (Sensor_Data sensor_Data : splitlist) {
-				if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
+				/*if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 					temp = isSameDay.format(sensor_Data.getReceiveTime());
 					ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
 					oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
@@ -667,7 +668,7 @@ public class EquipmentService {
 					phs.add(ph);
 					oxygens.add(oxygen);
 					temperatures.add(temperature);
-				} else {
+				} else {*/
 					ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 					oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 					temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -675,7 +676,7 @@ public class EquipmentService {
 					phs.add(ph);
 					oxygens.add(oxygen);
 					temperatures.add(temperature);
-				}
+				//}
 			}
 		}
 
@@ -735,9 +736,9 @@ public class EquipmentService {
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-		SimpleDateFormat isSameDay = new SimpleDateFormat("MM-dd");
-		String temp = "";
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//SimpleDateFormat isSameDay = new SimpleDateFormat("MM-dd");
+		//String temp = "";
 		List<Sensor_Data> splitlist = new ArrayList<>();
 		int i = 0;
 		while (i < 2016) {
@@ -750,7 +751,7 @@ public class EquipmentService {
 			i = i + 24;
 		}
 		for (Sensor_Data sensor_Data : splitlist) {
-			if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
+			/*if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 				temp = isSameDay.format(sensor_Data.getReceiveTime());
 				ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
 				oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
@@ -759,7 +760,7 @@ public class EquipmentService {
 				phs.add(ph);
 				oxygens.add(oxygen);
 				temperatures.add(temperature);
-			} else {
+			} else {*/
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 				temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -767,7 +768,7 @@ public class EquipmentService {
 				phs.add(ph);
 				oxygens.add(oxygen);
 				temperatures.add(temperature);
-			}
+			/*}*/
 		}
 
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();

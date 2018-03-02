@@ -640,8 +640,20 @@ public class EquipmentService {
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
 		SimpleDateFormat isSameDay=new SimpleDateFormat("MM-dd");
-		String temp=null;
-		for (Sensor_Data sensor_Data : list) {
+		String temp="";
+		List<Sensor_Data> splitlist=new ArrayList<>();
+		int i=0;
+		while(i<2016) {
+			try {
+				splitlist.add(list.get(i));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				break;
+			}
+			i=i+24;
+		}
+		if(!list.isEmpty()) {
+		for (Sensor_Data sensor_Data : splitlist) {
 			if(!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 			temp=isSameDay.format(sensor_Data.getReceiveTime());
 			ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
@@ -661,17 +673,8 @@ public class EquipmentService {
 				temperatures.add(temperature);
 			}
 		}
-		List<Sensor_Data> splitlist=new ArrayList<>();
-		int i=0;
-		while(i<2016) {
-			try {
-				splitlist.add(list.get(i));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				break;
-			}
-			i=i+14;
 		}
+		
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
 		map.put("oxygens", oxygens);
@@ -730,8 +733,19 @@ public class EquipmentService {
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
 		SimpleDateFormat isSameDay=new SimpleDateFormat("MM-dd");
-		String temp=null;
-		for (Sensor_Data sensor_Data : list) {
+		String temp="";
+		List<Sensor_Data> splitlist=new ArrayList<>();
+		int i=0;
+		while(i<2016) {
+			try {
+				splitlist.add(list.get(i));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				break;
+			}
+			i=i+24;
+		}
+		for (Sensor_Data sensor_Data : splitlist) {
 			if(!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 			temp=isSameDay.format(sensor_Data.getReceiveTime());
 			ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
@@ -752,17 +766,7 @@ public class EquipmentService {
 			}
 		}
 
-		List<Sensor_Data> splitlist=new ArrayList<>();
-		int i=0;
-		while(i<2016) {
-			try {
-				splitlist.add(list.get(i));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				break;
-			}
-			i=i+14;
-		}
+		
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
 		map.put("oxygens", oxygens);

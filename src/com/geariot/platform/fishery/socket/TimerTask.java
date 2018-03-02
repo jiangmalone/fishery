@@ -35,7 +35,7 @@ public class TimerTask {
 	private static Logger logger = Logger.getLogger(TimerTask.class);
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 	
-	@Scheduled(cron="0 0 24 * * ?")//每天晚上24点启动自动校准
+	@Scheduled(cron="0 0 0 * * ?")//每天晚上24点启动自动校准
 	public void check() {
 		Map<String,SocketChannel> map= CMDUtils.getclientMap();
 		for(String deviceSn:map.keySet()) {

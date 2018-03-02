@@ -366,11 +366,11 @@ public class EquipmentService {
 				map.put("low_limit", install.getLow_limit());
 				map.put("up_limit", install.getUp_limit());
 				map.put("high_limit", install.getHigh_limit());
-				map.put("status", aio.getStatus());
-				map.put("name", aio.getName());
+				map.put("status", sensor.getStatus());
+				map.put("name", sensor.getName());
 			}else{
-				map.put("status", aio.getStatus());
-				map.put("name", aio.getName());
+				map.put("status", sensor.getStatus());
+				map.put("name", sensor.getName());
 				map.put("low_limit", 5);
 				map.put("up_limit", 10);
 				map.put("high_limit", 15);

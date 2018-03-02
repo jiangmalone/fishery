@@ -12,26 +12,29 @@ import correct from '../../img/btn_correct.png';
 import back_img from '../../img/back.png';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
 import { getDataToday, getRealTimeData, myEquipment, getDataSevenday, serverCheck } from '../../services/equipment.js'; //接口
+import ReactEcharts from 'echarts-for-react';
 
-const todayTimes = ["00:00", "03:00",
-    "06:00", "09:00",
-    "12:00", "15:00",
-    "18:00", "21:00", "24:00"];
 
+const now = new Date();
+const todayStr = formartDate(now);
+const yesterdayStr = formartDate(new Date(now - 24 * 60 * 60 * 1000));
+const beforeYesterdayStr = formartDate(new Date(now - 2 * 24 * 60 * 60 * 1000));
+now.setDate(now.getDate() + 1);
+const tomorrowStr = formartDate(now);
+function formartDate(date) {
+    
+    let year = date.getFullYear();
+    let month = (((date.getMonth() + 1) < 10)?"0"+ (date.getMonth() + 1): (date.getMonth() +1));
+    let day = ((date.getDate() < 10)?"0"+ date.getDate() : date.getDate());
+    
+     return year + '/' + month + '/' + day + ' 00:00:00';
+}
 class SensorDetail extends React.Component {
 
     constructor(props) {
         super(props)
         const device_sn = this.props.match.params.device_sn;
         const way = this.props.match.params.way;
-
-        const now = new Date();
-        const last = new Date(now - 24 * 60 * 60 * 1000);
-        const lastlast = new Date(now - 2 * 24 * 60 * 60 * 1000)
-        const nowStr = (((now.getMonth() + 1) < 10)?"0"+ (now.getMonth() + 1): (now.getMonth() +1)) +'-' +  ((now.getDate() < 10)?"0"+ now.getDate() : now.getDate());
-        const lastStr = (((last.getMonth() +1) < 10)?"0"+ (last.getMonth() + 1): (last.getMonth() +1 )) +'-' +  ((last.getDate() < 10)?"0"+ last.getDate() : last.getDate());
-        const lastlastStr = (((lastlast.getMonth() + 1) < 10)?"0"+ (lastlast.getMonth() + 1): (lastlast.getMonth() +1 )) +'-' +  ((lastlast.getDate() < 10)?"0"+ lastlast.getDate() : lastlast.getDate());
-        let ary = [nowStr, lastStr, lastlastStr];
 
         this.state = {
             animating: false,
@@ -52,33 +55,9 @@ class SensorDetail extends React.Component {
             device_sn: device_sn,
             way: way,
             name: '',
-            status: '',
-            cols: {
-                'ph': { min: 0 },
-                'receiveTime': { ticks: todayTimes }
-            },
-            oCols: {
-                'oxygen': { min: 0 },
-                'receiveTime': { ticks: todayTimes }
-            },
-            waterCols: {
-                'temperature': { min: 0 },
-                'receiveTime': { ticks: todayTimes }
-            },
-            colsT: {
-                'ph': { min: 0 },
-                'receiveTime': { ticks: ary }
-            },
-            oColsT: {
-                'oxygen': { min: 0 },
-                'receiveTime': { ticks: ary }
-            },
-            waterColsT: {
-                'temperature': { min: 0 },
-                'receiveTime': { ticks: ary }
-            }
-
+            status: ''
         }
+       
     }
 
     componentDidMount() {
@@ -88,6 +67,100 @@ class SensorDetail extends React.Component {
         window.scrollTo(0, 0);
     }
 
+    formartDate = (date) => {
+    
+        let year = date.getFullYear();
+        let month = (((date.getMonth() + 1) < 10)?"0"+ (date.getMonth() + 1): (date.getMonth() +1));
+        let day = ((date.getDate() < 10)?"0"+ date.getDate() : date.getDate());
+        
+         return year + '/' + month + '/' + day + ' 00:00:00';
+    }
+    
+    getOption = (type, isSelectToday) => {
+        let data;
+        let anchor;
+        let title = ''
+        if (isSelectToday) {
+            anchor = [
+                {name:todayStr, value:[todayStr, 0]},
+                {name:tomorrowStr, value:[tomorrowStr, 0]}
+                ];
+        } else {
+            anchor = [
+                {name:beforeYesterdayStr, value:[beforeYesterdayStr, 0]},
+                {name:yesterdayStr, value:[yesterdayStr, 0]},
+                {name:todayStr, value:[todayStr, 0]},
+                {name:tomorrowStr, value:[tomorrowStr, 0]}
+            ]
+        }
+        if (type == 'phs') {
+            data = this.state.phData;
+            title = "PH变化曲线";
+        } else if (type == 'oxygens') {
+            data = this.state.oData;
+            title = "溶氧变化曲线";
+        } else if (type == 'temperatures') {
+            data = this.state.waterData;
+            title = "水温变化曲线";
+        }
+        return {
+            title: {
+                text: title,
+                left: "10%"
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function (params) {
+                    params = params[0];
+                    var date = new Date(params.name);
+                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+                },
+                axisPointer: {
+                    animation: false
+                }
+            },
+            grid: {
+                left: '10%',
+                right: '10%',
+                bottom: '10%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'time',
+                splitLine: {
+                    show: false
+                }
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%'],
+                splitLine: {
+                    show: false
+                }
+            },
+            series: [{
+                name: '模拟数据',
+                type: 'line',
+                // showSymbol: false,
+                symbolSize: 3,
+                hoverAnimation: false,
+                data: data,
+                smooth: true,
+                // lineStyle:{
+                //     color: '#1E90FF'
+                // }
+            },
+            {
+                name:'.anchor',
+                type:'line', 
+                showSymbol:false, 
+                data:anchor,
+                itemStyle:{normal:{opacity:0}},
+                lineStyle:{normal:{opacity:0}}
+            }]
+        }
+    }
+    
     getDataToday = () => {
         this.setState({ animating: true })
         getDataToday({
@@ -96,11 +169,10 @@ class SensorDetail extends React.Component {
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
-                console.log(typeof res.data.oxygens[0]);
                 this.setState({
-                    oData: this.formartTodayData(res.data.oxygens),
-                    phData: this.formartTodayData(res.data.phs),
-                    waterData: this.formartTodayData(res.data.temperatures)
+                    oData: this.TransformationData(res.data.oxygens, 'oxygens'),
+                    phData: this.TransformationData(res.data.phs, 'phs'),
+                    waterData: this.TransformationData(res.data.temperatures, 'temperatures')
                 })
             } else {
                 Toast.fail(res.data.msg, 1);
@@ -112,39 +184,45 @@ class SensorDetail extends React.Component {
         });
     }
 
-    formartTodayData = (data) => {
-        let formartData = data;
-        let times = ["00:00", "03:00",
-            "06:00", "09:00",
-            "12:00", "15:00",
-            "18:00", "21:00", "24:00"];
-
-        for (let i = 1; i < formartData.length; i++) {
-            if (formartData[i - 1]["receiveTime"] > times[0]) {
-                times.shift();
-            } else if (formartData[i - 1]["receiveTime"] < times[0] && formartData[i]["receiveTime"] > times[0]) {
-                if (formartData[i]["ph"]) {
-                    let value = (formartData[i - 1]["ph"] + formartData[i]["ph"]) / 2;
-                    let item = { 'ph': value, 'receiveTime': times[0] };
-                    formartData.splice(i, 0, item);
-                    i++;
-                    times.shift();
-                } else if (formartData[i]["oxygen"]) {
-                    let value = (formartData[i - 1]["oxygen"] + formartData[i]["oxygen"]) / 2;
-                    let item = { 'oxygen': value, 'receiveTime': times[0] };
-                    formartData.splice(i, 0, item);
-                    i++;
-                    times.shift();
-                } else if (formartData[i]["temperature"]) {
-                    let value = (formartData[i - 1]["temperature"] + formartData[i]["temperature"]) / 2;
-                    let item = { 'temperature': value, 'receiveTime': times[0] };
-                    formartData.splice(i, 0, item);
-                    i++;
-                    times.shift();
+    TransformationData = (data, type) => {
+        let realData = [];
+        let length = 0;
+        if (type == 'oxygens') {
+            data.map((item, index) => {
+                if(item.oxygen) {
+                    realData[length]= {
+                                        name: item.receiveTime,
+                                        value:[item.receiveTime, item.oxygen]}
+                    length ++;
+                } else {
+                    length ++ ;
                 }
-            }
+            })
+        } else if (type == 'phs') {
+            data.map((item, index) => {
+                if(item.ph) {
+                    realData[length] = {
+                        name: item.receiveTime,
+                         value:[item.receiveTime, item.ph]}
+                         length ++;
+                } else {
+                    length ++;
+                }
+            })
+        } else if (type == 'temperatures') {
+            data.map((item, index) => {
+                if(item.temperature) {
+                    realData[length] = {
+                        name: item.receiveTime,
+                         value:[item.receiveTime, item.temperature]}
+                         length ++;
+                } else {
+                    length ++;
+                }
+            })
         }
-        return formartData;
+        return realData;
+        
     }
 
     getDataSevenday = () => {
@@ -155,12 +233,10 @@ class SensorDetail extends React.Component {
         }).then((res) => {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
-
-                this.getColsData(res.data.oxygens, res.data.phs, res.data.temperatures);
                 this.setState({
-                    oData: res.data.oxygens,
-                    phData: res.data.phs,
-                    waterData: res.data.temperatures
+                    oData: this.TransformationData(res.data.oxygens, 'oxygens'),
+                    phData: this.TransformationData(res.data.phs, 'phs'),
+                    waterData: this.TransformationData(res.data.temperatures, 'temperatures')
                 })
             } else {
                 Toast.fail(res.data.msg, 1);
@@ -170,33 +246,6 @@ class SensorDetail extends React.Component {
             Toast.fail('请求失败', 1);
             console.log(error)
         });
-    }
-
-    getColsData = (oxygens, phs, temperatures) => {
-        let timesAry = [];
-        oxygens.map((item, index) => {
-            if (item.receiveTime.length < 7) {
-                timesAry.push(item.receiveTime + '');
-            }
-        })
-        let cols = this.state.colsT;
-        let oCols = this.state.oColsT;
-        let waterCols = this.state.waterColsT;
-        cols.receiveTime = { ticks: timesAry }
-        oCols.receiveTime = { ticks: timesAry }
-        waterCols.receiveTime = { ticks: timesAry }
-        console.log(cols)
-        this.setState({
-            colsT: cols,
-            oColsT: oCols,
-            waterColsT: waterCols
-        }, () => {
-            this.setState({
-                oData: oxygens,
-                phData: phs,
-                waterData: temperatures
-            })
-        })
     }
 
     getRealTimeData = () => {
@@ -297,17 +346,7 @@ class SensorDetail extends React.Component {
                 isSelectToday: !this.state.isSelectToday,
             }, () => {
                 if (this.state.isSelectToday) {
-                    let cols = this.state.cols;
-                    let oCols = this.state.oCols;
-                    let waterCols = this.state.waterCols;
-                    cols.receiveTime = { ticks: todayTimes }
-                    oCols.receiveTime = { ticks: todayTimes }
-                    waterCols.receiveTime = { ticks: todayTimes }
-                    this.setState({
-                        cols: cols,
-                        oCols: oCols,
-                        waterCols: waterCols
-                    })
+                   
                     this.getDataToday();
                 } else {
                     this.getDataSevenday();
@@ -333,7 +372,6 @@ class SensorDetail extends React.Component {
     }
 
     render() {
-        console.log(this.state.waterColsT)
         const overlayAry = [];
         const sensors = this.state.sensors;
         sensors.map((sensor, index) => {
@@ -407,31 +445,13 @@ class SensorDetail extends React.Component {
                 </div>
             </div>
             <div className='chart-div'>
-                <p>PH变化曲线</p>
-                <Chart height={400} data={this.state.phData} scale={this.state.isSelectToday ? this.state.cols : this.state.colsT} forceFit>
-                    <Axis name="time" />
-                    <Axis name="ph" />
-                    <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="receiveTime*ph" size={2} shape={'smooth'} />
-                </Chart>
+                <ReactEcharts option={this.getOption('phs', this.state.isSelectToday)} height={400} title="haha" />
             </div>
             <div className='chart-div'>
-                <p>溶氧变化曲线</p>
-                <Chart height={400} data={this.state.oData} scale={this.state.isSelectToday ? this.state.oCols: this.state.oColsT} forceFit>
-                    <Axis name="time" />
-                    <Axis name="o" />
-                    <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="receiveTime*oxygen" size={2} shape={'smooth'} />
-                </Chart>
+                <ReactEcharts option={this.getOption('oxygens', this.state.isSelectToday)} height={400} />
             </div>
-            <div className='chart-div'>
-                <p>水温变化曲线</p>
-                <Chart height={400} data={this.state.waterData} scale={this.state.isSelectToday ? this.state.waterCols : this.state.waterColsT} forceFit>
-                    <Axis name="time" />
-                    <Axis name="温度" />
-                    <Tooltip crosshairs={{ type: "y" }} />
-                    <Geom type="line" position="receiveTime*temperature" size={2} shape={'smooth'} />
-                </Chart>
+            <div className='chart-div'> 
+                <ReactEcharts option={this.getOption('temperatures', this.state.isSelectToday)} height={400} />
             </div>
             <ActivityIndicator
                 toast

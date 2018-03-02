@@ -4,8 +4,9 @@ import { createForm } from 'rc-form';
 import NavBar from '../../components/NavBar';
 import { withRouter } from "react-router-dom";
 import { connect } from 'dva';
-import addImg from '../../img/add.png'
-import question from '../../img/question.png'
+import addImg from '../../img/add.png';
+import question from '../../img/question.png';
+import moment from 'moment';
 import './autoOxygenationSetting.less';
 import { autoSet, queryAeratorData } from '../../services/equipment.js'; //接口
 
@@ -105,6 +106,21 @@ class AutoOxygenationSetting extends React.Component {
             }
         });
     }
+    getTaskTime = (strDate) => {  
+        console.log("原始时间格式："+strDate);  
+        var date = new Date(strDate);  
+        var y = date.getFullYear();   
+        var m = date.getMonth() + 1;    
+        m = m < 10 ? ('0' + m) : m;    
+        var d = date.getDate();    
+        d = d < 10 ? ('0' + d) : d;    
+        var h = date.getHours();    
+        var minute = date.getMinutes();    
+        minute = minute < 10 ? ('0' + minute) : minute;  
+        var str = y+"-"+m+"-"+d+" "+h+":"+minute;  
+        console.log("转换时间格式："+str);  
+        return str;  
+    };  
     
     queryAeratorData = () => {
         queryAeratorData({
@@ -118,7 +134,19 @@ class AutoOxygenationSetting extends React.Component {
                     high_limit: res.data.oxyHighLimit || 0,
                 })
                 if (res.data.timerList && res.data.timerList.length > 0) {
-                    this.setState({timeSections: res.data.timerList});
+                    
+                    // this.setState({timeSections: res.data.timerList});
+                    let timeArray = []
+                    res.data.timerList.map((item, index) => {
+                        let now = new Date();
+                        let startTime = now.getFullYear() + '/' + (now.getMonth() + 1) +'/' + now.getDay() + ' ' + item.startTime;
+                        let endTime = now.getFullYear() + '/' + (now.getMonth() + 1) +'/' + now.getDay() + ' ' + item.endTime;
+                        startTime = moment(startTime);
+                        endTime = moment(endTime);
+                        let arr = [startTime , endTime];
+                        timeArray.push(arr);
+                    })
+                    this.setState({timeSections: timeArray});
                 } else {
                     this.setState({timeSections: [['', '']]});
                 }

@@ -815,16 +815,16 @@ public class EquipmentService {
 			Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 			Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
 			List<Timer> timer = timerDao.findTimerByDeviceSnAndWay(device_sn, way);
-			Sensor_Data sensor_data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
+			/*Sensor_Data sensor_data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
 			if (sensor_data != null) {
 				map.put("currentOxygens", sensor_data.getOxygen());
-			}
+			}*/
 			if (limit != null) {
 				map.put("oxyHighLimit", limit.getHigh_limit());
 				map.put("oxyUpLimit", limit.getUp_limit());
 				map.put("oxyLowLimit", limit.getLow_limit());
 			}
-			if (timer != null) {
+			if(timer!=null) {
 				map.put("timerList", timer);
 			}
 			return map;

@@ -339,7 +339,7 @@ class PondList extends PureComponent {
             key: 'sediment_thickness',
             dataIndex: 'sediment_thickness'
         }, {
-            title: '塘口密度(kg/㎡)',
+            title: '塘口密度(㎏/亩)',
             key: 'density',
             dataIndex: 'density'
         }, {

@@ -5,6 +5,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -199,6 +203,40 @@ public class EquipmentService {
 		StringBuffer sb = new StringBuffer(controller.getPort_status());
 		sb.setCharAt(port - 1, '0');
 		controller.setPort_status(sb.toString());
+	}
+	
+	private void addVirtualData(List<Sensor_Data> sensor_Datas){
+		Sensor_Data temp = null;
+		List<Sensor_Data> tempList = new ArrayList<>();
+		if(sensor_Datas.size()>1){
+			for(int i=0;i<sensor_Datas.size()-1;i++){
+				if((sensor_Datas.get(i).getReceiveTime().getTime()+7200000) < sensor_Datas.get(i+1).getReceiveTime().getTime()){
+					temp = new Sensor_Data();
+					temp.setDevice_sn(sensor_Datas.get(i).getDevice_sn());
+					temp.setId(sensor_Datas.size()+i+2);
+					temp.setOxygen(0);
+					temp.setpH_value(0);
+					temp.setWater_temperature(0);
+					temp.setSaturation(0);
+					temp.setWay(sensor_Datas.get(i).getWay());
+					temp.setReceiveTime(new Date(sensor_Datas.get(i).getReceiveTime().getTime()+3600000));
+					tempList.add(temp);
+				}
+			}
+			sensor_Datas.addAll(tempList);
+			Collections.sort(sensor_Datas, new Comparator<Sensor_Data>(){  
+	            public int compare(Sensor_Data o1, Sensor_Data o2) {  
+	                if(o1.getReceiveTime().getTime()>o2.getReceiveTime().getTime()){  
+	                    return 1;  
+	                }  
+	                if(o1.getReceiveTime().getTime() == o2.getReceiveTime().getTime()){  
+	                    return 0;  
+	                }  
+	                return -1;  
+	            }  
+	        });   
+		}
+		
 	}
 
 	public boolean exportData(String device_sn, String startTime, String endTime, HttpServletResponse response) {
@@ -600,6 +638,7 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.today(device_sn);
 		}
+		addVirtualData(list);
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
@@ -658,6 +697,7 @@ public class EquipmentService {
 			i = i + 24;
 		}
 		if (!list.isEmpty()) {
+			addVirtualData(splitlist);
 			for (Sensor_Data sensor_Data : splitlist) {
 				/*if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 					temp = isSameDay.format(sensor_Data.getReceiveTime());
@@ -694,6 +734,7 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.today(device_sn);
 		}
+		addVirtualData(list);
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
@@ -702,7 +743,7 @@ public class EquipmentService {
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Sensor_Data sensor_Data = null;
-		for (int i = 0; i < 288; i = i + 6) {
+		for (int i = RandomUtils.nextInt(6); i < 288; i = i + 6) {
 			try {
 				sensor_Data = list.get(i);
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
@@ -750,6 +791,7 @@ public class EquipmentService {
 			}
 			i = i + 24;
 		}
+		addVirtualData(splitlist);
 		for (Sensor_Data sensor_Data : splitlist) {
 			/*if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 				temp = isSameDay.format(sensor_Data.getReceiveTime());

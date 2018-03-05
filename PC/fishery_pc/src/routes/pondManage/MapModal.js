@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Modal, Input, Button, AutoComplete,message } from 'antd';
 import { Map, MouseTool } from 'react-amap';
+import update from 'immutability-helper'
 
 class MapModal extends PureComponent {
     constructor() {
@@ -10,6 +11,29 @@ class MapModal extends PureComponent {
         };
         this.amapEvents = {
             created: (map) => {
+                map.on('click', (e)=> {
+                    var mouseTool = new AMap.MouseTool(map);
+                    
+                    mouseTool.marker({offset:new AMap.Pixel(-14,-11)});
+                    console.log(e)
+                    // this.setState({
+                    //     address:e.poi
+                    // })
+                    Marker.remove()
+                    if(this.state.address) {
+                        this.setState({
+                            address:update(this.state.address,{[location]:{$set:e.lnglat}})
+                        })
+                    } else {
+                        this.setState({
+                            address:{
+                                address:'',
+                                location:e.lnglat
+                            }
+                        })
+                    }
+                    
+                });
                 AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], () => {
                     var autoOptions = {
                         input: "keyword"//使用联想输入的input的id
@@ -23,6 +47,7 @@ class MapModal extends PureComponent {
                         //TODO 针对选中的poi实现自己的功能
                         placeSearch.setCity(e.poi.adcode);
                         placeSearch.search(e.poi.name);
+                        console.log(e.poi)
                         if(e.poi.location) {
                             this.setState({
                                 address:e.poi
@@ -80,8 +105,8 @@ class MapModal extends PureComponent {
             width='70%'
             okText="确认"
             cancelText="取消">
-            <div style={{ height: '500px' }}>
-                <Map amapkey={'ae721b47f9c198651a4bfecec901aa8c'} version={'1.4.2'}
+            <div style={{ height: '600px' }}>
+                <Map amapkey={'ae721b47f9c198651a4bfecec901aa8c'} version={'1.4.2'} zoom={5}
                     plugins={this.mapPlugins}
                     events={this.amapEvents} >
                     <MouseTool events={this.toolEvents} >

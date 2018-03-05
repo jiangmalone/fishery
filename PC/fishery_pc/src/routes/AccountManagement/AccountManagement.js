@@ -54,9 +54,15 @@ export default class CompanyUserDetail extends React.Component {
 
     handleInputChange = (value, key) => {
         if (key) {
-            this.setState({
-                key: value
-            })
+            if (key ==  'password') {
+                this.setState({
+                    password: value
+                })
+            } else if (key == "passwordAgain") {
+                this.setState({
+                    passwordAgain: value
+                })
+            }
         }
     }
 

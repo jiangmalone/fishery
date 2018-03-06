@@ -17,6 +17,8 @@ public interface SensorDao {
 	Sensor findSensorById(int sensorId);
 	
 	Sensor findSensorByDeviceSns(String deviceSns);
+	
+	Sensor findSensorByDeviceSnAndWay(String deviceSn,int way);
 
 	List<Sensor> querySensorByNameAndRelation(String relation, String name, int from, int pageSize);
 	

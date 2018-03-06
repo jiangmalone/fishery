@@ -141,6 +141,20 @@ public class SocketSerivce {
 		return controllerDao.findControllerByDeviceSns(deviceSn);
 	}
 	
+	public Sensor findSensorByDeviceSnAndWay(String deviceSn,int way) {
+		return sensorDao.findSensorByDeviceSnAndWay(deviceSn, way);
+	}
+	
+	public AIO findAIOByDeviceSnAndWay(String deviceSn,int way) {
+		return aioDao.findAIOByDeviceSnAndWay(deviceSn, way);
+	}
+	
+	public Controller findControllerByDeviceSnAndWay(String deviceSn,int way) {
+		return controllerDao.findControllerByDeviceSnAndWay(deviceSn, way);
+	}
+	
+	
+	
 	public WXUser findWXUserByRelation(String relation) {
 		return wxuserDao.findUserByRelation(relation);
 	}

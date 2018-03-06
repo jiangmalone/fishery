@@ -82,6 +82,14 @@ public class CMDUtils {
 		selfTest.setCreateDate(new Date());
 		logger.debug("设备号为:" + deviceSn + "的设备自检分析完毕，是第" + way + "路，准备存入数据库");
 		service.save(selfTest);
+		AIO aio=service.findAIOByDeviceSn(deviceSn);
+		if(aio!=null) {
+			if(aio.getStatus()==1) {
+			aio.setStatus(0);
+			service.updateAIO(aio);
+			}
+		}
+			
 		response(20, data, readChannel);
 	}
 
@@ -207,7 +215,13 @@ public class CMDUtils {
 				da.setPondName(null);
 			}
 		doJudge(deviceSn, waterTemp, oxygen,-1,openId,da);//判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
-		
+		AIO aio2=service.findAIOByDeviceSn(deviceSn);
+		if(aio2!=null) {
+			if(aio2.getStatus()==1) {
+			aio2.setStatus(0);
+			service.updateAIO(aio2);
+			}
+		}
 
 		response(16, data, readChannel);
 	}
@@ -218,15 +232,16 @@ public class CMDUtils {
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路缺相报警");
 		String judge = deviceSn.substring(0, 2);
 		if (judge.equals("01") || judge.equals("02")) {
-			AIO aio = service.findAIOByDeviceSn(deviceSn);
+			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn,way);
 			if (aio == null) {
 				response(8, data, readChannel);
 				return;
 			}
+			
 			aio.setStatus(3);
 			service.updateAIO(aio);
 		} else if (judge.equals("03")) {
-			Sensor sensor = service.findSensorByDeviceSn(deviceSn);
+			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn,way);
 			if (sensor == null) {
 				response(8, data, readChannel);
 				return;
@@ -234,7 +249,7 @@ public class CMDUtils {
 			sensor.setStatus(3);
 			service.updateSensor(sensor);
 		} else if (judge.equals("04")) {
-			Controller controller = service.findControllerByDeviceSn(deviceSn);
+			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn,way);
 			if (controller == null) {
 				response(8, data, readChannel);
 				return;
@@ -250,7 +265,8 @@ public class CMDUtils {
 
 		alarm.setAlarmType(1);
 		service.save(alarm);
-
+		String openId=service.findOpenIdByDeviceSn(deviceSn);
+        WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", openId, deviceSn);
 		response(8, data, readChannel);
 	}
 
@@ -292,6 +308,8 @@ public class CMDUtils {
 		
 		alarm.setAlarmType(2);
 		service.save(alarm);
+		String openId=service.findOpenIdByDeviceSn(deviceSn);
+        WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", openId, deviceSn);
 		response(8, data, readChannel);
 	}
 
@@ -302,7 +320,7 @@ public class CMDUtils {
 
 		String judge = deviceSn.substring(0, 2);
 		if (judge.equals("01") || judge.equals("02")) {
-			AIO aio = service.findAIOByDeviceSn(deviceSn);
+			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn,way);
 			if (aio == null) {
 				response(8, data, readChannel);
 				return;
@@ -310,7 +328,7 @@ public class CMDUtils {
 			aio.setStatus(4);
 			service.updateAIO(aio);
 		} else if (judge.equals("03")) {
-			Sensor sensor = service.findSensorByDeviceSn(deviceSn);
+			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn,way);
 			if (sensor == null) {
 				response(8, data, readChannel);
 				return;
@@ -318,7 +336,7 @@ public class CMDUtils {
 			sensor.setStatus(4);
 			service.updateSensor(sensor);
 		} else if (judge.equals("04")) {
-			Controller controller = service.findControllerByDeviceSn(deviceSn);
+			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn,way);
 			if (controller == null) {
 				response(8, data, readChannel);
 				return;
@@ -334,6 +352,8 @@ public class CMDUtils {
 		
 		alarm.setAlarmType(3);
 		service.save(alarm);
+		String openId=service.findOpenIdByDeviceSn(deviceSn);
+        WechatSendMessageUtils.sendWechatDataAlarmMessages("数据异常报警", openId, deviceSn);
 		response(8, data, readChannel);
 	}
 
@@ -343,7 +363,7 @@ public class CMDUtils {
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路取消所有报警");
 		String judge = deviceSn.substring(0, 2);
 		if (judge.equals("01") || judge.equals("02")) {
-			AIO aio = service.findAIOByDeviceSn(deviceSn);
+			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn,way);
 			if (aio == null) {
 				response(8, data, readChannel);
 				return;
@@ -351,7 +371,7 @@ public class CMDUtils {
 			aio.setStatus(0);
 			service.updateAIO(aio);
 		} else if (judge.equals("03")) {
-			Sensor sensor = service.findSensorByDeviceSn(deviceSn);
+			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn,way);
 			if (sensor == null) {
 				response(8, data, readChannel);
 				return;
@@ -359,7 +379,7 @@ public class CMDUtils {
 			sensor.setStatus(0);
 			service.updateSensor(sensor);
 		} else if (judge.equals("04")) {
-			Controller controller = service.findControllerByDeviceSn(deviceSn);
+			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn,way);
 			if (controller == null) {
 				response(8, data, readChannel);
 				return;
@@ -599,6 +619,13 @@ public class CMDUtils {
 		doJudge(deviceSn, waterTemp, oxygen,phValue,openId,da);
 		
 		service.save(sData);
+		AIO aio3=service.findAIOByDeviceSn(deviceSn);
+		if(aio3!=null) {
+			if(aio3.getStatus()==1) {
+			aio3.setStatus(0);
+			service.updateAIO(aio3);
+			}
+		}
 		response(24, data, readChannel);
 	}
 

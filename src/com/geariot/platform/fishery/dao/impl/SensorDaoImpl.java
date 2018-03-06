@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.SensorDao;
+import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.utils.QueryUtils;
 
@@ -72,6 +73,13 @@ public class SensorDaoImpl implements SensorDao {
 		return (Sensor) query.uniqueResult();
 	}
 
+	
+	@Override
+	public Sensor findSensorByDeviceSnAndWay(String device_sn, int way) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
+		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
+		return (Sensor) query.uniqueResult();
+	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Sensor> findSensorsByPondId(int pondId) {

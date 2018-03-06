@@ -128,6 +128,8 @@ public class DataHandle {
 					msg7="打开增氧机";}else {
 						msg7="关闭增氧机";
 					}
+					
+					
 					WechatSendMessageUtils.sendWechatOnOffMessages(msg7+"操作成功", openId7, deviceSn);
 					break;
 				case 8:

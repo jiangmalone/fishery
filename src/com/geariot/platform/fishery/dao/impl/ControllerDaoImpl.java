@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.ControllerDao;
+import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.utils.QueryUtils;
 
@@ -69,6 +70,13 @@ public class ControllerDaoImpl implements ControllerDao {
 	public Controller findControllerByDeviceSns(String deviceSns) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
 		Query query = queryUtils.addString("device_sn", deviceSns).getQuery();
+		return (Controller) query.uniqueResult();
+	}
+	
+	@Override
+	public Controller findControllerByDeviceSnAndWay(String device_sn, int way) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
+		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
 		return (Controller) query.uniqueResult();
 	}
 

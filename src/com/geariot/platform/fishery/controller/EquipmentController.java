@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.model.ParamBody;
 import com.geariot.platform.fishery.service.EquipmentService;
 import com.geariot.platform.fishery.socket.CMDUtils;
+import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 @RestController
 @RequestMapping(value = "/equipment")
@@ -112,7 +114,7 @@ public class EquipmentController {
 	//增氧机开关
 	@RequestMapping(value="/aeratorOnOff",method=RequestMethod.GET)
 	public Map<String,Object> aeratorOnOff(String device_sn,int way,int openOrclose){
-		return CMDUtils.serverOnOffOxygenCMD(device_sn,way,openOrclose);
+		return equipmentService.aeratorOnOff(device_sn, way, openOrclose);
 	}
 	
 	@RequestMapping(value ="/queryAeratorData", method = RequestMethod.GET)

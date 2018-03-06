@@ -1,5 +1,6 @@
 package com.geariot.platform.fishery.wxutils;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.http.entity.StringEntity;
@@ -22,7 +23,7 @@ public class WechatTemplateMessage {
 	private static final String ALARM_TEMPLATE_ID="rWbgpqTb6alKSu4Wusf7ItFq2FQRQrzk1CNQV0uyJ_4";
 	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	//private static final String ALARM_TEMPLATE_ID=null;
-
+   private static SimpleDateFormat sdf=new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 	private static String invokeTemplateMessage(JSONObject params){
 		StringEntity entity = new StringEntity(params.toString(),"utf-8"); //解决中文乱码问题   
 		String result = HttpRequest.postCall(WechatConfig.WECHAT_TEMPLATE_MESSAGE_URL + 
@@ -51,7 +52,7 @@ public class WechatTemplateMessage {
 		data.put("first", keywordFactory("故障信息","#173177"));
 		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
 		data.put("keyword2", keywordFactory(sb.toString(),"#173177"));
-		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
 		data.put("remark", keywordFactory(""));
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
@@ -68,7 +69,7 @@ public class WechatTemplateMessage {
 		data.put("first", keywordFactory("结果","#173177"));
 		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
 		data.put("keyword2", keywordFactory(msg,"#173177"));
-		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
 		data.put("remark", keywordFactory(""));
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
@@ -85,7 +86,7 @@ public class WechatTemplateMessage {
 		data.put("first", keywordFactory("结果","#173177"));
 		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
 		data.put("keyword2", keywordFactory(msg,"#173177"));
-		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
 		data.put("remark", keywordFactory(""));
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
@@ -101,7 +102,7 @@ public class WechatTemplateMessage {
 		data.put("first", keywordFactory("结果","#173177"));
 		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
 		data.put("keyword2", keywordFactory(msg,"#173177"));
-		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
 		data.put("remark", keywordFactory(""));
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
@@ -119,7 +120,7 @@ public class WechatTemplateMessage {
 		data.put("first", keywordFactory("设置三限结果信息","#173177"));
 		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
 		data.put("keyword2", keywordFactory(msg,"#173177"));
-		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
 		data.put("remark", keywordFactory(""));
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
@@ -138,13 +139,70 @@ public class WechatTemplateMessage {
 		data.put("first", keywordFactory("结果信息","#173177"));
 		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
 		data.put("keyword2", keywordFactory(msg,"#173177"));
-		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
 		data.put("remark", keywordFactory(""));
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
 		log.debug("消息结果:"+result);
 		//data.put(key, value);
 	}
+	
+public static void sendOxyAlarmMSG(String msg,String openId,String deviceSn) {
+		
+		log.debug("向微信用户发送增氧机缺相报警信息····");
+			
+		JSONObject params=new JSONObject();
+		JSONObject data=new JSONObject();
+		params.put("touser",openId);
+		params.put("template_id", MSG_TEMPLATE_ID);
+		data.put("first", keywordFactory("缺相报警信息","#173177"));
+		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
+		data.put("keyword2", keywordFactory(msg,"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
+		data.put("remark", keywordFactory(""));
+		params.put("data", data);
+		String result=invokeTemplateMessage(params);
+		log.debug("消息结果:"+result);
+		//data.put(key, value);
+	}
+
+public static void sendVoltageAlarmMSG(String msg,String openId,String deviceSn) {
+	
+	log.debug("向微信用户发送断电报警信息····");
+		
+	JSONObject params=new JSONObject();
+	JSONObject data=new JSONObject();
+	params.put("touser",openId);
+	params.put("template_id", MSG_TEMPLATE_ID);
+	data.put("first", keywordFactory("断电报警信息","#173177"));
+	data.put("keyword1", keywordFactory(deviceSn,"#173177"));
+	data.put("keyword2", keywordFactory(msg,"#173177"));
+	data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
+	data.put("remark", keywordFactory(""));
+	params.put("data", data);
+	String result=invokeTemplateMessage(params);
+	log.debug("消息结果:"+result);
+	//data.put(key, value);
+}
+
+public static void sendDataAlarmMSG(String msg,String openId,String deviceSn) {
+	
+	log.debug("向微信用户发送数据异常报警信息····");
+		
+	JSONObject params=new JSONObject();
+	JSONObject data=new JSONObject();
+	params.put("touser",openId);
+	params.put("template_id", MSG_TEMPLATE_ID);
+	data.put("first", keywordFactory("数据异常报警信息","#173177"));
+	data.put("keyword1", keywordFactory(deviceSn,"#173177"));
+	data.put("keyword2", keywordFactory(msg,"#173177"));
+	data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
+	data.put("remark", keywordFactory(""));
+	params.put("data", data);
+	String result=invokeTemplateMessage(params);
+	log.debug("消息结果:"+result);
+	//data.put(key, value);
+}
 	
 	public static void sendOxygenOnoffMSG(String msg,String openId,String deviceSn,int onOff) {
 		if(onOff==0) {
@@ -163,7 +221,7 @@ public class WechatTemplateMessage {
 		}else {
 			data.put("keyword2", keywordFactory("增氧机关闭失败","#173177"));
 		}
-		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
 		data.put("remark", keywordFactory(""));
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
@@ -193,7 +251,7 @@ public class WechatTemplateMessage {
 		data.put("keyword1", keywordFactory("报警的设备没有绑定塘口","#173177"));
 		}
 		data.put("keyword2", keywordFactory(deviceSn,"#173177"));
-		data.put("keyword3", keywordFactory(new Date().toString(),"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
 		data.put("keyword4", keywordFactory(msg,"#173177"));
 		data.put("remark", keywordFactory(""));
 		params.put("data", data);

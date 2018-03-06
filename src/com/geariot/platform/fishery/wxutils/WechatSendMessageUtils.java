@@ -99,4 +99,40 @@ public class WechatSendMessageUtils {
 			
 		});
 	}
+	
+	public static void sendWechatOxyAlarmMessages(final String msg,final String openId,final String deviceSn) {
+		executorService.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				WechatTemplateMessage.sendOxyAlarmMSG(msg, openId, deviceSn);
+			}
+			
+		});
+	}
+	
+	public static void sendWechatVoltageMessages(final String msg,final String openId,final String deviceSn) {
+		executorService.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				WechatTemplateMessage.sendVoltageAlarmMSG(msg, openId, deviceSn);
+			}
+			
+		});
+	}
+	
+	public static void sendWechatDataAlarmMessages(final String msg,final String openId,final String deviceSn) {
+		executorService.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				WechatTemplateMessage.sendDataAlarmMSG(msg, openId, deviceSn);
+			}
+			
+		});
+	}
 }

@@ -49,6 +49,7 @@ import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.model.Temperature;
 import com.geariot.platform.fishery.socket.CMDUtils;
 import com.geariot.platform.fishery.utils.DataExportExcel;
+import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 @Service
 @Transactional
@@ -91,6 +92,9 @@ public class EquipmentService {
 
 	@Autowired
 	private DataAlarmDao daDao;
+	
+	@Autowired
+	private SocketSerivce socketService;
 
 	private String type = "";
 	private String relation = "";
@@ -804,7 +808,7 @@ public class EquipmentService {
 				install.setLow_limit(limit_Install.getLow_limit());
 				install.setUp_limit(limit_Install.getUp_limit());
 			}
-			// 传空为了删除定时功能
+			
 			if (timers == null) {
 				if (statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay()).isOn_off()) {
 					CMDUtils.serverOnOffOxygenCMD(limit_Install.getDevice_sn(), limit_Install.getWay(), 0);
@@ -845,10 +849,10 @@ public class EquipmentService {
 			Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 			Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
 			List<Timer> timer = timerDao.findTimerByDeviceSnAndWay(device_sn, way);
-			/*Sensor_Data sensor_data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
+			Sensor_Data sensor_data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
 			if (sensor_data != null) {
 				map.put("currentOxygens", sensor_data.getOxygen());
-			}*/
+			}
 			if (limit != null) {
 				map.put("oxyHighLimit", limit.getHigh_limit());
 				map.put("oxyUpLimit", limit.getUp_limit());
@@ -922,6 +926,17 @@ public class EquipmentService {
 		}
 
 		return map;
+
+	}
+	
+	public Map<String, Object> aeratorOnOff(String device_sn,int way,int openOrclose) {
+		AIO aio=aioDao.findAIOByDeviceSnAndWay(device_sn, way);
+		if(aio!=null&&aio.getStatus()==3) {
+			String openId=socketService.findOpenIdByDeviceSn(device_sn);
+			WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机失败，因为该增氧机存在缺相报警问题", openId, device_sn);
+		return RESCODE.SUCCESS.getJSONRES();
+		}
+		return CMDUtils.serverOnOffOxygenCMD(device_sn,way,openOrclose);
 
 	}
 

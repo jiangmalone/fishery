@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Modal, Input, Button, AutoComplete,message } from 'antd';
+import { Modal, Input, Button, AutoComplete, message } from 'antd';
 import { Map, MouseTool } from 'react-amap';
 import update from 'immutability-helper'
 
@@ -7,32 +7,40 @@ class MapModal extends PureComponent {
     constructor() {
         super();
         this.state = {
-            address:''
+            address: ''
         };
+        this.markers = []
         this.amapEvents = {
             created: (map) => {
-                map.on('click', (e)=> {
-                    var mouseTool = new AMap.MouseTool(map);
-                    
-                    mouseTool.marker({offset:new AMap.Pixel(-14,-11)});
-                    console.log(e)
+               
+                map.on('click', (e) => {
+                    // var mouseTool = new AMap.MouseTool(map);
+                    // mouseTool.marker({ offset: new AMap.Pixel(-14, -11) });
+                    map.remove(this.markers);  
+                    var marker = new AMap.Marker({
+                        position: e.lnglat,
+                        offset: new AMap.Pixel(-12, -12),
+                        map: map
+                    });
                     // this.setState({
                     //     address:e.poi
                     // })
-                    Marker.remove()
-                    if(this.state.address) {
+                    // Marker.remove()
+                    this.markers.push(marker);
+                    console.log(this.markers)
+                    if (this.state.address) {
                         this.setState({
-                            address:update(this.state.address,{[location]:{$set:e.lnglat}})
+                            address: update(this.state.address, { [location]: { $set: e.lnglat } })
                         })
                     } else {
+                        console.log(e.lnglat)
                         this.setState({
-                            address:{
-                                address:'',
-                                location:e.lnglat
+                            address: {
+                                address: `坐标（${e.lnglat.lat},${e.lnglat.lng}）`,
+                                location: e.lnglat
                             }
                         })
                     }
-                    
                 });
                 AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], () => {
                     var autoOptions = {
@@ -43,14 +51,14 @@ class MapModal extends PureComponent {
                     var placeSearch = new AMap.PlaceSearch({
                         map: map
                     })
-                    AMap.event.addListener(autocomplete, "select",  (e)=> {
+                    AMap.event.addListener(autocomplete, "select", (e) => {
                         //TODO 针对选中的poi实现自己的功能
                         placeSearch.setCity(e.poi.adcode);
                         placeSearch.search(e.poi.name);
                         console.log(e.poi)
-                        if(e.poi.location) {
+                        if (e.poi.location) {
                             this.setState({
-                                address:e.poi
+                                address: e.poi
                             })
                         } else {
                             message.error('您输入的地点不够准确请重新输入', 1)
@@ -99,7 +107,7 @@ class MapModal extends PureComponent {
     }
     render() {
         return (<Modal visible={this.props.visible}
-            onOk={()=>this.props.onMapOk(this.state.address)}
+            onOk={() => this.props.onMapOk(this.state.address)}
             onCancel={this.props.onMapCancel}
             wrapClassName={this.props.wrapClassName}
             width='70%'
@@ -114,7 +122,7 @@ class MapModal extends PureComponent {
                 </Map>
             </div>
             <div style={{ position: 'absolute', top: '0' }}>
-                <Input id="keyword" ref="keyword" name="keyword" style={{width:'300px'}} placeholder="请输入关键字：(选定后搜索)" />
+                <Input id="keyword" ref="keyword" name="keyword" style={{ width: '300px' }} placeholder="请输入关键字：(选定后搜索)" />
             </div>
         </Modal>)
     }

@@ -270,7 +270,7 @@ class UserInfo extends PureComponent {
                 if (!this.state.modifyId && this.state.modifyId !== 0) {
                     let newFishs = []
                     values.relation = this.props.match.params.id;
-                    values.address = this.props.address.district + this.props.address.address + this.props.address.name;
+                    values.address = (this.props.address.district ? this.props.address.district : '') + (this.props.address.address?this.props.address.address:'') + (this.props.address.name ? this.props.address.name : '');
                     values.latitude = this.props.address.location ? this.props.address.location.lat : '';
                     values.longitude = this.props.address.location ? this.props.address.location.lng : '';
                     if (values.pondFishs) {

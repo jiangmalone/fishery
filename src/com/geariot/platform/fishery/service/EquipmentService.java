@@ -92,7 +92,7 @@ public class EquipmentService {
 
 	@Autowired
 	private DataAlarmDao daDao;
-	
+
 	@Autowired
 	private SocketSerivce socketService;
 
@@ -605,12 +605,12 @@ public class EquipmentService {
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-		//for (Sensor_Data sensor_Data : list) {
-		Sensor_Data sensor_Data=null;
-		for(int i=0;i<288;i=i+6) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		// for (Sensor_Data sensor_Data : list) {
+		Sensor_Data sensor_Data = null;
+		for (int i = 0; i < 288; i = i + 6) {
 			try {
-				sensor_Data=list.get(i);
+				sensor_Data = list.get(i);
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 				temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -643,42 +643,42 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-		SimpleDateFormat isSameDay=new SimpleDateFormat("MM-dd");
-		String temp="";
-		List<Sensor_Data> splitlist=new ArrayList<>();
-		int i=0;
-		while(i<2016) {
+		SimpleDateFormat isSameDay = new SimpleDateFormat("MM-dd");
+		String temp = "";
+		List<Sensor_Data> splitlist = new ArrayList<>();
+		int i = 0;
+		while (i < 2016) {
 			try {
 				splitlist.add(list.get(i));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				break;
 			}
-			i=i+24;
+			i = i + 24;
 		}
-		if(!list.isEmpty()) {
-		for (Sensor_Data sensor_Data : splitlist) {
-			if(!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
-			temp=isSameDay.format(sensor_Data.getReceiveTime());
-			ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
-			oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
-			temperature = new Temperature(sensor_Data.getWater_temperature(),
-					isSameDay.format(sensor_Data.getReceiveTime()));
-			phs.add(ph);
-			oxygens.add(oxygen);
-			temperatures.add(temperature);
-			}else {
-				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
-				temperature = new Temperature(sensor_Data.getWater_temperature(),
-						format.format(sensor_Data.getReceiveTime()));
-				phs.add(ph);
-				oxygens.add(oxygen);
-				temperatures.add(temperature);
+		if (!list.isEmpty()) {
+			for (Sensor_Data sensor_Data : splitlist) {
+				if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
+					temp = isSameDay.format(sensor_Data.getReceiveTime());
+					ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
+					oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
+					temperature = new Temperature(sensor_Data.getWater_temperature(),
+							isSameDay.format(sensor_Data.getReceiveTime()));
+					phs.add(ph);
+					oxygens.add(oxygen);
+					temperatures.add(temperature);
+				} else {
+					ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
+					oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
+					temperature = new Temperature(sensor_Data.getWater_temperature(),
+							format.format(sensor_Data.getReceiveTime()));
+					phs.add(ph);
+					oxygens.add(oxygen);
+					temperatures.add(temperature);
+				}
 			}
 		}
-		}
-		
+
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
 		map.put("oxygens", oxygens);
@@ -699,11 +699,11 @@ public class EquipmentService {
 		PH ph = null;
 		Oxygen oxygen = null;
 		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-		Sensor_Data sensor_Data=null;
-		for(int i=0;i<288;i=i+6) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Sensor_Data sensor_Data = null;
+		for (int i = 0; i < 288; i = i + 6) {
 			try {
-				sensor_Data=list.get(i);
+				sensor_Data = list.get(i);
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 				temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -736,30 +736,30 @@ public class EquipmentService {
 		Oxygen oxygen = null;
 		Temperature temperature = null;
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-		SimpleDateFormat isSameDay=new SimpleDateFormat("MM-dd");
-		String temp="";
-		List<Sensor_Data> splitlist=new ArrayList<>();
-		int i=0;
-		while(i<2016) {
+		SimpleDateFormat isSameDay = new SimpleDateFormat("MM-dd");
+		String temp = "";
+		List<Sensor_Data> splitlist = new ArrayList<>();
+		int i = 0;
+		while (i < 2016) {
 			try {
 				splitlist.add(list.get(i));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				break;
 			}
-			i=i+24;
+			i = i + 24;
 		}
 		for (Sensor_Data sensor_Data : splitlist) {
-			if(!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
-			temp=isSameDay.format(sensor_Data.getReceiveTime());
-			ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
-			oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
-			temperature = new Temperature(sensor_Data.getWater_temperature(),
-					isSameDay.format(sensor_Data.getReceiveTime()));
-			phs.add(ph);
-			oxygens.add(oxygen);
-			temperatures.add(temperature);
-			}else {
+			if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
+				temp = isSameDay.format(sensor_Data.getReceiveTime());
+				ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
+				oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
+				temperature = new Temperature(sensor_Data.getWater_temperature(),
+						isSameDay.format(sensor_Data.getReceiveTime()));
+				phs.add(ph);
+				oxygens.add(oxygen);
+				temperatures.add(temperature);
+			} else {
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 				temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -770,7 +770,6 @@ public class EquipmentService {
 			}
 		}
 
-		
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
 		map.put("phs", phs);
 		map.put("oxygens", oxygens);
@@ -800,15 +799,15 @@ public class EquipmentService {
 					limit_Install.getWay());
 			logger.debug(limit_Install.toString());
 			if (install == null) {
-				
+
 				limitDao.save(limit_Install);
 			} else {
-				
+
 				install.setHigh_limit(limit_Install.getHigh_limit());
 				install.setLow_limit(limit_Install.getLow_limit());
 				install.setUp_limit(limit_Install.getUp_limit());
 			}
-			
+
 			if (timers == null) {
 				if (statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay()).isOn_off()) {
 					CMDUtils.serverOnOffOxygenCMD(limit_Install.getDevice_sn(), limit_Install.getWay(), 0);
@@ -858,7 +857,7 @@ public class EquipmentService {
 				map.put("oxyUpLimit", limit.getUp_limit());
 				map.put("oxyLowLimit", limit.getLow_limit());
 			}
-			if(timer!=null) {
+			if (timer != null) {
 				map.put("timerList", timer);
 			}
 			return map;
@@ -928,15 +927,15 @@ public class EquipmentService {
 		return map;
 
 	}
-	
-	public Map<String, Object> aeratorOnOff(String device_sn,int way,int openOrclose) {
-		AIO aio=aioDao.findAIOByDeviceSnAndWay(device_sn, way);
-		if(aio!=null&&aio.getStatus()==3) {
-			String openId=socketService.findOpenIdByDeviceSn(device_sn);
+
+	public Map<String, Object> aeratorOnOff(String device_sn, int way, int openOrclose) {
+		AIO aio = aioDao.findAIOByDeviceSnAndWay(device_sn, way);
+		if (aio != null && aio.getStatus() == 3) {
+			String openId = socketService.findOpenIdByDeviceSn(device_sn);
 			WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机失败，因为该增氧机存在缺相报警问题", openId, device_sn);
-		return RESCODE.SUCCESS.getJSONRES();
+			return RESCODE.SUCCESS.getJSONRES();
 		}
-		return CMDUtils.serverOnOffOxygenCMD(device_sn,way,openOrclose);
+		return CMDUtils.serverOnOffOxygenCMD(device_sn, way, openOrclose);
 
 	}
 

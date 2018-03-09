@@ -103,7 +103,7 @@ class SensorDetail extends React.Component {
             data = this.state.waterData;
             title = "水温变化曲线";
         }
-        return {
+        let option = {
             title: {
                 text: title,
                 left: "10%"
@@ -139,16 +139,13 @@ class SensorDetail extends React.Component {
                 }
             },
             series: [{
-                name: '模拟数据',
+                name: 'data',
                 type: 'line',
                 // showSymbol: false,
                 symbolSize: 3,
                 hoverAnimation: false,
                 data: data,
-                smooth: true,
-                // lineStyle:{
-                //     color: '#1E90FF'
-                // }
+                smooth: true
             },
             {
                 name:'.anchor',
@@ -159,6 +156,77 @@ class SensorDetail extends React.Component {
                 lineStyle:{normal:{opacity:0}}
             }]
         }
+        if (type == 'oxygens') {
+            option.series = [{
+                name: 'data',
+                type: 'line',
+                // showSymbol: false,
+                symbolSize: 3,
+                hoverAnimation: false,
+                data: data,
+                smooth: true
+            },
+            {
+                name:'.anchor',
+                type:'line', 
+                showSymbol:false, 
+                data:anchor,
+                itemStyle:{normal:{opacity:0}},
+                lineStyle:{normal:{opacity:0}}
+            },{
+                name:'上限',
+                type:'line', 
+                markLine: {
+                    silent: true,
+                    data: [{
+                        yAxis: 15
+                    }],
+                    symbolSize: 0,
+                    label: {
+                        show: false
+                    },
+                    lineStyle: {
+                        type: 'solid',
+                        color: 'blue'
+                    }
+                }
+            },{
+                name:'下线',
+                type:'line', 
+                markLine: {
+                    silent: true,
+                    data: [{
+                        yAxis: 5
+                    }],
+                    symbolSize: 0,
+                    label: {
+                        show: false
+                    },
+                    lineStyle: {
+                        type: 'solid',
+                        color: 'red'
+                    }
+                }
+            },{
+                name:'gaoxian',
+                type:'line', 
+                markLine: {
+                    silent: true,
+                    data: [{
+                        yAxis: 10
+                    }],
+                    symbolSize: 0,
+                    label: {
+                        show: false
+                    },
+                    lineStyle: {
+                        type: 'solid',
+                        color: 'green'
+                    }
+                }
+            }]
+        }
+        return option;
     }
     
     getDataToday = () => {

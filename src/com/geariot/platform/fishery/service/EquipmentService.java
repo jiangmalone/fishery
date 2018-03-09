@@ -339,8 +339,20 @@ public class EquipmentService {
 			data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
 			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
 			map = RESCODE.SUCCESS.getJSONRES(data);
-			map.put("status", aio.getStatus());
-			map.put("name", aio.getName());
+			Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
+			if(install!=null){
+				map.put("low_limit", install.getLow_limit());
+				map.put("up_limit", install.getUp_limit());
+				map.put("high_limit", install.getHigh_limit());
+				map.put("status", aio.getStatus());
+				map.put("name", aio.getName());
+			}else{
+				map.put("status", aio.getStatus());
+				map.put("name", aio.getName());
+				map.put("low_limit", 5);
+				map.put("up_limit", 10);
+				map.put("high_limit", 15);
+			}
 			return map;
 		} else if (deviceSn.equals("03")) {
 			if (sensorDao.findSensorByDeviceSns(device_sn) == null) {
@@ -349,8 +361,20 @@ public class EquipmentService {
 			data = sensor_DataDao.findDataByDeviceSns(device_sn);
 			Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
 			map = RESCODE.SUCCESS.getJSONRES(data);
-			map.put("status", sensor.getStatus());
-			map.put("name", sensor.getName());
+			Limit_Install install = limitDao.findLimitByDeviceSns(device_sn);
+			if(install!=null){
+				map.put("low_limit", install.getLow_limit());
+				map.put("up_limit", install.getUp_limit());
+				map.put("high_limit", install.getHigh_limit());
+				map.put("status", aio.getStatus());
+				map.put("name", aio.getName());
+			}else{
+				map.put("status", aio.getStatus());
+				map.put("name", aio.getName());
+				map.put("low_limit", 5);
+				map.put("up_limit", 10);
+				map.put("high_limit", 15);
+			}
 			return map;
 		} else
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();

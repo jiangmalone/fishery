@@ -53,6 +53,7 @@ import com.geariot.platform.fishery.model.PH;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.model.Temperature;
 import com.geariot.platform.fishery.socket.CMDUtils;
+import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.DataExportExcel;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
@@ -860,8 +861,12 @@ public class EquipmentService {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
 			Map<String, Object> map = CMDUtils.downLimitCMD(limit_Install);
-			if (!map.containsKey("0"))
+			/*for(Map.Entry<String, Object> m:map.entrySet()) {
+			System.out.println(m.getKey()+" : "+m.getValue());
+			}*/
+			if (!(map.containsValue("成功"))) {
 				return map;
+			}
 			Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(),
 					limit_Install.getWay());
 			logger.debug(limit_Install.toString());
@@ -884,14 +889,16 @@ public class EquipmentService {
 			} else {
 				AeratorStatus status = statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(),
 						limit_Install.getWay());
-				Timer timer = timers[0];
+				
 				if (timers.length > 0) {
 					status.setTimed(true);
+					Timer timer = timers[0];
+					timerDao.delete(timer.getDevice_sn(), timer.getWay());
+					for (Timer timersave : timers) {
+						timerDao.save(timersave);
+					}
 				}
-				timerDao.delete(timer.getDevice_sn(), timer.getWay());
-				for (Timer timersave : timers) {
-					timerDao.save(timersave);
-				}
+				
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		} catch (Exception e) {

@@ -157,9 +157,10 @@ public class CMDUtils {
 			return RESCODE.SEND_FAILED.getJSONRES();
 		}
 		//return responseToBrowser("2", limit.getDevice_sn());
-		msg.put(limit.getDevice_sn()+"2", "低限为:"+limit.getLow_limit()+"高限为:"+limit.getHigh_limit()+
-				"上限为:"+limit.getUp_limit());
-        return RESCODE.SUCCESS.getJSONRES();
+		System.out.println("22222");
+		msg.put(limit.getDevice_sn()+"2", "低限为:"+limit.getLow_limit()+"高限为:"+limit.getHigh_limit()+"上限为:"+limit.getUp_limit());
+		System.out.println("11111111111");
+       return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	// 5分钟一次上传溶氧和水温值

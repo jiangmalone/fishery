@@ -99,7 +99,7 @@ public class DataHandle {
 					break;
 				case 2:
 					logger.debug("服务器设置三限的反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String openId2 = service.findOpenIdByDeviceSn(deviceSn);
+					String openId2 = service.findWXUserByDeviceSn(deviceSn).getOpenId();
 					String msg2=CMDUtils.msg.get(deviceSn+"2");
 					WechatSendMessageUtils.sendWechatLimitMessages("设置"+msg2+"成功", openId2, deviceSn);
 					CMDUtils.msg.remove(deviceSn+"2");
@@ -121,7 +121,7 @@ public class DataHandle {
 					break;
 				case 7:
 					logger.debug("服务器开关增氧机反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String openId7 = service.findOpenIdByDeviceSn(deviceSn);
+					String openId7 = service.findWXUserByDeviceSn(deviceSn).getOpenId();
 					String onOff=CMDUtils.msg.get(deviceSn+"7");
 					String msg7=null;
 					if(onOff.equals("1")) {
@@ -134,7 +134,7 @@ public class DataHandle {
 					break;
 				case 8:
 					logger.debug("服务器一键自动反馈命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String openId8 = service.findOpenIdByDeviceSn(deviceSn);
+					String openId8 = service.findWXUserByDeviceSn(deviceSn).getOpenId();
 					WechatSendMessageUtils.sendWechatSetAutoMessages("一键自动成功", openId8, deviceSn);
 					break;
 				case 9:
@@ -151,7 +151,7 @@ public class DataHandle {
 					break;
 				case 12: // 0C
 					logger.debug("服务器使用哪路传感器命令,设备编号为:" + deviceSn + "第" + way + "路");
-					String openId12 = service.findOpenIdByDeviceSn(deviceSn);
+					String openId12 = service.findWXUserByDeviceSn(deviceSn).getOpenId();
 					WechatSendMessageUtils.sendWechatSetPathMessages("更改传感器路数成功", openId12, deviceSn);
 					break;
 				case 13:// 0D

@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.AeratorStatus;
 import com.geariot.platform.fishery.entities.Alarm;
@@ -36,6 +37,7 @@ import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.CommonUtils;
 import com.geariot.platform.fishery.utils.JudgeAlarmRangeUtils;
 import com.geariot.platform.fishery.utils.StringUtils;
+import com.geariot.platform.fishery.utils.VmsUtils;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 public class CMDUtils {
@@ -48,8 +50,6 @@ public class CMDUtils {
 	public static Map<String, SocketChannel> getclientMap() {
 		return clientMap;
 	}
-
-	
 
 	// 自检
 	public static void selfTestCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way)
@@ -238,9 +238,13 @@ public class CMDUtils {
 				response(8, data, readChannel);
 				return;
 			}
-			
 			aio.setStatus(3);
 			service.updateAIO(aio);
+			WXUser wxUser = null;
+			wxUser = service.findWXUserByDeviceSn(deviceSn);
+			if(wxUser!=null && wxUser.getOpenId()!=null){
+				WechatSendMessageUtils.sendWechatVoltageMessages("缺相报警", wxUser.getOpenId(), deviceSn);
+	        }
 		} else if (judge.equals("03")) {
 			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn,way);
 			if (sensor == null) {
@@ -249,6 +253,11 @@ public class CMDUtils {
 			}
 			sensor.setStatus(3);
 			service.updateSensor(sensor);
+			WXUser wxUser = null;
+			wxUser = service.findWXUserByDeviceSnSensor(deviceSn);
+			if(wxUser!=null && wxUser.getOpenId()!=null){
+				WechatSendMessageUtils.sendWechatVoltageMessages("缺相报警", wxUser.getOpenId(), deviceSn);
+	        }
 		} else if (judge.equals("04")) {
 			Controller controller = service.findControllerByDeviceSnAndWay(deviceSn,way);
 			if (controller == null) {
@@ -257,23 +266,24 @@ public class CMDUtils {
 			}
 			controller.setStatus(3);
 			service.updateController(controller);
+			WXUser wxUser = null;
+			wxUser = service.findWXUserByDeviceSnController(deviceSn);
+			if(wxUser!=null && wxUser.getOpenId()!=null){
+				WechatSendMessageUtils.sendWechatVoltageMessages("缺相报警", wxUser.getOpenId(), deviceSn);
+	        }
 		}
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
 		alarm.setWay(way);
-
 		alarm.setCreateDate(new Date());
-
 		alarm.setAlarmType(1);
 		service.save(alarm);
-		String openId=service.findOpenIdByDeviceSn(deviceSn);
-        WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", openId, deviceSn);
 		response(8, data, readChannel);
 	}
 
 	// 220v断电报警
 	public static void voltageAlarmCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way)
-			throws IOException {
+			throws IOException, ClientException {
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路220V断电报警");
 		String judge = deviceSn.substring(0, 2);
 		if (judge.equals("01") || judge.equals("02")) {
@@ -284,6 +294,14 @@ public class CMDUtils {
 			}
 			aio.setStatus(2);
 			service.updateAIO(aio);
+			WXUser wxUser = null;
+			wxUser = service.findWXUserByDeviceSn(deviceSn);
+			if(wxUser!=null && wxUser.getOpenId()!=null){
+				WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", wxUser.getOpenId(), deviceSn);
+	        }
+			if(wxUser.getPhone()!=null){
+				VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", "param");
+			}
 		} else if (judge.equals("03")) {
 			Sensor sensor = service.findSensorByDeviceSn(deviceSn);
 			if (sensor == null) {
@@ -292,6 +310,11 @@ public class CMDUtils {
 			}
 			sensor.setStatus(2);
 			service.updateSensor(sensor);
+			WXUser wxUser = null;
+			wxUser = service.findWXUserByDeviceSnSensor(deviceSn);
+			if(wxUser!=null && wxUser.getOpenId()!=null){
+				WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", wxUser.getOpenId(), deviceSn);
+	        }
 		} else if (judge.equals("04")) {
 			Controller controller = service.findControllerByDeviceSn(deviceSn);
 			if (controller == null) {
@@ -300,17 +323,18 @@ public class CMDUtils {
 			}
 			controller.setStatus(2);
 			service.updateController(controller);
+			WXUser wxUser = null;
+			wxUser = service.findWXUserByDeviceSnController(deviceSn);
+			if(wxUser!=null && wxUser.getOpenId()!=null){
+				WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", wxUser.getOpenId(), deviceSn);
+	        }
 		}
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
 		alarm.setWay(way);
-		
 		alarm.setCreateDate(new Date());
-		
 		alarm.setAlarmType(2);
 		service.save(alarm);
-		String openId=service.findOpenIdByDeviceSn(deviceSn);
-        WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", openId, deviceSn);
 		response(8, data, readChannel);
 	}
 
@@ -348,13 +372,9 @@ public class CMDUtils {
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
 		alarm.setWay(way);
-		
 		alarm.setCreateDate(new Date());
-		
 		alarm.setAlarmType(3);
 		service.save(alarm);
-		String openId=service.findOpenIdByDeviceSn(deviceSn);
-        WechatSendMessageUtils.sendWechatDataAlarmMessages("数据异常报警", openId, deviceSn);
 		response(8, data, readChannel);
 	}
 

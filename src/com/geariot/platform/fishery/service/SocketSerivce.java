@@ -180,13 +180,35 @@ public class SocketSerivce {
 	}
 	
 	
-	public String findOpenIdByDeviceSn(String deviceSn) {
-		AIO aio=findAIOByDeviceSn(deviceSn);
+	public WXUser findWXUserByDeviceSn(String deviceSn) {
+		AIO aio = findAIOByDeviceSn(deviceSn);
 		WXUser wxuser=null;
-		if(aio!=null&&aio.getRelation().contains("WX")) {
-			wxuser=findWXUserByRelation(aio.getRelation());
+		if(aio != null && aio.getRelation().contains("WX")) {
+			wxuser = findWXUserByRelation(aio.getRelation());
+			if(wxuser != null)
+				return wxuser;
+		}
+		return null;
+	}
+	
+	public WXUser findWXUserByDeviceSnSensor(String deviceSn) {
+		Sensor sensor = findSensorByDeviceSn(deviceSn);
+		WXUser wxuser=null;
+		if(sensor != null && sensor.getRelation().contains("WX")) {
+			wxuser=findWXUserByRelation(sensor.getRelation());
 			if(wxuser!=null)
-				return wxuser.getOpenId();
+				return wxuser;
+		}
+		return null;
+	}
+	
+	public WXUser findWXUserByDeviceSnController(String deviceSn) {
+		Controller controller = findControllerByDeviceSn(deviceSn);
+		WXUser wxuser=null;
+		if(controller != null && controller.getRelation().contains("WX")) {
+			wxuser=findWXUserByRelation(controller.getRelation());
+			if(wxuser!=null)
+				return wxuser;
 		}
 		return null;
 	}

@@ -28,7 +28,6 @@ import com.geariot.platform.fishery.entities.SelfTest;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Sensor_Data;
 import com.geariot.platform.fishery.entities.WXUser;
-import com.geariot.platform.fishery.model.BrokenMSG;
 import com.geariot.platform.fishery.model.EntityModel;
 import com.geariot.platform.fishery.model.EntityType;
 import com.geariot.platform.fishery.model.RESCODE;
@@ -45,7 +44,6 @@ public class CMDUtils {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static Map<String, SocketChannel> clientMap = new ConcurrentHashMap<String, SocketChannel>();
 	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
-    private static BrokenMSG bs=new BrokenMSG();
     public static Map<String,String> msg=new ConcurrentHashMap<String,String>();
 	public static Map<String, SocketChannel> getclientMap() {
 		return clientMap;
@@ -659,7 +657,7 @@ public class CMDUtils {
 		ByteBuffer outBuffer = ByteBuffer.wrap(response);
 		logger.debug(CommonUtils.printHexStringMerge(outBuffer.array(),0,outBuffer.array().length));
 		readChannel.write(outBuffer);// 将消息回送给客户端
-		// System.out.println("cmd代码处理完");
+		
 	}
 
 	public static void statusHandle(byte[] status, List<Broken> brokenlist, String deviceSn) {
@@ -694,39 +692,21 @@ public class CMDUtils {
 				return;
 			}
 		}
-		//logger.debug("relation为:"+relation);
-		System.out.println(statusStr);
-		/*
-		 * switch (statusStr.substring(0,1)) { case "0": //水泵关闭故障
-		 * selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP,
-		 * EntityType.PUMP_OFF,"水泵关闭故障",brokenlist,deviceSn);
-		 * System.out.println("````水泵关闭故障"); break; case "1": //水泵打开故障
-		 * selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP,
-		 * EntityType.PUMP_ON,"水泵打开故障",brokenlist,deviceSn); break; case "2":
-		 * //水泵低电流故障 selfTestBrokenHandle(relation, EntityModel.ENTITY_PUMP,
-		 * EntityType.PUMP_LOWCURRENT,"水泵低电流故障",brokenlist,deviceSn); break;
-		 * case "3": //水泵高电流故障 selfTestBrokenHandle(relation,
-		 * EntityModel.ENTITY_PUMP,
-		 * EntityType.HIGH_LIMIT_BROKEN,"水泵高电流故障",brokenlist,deviceSn); break;
-		 * default: break; }
-		 */
+		StringBuilder sb=new StringBuilder();
 
 		switch (statusStr.substring(1, 2)) {
-		/*
-		 * case "0": //PH故障 selfTestBrokenHandle(relation,
-		 * EntityModel.ENTITY_PH,
-		 * EntityType.NOT_BROKEN,"PH正常",brokenlist,deviceSn);
-		 * System.out.println("````ph故障"); break;
-		 */
+		
 		case "1":
 			// PH低限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.LOW_LIMIT_BROKEN, "PH低限故障", brokenlist,
+			sb.append("PH低限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.LOW_LIMIT_BROKEN, brokenlist,
 					deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现PH低限故障");
 			break;
 		case "2":
 			// PH高限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.HIGH_LIMIT_BROKEN, "PH高限故障", brokenlist,
+			sb.append("PH高限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_PH, EntityType.HIGH_LIMIT_BROKEN, brokenlist,
 					deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现PH高限故障");
 			break;
@@ -735,21 +715,18 @@ public class CMDUtils {
 		}
 
 		switch (statusStr.substring(2, 3)) {
-		/*
-		 * case "0": //溶氧值故障 selfTestBrokenHandle(relation,
-		 * EntityModel.ENTITY_OXYGEN,
-		 * EntityType.NOT_BROKEN,"溶氧值正常",brokenlist,deviceSn);
-		 * System.out.println("溶氧值故障"); break;
-		 */
+		
 		case "1":
 			// 溶氧值低限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.LOW_LIMIT_BROKEN, "溶氧值低限故障",
+			sb.append( "溶氧值低限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.LOW_LIMIT_BROKEN,
 					brokenlist, deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现溶氧值低限故障");
 			break;
 		case "2":
 			// 溶氧值高限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.HIGH_LIMIT_BROKEN, "溶氧值高限故障",
+			sb.append( "溶氧值高限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_OXYGEN, EntityType.HIGH_LIMIT_BROKEN, 
 					brokenlist, deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现PH高限故障");
 			break;
@@ -758,28 +735,27 @@ public class CMDUtils {
 		}
 
 		switch (statusStr.substring(3, 4)) {
-		/*
-		 * case "0": //温度故障 selfTestBrokenHandle(relation,
-		 * EntityModel.ENTITY_TEMPERATURE,
-		 * EntityType.NOT_BROKEN,"温度正常",brokenlist,deviceSn); break;
-		 */
+		
 		case "1":
 			// 温度低限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN, "温度低限故障",
+			sb.append( "温度低限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.LOW_LIMIT_BROKEN, 
 					brokenlist, deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现温度低限故障");
 			// System.out.println("温度低限故障");
 			break;
 		case "2":
 			// 温度高限故障
-			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.HIGH_LIMIT_BROKEN, "温度高限故障",
+			sb.append( "温度高限故障");
+			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.HIGH_LIMIT_BROKEN, 
 					brokenlist, deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现温度高限故障");
 			break;
 		case "4":
 			// 温度断开故障
+			sb.append( "温度断开故障");
 			selfTestBrokenHandle(relation, EntityModel.ENTITY_TEMPERATURE, EntityType.TEMPORETURE_CLOSED_BROKEN,
-					"温度断开故障", brokenlist, deviceSn);
+					 brokenlist, deviceSn);
 			logger.debug("设备编号为:" + deviceSn + "的设备开机自检中发现温度断开故障");
 			break;
 		default:
@@ -788,27 +764,22 @@ public class CMDUtils {
 
 		
 		WXUser wxuser = service.findWXUserByRelation(relation);
-		//logger.debug(wxuser.getName());
+		
 		if (wxuser != null) {
-			
-			if (bs.getMSG()!= null) {
-				logger.debug("准备将故障信息推送给微信用户");
-				WechatSendMessageUtils.sendWechatMessages(bs.getMSG(), wxuser.getOpenId(),deviceSn);
-				// WechatTemplateMessage.sendBrokenMSG(bs.getMSG(),wxuser.getOpenId());//把所有故障信息拼接完毕推送给前台
+			if (sb.length()!=0) {
+				
+				logger.debug("准备将故障信息推送给微信用户"+sb.toString());
+				WechatSendMessageUtils.sendWechatMessages(sb, wxuser.getOpenId(),deviceSn);
+				
 			}
-			bs.clear();
+			
 		}
 		
 	}
 
-	public static void selfTestBrokenHandle(String relation, int entityModel, int entityType, String brokenmsg,
+	public static void selfTestBrokenHandle(String relation, int entityModel, int entityType,
 			List<Broken> brokenlist, String deviceSn) {
-		if (relation.contains("WX")) {
-			// 是微信用户就推送给前台
-			//BrokenMSG bs = new BrokenMSG();
-			
-			bs.setMSG(brokenmsg);
-		}
+		
 		logger.debug("准备将故障信息保存到数据库");
 		Broken broken = new Broken();
 		broken.setCreateDate(new Date());

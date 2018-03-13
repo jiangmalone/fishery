@@ -37,8 +37,8 @@ public class VmsUtils {
     static final String domain = "dyvmsapi.aliyuncs.com";
 
     //TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-    static final String accessKeyId = "LTAIj7x1ag9KDP9y";
-    static final String accessKeySecret = "GiXylqbw4PBEhL86CkmFg8OGdBsZqH";
+    static final String accessKeyId = "LTAIn3g4DqQFIuVP";
+    static final String accessKeySecret = "nt5XbfunKpwwv9M5U1Moy0v7JSl3DQ";
 
     /**
      * 文本转语音外呼
@@ -76,14 +76,14 @@ public class VmsUtils {
 
     }
   
-    public static void main(String[] args) throws ClientException, InterruptedException {
-        SingleCallByTtsResponse singleCallByTtsResponse = singleCallByTts("15105182270","TTS_126970811","{\"deviceName\":\"一体机\",\"deviceSn\":\"010023\",\"way\":\"1\"}");
+    /*public static void main(String[] args) throws ClientException, InterruptedException {
+        SingleCallByTtsResponse singleCallByTtsResponse = singleCallByTts("15852625983","TTS_126781509","{\"deviceName\":\"一体机\",\"way\":\"1\"}");
         System.out.println("文本转语音外呼---------------");
         System.out.println("RequestId=" + singleCallByTtsResponse.getRequestId());
         System.out.println("Code=" + singleCallByTtsResponse.getCode());
         System.out.println("Message=" + singleCallByTtsResponse.getMessage());
         System.out.println("CallId=" + singleCallByTtsResponse.getCallId());
     
-    }
+    }*/
 
 }

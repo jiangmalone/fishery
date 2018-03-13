@@ -233,7 +233,7 @@ public class CMDUtils {
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSn(deviceSn);
 			if (wxUser != null && wxUser.getOpenId() != null) {
-				WechatSendMessageUtils.sendWechatVoltageMessages("缺相报警", wxUser.getOpenId(), deviceSn);
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", wxUser.getOpenId(), deviceSn);
 			}
 			if (wxUser.getPhone() != null) {
 				String json = "{\"deviceName\":\"" + aio.getName() + "\",\"way\":" + Byte.toString(way) + "}";
@@ -256,7 +256,7 @@ public class CMDUtils {
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSnSensor(deviceSn);
 			if (wxUser != null && wxUser.getOpenId() != null) {
-				WechatSendMessageUtils.sendWechatVoltageMessages("缺相报警", wxUser.getOpenId(), deviceSn);
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", wxUser.getOpenId(), deviceSn);
 			}
 			if (wxUser.getPhone() != null) {
 				String json = "{\"deviceName\":\"" + sensor.getName() + "\",\"way\":" + 0 + "}";
@@ -278,7 +278,7 @@ public class CMDUtils {
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSnController(deviceSn);
 			if (wxUser != null && wxUser.getOpenId() != null) {
-				WechatSendMessageUtils.sendWechatVoltageMessages("缺相报警", wxUser.getOpenId(), deviceSn);
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", wxUser.getOpenId(), deviceSn);
 			}
 			if (wxUser.getPhone() != null) {
 				String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + 0 + "}";

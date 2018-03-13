@@ -83,7 +83,7 @@ public class CMDUtils {
 		service.save(selfTest);
 		AIO aio = service.findAIOByDeviceSn(deviceSn);
 		if (aio != null) {
-			if (aio.getStatus() == 1) {
+			if (aio.getStatus() != 0) {
 				aio.setStatus(0);
 				service.updateAIO(aio);
 			}
@@ -223,7 +223,7 @@ public class CMDUtils {
 		logger.debug("服务器接收设备号为:" + deviceSn + "的设备，的第" + way + "路缺相报警");
 		String judge = deviceSn.substring(0, 2);
 		if (judge.equals("01") || judge.equals("02")) {
-			AIO aio = service.findAIOByDeviceSnAndWay(deviceSn, way);
+			AIO aio = service.findAIOByDeviceSn(deviceSn);
 			if (aio == null) {
 				response(8, data, readChannel);
 				return;
@@ -238,6 +238,7 @@ public class CMDUtils {
 			if (wxUser.getPhone() != null) {
 				String json = "{\"deviceName\":\"" + aio.getName() + "\",\"way\":" + Byte.toString(way) + "}";
 				try {
+					logger.debug("准备启用阿里云语音服务");
 					VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
 				} catch (ClientException e) {
 					// TODO Auto-generated catch block
@@ -451,9 +452,7 @@ public class CMDUtils {
 		Alarm alarm = new Alarm();
 		alarm.setDeviceSn(deviceSn);
 		alarm.setWay(way);
-
 		alarm.setCreateDate(new Date());
-
 		alarm.setAlarmType(4);
 		service.save(alarm);
 		response(8, data, readChannel);

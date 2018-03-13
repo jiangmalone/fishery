@@ -1003,7 +1003,7 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> aeratorOnOff(String device_sn, int way, int openOrclose) {
-		AIO aio = aioDao.findAIOByDeviceSnAndWay(device_sn, way);
+		AIO aio = aioDao.findAIOByDeviceSns(device_sn);
 		if (aio != null && aio.getStatus() == 3) {
 			String openId = socketService.findWXUserByDeviceSn(device_sn).getOpenId();
 			WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机失败，因为该增氧机存在缺相报警问题", openId, device_sn);

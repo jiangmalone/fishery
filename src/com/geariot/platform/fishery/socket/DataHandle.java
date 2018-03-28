@@ -48,7 +48,7 @@ public class DataHandle {
 				
 				if (judge.equals("01") || judge.equals("02")) {
 					AIO aio = service.findAIOByDeviceSn(deviceSn);
-					aio.setStatus(1);
+					aio.setStatus("11");
 					service.updateAIO(aio);
 					beatMap.remove(deviceSn);
 				} else if (judge.equals("03")) {

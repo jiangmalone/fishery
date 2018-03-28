@@ -272,7 +272,7 @@ public class EquipmentService {
 				aio.setDevice_sn(device_sn);
 				aio.setName(name);
 				aio.setRelation(relation);
-				aio.setStatus(1);
+				aio.setStatus("11");
 				aio.setType(Integer.parseInt(deviceSn));
 				aioDao.save(aio);
 				// 初始化两个增氧机状态
@@ -1004,7 +1004,8 @@ public class EquipmentService {
 
 	public Map<String, Object> aeratorOnOff(String device_sn, int way, int openOrclose) {
 		AIO aio = aioDao.findAIOByDeviceSns(device_sn);
-		if (aio != null && aio.getStatus() == 3) {
+		char aeratorStatus = new StringBuffer(aio.getStatus()).charAt(way-1);
+		if (aio != null && aeratorStatus == '3') {
 			String openId = socketService.findWXUserByDeviceSn(device_sn).getOpenId();
 			WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机失败，因为该增氧机存在缺相报警问题", openId, device_sn);
 			return RESCODE.SUCCESS.getJSONRES();

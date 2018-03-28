@@ -83,14 +83,18 @@ public class CMDUtils {
 		service.save(selfTest);
 		AIO aio = service.findAIOByDeviceSn(deviceSn);
 		if (aio != null) {
-			if (aio.getStatus() != 0) {
-				aio.setStatus(0);
-				service.updateAIO(aio);
-			}
+			int wayInt = way;
+			StringBuffer sb = new StringBuffer(aio.getStatus());
+			sb.setCharAt(wayInt-1 , '0');
+			aio.setStatus(sb.toString());
+			service.updateAIO(aio);
 		}
 		response(20, data, readChannel);
 	}
-
+	
+	
+	
+	
 	// 下位机设限上传给服务器
 	public static void uploadLimitCMD(byte[] data, SocketChannel readChannel, String deviceSn, byte way)
 			throws IOException {
@@ -208,10 +212,11 @@ public class CMDUtils {
 		doJudge(deviceSn, waterTemp, oxygen, -1, openId, da);// 判断上传的数据是否正常,因为没有PH值所以参数为-1,然后在程序里面再判断为-1代表不支持PH
 		AIO aio2 = service.findAIOByDeviceSn(deviceSn);
 		if (aio2 != null) {
-			if (aio2.getStatus() == 1) {
-				aio2.setStatus(0);
-				service.updateAIO(aio2);
-			}
+			int wayInt = way;
+			StringBuffer sb = new StringBuffer(aio2.getStatus());
+			sb.setCharAt(wayInt-1 , '0');
+			aio2.setStatus(sb.toString());
+			service.updateAIO(aio2);
 		}
 
 		response(16, data, readChannel);
@@ -228,7 +233,10 @@ public class CMDUtils {
 				response(8, data, readChannel);
 				return;
 			}
-			aio.setStatus(3);
+			int wayInt = way;
+			StringBuffer sb = new StringBuffer(aio.getStatus());
+			sb.setCharAt(wayInt-1 , '3');
+			aio.setStatus(sb.toString());
 			service.updateAIO(aio);
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSn(deviceSn);
@@ -309,7 +317,7 @@ public class CMDUtils {
 				response(8, data, readChannel);
 				return;
 			}
-			aio.setStatus(2);
+			aio.setStatus("22");
 			service.updateAIO(aio);
 			WXUser wxUser = null;
 			wxUser = service.findWXUserByDeviceSn(deviceSn);
@@ -391,7 +399,10 @@ public class CMDUtils {
 				response(8, data, readChannel);
 				return;
 			}
-			aio.setStatus(4);
+			int wayInt = way;
+			StringBuffer sb = new StringBuffer(aio.getStatus());
+			sb.setCharAt(wayInt-1 , '4');
+			aio.setStatus(sb.toString());
 			service.updateAIO(aio);
 		} else if (judge.equals("03")) {
 			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn, way);
@@ -430,7 +441,10 @@ public class CMDUtils {
 				response(8, data, readChannel);
 				return;
 			}
-			aio.setStatus(0);
+			int wayInt = way;
+			StringBuffer sb = new StringBuffer(aio.getStatus());
+			sb.setCharAt(wayInt-1 , '0');
+			aio.setStatus(sb.toString());
 			service.updateAIO(aio);
 		} else if (judge.equals("03")) {
 			Sensor sensor = service.findSensorByDeviceSnAndWay(deviceSn, way);
@@ -674,10 +688,11 @@ public class CMDUtils {
 		service.save(sData);
 		AIO aio3 = service.findAIOByDeviceSn(deviceSn);
 		if (aio3 != null) {
-			if (aio3.getStatus() == 1) {
-				aio3.setStatus(0);
-				service.updateAIO(aio3);
-			}
+			int wayInt = way;
+			StringBuffer sb = new StringBuffer(aio.getStatus());
+			sb.setCharAt(wayInt-1 , '0');
+			aio3.setStatus(sb.toString());
+			service.updateAIO(aio3);
 		}
 		response(24, data, readChannel);
 	}

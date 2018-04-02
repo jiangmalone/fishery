@@ -33,6 +33,8 @@ public class AIO {
 	private int way;								//一体机第几路数据
 	private boolean onoff;							//开关状态
 	private boolean isTimed;						//是否定时增氧
+	private int wayStatus;							//一体机路状态
+	
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -119,5 +121,12 @@ public class AIO {
 	}
 	public void setTimed(boolean isTimed) {
 		this.isTimed = isTimed;
+	}
+	@Transient
+	public int getWayStatus() {
+		return wayStatus;
+	}
+	public void setWayStatus(int wayStatus) {
+		this.wayStatus = wayStatus;
 	}
 }

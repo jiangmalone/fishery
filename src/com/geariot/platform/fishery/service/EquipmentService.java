@@ -341,14 +341,15 @@ public class EquipmentService {
 			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
 			map = RESCODE.SUCCESS.getJSONRES(data);
 			Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
+			StringBuffer sb = new StringBuffer(aio.getStatus());
 			if(install!=null){
 				map.put("low_limit", install.getLow_limit());
 				map.put("up_limit", install.getUp_limit());
 				map.put("high_limit", install.getHigh_limit());
-				map.put("status", aio.getStatus());
+				map.put("status", String.valueOf(sb.charAt(way-1)));
 				map.put("name", aio.getName());
 			}else{
-				map.put("status", aio.getStatus());
+				map.put("status", String.valueOf(sb.charAt(way-1)));
 				map.put("name", aio.getName());
 				map.put("low_limit", 5);
 				map.put("up_limit", 10);

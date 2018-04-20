@@ -206,6 +206,9 @@ public class PondService {
 	}
 
 	public Map<String, Object> WXqueryPond(String relation) {
+		if(! relation.contains("WX")){
+			return RESCODE.WRONG_PARAM.getJSONRES();
+		}
 		Sensor_Data sensor_Data = null;
 		Sensor_Data oneWay = null;
 		Sensor_Data twoWay = null;
@@ -221,10 +224,12 @@ public class PondService {
 					sensor.setOxygen(0);
 					sensor.setpH_value(0);
 					sensor.setWater_temperature(0);
+					sensor.setWayStatus(sensor.getStatus());
 				} else {
 					sensor.setOxygen(sensor_Data.getOxygen());
 					sensor.setpH_value(sensor_Data.getpH_value());
 					sensor.setWater_temperature(sensor_Data.getWater_temperature());
+					sensor.setWayStatus(sensor.getStatus());
 				}
 			}
 			pond.setSensors(sensors);
@@ -233,19 +238,25 @@ public class PondService {
 				oneWay = sensor_DataDao.findDataByDeviceSnAndWay(aio.getDevice_sn(), 1);
 				AeratorStatus oneStatus = statusDao.findByDeviceSnAndWay(aio.getDevice_sn(), 1);
 				if(oneWay == null){
+					StringBuffer sb = new StringBuffer(aio.getStatus());
+					char a = sb.charAt(0);
 					aio.setOxygen(0);
 					aio.setWater_temperature(0);
 					aio.setpH_value(0);
 					aio.setWay(1);
 					aio.setTimed(oneStatus.isTimed());
 					aio.setOnoff(oneStatus.isOn_off());
+					aio.setWayStatus(Integer.parseInt(String.valueOf(a)));
 				}else{
+					StringBuffer sb = new StringBuffer(aio.getStatus());
+					char a = sb.charAt(0);
 					aio.setWater_temperature(oneWay.getWater_temperature());
 					aio.setOxygen(oneWay.getOxygen());
 					aio.setpH_value(oneWay.getpH_value());
 					aio.setWay(1);
 					aio.setTimed(oneStatus.isTimed());
 					aio.setOnoff(oneStatus.isOn_off());
+					aio.setWayStatus(Integer.parseInt(String.valueOf(a)));
 				}
 				twoWay = sensor_DataDao.findDataByDeviceSnAndWay(aio.getDevice_sn(), 2);
 				AeratorStatus twoStatus = statusDao.findByDeviceSnAndWay(aio.getDevice_sn(), 2);
@@ -259,17 +270,23 @@ public class PondService {
 				aioTemp.setStatus(aio.getStatus());
 				aioTemp.setWay(2);
 				if(twoWay == null){
+					StringBuffer sb = new StringBuffer(aio.getStatus());
+					char a = sb.charAt(1);
 					aioTemp.setOxygen(0);
 					aioTemp.setWater_temperature(0);
 					aioTemp.setpH_value(0);
 					aio.setTimed(twoStatus.isTimed());
 					aio.setOnoff(twoStatus.isOn_off());
+					aio.setWayStatus(Integer.parseInt(String.valueOf(a)));
 				}else{
+					StringBuffer sb = new StringBuffer(aio.getStatus());
+					char a = sb.charAt(1);
 					aioTemp.setWater_temperature(twoWay.getWater_temperature());
 					aioTemp.setOxygen(twoWay.getOxygen());
 					aioTemp.setpH_value(twoWay.getpH_value());
 					aio.setTimed(twoStatus.isTimed());
 					aio.setOnoff(twoStatus.isOn_off());
+					aio.setWayStatus(Integer.parseInt(String.valueOf(a)));
 				}
 				temp.add(aioTemp);
 			}

@@ -10,7 +10,7 @@ package com.geariot.platform.fishery.model;
 public class Equipment {
 	private String device_sn;
 	private String name;
-	private int status;
+	private String status;
 	private String userName;
 	private String relation;
 	private int sensorId;
@@ -18,20 +18,20 @@ public class Equipment {
 
 	}
 
-	public Equipment(String device_sn, String name, int status) {
+	public Equipment(String device_sn, String name, String status) {
 		this.device_sn = device_sn;
 		this.name = name;
 		this.status = status;
 	}
 	
-	public Equipment(String device_sn, String name, int status, String relation) {
+	public Equipment(String device_sn, String name, String status, String relation) {
 		this.device_sn = device_sn;
 		this.name = name;
 		this.status = status;
 		this.relation = relation;
 	}
 	
-	public Equipment(String device_sn, String name, int status, String relation, int sensorId) {
+	public Equipment(String device_sn, String name, String status, String relation, int sensorId) {
 		this.device_sn = device_sn;
 		this.name = name;
 		this.status = status;
@@ -55,11 +55,11 @@ public class Equipment {
 		this.name = name;
 	}
 
-	public int getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

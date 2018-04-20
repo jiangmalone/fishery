@@ -53,6 +53,7 @@ import com.geariot.platform.fishery.model.PH;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.model.Temperature;
 import com.geariot.platform.fishery.socket.CMDUtils;
+import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.DataExportExcel;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
@@ -271,7 +272,7 @@ public class EquipmentService {
 				aio.setDevice_sn(device_sn);
 				aio.setName(name);
 				aio.setRelation(relation);
-				aio.setStatus(1);
+				aio.setStatus("11");
 				aio.setType(Integer.parseInt(deviceSn));
 				aioDao.save(aio);
 				// 初始化两个增氧机状态
@@ -340,14 +341,15 @@ public class EquipmentService {
 			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
 			map = RESCODE.SUCCESS.getJSONRES(data);
 			Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
+			StringBuffer sb = new StringBuffer(aio.getStatus());
 			if(install!=null){
 				map.put("low_limit", install.getLow_limit());
 				map.put("up_limit", install.getUp_limit());
 				map.put("high_limit", install.getHigh_limit());
-				map.put("status", aio.getStatus());
+				map.put("status", String.valueOf(sb.charAt(way-1)));
 				map.put("name", aio.getName());
 			}else{
-				map.put("status", aio.getStatus());
+				map.put("status", String.valueOf(sb.charAt(way-1)));
 				map.put("name", aio.getName());
 				map.put("low_limit", 5);
 				map.put("up_limit", 10);
@@ -366,11 +368,11 @@ public class EquipmentService {
 				map.put("low_limit", install.getLow_limit());
 				map.put("up_limit", install.getUp_limit());
 				map.put("high_limit", install.getHigh_limit());
-				map.put("status", aio.getStatus());
-				map.put("name", aio.getName());
+				map.put("status", sensor.getStatus());
+				map.put("name", sensor.getName());
 			}else{
-				map.put("status", aio.getStatus());
-				map.put("name", aio.getName());
+				map.put("status", sensor.getStatus());
+				map.put("name", sensor.getName());
 				map.put("low_limit", 5);
 				map.put("up_limit", 10);
 				map.put("high_limit", 15);
@@ -860,8 +862,12 @@ public class EquipmentService {
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
 			Map<String, Object> map = CMDUtils.downLimitCMD(limit_Install);
-			if (!map.containsKey("0"))
+			/*for(Map.Entry<String, Object> m:map.entrySet()) {
+			System.out.println(m.getKey()+" : "+m.getValue());
+			}*/
+			if (!(map.containsValue("成功"))) {
 				return map;
+			}
 			Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(),
 					limit_Install.getWay());
 			logger.debug(limit_Install.toString());
@@ -884,14 +890,16 @@ public class EquipmentService {
 			} else {
 				AeratorStatus status = statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(),
 						limit_Install.getWay());
-				Timer timer = timers[0];
+				
 				if (timers.length > 0) {
 					status.setTimed(true);
+					Timer timer = timers[0];
+					timerDao.delete(timer.getDevice_sn(), timer.getWay());
+					for (Timer timersave : timers) {
+						timerDao.save(timersave);
+					}
 				}
-				timerDao.delete(timer.getDevice_sn(), timer.getWay());
-				for (Timer timersave : timers) {
-					timerDao.save(timersave);
-				}
+				
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		} catch (Exception e) {
@@ -996,9 +1004,10 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> aeratorOnOff(String device_sn, int way, int openOrclose) {
-		AIO aio = aioDao.findAIOByDeviceSnAndWay(device_sn, way);
-		if (aio != null && aio.getStatus() == 3) {
-			String openId = socketService.findOpenIdByDeviceSn(device_sn);
+		AIO aio = aioDao.findAIOByDeviceSns(device_sn);
+		char aeratorStatus = new StringBuffer(aio.getStatus()).charAt(way-1);
+		if (aio != null && aeratorStatus == '3') {
+			String openId = socketService.findWXUserByDeviceSn(device_sn).getOpenId();
 			WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机失败，因为该增氧机存在缺相报警问题", openId, device_sn);
 			return RESCODE.SUCCESS.getJSONRES();
 		}

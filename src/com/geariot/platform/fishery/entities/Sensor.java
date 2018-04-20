@@ -31,7 +31,7 @@ public class Sensor {
 	private float oxygen;						//溶氧量
 	private float water_temperature;			//水温
 	private float pH_value;						//ph值
-	
+	private int wayStatus;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -97,5 +97,12 @@ public class Sensor {
 	}
 	public void setpH_value(float pH_value) {
 		this.pH_value = pH_value;
+	}
+	@Transient
+	public int getWayStatus() {
+		return wayStatus;
+	}
+	public void setWayStatus(int wayStatus) {
+		this.wayStatus = wayStatus;
 	}
 }

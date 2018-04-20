@@ -276,7 +276,7 @@ public class BindService {
 				} else {
 					BindState bindState = new BindState();
 					bindState.setDeviceName(sensor.getName());
-					bindState.setStatus(sensor.getStatus());
+					bindState.setStatus(Integer.toString(sensor.getStatus()));
 					PortBind bind = null;
 					Controller controller = null;
 					List<Sensor_Controller> list = sensor_ControllerDao.list(sensor.getId());
@@ -307,7 +307,7 @@ public class BindService {
 				} else {
 					BindState bindState = new BindState();
 					bindState.setDeviceName(controller1.getName());
-					bindState.setStatus(controller1.getStatus());
+					bindState.setStatus(Integer.toString(controller1.getStatus()));
 					PortBind bind = null;
 					Sensor sensor2 = null;
 					List<Sensor_Controller> list = sensor_ControllerDao.controller(controller1.getId());

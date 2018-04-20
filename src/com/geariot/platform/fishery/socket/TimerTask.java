@@ -45,9 +45,6 @@ public class TimerTask {
 		
 	}
 	
-	
-	
-	
 	@Scheduled(cron = "0 0/30 * * * ?") // 每半小时执行一次
 	public void judgeTime() throws ParseException {
 

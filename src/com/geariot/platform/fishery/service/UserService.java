@@ -239,7 +239,7 @@ public class UserService {
 		List<Pond> ponds = pondDao.queryPondByNameAndRelation(company.getRelation(), null);
 		List<Equipment> equipments = pondDao.adminFindEquipmentByName(relations, 0, 2000);
 		for(Equipment equipment :equipments){
-			if(equipment.getStatus()==0){
+			if(equipment.getStatus().contains("0")){
 				count++;
 			}
 		}

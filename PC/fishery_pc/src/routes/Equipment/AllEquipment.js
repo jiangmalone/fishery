@@ -91,15 +91,21 @@ class AllEquipmentQuery extends PureComponent {
                 title: '设备状态',
                 dataIndex: 'status',
                 render: (text, record, index) => {
-
-                    switch (text) {
-                        case 0: text = '正常'; break;
-                        case 1: text = '离线'; break;
-                        case 2: text = '断电'; break;
-                        case 3: text = '缺相'; break;
-                        case 4: text = '数据异常'; break;
-                    }
-                    return <span>{text}</span>
+                    let status = text.split('');
+                    status.map((item, index) => {
+                        let str = ''
+                        console.log(item)
+                        switch (item) {
+                            case '0': str = '正常'; break;
+                            case '1': str = '离线'; break;
+                            case '2': str = '断电'; break;
+                            case '3': str = '缺相'; break;
+                            case '4': str = '数据异常'; break;
+                        }
+                        status[index] = str;
+                    })
+                   
+                    return <span>{status.join('/')}</span>
                 }
             }
         ];

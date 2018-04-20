@@ -1,6 +1,6 @@
 import React from 'react';
 import './sensorDetail.less'
-import { Popover, Icon, NavBar, List, ActivityIndicator, Toast } from 'antd-mobile'
+import { Popover, Icon, NavBar, List, ActivityIndicator, Toast, Modal } from 'antd-mobile'
 import { withRouter } from "react-router-dom";
 import moment from 'moment';
 import offline from '../../img/equ_offline.png'
@@ -22,12 +22,12 @@ const beforeYesterdayStr = formartDate(new Date(now - 2 * 24 * 60 * 60 * 1000));
 now.setDate(now.getDate() + 1);
 const tomorrowStr = formartDate(now);
 function formartDate(date) {
-    
+
     let year = date.getFullYear();
-    let month = (((date.getMonth() + 1) < 10)?"0"+ (date.getMonth() + 1): (date.getMonth() +1));
-    let day = ((date.getDate() < 10)?"0"+ date.getDate() : date.getDate());
-    
-     return year + '/' + month + '/' + day + ' 00:00:00';
+    let month = (((date.getMonth() + 1) < 10) ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1));
+    let day = ((date.getDate() < 10) ? "0" + date.getDate() : date.getDate());
+
+    return year + '/' + month + '/' + day + ' 00:00:00';
 }
 class SensorDetail extends React.Component {
 
@@ -55,9 +55,13 @@ class SensorDetail extends React.Component {
             device_sn: device_sn,
             way: way,
             name: '',
-            status: ''
+            status: 1,
+            high_limit: 15,
+            low_limit: 5,
+            up_limit: 10,
+            modalShow: false
         }
-       
+
     }
 
     componentDidMount() {
@@ -67,30 +71,21 @@ class SensorDetail extends React.Component {
         window.scrollTo(0, 0);
     }
 
-    formartDate = (date) => {
-    
-        let year = date.getFullYear();
-        let month = (((date.getMonth() + 1) < 10)?"0"+ (date.getMonth() + 1): (date.getMonth() +1));
-        let day = ((date.getDate() < 10)?"0"+ date.getDate() : date.getDate());
-        
-         return year + '/' + month + '/' + day + ' 00:00:00';
-    }
-    
     getOption = (type, isSelectToday) => {
         let data;
         let anchor;
         let title = ''
         if (isSelectToday) {
             anchor = [
-                {name:todayStr, value:[todayStr, 0]},
-                {name:tomorrowStr, value:[tomorrowStr, 0]}
-                ];
+                { name: todayStr, value: [todayStr, 0] },
+                { name: tomorrowStr, value: [tomorrowStr, 0] }
+            ];
         } else {
             anchor = [
-                {name:beforeYesterdayStr, value:[beforeYesterdayStr, 0]},
-                {name:yesterdayStr, value:[yesterdayStr, 0]},
-                {name:todayStr, value:[todayStr, 0]},
-                {name:tomorrowStr, value:[tomorrowStr, 0]}
+                { name: beforeYesterdayStr, value: [beforeYesterdayStr, 0] },
+                { name: yesterdayStr, value: [yesterdayStr, 0] },
+                { name: todayStr, value: [todayStr, 0] },
+                { name: tomorrowStr, value: [tomorrowStr, 0] }
             ]
         }
         if (type == 'phs') {
@@ -112,8 +107,8 @@ class SensorDetail extends React.Component {
                 trigger: 'axis',
                 formatter: function (params) {
                     params = params[0];
-                    var date = new Date(params.name);
-                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+                    var date = new Date(Date.parse(params.name.replace(/-/g,   "/")));
+                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ' : ' + params.value[1];
                 },
                 axisPointer: {
                     animation: false
@@ -148,12 +143,12 @@ class SensorDetail extends React.Component {
                 smooth: true
             },
             {
-                name:'.anchor',
-                type:'line', 
-                showSymbol:false, 
-                data:anchor,
-                itemStyle:{normal:{opacity:0}},
-                lineStyle:{normal:{opacity:0}}
+                name: '.anchor',
+                type: 'line',
+                showSymbol: false,
+                data: anchor,
+                itemStyle: { normal: { opacity: 0 } },
+                lineStyle: { normal: { opacity: 0 } }
             }]
         }
         if (type == 'oxygens') {
@@ -167,19 +162,19 @@ class SensorDetail extends React.Component {
                 smooth: true
             },
             {
-                name:'.anchor',
-                type:'line', 
-                showSymbol:false, 
-                data:anchor,
-                itemStyle:{normal:{opacity:0}},
-                lineStyle:{normal:{opacity:0}}
-            },{
-                name:'上限',
-                type:'line', 
+                name: '.anchor',
+                type: 'line',
+                showSymbol: false,
+                data: anchor,
+                itemStyle: { normal: { opacity: 0 } },
+                lineStyle: { normal: { opacity: 0 } }
+            }, {
+                name: 'up_limit',
+                type: 'line',
                 markLine: {
                     silent: true,
                     data: [{
-                        yAxis: 15
+                        yAxis: this.state.up_limit
                     }],
                     symbolSize: 0,
                     label: {
@@ -190,13 +185,13 @@ class SensorDetail extends React.Component {
                         color: 'blue'
                     }
                 }
-            },{
-                name:'下线',
-                type:'line', 
+            }, {
+                name: 'low_limit',
+                type: 'line',
                 markLine: {
                     silent: true,
                     data: [{
-                        yAxis: 5
+                        yAxis: this.state.low_limit
                     }],
                     symbolSize: 0,
                     label: {
@@ -207,13 +202,13 @@ class SensorDetail extends React.Component {
                         color: 'red'
                     }
                 }
-            },{
-                name:'gaoxian',
-                type:'line', 
+            }, {
+                name: 'high_limit',
+                type: 'line',
                 markLine: {
                     silent: true,
                     data: [{
-                        yAxis: 10
+                        yAxis: this.state.high_limit
                     }],
                     symbolSize: 0,
                     label: {
@@ -228,7 +223,7 @@ class SensorDetail extends React.Component {
         }
         return option;
     }
-    
+
     getDataToday = () => {
         this.setState({ animating: true })
         getDataToday({
@@ -257,40 +252,43 @@ class SensorDetail extends React.Component {
         let length = 0;
         if (type == 'oxygens') {
             data.map((item, index) => {
-                if(item.oxygen) {
-                    realData[length]= {
-                                        name: item.receiveTime,
-                                        value:[item.receiveTime, item.oxygen]}
-                    length ++;
+                if (item.oxygen) {
+                    realData[length] = {
+                        name: item.receiveTime,
+                        value: [item.receiveTime, item.oxygen]
+                    }
+                    length++;
                 } else {
-                    length ++ ;
+                    length++;
                 }
             })
         } else if (type == 'phs') {
             data.map((item, index) => {
-                if(item.ph) {
+                if (item.ph) {
                     realData[length] = {
                         name: item.receiveTime,
-                         value:[item.receiveTime, item.ph]}
-                         length ++;
+                        value: [item.receiveTime, item.ph]
+                    }
+                    length++;
                 } else {
-                    length ++;
+                    length++;
                 }
             })
         } else if (type == 'temperatures') {
             data.map((item, index) => {
-                if(item.temperature) {
+                if (item.temperature) {
                     realData[length] = {
                         name: item.receiveTime,
-                         value:[item.receiveTime, item.temperature]}
-                         length ++;
+                        value: [item.receiveTime, item.temperature]
+                    }
+                    length++;
                 } else {
-                    length ++;
+                    length++;
                 }
             })
         }
         return realData;
-        
+
     }
 
     getDataSevenday = () => {
@@ -325,8 +323,16 @@ class SensorDetail extends React.Component {
             this.setState({ animating: false })
             if (res.data && res.data.code == 0) {
                 const data = res.data.data;
+                const high = res.data.high_limit;
+                const up = res.data.up_limit;
+                const low = res.data.low_limit;
                 if (data) {
-                    this.setState({ realTimeData: data });
+                    this.setState({
+                        realTimeData: data,
+                        up_limit: up,
+                        low_limit: low,
+                        high_limit: high
+                    });
                 }
                 this.setState({
                     name: res.data.name,
@@ -414,7 +420,7 @@ class SensorDetail extends React.Component {
                 isSelectToday: !this.state.isSelectToday,
             }, () => {
                 if (this.state.isSelectToday) {
-                   
+
                     this.getDataToday();
                 } else {
                     this.getDataSevenday();
@@ -424,18 +430,27 @@ class SensorDetail extends React.Component {
     }
 
     serverCheck = () => {   //校准
+
         serverCheck({
             device_sn: this.state.device_sn,
             way: this.state.way,
         }).then(res => {
             if (res.data && res.data.code == 0) {
-                Toast.success('校准成功', 1);
+                this.setState({
+                    modalShow: true
+                })
             } else {
                 Toast.fail(res.data.msg, 1);
             }
         }).catch(error => {
             Toast.fail('校准失败', 1);
             console.log(error)
+        })
+    }
+
+    onCloseModal = () => {
+        this.setState({
+            modalShow: false
         })
     }
 
@@ -491,7 +506,7 @@ class SensorDetail extends React.Component {
 
             <div className='state-head'  >
                 <div className='state-div' onClick={this.changeDetailShowState}>
-                    <img src={this.state.status == 0 ? online : offline} style={{ marginLeft: 0 }} />
+                    <img src={(this.state.status == 1 || this.state.status == 2) ? offline : online } style={{ marginLeft: 0 }} />
                     <span>最新数据</span>
                     <Icon type={this.state.isShowDetail ? 'up' : 'down'} className='icon' ></Icon>
                 </div>
@@ -518,7 +533,7 @@ class SensorDetail extends React.Component {
             <div className='chart-div'>
                 <ReactEcharts option={this.getOption('oxygens', this.state.isSelectToday)} height={400} />
             </div>
-            <div className='chart-div'> 
+            <div className='chart-div'>
                 <ReactEcharts option={this.getOption('temperatures', this.state.isSelectToday)} height={400} />
             </div>
             <ActivityIndicator
@@ -526,6 +541,17 @@ class SensorDetail extends React.Component {
                 text="Loading..."
                 animating={this.state.animating}
             />
+            <Modal
+                visible={this.state.modalShow}
+                transparent
+                maskClosable={true}
+                onClose={() => this.onCloseModal()}
+                title="指令发送成功"
+                footer={[{ text: '知道了', onPress: () => { this.onCloseModal() } }]}
+            //   wrapProps={{ onTouchStart: this.onWrapTouchStart }}
+            >
+                校准需要30分钟，在校准过程中建议不要进行其他设备级的操作，如开关、设置三限等，请耐心等待30分钟后再试。
+            </Modal>
         </div>);
     }
 }

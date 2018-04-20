@@ -277,11 +277,11 @@ export default class EquipmentManagement extends React.Component {
             },
             {
                 title: '设备状态',
-                // dataIndex: 'status',
+                dataIndex: 'wayStatus',
                 render: (text, record, index) => {
                     let str = '';
-                    if (record.status != undefined) {
-                        switch (record.status) {
+                    if (record.wayStatus != undefined) {
+                        switch (record.wayStatus) {
                             case 0:
                                 str = '正常';
                                 break;

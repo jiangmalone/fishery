@@ -196,7 +196,7 @@ export default class CompanyUserDetail extends React.Component {
                         </Col>
                     </Row>
                     <Row style={{ marginTop: 30 }}>
-                        {this.state.isShowMap ? <div style={{ width: '100%', height: 400 }}>
+                        {this.state.isShowMap ? <div style={{ width: '100%', height: 600 }}>
                             <Map plugins={['ToolBar']} >
                                 {/* <Markers
                                     markers={this.state.markers}

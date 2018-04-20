@@ -7,29 +7,25 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { TimelineChart } from '../../components/Charts';
 import Trend from '../../components/Trend';
 import NumberInfo from '../../components/NumberInfo';
-import { getDataToday, getDataAll } from '../../services/equipment';
+import { getDataToday, getDataAll, getRealTimeData } from '../../services/equipment';
 import { Chart, Geom, Axis, Tooltip, Legend, Coord } from 'bizcharts';
+import ReactEcharts from 'echarts-for-react';
 import moment from 'moment';
 import numeral from 'numeral';
-const chartData = [];
-const cols = {
-    'ph': { min:0 },
-    'receiveTime': {tickCount: 18, nice: true}
-};
-const oCols = {
-    'o': { range: [0, 45] },
-    'receiveTime': {tickCount: 18,nice: true}
-};
 
-const waterCols = {
-    '温度': { range: [0, 45] },
-    'receiveTime': {tickCount: 18,nice: true},
-};
-for (let i = 0; i < 20; i += 1) {
-    chartData.push({
-        x: (new Date().getTime()) + (1000 * 60 * 30 * i),
-        y1: Math.floor(Math.random() * 10) + 10,
-    });
+const now = new Date();
+const todayStr = formartDate(now);
+const yesterdayStr = formartDate(new Date(now - 24 * 60 * 60 * 1000));
+const beforeYesterdayStr = formartDate(new Date(now - 2 * 24 * 60 * 60 * 1000));
+now.setDate(now.getDate() + 1);
+const tomorrowStr = formartDate(now);
+function formartDate(date) {
+
+    let year = date.getFullYear();
+    let month = (((date.getMonth() + 1) < 10) ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1));
+    let day = ((date.getDate() < 10) ? "0" + date.getDate() : date.getDate());
+
+    return year + '/' + month + '/' + day + ' 00:00:00';
 }
 
 export default class WaterQualityCurve extends React.Component {
@@ -45,12 +41,42 @@ export default class WaterQualityCurve extends React.Component {
             name: data.deviceName,
             status: data.status,
             selectTime: 'today',
-            way: data.way
+            way: data.way,
+            up_limit: 10,
+            low_limit: 5,
+            high_limit: 15
         }
     }
 
     componentDidMount() {
         this.getDataToday();
+        this.getRealTimeData();
+    }
+
+    getRealTimeData = () => {
+        getRealTimeData({
+            device_sn: this.state.device_sn,
+            way: this.state.way
+        }).then((res) => {
+            if (res && res.code == 0) {
+                const data = res.data;
+                const high = res.high_limit;
+                const up = res.up_limit;
+                const low = res.low_limit;
+                if (data) {
+                    this.setState({
+                        up_limit: up,
+                        low_limit: low,
+                        high_limit: high
+                    });
+                }
+            } else {
+                message.error(res.msg, 1);
+            }
+        }).catch((error) => {
+            message.error('请求失败', 1);
+            console.log(error)
+        });
     }
 
     getDataToday = () => {
@@ -60,9 +86,9 @@ export default class WaterQualityCurve extends React.Component {
         }).then((res) => {
             if (res && res.code == 0) {
                 this.setState({
-                    oxygens: res.oxygens,
-                    phs: res.phs,
-                    temperatures: res.temperatures
+                    oxygens: this.TransformationData(res.oxygens, 'oxygens'),
+                    phs: this.TransformationData(res.phs, 'phs'),
+                    temperatures: this.TransformationData(res.temperatures, 'temperatures')
                 })
             } else {
                 message.error(res.msg, 1);
@@ -73,38 +99,60 @@ export default class WaterQualityCurve extends React.Component {
         });
     }
 
+    TransformationData = (data, type) => {
+        let realData = [];
+        let length = 0;
+        if (type == 'oxygens') {
+            data.map((item, index) => {
+                if (item.oxygen) {
+                    realData[length] = {
+                        name: item.receiveTime,
+                        value: [item.receiveTime, item.oxygen]
+                    }
+                    length++;
+                } else {
+                    length++;
+                }
+            })
+        } else if (type == 'phs') {
+            data.map((item, index) => {
+                if (item.ph) {
+                    realData[length] = {
+                        name: item.receiveTime,
+                        value: [item.receiveTime, item.ph]
+                    }
+                    length++;
+                } else {
+                    length++;
+                }
+            })
+        } else if (type == 'temperatures') {
+            data.map((item, index) => {
+                if (item.temperature) {
+                    realData[length] = {
+                        name: item.receiveTime,
+                        value: [item.receiveTime, item.temperature]
+                    }
+                    length++;
+                } else {
+                    length++;
+                }
+            })
+        }
+        // console.log(realData);
+        return realData;
+    }
+
     getDataSevent = () => {
         getDataAll({
             device_sn: this.state.device_sn,
             way: this.state.way
         }).then((res) => {
             if (res && res.code == 0) {
-                // let oxygens = [], phs = [], temperatures = [];
-                // res.oxygens.map((oxygen, index) => {
-                //     oxygens.push({
-                //         // x: new Date(Date.parse(oxygen.receiveTime.replace(/-/g, "/"))),
-                //         x: new Date(oxygen.receiveTime),
-                //         y1: oxygen.oxygen
-                //     })
-                // })
-                // res.phs.map((ph, index) => {
-                //     phs.push({
-                //         // x: new Date(Date.parse(ph.receiveTime.replace(/-/g, "/"))),
-                //         x: new Date(ph.receiveTime),
-                //         y1: ph.ph
-                //     })
-                // })
-                // res.temperatures.map((temperature, index) => {
-                //     temperatures.push({
-                //         // x: new Date(Date.parse(temperature.receiveTime.replace(/-/g, "/"))),
-                //         x: new Date(temperature.receiveTime),
-                //         y1: temperature.temperature
-                //     })
-                // })
                 this.setState({
-                    oxygens: res.oxygens,
-                    phs: res.phs,
-                    temperatures: res.temperatures
+                    oxygens: this.TransformationData(res.oxygens, 'oxygens'),
+                    phs: this.TransformationData(res.phs, 'phs'),
+                    temperatures: this.TransformationData(res.temperatures, 'temperatures')
                 })
             } else {
                 message.error(res.msg, 1);
@@ -123,6 +171,160 @@ export default class WaterQualityCurve extends React.Component {
             this.getDataSevent()
         }
     }
+
+    getOption = (type, isSelectToday) => {
+        let data;
+        let anchor;
+        let title = ''
+        if (isSelectToday) {
+            anchor = [
+                {name:todayStr, value:[todayStr, 0]},
+                {name:tomorrowStr, value:[tomorrowStr, 0]}
+                ];
+        } else {
+            anchor = [
+                {name:beforeYesterdayStr, value:[beforeYesterdayStr, 0]},
+                {name:yesterdayStr, value:[yesterdayStr, 0]},
+                {name:todayStr, value:[todayStr, 0]},
+                {name:tomorrowStr, value:[tomorrowStr, 0]}
+            ]
+        }
+        if (type == 'phs') {
+            data = this.state.phs;
+            title = "PH变化曲线";
+        } else if (type == 'oxygens') {
+            data = this.state.oxygens;
+            title = "溶氧变化曲线";
+        } else if (type == 'temperatures') {
+            data = this.state.temperatures;
+            title = "水温变化曲线";
+        }
+        let option = {
+            // title: {
+            //     text: title,
+            //     left: "10%"
+            // },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function (params) {
+                    params = params[0];
+                    var date = new Date(params.name);
+                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+                },
+                axisPointer: {
+                    animation: false
+                }
+            },
+            grid: {
+                left: '10%',
+                right: '10%',
+                bottom: '10%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'time',
+                splitLine: {
+                    show: false
+                }
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%'],
+                splitLine: {
+                    show: false
+                }
+            },
+            series: [{
+                name: 'data',
+                type: 'line',
+                // showSymbol: false,
+                symbolSize: 3,
+                hoverAnimation: false,
+                data: data,
+                smooth: true
+            },
+            {
+                name:'.anchor',
+                type:'line', 
+                showSymbol:false, 
+                data:anchor,
+                itemStyle:{normal:{opacity:0}},
+                lineStyle:{normal:{opacity:0}}
+            }]
+        }
+        if (type == 'oxygens') {
+            option.series = [{
+                name: 'data',
+                type: 'line',
+                // showSymbol: false,
+                symbolSize: 3,
+                hoverAnimation: false,
+                data: data,
+                smooth: true
+            },
+            {
+                name:'.anchor',
+                type:'line', 
+                showSymbol:false, 
+                data:anchor,
+                itemStyle:{normal:{opacity:0}},
+                lineStyle:{normal:{opacity:0}}
+            },{
+                name:'up_limit',
+                type:'line', 
+                markLine: {
+                    silent: true,
+                    data: [{
+                        yAxis: this.state.up_limit
+                    }],
+                    symbolSize: 0,
+                    label: {
+                        show: false
+                    },
+                    lineStyle: {
+                        type: 'solid',
+                        color: 'blue'
+                    }
+                }
+            },{
+                name:'low_limit',
+                type:'line', 
+                markLine: {
+                    silent: true,
+                    data: [{
+                        yAxis: this.state.low_limit
+                    }],
+                    symbolSize: 0,
+                    label: {
+                        show: false
+                    },
+                    lineStyle: {
+                        type: 'solid',
+                        color: 'red'
+                    }
+                }
+            },{
+                name:'high_limit',
+                type:'line', 
+                markLine: {
+                    silent: true,
+                    data: [{
+                        yAxis: this.state.high_limit
+                    }],
+                    symbolSize: 0,
+                    label: {
+                        show: false
+                    },
+                    lineStyle: {
+                        type: 'solid',
+                        color: 'green'
+                    }
+                }
+            }]
+        }
+        return option;
+    }
+    
     render() {
         return (
             <PageHeaderLayout >
@@ -136,14 +338,8 @@ export default class WaterQualityCurve extends React.Component {
                             <Radio.Group value={this.state.selectTime} onChange={e => this.handleTimeChange(e.target.value)} >
                                 <Radio.Button value="today" >今日</Radio.Button>
                                 <Radio.Button value="sevent">七日</Radio.Button>
-                                {/* <Radio.Button value="small">区间</Radio.Button> */}
                             </Radio.Group>
                         </Col>
-
-                        {/* <Col> */}
-                        {/* <RangePicker /> */}
-                        {/* </Col> */}
-
                     </Row>
                     <Row style={{ fontSize: 25, paddingTop: 25 }}>
                         PH变化曲线
@@ -151,18 +347,7 @@ export default class WaterQualityCurve extends React.Component {
                     <Row style={{ padding: 30, paddingTop: 0 }}>
                         <Col span={20}>
                             {this.state.phs && this.state.phs.length > 0 ?
-                                //  <TimelineChart
-                                //     height={300}
-                                //     data={this.state.phs}
-                                //     titleMap={{ y1: 'PH值' }}
-                                // /> 
-                                <Chart height={400} data={this.state.phs} scale={cols} forceFit>
-                                    <Axis name="time" />
-                                    <Axis name="ph" />
-                                    <Tooltip crosshairs={{ type: "y" }} />
-                                    <Geom type="line" position="receiveTime*ph" size={2} shape={'smooth'} />
-                                    {/* <Geom type='point' position="receiveTime*ph" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} /> */}
-                                </Chart>
+                                <ReactEcharts option={this.getOption('phs', this.state.selectTime === 'today')} height={500}/>
                                 :
                                 <span>暂无数据</span>}
                         </Col>
@@ -173,39 +358,17 @@ export default class WaterQualityCurve extends React.Component {
                     <Row style={{ padding: 30, paddingTop: 0 }}>
                         <Col span={20}>
                             {(this.state.oxygens && this.state.oxygens.length > 0) ?
-                                //  <TimelineChart
-                                //     height={300}
-                                //     data={this.state.oxygens}
-                                //     titleMap={{ y1: '溶氧' }}
-                                // />
-                                <Chart height={400} data={this.state.oxygens} scale={oCols} forceFit>
-                                    <Axis name="time" />
-                                    <Axis name="o" />
-                                    <Tooltip crosshairs={{ type: "y" }} />
-                                    <Geom type="line" position="receiveTime*oxygen" size={2} shape={'smooth'} />
-                                    {/* <Geom type='point' position="receiveTime*oxygen" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} /> */}
-                                </Chart>
+                                <ReactEcharts option={this.getOption('oxygens', this.state.selectTime === 'today')} height={500} />
                                 : <span>暂无数据</span>}
                         </Col>
                     </Row>
                     <Row style={{ fontSize: 25, paddingTop: 25 }}>
                         水温变化曲线
                     </Row>
-                    <Row style={{ padding: 30 }}>
+                    <Row style={{ padding: 30, paddingTop: 0  }}>
                         <Col span={20}>
                             {(this.state.temperatures && this.state.temperatures.length > 0) ?
-                                //  <TimelineChart
-                                //     height={300}
-                                //     data={this.state.temperatures}
-                                //     titleMap={{ y1: '水温' }}
-                                // /> 
-                                <Chart height={400} data={this.state.temperatures} scale={waterCols} forceFit>
-                                    <Axis name="time" />
-                                    <Axis name="温度" />
-                                    <Tooltip crosshairs={{ type: "y" }} />
-                                    <Geom type="line" position="receiveTime*temperature" size={2} shape={'smooth'} />
-                                    {/* <Geom type='point' position="receiveTime*temperature" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} /> */}
-                                </Chart>
+                                <ReactEcharts option={this.getOption('temperatures', this.state.selectTime === 'today')} height={500} />
                                 : <span>暂无数据</span>}
                         </Col>
                     </Row>

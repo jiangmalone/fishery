@@ -1,6 +1,6 @@
 import React from 'react';
 import './main.less'
-import { Flex, Toast, List, Switch, Button, ActionSheet, ActivityIndicator } from 'antd-mobile'
+import { Flex, Toast, List, Switch, Button, ActionSheet, ActivityIndicator, Modal } from 'antd-mobile'
 import { Map } from 'react-amap';
 import { withRouter } from "react-router-dom";
 import BottomTabBar from '../../components/TabBar';
@@ -14,6 +14,8 @@ import { getWeather } from '../../services/weather.js'; //接口
 import { aeratorOnOff } from '../../services/oxygenControl.js'; //接口
 import equipment, { autoSet } from '../../services/equipment.js'; //接口
 import isEmpty from '../../utils/isEmpty';
+
+const alert = Modal.alert;
 class Main extends React.Component {
 
     constructor(props) {
@@ -32,24 +34,11 @@ class Main extends React.Component {
     componentDidMount() {
         // if(isEmpty(window.localStorage.getItem('openid'))||isEmpty(window.localStorage.getItem('relation'))){
         //     window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9871d8699143d59e&redirect_uri=http%3a%2f%2fwww.fisherymanager.net%2fapi%2fwebService%2fwechatlogin%3fhtmlPage%3dlogin%26isAuth%3dtrue&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"+'?v='+(new Date().getTime());
-        
+
         //     // window.location.reload();
         // }
         this.getLocation(); //获得当前地理位置
         this.queryPonds();
-        // var citysearch = new AMap.CitySearch();
-        // //自动获取用户IP，返回当前城市
-        // citysearch.getLocalCity(function(status, result) {
-        //     if (status === 'complete' && result.info === 'OK') {
-        //         if (result && result.city && result.bounds) {
-        //             var cityinfo = result.city;
-        //             var citybounds = result.bounds;
-        //             console.log('您当前所在城市：'+cityinfo)
-        //         }
-        //     } else {
-        //         console.log('您当前所在城市：'+ result.info);
-        //     }
-        // });
     }
 
     getLocation = () => {
@@ -66,9 +55,9 @@ class Main extends React.Component {
                 this.setState({ ponds: res.data.data })
                 let equipmentNum = 0;
                 if (res.data.data.length == 0) {
-                    this.setState({isEmpty: true});
+                    this.setState({ isEmpty: true });
                 } else {
-                    this.setState({isEmpty: false});
+                    this.setState({ isEmpty: false });
                 }
             }
         }).catch((error) => {
@@ -128,6 +117,24 @@ class Main extends React.Component {
         this.props.history.push(`/sensorDetail/${device_sn}/${way}`);
     }
 
+    sureChangeAeretorOnOff = (device_sn, way, openOrclose, pondIndex, aioIndex) => {
+        let content = '';
+        if (openOrclose) {
+            content = '确认打开增氧机？';
+        } else {
+            content = '确认关闭增氧机？';
+        }
+        alert('提示', content, [
+            { text: '取消', onPress: () => console.log('cancel') },
+            {
+                text: '确定',
+                onPress: () => {
+                    this.changeAeratorOnOff(device_sn, way, openOrclose, pondIndex, aioIndex)
+                },
+            },
+        ])
+    }
+
     changeAeratorOnOff = (device_sn, way, openOrclose, pondIndex, aioIndex) => {
         this.setState({ animating: true });
         aeratorOnOff({
@@ -149,12 +156,17 @@ class Main extends React.Component {
                 Toast.fail(res.data.msg, 1)
             }
         }).catch((error) => {
+            if (openOrclose) {
+                Toast.error('开启增氧机失败!', 1)
+            } else {
+                Toast.error('关闭增氧机失败', 1)
+            }
             this.setState({ animating: false });
             console.log(error);
         });
     }
 
-    showActionSheet = (device_sn, way ,state, pondIndex, aioIndex) => {
+    showActionSheet = (device_sn, way, state, pondIndex, aioIndex) => {
         //两种情况   已经打开，和没有打开
         let BUTTONS = [], title = '', cancelButtonIndex
         if (state) {
@@ -194,16 +206,16 @@ class Main extends React.Component {
     }
 
     getStatusString = (status) => {
-        switch (status){
-            case 0 :
+        switch (status) {
+            case 0:
                 return '正常';
-            case 1 :
+            case 1:
                 return '离线';
-            case 2 :
+            case 2:
                 return '断电';
-            case 3 :
-                return '缺项';
-            case 4 :
+            case 3:
+                return '缺相';
+            case 4:
                 return '数据异常';
             default:
                 return '异常';
@@ -280,8 +292,8 @@ class Main extends React.Component {
                     <div className='name' >
                         {aio.name}
                     </div>
-                    <div className={aio.status ? 'right-text unnormal-state' :  'right-text normal-state' }>
-                        {this.getStatusString(aio.status)}
+                    <div className={aio.wayStatus ? 'right-text unnormal-state' : 'right-text normal-state'}>
+                        {this.getStatusString(aio.wayStatus)}
                     </div>
                 </div>
                 <div className='line' >
@@ -319,7 +331,7 @@ class Main extends React.Component {
                 <Switch
                     nanme='watertem'
                     checked={aio.onoff}
-                    onClick={() => { this.changeAeratorOnOff(aio.device_sn, aio.way, !aio.onoff, pondIndex, aioIndex) }}
+                    onClick={() => { this.sureChangeAeretorOnOff(aio.device_sn, aio.way, !aio.onoff, pondIndex, aioIndex) }}
                     className='state-switch'
                 />
             </div>
@@ -338,7 +350,7 @@ class Main extends React.Component {
             let aioNode = aios.map((aio, aioIndex) => {
                 return this.getAioNode(aio, pondIndex, aioIndex)
             })
-            
+
             return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} isShow={true} >
                 {sensorNode}
                 {aioNode}
@@ -360,22 +372,36 @@ class Main extends React.Component {
         const ponds = this.getPondsAccordion();
         return <div className='main-bg' style={{ minHeight: window.document.body.clientHeight }}>
             <div className='weather-div'>
-                <i className={`weather-icon iconfont ${this.state.weatherIcon}`}> </i>
-                {this.state.temp}
+                <div>
+                    <i className={`weather-icon iconfont ${this.state.weatherIcon}`}> </i>
+                    {this.state.temp}
+                </div>
+
+                <Button style={{color: '#35b4e8', float: 'right', width: 100, height: 30}} onClick={this.queryPonds} icon >数据刷新</Button>
             </div>
             {!this.state.isEmpty ? <div className='fishpond-item'>
                 {ponds}
-            </div> : <div  className='nodata' onClick={this.gotoAddPond} >
-            <div className='img-404'  />
-            <span className='add-span' >您还没有添加鱼塘呢~</span>
-            <div className='img-add' ></div>
-            </div>}
+            </div> : <div className='nodata' onClick={this.gotoAddPond} >
+                    <div className='img-404' />
+                    <span className='add-span' >您还没有添加鱼塘呢~</span>
+                    <div className='img-add' ></div>
+                </div>}
             <BottomTabBar nowTab={1} />
             <ActivityIndicator
                 toast
                 text="Loading..."
                 animating={this.state.animating}
             />
+            <Modal
+                visible={this.state.modalShow}
+                transparent
+                maskClosable={true}
+                onClose={() => this.onCloseModal()}
+                title="提示"
+                footer={[{ text: '知道了', onPress: () => { this.onCloseModal() } }]}
+            >
+
+            </Modal>
         </div>
     }
 }

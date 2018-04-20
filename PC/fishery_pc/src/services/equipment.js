@@ -32,7 +32,7 @@ export async function getDataAll(params) {          //获得设备数据汇总  
 }
 
 export async function getRealTimeData(params) {          //获得设备实时数据 
-    return get(`api/equipment/realTimeData?${stringify(params)}`);
+    return request(`api/equipment/realTimeData?${stringify(params)}`);
 }
 
 

@@ -62,7 +62,7 @@ class PondDetail extends PureComponent {
                     });
                 }
             }
-            ).catch((error) => { console.error() });
+        ).catch((error) => { console.error() });
     }
 
     handleTableChange = (pagination) => {
@@ -108,14 +108,22 @@ class PondDetail extends PureComponent {
             dataIndex: 'status',
             key: 'status',
             render: (text, record, index) => {
-                switch (text) {
-                    case 0: text = '正常'; break;
-                    case 1: text = '离线'; break;
-                    case 2: text = '断电'; break;
-                    case 3: text = '缺相'; break;
-                    case 4: text = '数据异常'; break;
-                }
-                return <span>{text}</span>
+                let status = text.split('');
+
+                status.map((item, index) => {
+                    let str = ''
+                    console.log(item)
+                    switch (item) {
+                        case '0': str = '正常'; break;
+                        case '1': str = '离线'; break;
+                        case '2': str = '断电'; break;
+                        case '3': str = '缺相'; break;
+                        case '4': str = '数据异常'; break;
+                    }
+                    status[index] = str;
+                })
+
+                return <span>{status.join('/')}</span>
             }
         }, {
             title: '操作',
@@ -129,12 +137,12 @@ class PondDetail extends PureComponent {
             }
         }];
         let pondFishs = ''
-        if(pondInfo.pondFishs&&pondInfo.pondFishs.length>0) {
-            for(let item of pondInfo.pondFishs) {
+        if (pondInfo.pondFishs && pondInfo.pondFishs.length > 0) {
+            for (let item of pondInfo.pondFishs) {
                 pondFishs = pondFishs + item.fish_name + '、';
             }
         }
-  
+
         return (
             <PageHeaderLayout>
                 <Card title="塘口信息" bordered={false} style={{ marginBottom: '20px' }}>
@@ -144,7 +152,7 @@ class PondDetail extends PureComponent {
                         <Col span={4}>深度（m）：{pondInfo.depth || ''}</Col>
                     </Row>
                     <Row type="flex" justify="space-between" style={{ marginBottom: '15px' }}>
-                        <Col span={4}>养殖品种：{ pondFishs?pondFishs.slice(0,-1):''}</Col>
+                        <Col span={4}>养殖品种：{pondFishs ? pondFishs.slice(0, -1) : ''}</Col>
                         <Col span={4}>池塘水源：{pondInfo.water_source || ''}</Col>
                         <Col span={4}>底泥厚度(cm)：{pondInfo.sediment_thickness || ''}</Col>
                     </Row>
@@ -163,8 +171,8 @@ class PondDetail extends PureComponent {
                         onChange={this.handleTableChange}
                     />
                 </Card>
-                <Button type="primary" style={{float:'right'}} onClick={()=>{history.back()}}>
-                   返回上一页
+                <Button type="primary" style={{ float: 'right' }} onClick={() => { history.back() }}>
+                    返回上一页
                 </Button>
 
             </PageHeaderLayout>

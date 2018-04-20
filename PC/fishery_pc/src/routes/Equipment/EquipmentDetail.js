@@ -45,7 +45,7 @@ export default class EquipmentDetail extends React.Component {
                 up_limit: '',
                 high_limit: ''
             },
-            user:'',
+            user: '',
             timeSections: [['', '']],
             timeSectionsString: [['', '']],
             isOpen: false  //当前路的增氧是否打开
@@ -65,7 +65,7 @@ export default class EquipmentDetail extends React.Component {
         }).then((res) => {
             if (res.code == '0') {
                 let state = '正常';
-                switch (res.data.status) {
+                switch (res.data.wayStatus) {
                     case 0: state = '正常'; break;
                     case 1: state = '离线'; break;
                     case 2: state = '断电'; break;
@@ -75,7 +75,7 @@ export default class EquipmentDetail extends React.Component {
                 this.setState({
                     deviceName: res.data.deviceName,
                     pondId: res.data.pondId,
-                    status: state
+                    // status: state
                 })
                 let portBinds = res.data.portBinds;
                 let standardPorts = [];
@@ -123,6 +123,18 @@ export default class EquipmentDetail extends React.Component {
             device_sn: this.props.match.params.device_sn,
             way: this.state.way
         }).then(res => {
+            console.log(res);
+            let state = '离线';
+            switch (res.status) {
+                case 0: state = '正常'; break;
+                case 1: state = '离线'; break;
+                case 2: state = '断电'; break;
+                case 3: state = '缺相'; break;
+                case 4: state = '数据异常'; break;
+            }
+            this.setState({
+                status: state
+            })
             if (res.code == 0) {
                 if (res.data) {
                     this.setState({ realTimeData: [res.data] })
@@ -162,7 +174,7 @@ export default class EquipmentDetail extends React.Component {
                         controller = { name: item.name, id: item.id, ports: usefulPorts };
                         controllers.push(controller);
                     })
-                    this.setState({ controllers: controllers ,user:res.user})
+                    this.setState({ controllers: controllers, user: res.user })
                 }
             } else {
                 message.error(res.msg, 1);
@@ -585,7 +597,7 @@ export default class EquipmentDetail extends React.Component {
             <PageHeaderLayout >
                 <Card bordered={false}>
                     <Row style={{ fontSize: 17 }}>所有者：{this.state.user}</Row>
-                    <Row style={{ fontSize: 17 ,marginTop: 20}}>
+                    <Row style={{ fontSize: 17, marginTop: 20 }}>
                         <Col span={8}>设备编号: &nbsp;&nbsp; {this.props.match.params.device_sn}</Col>
                         <Col span={8}>设备名称: &nbsp; {this.state.deviceName}</Col>
                         <Col span={8}>设备状态: &nbsp; {this.state.status}</Col>

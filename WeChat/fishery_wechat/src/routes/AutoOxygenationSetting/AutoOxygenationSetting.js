@@ -71,10 +71,10 @@ class AutoOxygenationSetting extends React.Component {
                 form.way = this.state.way;
                 timeSections.map((item, index) => {
                     timers.push({
-                        startTime: item[0],
-                        endTime: item[1],
+                        startTime: item[0].format('hh:mm'),
+                        endTime: item[1].format('hh:mm'),
                         way: this.state.way,
-                        device_sn: this.state.way,                                                                       
+                        device_sn: this.state.device_sn,                                                                       
                     })
                 })
 
@@ -118,9 +118,9 @@ class AutoOxygenationSetting extends React.Component {
                     up_limit: res.data.oxyUpLimit || 0,
                     high_limit: res.data.oxyHighLimit || 0,
                 })
+
                 if (res.data.timerList && res.data.timerList.length > 0) {
                     
-                    // this.setState({timeSections: res.data.timerList});
                     let timeArray = []
                     res.data.timerList.map((item, index) => {
                         let now = new Date();

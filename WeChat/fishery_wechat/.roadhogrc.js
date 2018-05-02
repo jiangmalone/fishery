@@ -2,7 +2,7 @@ const path = require('path');
 var pxtorem = require('postcss-pxtorem');
 const svgSpriteDirs = [
   require.resolve('antd-mobile').replace(/warn\.js$/, ''), // antd-mobile 内置svg
-  path.resolve(__dirname, 'src/assets'),  // 业务代码本地私有 svg 存放目录
+  path.resolve(__dirname, 'src/assets'), // 业务代码本地私有 svg 存放目录
 ];
 export default {
   entry: "src/index.js",
@@ -12,8 +12,11 @@ export default {
     development: {
       extraBabelPlugins: [
         "dva-hmr",
-        "transform-runtime",
-        ["import", { "libraryName": "antd-mobile", 'libraryDirectory': 'lib', "style": true }]
+        "transform-runtime", ["import", {
+          "libraryName": "antd-mobile",
+          'libraryDirectory': 'lib',
+          "style": true
+        }]
       ],
       extraPostCSSPlugins: [
         pxtorem({
@@ -23,17 +26,22 @@ export default {
       ],
       proxy: {
         "/api": {
-          "target": "http://172.17.3.106:8080/fishery/api/",//杨威
+          "target": "http://192.168.0.111:8080/fishery/api/", //杨威
           // "target": "http://172.17.3.158:8081/freelycar_wechat/api/",//小付
           "changeOrigin": true,
-          "pathRewrite": { "^/api": "" }
+          "pathRewrite": {
+            "^/api": ""
+          }
         }
       }
     },
     production: {
       extraBabelPlugins: [
-        "transform-runtime",
-        ["import", { "libraryName": "antd-mobile", 'libraryDirectory': 'lib', "style": true }]
+        "transform-runtime", ["import", {
+          "libraryName": "antd-mobile",
+          'libraryDirectory': 'lib',
+          "style": true
+        }]
       ],
       extraPostCSSPlugins: [
         pxtorem({

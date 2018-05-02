@@ -19,7 +19,7 @@ class LoginIndex extends React.Component {
             allowSend: true,
             isphone: false,
             wait: 60,
-            phone: ''
+            phone: window.localStorage.getItem('phone')?window.localStorage.getItem('phone'):''
         }
     }
 

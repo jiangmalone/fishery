@@ -270,23 +270,23 @@ public class PondService {
 				aioTemp.setStatus(aio.getStatus());
 				aioTemp.setWay(2);
 				if(twoWay == null){
-					StringBuffer sb = new StringBuffer(aio.getStatus());
-					char a = sb.charAt(1);
+					StringBuffer sbs = new StringBuffer(aio.getStatus());
+					char b = sbs.charAt(1);
 					aioTemp.setOxygen(0);
 					aioTemp.setWater_temperature(0);
 					aioTemp.setpH_value(0);
-					aio.setTimed(twoStatus.isTimed());
-					aio.setOnoff(twoStatus.isOn_off());
-					aio.setWayStatus(Integer.parseInt(String.valueOf(a)));
+					aioTemp.setTimed(twoStatus.isTimed());
+					aioTemp.setOnoff(twoStatus.isOn_off());
+					aioTemp.setWayStatus(Integer.parseInt(String.valueOf(b)));
 				}else{
-					StringBuffer sb = new StringBuffer(aio.getStatus());
-					char a = sb.charAt(1);
+					StringBuffer sbs = new StringBuffer(aio.getStatus());
+					char b = sbs.charAt(1);
 					aioTemp.setWater_temperature(twoWay.getWater_temperature());
 					aioTemp.setOxygen(twoWay.getOxygen());
 					aioTemp.setpH_value(twoWay.getpH_value());
-					aio.setTimed(twoStatus.isTimed());
-					aio.setOnoff(twoStatus.isOn_off());
-					aio.setWayStatus(Integer.parseInt(String.valueOf(a)));
+					aioTemp.setTimed(twoStatus.isTimed());
+					aioTemp.setOnoff(twoStatus.isOn_off());
+					aioTemp.setWayStatus(Integer.parseInt(String.valueOf(b)));
 				}
 				temp.add(aioTemp);
 			}

@@ -704,6 +704,7 @@ public class CMDUtils {
 		response[7] = CommonUtils.arrayMerge(response, 2, 5);
 		CommonUtils.arrayHandle(data, response, dataStart, 8, 4);
 		ByteBuffer outBuffer = ByteBuffer.wrap(response);
+		System.out.println("0000000000000000000000");
 		logger.debug(CommonUtils.printHexStringMerge(outBuffer.array(), 0, outBuffer.array().length));
 		readChannel.write(outBuffer);// 将消息回送给客户端
 

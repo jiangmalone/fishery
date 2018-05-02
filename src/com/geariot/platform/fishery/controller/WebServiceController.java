@@ -165,7 +165,7 @@ public class WebServiceController {
 			logger.debug(phone + ";code:" + smscode + " 验证失败。。。");
 			Map<String, Object> obj = new HashMap<>();
 			obj.put(Constants.RESPONSE_CODE_KEY, json.getInt("code"));
-			obj.put(Constants.RESPONSE_MSG_KEY, json.getInt("error"));
+			obj.put(Constants.RESPONSE_MSG_KEY, json.getString("error"));
 			return obj;
 		} else {
 			return webServiceService.login(phone,openId,headimgurl);

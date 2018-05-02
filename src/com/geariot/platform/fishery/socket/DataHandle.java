@@ -25,6 +25,7 @@ public class DataHandle {
 	private static Logger logger = Logger.getLogger(DataHandle.class);
 	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
 	public void handle(byte[] data, SocketChannel readChannel) {
+		logger.debug("接收到的原始指令码="+CommonUtils.printHexStringMerge(data, 0, data.length)+".......");
 		if (data[6] != 6) {
 			logger.debug(CommonUtils.printHexStringMerge(data, 0, data.length) + "进入handle处理");
 		}

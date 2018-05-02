@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class RequestProcessor {
 //1
 	private static final Logger log = LogManager.getLogger(RequestProcessor.class);
-    private  ExecutorService  executorService  = Executors.newFixedThreadPool(10);
+    private  ExecutorService  executorService  = Executors.newFixedThreadPool(20);
     private DataHandle handle=new DataHandle();
     
 	public void ProcessorRequest(final SelectionKey key){

@@ -17,9 +17,9 @@ class LoginIndex extends React.Component {
         super(props)
         this.state = {
             allowSend: true,
-            isphone: false,
+            isphone: window.localStorage.getItem('phone') ? true : false,
             wait: 60,
-            phone: window.localStorage.getItem('phone')?window.localStorage.getItem('phone'):''
+            phone: window.localStorage.getItem('phone') ? window.localStorage.getItem('phone') : ''
         }
     }
 
@@ -55,12 +55,12 @@ class LoginIndex extends React.Component {
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         window.localStorage.setItem('headimgurl', getParameterByName('headimgurl'));
         window.localStorage.setItem('openid', getParameterByName('openid'));
         // if(isEmpty(window.localStorage.getItem('openid'))){
         //     window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9871d8699143d59e&redirect_uri=http%3a%2f%2fwww.fisherymanager.net%2fapi%2fwebService%2fwechatlogin%3fhtmlPage%3dlogin%26isAuth%3dtrue&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"+'?v='+(new Date().getTime());
-        
+
         //     // window.location.reload();
         // }
 
@@ -83,10 +83,9 @@ class LoginIndex extends React.Component {
             headimgurl: getParameterByName('headimgurl'),
         }).then((res) => {
             if (res.data.code == '0') {
-            
                 window.localStorage.setItem('id', res.data.data.id);
                 window.localStorage.setItem('relation', res.data.data.relation);
-                if( res.data.data.name) {
+                if (res.data.data.name) {
                     window.localStorage.setItem('name', res.data.data.name);
                 }
                 window.localStorage.setItem("phone", res.data.data.phone);
@@ -99,7 +98,6 @@ class LoginIndex extends React.Component {
                     }
                 })
                 if (res.data.data.name) {
-
                     this.props.history.push(`/main`)
                 } else {
                     this.props.history.push(`/userInfo`)

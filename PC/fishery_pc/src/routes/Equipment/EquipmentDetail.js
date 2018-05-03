@@ -123,14 +123,13 @@ export default class EquipmentDetail extends React.Component {
             device_sn: this.props.match.params.device_sn,
             way: this.state.way
         }).then(res => {
-            console.log(res);
             let state = '离线';
             switch (res.status) {
-                case 0: state = '正常'; break;
-                case 1: state = '离线'; break;
-                case 2: state = '断电'; break;
-                case 3: state = '缺相'; break;
-                case 4: state = '数据异常'; break;
+                case '0': state = '正常'; break;
+                case '1': state = '离线'; break;
+                case '2': state = '断电'; break;
+                case '3': state = '缺相'; break;
+                case '4': state = '数据异常'; break;
             }
             this.setState({
                 status: state

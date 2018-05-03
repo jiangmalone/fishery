@@ -49,10 +49,10 @@ class App extends React.Component {
 
     componentDidMount() {
         window.scrollTo();
-        // if (isEmpty(window.localStorage.getItem('openid'))) {
-        //     window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9871d8699143d59e&redirect_uri=http%3a%2f%2fwww.fisherymanager.net%2fapi%2fwebService%2fwechatlogin%3fhtmlPage%3dlogin%26isAuth%3dtrue&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect" + '?v=' + (new Date().getTime());
-        //     // window.location.reload();
-        // }
+        if (isEmpty(window.localStorage.getItem('openid'))) {
+            window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9871d8699143d59e&redirect_uri=http%3a%2f%2fwww.fisherymanager.net%2fapi%2fwebService%2fwechatlogin%3fhtmlPage%3dmain%26isAuth%3dtrue&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect" + '?v=' + (new Date().getTime());
+            // window.location.reload();
+        }
         if (window.location.hash.indexOf('login') == -1 && (window.location.hash !== '#/') && (window.location.hash !== '#/main')) {
             verifyIsLogin({
                 phone: window.localStorage.getItem('phone')

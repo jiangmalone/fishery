@@ -15,9 +15,9 @@ class MyPond extends PureComponent {
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.props.dispatch({
-            type:'pond/query',
+            type: 'pond/query',
             payload: { relation: window.localStorage.getItem('relation'), page: 1, number: 99 }
         })
     }
@@ -58,7 +58,7 @@ class MyPond extends PureComponent {
 
     addPond = () => {
         this.props.dispatch({
-            type: 'changeState', 
+            type: 'changeState',
             payload: {
                 formData: {
                     fields: {}
@@ -107,7 +107,7 @@ class MyPond extends PureComponent {
                 address: record.address,
                 latitude: record.latitude,
                 longitude: record.longitude,
-                selectedFishes:record.pondFishs
+                selectedFishes: record.pondFishs
             }
         })
         this.props.dispatch({
@@ -161,7 +161,7 @@ class MyPond extends PureComponent {
                             <span className="content-info">
                                 <i className="content-info-img poolFish-img" />
                                 <span className="content-info-value">
-                                    {item.pondFishs.length > 0 ? `${item.pondFishs[0].fish_name},${item.pondFishs[1].fish_name}...` : ''}
+                                    {item.pondFishs.length > 1 ? `${item.pondFishs[0].fish_name},${item.pondFishs[1].fish_name}...` : (item.pondFishs.length === 1 ? item.pondFishs[0].fish_name : '')}
                                 </span>
                             </span>
                             <span className="content-info">
@@ -191,12 +191,12 @@ class MyPond extends PureComponent {
                         })
                     }}></i>
                     我的塘口
-                    <i className={this.state.edit ? 'edit' : 'right-item-none'} onClick={() => { this.setState({ edit: !this.state.edit }) }}>{this.props.list.length > 0?'取消':''}</i>
+                    <i className={this.state.edit ? 'edit' : 'right-item-none'} onClick={() => { this.setState({ edit: !this.state.edit }) }}>{this.props.list.length > 0 ? '取消' : ''}</i>
                 </div>
                 {this.props.list.length > 0 && <div className="mypond-bac"></div>}
                 {this.props.list.length > 0 && ponds}
                 {this.props.list.length > 0 && <div className="btn_add" onClick={() => {
-                     this.props.dispatch({
+                    this.props.dispatch({
                         type: 'global/changeState',
                         payload: {
                             transitionName: 'fade'
@@ -211,7 +211,7 @@ class MyPond extends PureComponent {
                         }
                     })
                     this.props.history.push('/addPond');
-                   
+
                 }}>
                 </div>}
                 {this.props.list.length == 0 && <div className="none-list">
@@ -228,7 +228,6 @@ class MyPond extends PureComponent {
             </div>
         );
     }
-
 }
 
 export default connect((state) => {

@@ -38,6 +38,7 @@ public enum RESCODE {
 	PHONE_BINDED_BY_OTHER(26, "手机号被其他账号绑定"),
 	NO_LOGIN(27, "手机号没登录"),
 	IS_WATCH(28,"报警信息已经被读过了"),
+	OFF_LINE(29,"设备已离线"),
 	FOR_EXCEPTION
 	;
 	

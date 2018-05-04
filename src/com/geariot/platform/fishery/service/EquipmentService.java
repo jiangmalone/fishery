@@ -673,12 +673,12 @@ public class EquipmentService {
 		return map;//
 	}
 
-	public Map<String, Object> dataAll(String device_sn, int way) {
+	public Map<String, Object> dataAll(String device_sn, int way,int day) {
 		List<Sensor_Data> list = new ArrayList<>();
 		if (way > 0) {
-			list = sensor_DataDao.sevenData(device_sn, way);
+			list = sensor_DataDao.sevenData(device_sn, way,day);
 		} else {
-			list = sensor_DataDao.sevenData(device_sn);
+			list = sensor_DataDao.sevenData(device_sn,day);
 		}
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
@@ -768,12 +768,12 @@ public class EquipmentService {
 		return map;//
 	}
 
-	public Map<String, Object> pcDataAll(String device_sn, int way) {
+	public Map<String, Object> pcDataAll(String device_sn, int way,int day) {
 		List<Sensor_Data> list = new ArrayList<>();
 		if (way > 0) {
-			list = sensor_DataDao.sevenData(device_sn, way);
+			list = sensor_DataDao.sevenData(device_sn, way,day);
 		} else {
-			list = sensor_DataDao.sevenData(device_sn);
+			list = sensor_DataDao.sevenData(device_sn,day);
 		}
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();

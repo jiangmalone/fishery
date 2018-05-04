@@ -44,9 +44,9 @@ public class WebServiceController {
 
 	private String leancouldUrlVer = "https://leancloud.cn/1.1/verifySmsCode";
 
-	private String appid = "XPWUWPaoNKH8Liud35sER7Dc-gzGzoHsz";
+	private String appid = "moO5MJxKXNizrMVJKIikuqyH-gzGzoHsz";
 
-	private String appkey = "hqSCLSLjTuCYphRJ5q9kiqJo";
+	private String appkey = "QlGVlWcxjennYwAafkOGBBPj";
 
 	private static String BASEURL = "http://www.fisherymanager.net/index.html#/";
 

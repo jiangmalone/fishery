@@ -35,15 +35,15 @@ public class TimerTask {
 	private static Logger logger = Logger.getLogger(TimerTask.class);
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 	
-	@Scheduled(cron="0 0 0 * * ?")//每天晚上24点启动自动校准
-	public void check() {
-		Map<String,SocketChannel> map= CMDUtils.getclientMap();
-		for(String deviceSn:map.keySet()) {
-			CMDUtils.serverCheckCMD(deviceSn, 1);//第一路和第二路都去校准，这里不判断了哪一路没开了
-			CMDUtils.serverCheckCMD(deviceSn, 2);
-		}
-		
-	}
+//	@Scheduled(cron="0 0 0 * * ?")//每天晚上24点启动自动校准
+//	public void check() {
+//		Map<String,SocketChannel> map= CMDUtils.getclientMap();
+//		for(String deviceSn:map.keySet()) {
+//			CMDUtils.serverCheckCMD(deviceSn, 1);//第一路和第二路都去校准，这里不判断了哪一路没开了
+//			CMDUtils.serverCheckCMD(deviceSn, 2);
+//		}
+//
+//	}
 	
 	@Scheduled(cron = "0 0/30 * * * ?") // 每半小时执行一次
 	public void judgeTime() throws ParseException {

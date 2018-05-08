@@ -72,7 +72,7 @@ public class EquipmentController {
 	
 	@RequestMapping(value = "/dataAll", method = RequestMethod.GET)
 	public Map<String, Object> dataAll(String device_sn, int way) {
-		return equipmentService.dataAll(device_sn,way);
+		return equipmentService.dataAll(device_sn,way,3);
 	}
 	
 	@RequestMapping(value = "/pc/dataToday", method = RequestMethod.GET)
@@ -82,7 +82,7 @@ public class EquipmentController {
 	
 	@RequestMapping(value = "/pc/dataAll", method = RequestMethod.GET)
 	public Map<String, Object> pcDataAll(String device_sn, int way) {
-		return equipmentService.pcDataAll(device_sn, way);
+		return equipmentService.pcDataAll(device_sn, way,7);
 	}
 	
 	@RequestMapping(value = "/myEquipment", method = RequestMethod.GET)

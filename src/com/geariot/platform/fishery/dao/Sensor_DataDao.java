@@ -22,8 +22,8 @@ public interface Sensor_DataDao {
 	
 	List<Sensor_Data> today(String device_sn, int way);
 	
-	List<Sensor_Data> sevenData(String device_sn);
+	List<Sensor_Data> sevenData(String device_sn,int day);
 	
-	List<Sensor_Data> sevenData(String device_sn, int way);
+	List<Sensor_Data> sevenData(String device_sn, int way, int day);
 	
 }

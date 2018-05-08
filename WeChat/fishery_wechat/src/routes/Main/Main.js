@@ -351,7 +351,7 @@ class Main extends React.Component {
                 return this.getAioNode(aio, pondIndex, aioIndex)
             })
 
-            return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} isShow={true} >
+            return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} isShow={true} isOnline={pond.poundstatus} >
                 {sensorNode}
                 {aioNode}
             </Accordion>)

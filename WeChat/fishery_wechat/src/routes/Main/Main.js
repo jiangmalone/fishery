@@ -350,8 +350,7 @@ class Main extends React.Component {
             let aioNode = aios.map((aio, aioIndex) => {
                 return this.getAioNode(aio, pondIndex, aioIndex)
             })
-
-            return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} isShow={true} >
+            return (<Accordion title={pond.name ? pond.name : ''} key={pond.id} isShow={true} isOnline={pond.pondstatus} >
                 {sensorNode}
                 {aioNode}
             </Accordion>)

@@ -260,7 +260,22 @@ public static void sendDataAlarmMSG(String msg,String openId,String deviceSn) {
 		
 	}
 	
-	
+	public static void sendSelftestMSG(String msg,String openId,String deviceSn) {
+		log.debug("给用户发送设备自检成功信息------");
+		JSONObject params=new JSONObject();
+		JSONObject data=new JSONObject();
+		params.put("touser",openId);
+		params.put("template_id", MSG_TEMPLATE_ID);
+		data.put("first", keywordFactory("设备连接结果","#173177"));
+		data.put("keyword1", keywordFactory(deviceSn,"#173177"));
+		data.put("keyword2", keywordFactory(msg,"#173177"));
+		data.put("keyword3", keywordFactory(sdf.format(new Date()),"#173177"));
+		data.put("remark", keywordFactory(""));
+		params.put("data", data);
+		String result=invokeTemplateMessage(params);
+		log.debug("结果:"+result);
+		//data.put(key, value);
+	}
 	
 	
 	private static JSONObject keywordFactory(String value){

@@ -49,4 +49,7 @@ public class AdminController {
 	public Map<String,Object> modifyCompanyPSW(int companyId, String password){
 		return adminService.modifyCompanyPSW(companyId, password);
 	}
+
+
+
 }

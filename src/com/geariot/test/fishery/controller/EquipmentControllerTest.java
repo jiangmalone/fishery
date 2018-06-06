@@ -39,9 +39,8 @@ public class EquipmentControllerTest {
 
 	@Test
 	public void delTest() throws Exception {
-		mockMvc.perform(post("/equipment/delEquipments").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sns", "0102030405").param("device_sns", "0202030405")
-
+		mockMvc.perform(get("/equipment/delEquipments").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sn", "0131380529")
 		).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 
@@ -90,13 +89,11 @@ public class EquipmentControllerTest {
 
 	@Test
 	public void addTest() throws Exception {
-		int i = 0;
-		while (i < 10) {
-			mockMvc.perform(post("/equipment/add").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.param("device_sn", String.format("0", i)).param("name", "1").param("relation", "1")).andDo(print())
+			mockMvc.perform(get("/equipment/add").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.param("device_sn", "0131380529").param("name", "1").param("relation", "1").param("type", "1").param("pondId", "7")).andDo(print())
 					.andExpect(status().is2xxSuccessful());
-			i++;
-		}
+	
+		
 	}
 	
 	@Test

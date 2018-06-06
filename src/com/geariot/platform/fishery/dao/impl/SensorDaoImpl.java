@@ -31,7 +31,7 @@ public class SensorDaoImpl implements SensorDao {
 
 	@Override
 	public int delete(int sensorid) {
-		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from sensor");
+		QueryUtils queryUtils = new QueryUtils(getSession(), "delete from Sensor");
 		Query query = queryUtils.addInteger("id", sensorid).getQuery();
 		return query.executeUpdate();
 	}

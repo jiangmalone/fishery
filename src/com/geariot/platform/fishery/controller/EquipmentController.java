@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.model.ParamBody;
 import com.geariot.platform.fishery.service.EquipmentService;
-import com.geariot.platform.fishery.socket.CMDUtils;
+//import com.geariot.platform.fishery.socket.CMDUtils;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 @RestController
@@ -29,8 +29,8 @@ public class EquipmentController {
 	}*/
 
 	@RequestMapping(value = "/delEquipments", method = RequestMethod.GET)
-	public Map<String, Object> delEquipment(String... device_sns) {
-		return equipmentService.delEquipment(device_sns);
+	public Map<String, Object> delEquipment(String  device_sn) {
+		return equipmentService.delEquipment(device_sn);
 	}
 	
 	@RequestMapping(value = "/modifyEquipment", method = RequestMethod.GET)
@@ -56,13 +56,17 @@ public class EquipmentController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
-	public Map<String, Object> addEquipment(String device_sn, String name, String relation) {
-		return equipmentService.addEquipment(device_sn, name, relation);
+	public Map<String, Object> addEquipment(String device_sn, String name, String relation,int type,int pondId) {
+		return equipmentService.addEquipment(device_sn, name, relation, type,pondId);
 	}
 
+//	@RequestMapping(value = "/realTimeData", method = RequestMethod.GET)
+//	public Map<String, Object> realTimeData(String device_sn,int way) {
+//		return equipmentService.realTimeData(device_sn, way);
+//	}
 	@RequestMapping(value = "/realTimeData", method = RequestMethod.GET)
-	public Map<String, Object> realTimeData(String device_sn,int way) {
-		return equipmentService.realTimeData(device_sn, way);
+	public Map<String, Object> realTimeData(String device_sn) {
+		return equipmentService.realTimeData(device_sn);
 	}
 
 	@RequestMapping(value = "/dataToday", method = RequestMethod.GET)
@@ -100,23 +104,23 @@ public class EquipmentController {
 		return equipmentService.companyFindEquipment(device_sn, relation, page, number);
 	}
 	
-	@RequestMapping(value = "/autoSet", method = RequestMethod.POST)
-	public Map<String, Object> autoSet(@RequestBody ParamBody body){
-		return equipmentService.autoSet(body.getLimit_Install(), body.getTimers());
-	}
+//	@RequestMapping(value = "/autoSet", method = RequestMethod.POST)
+//	public Map<String, Object> autoSet(@RequestBody ParamBody body){
+//		return equipmentService.autoSet(body.getLimit_Install(), body.getTimers());
+//	}
 	
 	//服务器设置校准
-	@RequestMapping(value="/serverCheck",method=RequestMethod.GET)
-	public Map<String,Object> serverCheck(String device_sn,int way){
-		return CMDUtils.serverCheckCMD(device_sn,way);
-	}
+//	@RequestMapping(value="/serverCheck",method=RequestMethod.GET)
+//	public Map<String,Object> serverCheck(String device_sn,int way){
+//		return CMDUtils.serverCheckCMD(device_sn,way);
+//	}
 	
 	//增氧机开关
-	@RequestMapping(value="/aeratorOnOff",method=RequestMethod.GET)
-	public Map<String,Object> aeratorOnOff(String device_sn,int way,int openOrclose){
-		return equipmentService.aeratorOnOff(device_sn, way, openOrclose);
-	}
-	
+//	@RequestMapping(value="/aeratorOnOff",method=RequestMethod.GET)
+//	public Map<String,Object> aeratorOnOff(String device_sn,int way,int openOrclose){
+//		return equipmentService.aeratorOnOff(device_sn, way, openOrclose);
+//	}
+//	
 	@RequestMapping(value ="/queryAeratorData", method = RequestMethod.GET)
 	public Map<String, Object> queryAeratorData(String device_sn,int way){
 		return equipmentService.queryAeratorData(device_sn,way);

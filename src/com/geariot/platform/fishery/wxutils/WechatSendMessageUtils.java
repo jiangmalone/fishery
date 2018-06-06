@@ -135,4 +135,15 @@ public class WechatSendMessageUtils {
 			
 		});
 	}
+	public static void sendSelftestMSG(final String msg,final String openId,final String deviceSn) {
+		executorService.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				WechatTemplateMessage.sendSelftestMSG(msg, openId, deviceSn);
+			}
+			
+		});
+	}
 }

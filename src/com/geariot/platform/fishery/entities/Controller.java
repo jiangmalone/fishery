@@ -23,8 +23,8 @@ public class Controller {
 	private String relation;			//绑定的用户relation
 	private String name;				//控制器名称
 	private int status;					//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
-	private String port_status;  		//表示传感器四路绑定状态, 如0101 0110 1100 1111等
-	
+	private int port;    //传感器第几路
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getId() {
@@ -63,12 +63,12 @@ public class Controller {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public String getPort_status() {
-		return port_status;
+	public int getPort() {
+		return port;
 	}
-	public void setPort_status(String port_status) {
-		this.port_status = port_status;
+
+	public void setPort(int port) {
+		this.port = port;
 	}
-	
-	
+
 }

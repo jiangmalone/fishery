@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.geariot.platform.fishery.service;
 
@@ -26,10 +26,10 @@ import com.geariot.platform.fishery.model.RESCODE;
 public class WebServiceService {
 
 	private Logger logger = LogManager.getLogger(WebServiceService.class);
-	
+
 	@Autowired
 	private WXUserDao wxUserDao;
-	
+
 	public Map<String, Object> bindUser(String phone, String openId){
 		logger.debug("绑定用户的openId：" + openId);
 		if(openId == null){
@@ -51,13 +51,13 @@ public class WebServiceService {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}else if(!openId.equalsIgnoreCase(userPhone.getOpenId())){
 			if(userPhone.getOpenId() != null && !userPhone.getOpenId().isEmpty()){
-    			return RESCODE.PHONE_BINDED_BY_OTHER.getJSONRES();
-    		}else{
-    			userPhone.setOpenId(userOpenId.getOpenId());
-    			userPhone.setName(userOpenId.getName());
-    			wxUserDao.deleteUser(userOpenId.getId());
-    		  	return RESCODE.SUCCESS.getJSONRES(userPhone);
-    		}
+				return RESCODE.PHONE_BINDED_BY_OTHER.getJSONRES();
+			}else{
+				userPhone.setOpenId(userOpenId.getOpenId());
+				userPhone.setName(userOpenId.getName());
+				wxUserDao.deleteUser(userOpenId.getId());
+				return RESCODE.SUCCESS.getJSONRES(userPhone);
+			}
 		}
 		return RESCODE.SUCCESS.getJSONRES(userOpenId);
 	}

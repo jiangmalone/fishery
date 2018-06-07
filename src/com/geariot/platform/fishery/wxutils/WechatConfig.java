@@ -10,7 +10,7 @@ import com.geariot.platform.fishery.utils.HttpRequest;
 
 /**
  * 微信相关的常量
- * 
+ *
  * @author javabean
  *
  */
@@ -19,11 +19,11 @@ public class WechatConfig {
 	// 自定义的token
 	public static final String TOKEN = "fishery2018";
 
-	public static final String APP_ID = "wx9871d8699143d59e";
+	public static final String APP_ID = "wx2e6fb6e0e3c10ca3";    //wx9871d8699143d59e   公众号
 
 	//public static final String MCH_ID = "1493352962";
 
-	public static final String APP_SECRET = "0872554cedfb5082b359e32c655a7039";
+	public static final String APP_SECRET = "6d20c888c3ba425521a5a42205dfb048";// "0872554cedfb5082b359e32c655a7039"  公众号
 
 	public static final String APP_DOMAIN = "www.fisherymanager.net";// url域名
 
@@ -91,7 +91,7 @@ public class WechatConfig {
 	 *            是上面的获取用户信息的token，和下面的调用接口的token不同
 	 * @param openId
 	 * @return
-	 * 
+	 *
 	 * 		{ "openid":" OPENID", " nickname": NICKNAME, "sex":"1",
 	 *         "province":"PROVINCE" "city":"CITY", "country":"COUNTRY",
 	 *         "headimgurl":
@@ -119,10 +119,10 @@ public class WechatConfig {
 	/**
 	 * 微信普通的access_token 调用各接口时都需使用access_token
 	 * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183&token=&lang=zh_CN
-	 * 
+	 *
 	 * {"access_token":"ACCESS_TOKEN","expires_in":7200}
-	 * 
-	 * 
+	 *
+	 *
 	 */
 
 	public static JSONObject getAccessTokenForInteface() {
@@ -148,7 +148,7 @@ public class WechatConfig {
 	/**
 	 * 微信JS接口的临时票据
 	 * http://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115&token=683615784&lang=zh_CN
-	 * 
+	 *
 	 * { "errcode":0, "errmsg":"ok",
 	 * "ticket":"bxLdikRXVbTPdHSM05e5u5sUoXNKd8-41ZO3MhKoyN5OfkWITDGgnr2fwJ0m9E8NYzWKVZvdVtaUgWvsdshFKA",
 	 * "expires_in":7200 }
@@ -182,16 +182,16 @@ public class WechatConfig {
 	/**
 	 * 下载多媒体文件
 	 * https://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html
-	 * 
+	 *
 	 * 正确情况下的返回HTTP头如下： HTTP/1.1 200 OK Connection: close Content-Type:
 	 * image/jpeg Content-disposition: attachment; filename="MEDIA_ID.jpg" Date:
 	 * Sun, 06 Jan 2013 10:20:18 GMT Cache-Control: no-cache, must-revalidate
 	 * Content-Length: 339721 curl -G
 	 * "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID"
-	 * 
+	 *
 	 */
 	/**
-	 * @param access_token
+	 *
 	 *            调用接口的token
 	 * @param media_id
 	 * @return

@@ -91,10 +91,11 @@ public class WebServiceController {
 		return json.toString();
 	}
 
-	// OAuth2.0授权后的 重定向
-	@RequestMapping(value = "/wechatlogin")
-	public String wechatLogin(String htmlPage, String code, boolean isAuth) {
-		return getWechatInfo(htmlPage, code, isAuth);
+
+	@RequestMapping(value = "/getuserinfo", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> wechatLogin(String code) {
+		return getWechatInfo(code);
 	}
 
 	// 微信jsapi
@@ -125,36 +126,26 @@ public class WebServiceController {
 		return jsSDKConfig.toString();
 	}
 
-	public String getWechatInfo(String htmlPage, String code, boolean isAuth) {
-		System.out.println(isAuth);
+	public Map<String, Object> getWechatInfo(String code) {
 		String wechatInfo = WechatLoginUse.wechatInfo(code);
 		JSONObject resultJson;
+		Map<String, Object> wxuserin = new HashMap<>();
 		try {
 			resultJson = new JSONObject(wechatInfo);
 			if (resultJson.get("message").equals("success")) {
 				String openId = resultJson.getString("openid");
-				String headimgurl = resultJson.getString("headimgurl");
-				headimgurl = URLEncoder.encode(headimgurl, "utf-8");
-				String ret = BASEURL + htmlPage;
-				boolean wxUser = webServiceService.isExistUserOpenId(openId);
-				System.out.println(wxUser);
-				if(isAuth){
-					ret = BASEURL + "login?openid=" + openId + "&headimgurl=" + headimgurl;
-					return "redirect:"+ret;
-				}
-				if (!wxUser) {
-					ret = BASEURL + "login?openid=" + openId + "&headimgurl=" + headimgurl;
-					return "redirect:" + ret;
-					} 
-				}
-				return "redirect:"+BASEURL+"main";
-			}catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
-		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9871d8699143d59e&redirect_uri=http%3a%2f%2fwww.fisherymanager.net%2fapi%2fwebService%2fwechatlogin%3fhtmlPage%3dlogin&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+				//String headimgurl = resultJson.getString("headimgurl");
+				wxuserin.put("openId", openId);
+				//wxuserin.put("headimgurl", headimgurl);
+				System.out.println(wxuserin.toString());
+				return wxuserin;
+
+			}return RESCODE.NOT_FOUND.getJSONRES();
+		}catch (Exception e){
+			return RESCODE.NOT_FOUND.getJSONRES();
 		}
+	}
+
 
 	// 注册验证结果请求
 	@RequestMapping(value = "/verifySmsCode", method = RequestMethod.GET)
@@ -177,7 +168,7 @@ public class WebServiceController {
 	public Map<String, Object> checkLogin(String phone){
 		return webServiceService.checkLogin(phone);
 	}
-	
+
 	private JSONObject verifySmscode(String phone, String smscode) {
 		Map<String, Object> head = setLeancloudHead();
 		String result = HttpRequest.postCall(leancouldUrlVer + "/" + smscode + "?mobilePhoneNumber=" + phone, null,
@@ -199,7 +190,7 @@ public class WebServiceController {
 	public Map<String, Object> logout(String phone) {
 		return webServiceService.deletWXUser(phone);
 	}
-	
+
 	private Map<String, Object> setLeancloudHead() {
 		Map<String, Object> head = new HashMap<String, Object>();
 		head.put("X-LC-Id", appid);

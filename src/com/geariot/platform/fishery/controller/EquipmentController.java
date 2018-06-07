@@ -21,10 +21,10 @@ public class EquipmentController {
 	private EquipmentService equipmentService;
 
 
-	@RequestMapping(value = "/setlimit", method = RequestMethod.GET)
-	public Map<String, Object> setLimit(String devicesn,int way,String lowlimit,String highlimit,String higherlimit) {
-		return equipmentService.setLimit(devicesn,way,lowlimit,highlimit,higherlimit);
-	}
+//	@RequestMapping(value = "/setlimit", method = RequestMethod.GET)
+//	public Map<String, Object> setLimit(String devicesn,int way,String lowlimit,String highlimit,String higherlimit) {
+//		//return equipmentService.setLimit(devicesn,way,lowlimit,highlimit,higherlimit);
+//	}
 
 	@RequestMapping(value = "/changeControllerWayOnoff",method = RequestMethod.GET)
 	public void changeControllerWayOnoff(String divsn, int way ,int key){

@@ -46,4 +46,14 @@ private MockMvc mockMvc;
 				.param("city", "320100"))
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
+
+	@Test
+	public void infoTest() throws Exception{
+		mockMvc.perform(get("/webService/getuserinfo").
+				contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("code", "023oRal426IqLL0BTxm42Lsbl42oRalk"))
+				.andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+
+
 }

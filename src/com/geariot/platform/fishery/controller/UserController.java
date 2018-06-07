@@ -1,16 +1,15 @@
 package com.geariot.platform.fishery.controller;
 
-import java.util.Map;
-
+import com.geariot.platform.fishery.entities.Company;
+import com.geariot.platform.fishery.entities.WXUser;
+import com.geariot.platform.fishery.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.geariot.platform.fishery.entities.Company;
-import com.geariot.platform.fishery.entities.WXUser;
-import com.geariot.platform.fishery.service.UserService;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/usermanagement")

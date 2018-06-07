@@ -1,10 +1,5 @@
 package com.geariot.test.fishery.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +11,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author mxy940127
@@ -95,7 +95,30 @@ public class EquipmentControllerTest {
 	
 		
 	}
-	
+	@Test
+	public void addcontrollerTest() throws Exception {
+		mockMvc.perform(post("/equipment/addController")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("[{\"device_sn\":\"deptId\",\"pondId\":2222,\"relation\":\"小花\",\"name\":\"name\",\"port\":2222},{\"device_sn\":\"deptId\",\"pondId\":2222,\"relation\":\"小花\",\"name\":\"name\",\"port\":2222},{\"device_sn\":\"deptId\",\"pondId\":2222,\"relation\":\"小花\",\"name\":\"name\",\"port\":2222}]"))
+				.andDo(print()).andExpect(status().is2xxSuccessful());
+
+	}
+
+	@Test
+	public void autosetTest() throws Exception {
+		mockMvc.perform(post("/equipment/setTimer")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"startTime\":\"8:30\",\"endTime\":\"8:35\",\"device_sn\":\"0100522\",\"way\":1}"))
+				.andDo(print()).andExpect(status().is2xxSuccessful());
+
+	}
+
+
+
+
+
+
+
 	@Test
 	public void myEquipmentTest() throws Exception {
 		mockMvc.perform(get("/equipment/myEquipment").contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -136,4 +159,10 @@ public class EquipmentControllerTest {
 				//.param("relation", "WX1")
 				).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
+
+	@Test
+	public void triggerTest() throws Exception {
+		mockMvc.perform(post("/equipment/triggeractive").contentType(MediaType.APPLICATION_JSON).content("{ \"trigger\" : { \"id\" : 110680, \"threshold\" : 50, \"type\" : \"<\" }, \"current_data\" : [{ \"user_id\" : 134874, \"dev_id\" : \"31538332\", \"ds_id\" : \"temperature\", \"at\" : \"2018-06-01 17:34:04.000\", \"value\" : 1 }] }")).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+
 }

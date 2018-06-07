@@ -5,14 +5,10 @@ package com.geariot.platform.fishery.entities;
  *
  */
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import javax.persistence.*;
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="javaClassName")
 public class Controller {
@@ -22,8 +18,9 @@ public class Controller {
 	private int pondId;					//绑定的塘口Id
 	private String relation;			//绑定的用户relation
 	private String name;				//控制器名称
-	private int status;					//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
 	private int port;    //传感器第几路
+	private int status;					//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
+
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,18 +54,20 @@ public class Controller {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public int getPort() {
+		return port;
+	}
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	@Transient
 	public int getStatus() {
 		return status;
 	}
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public int getPort() {
-		return port;
-	}
 
-	public void setPort(int port) {
-		this.port = port;
-	}
 
 }

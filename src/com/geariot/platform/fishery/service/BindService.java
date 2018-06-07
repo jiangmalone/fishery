@@ -3,31 +3,21 @@
  */
 package com.geariot.platform.fishery.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.transaction.Transactional;
-
+import com.geariot.platform.fishery.dao.*;
+import com.geariot.platform.fishery.entities.*;
+import com.geariot.platform.fishery.model.BindState;
+import com.geariot.platform.fishery.model.PortBind;
+import com.geariot.platform.fishery.model.RESCODE;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.geariot.platform.fishery.dao.AIODao;
-import com.geariot.platform.fishery.dao.ControllerDao;
-import com.geariot.platform.fishery.dao.PondDao;
-import com.geariot.platform.fishery.dao.SensorDao;
-import com.geariot.platform.fishery.dao.Sensor_ControllerDao;
-import com.geariot.platform.fishery.entities.AIO;
-import com.geariot.platform.fishery.entities.Controller;
-import com.geariot.platform.fishery.entities.Pond;
-import com.geariot.platform.fishery.entities.Sensor;
-import com.geariot.platform.fishery.entities.Sensor_Controller;
-import com.geariot.platform.fishery.model.BindState;
-import com.geariot.platform.fishery.model.PortBind;
-import com.geariot.platform.fishery.model.RESCODE;
+import javax.transaction.Transactional;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author mxy940127
@@ -119,7 +109,7 @@ public class BindService {
 					if(controller == null){
 						continue;
 					}else{
-						changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
+						//changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
 					}
 				}
 				int count = sensor_ControllerDao.delete(sensor.getId());
@@ -165,7 +155,7 @@ public class BindService {
 				if (controller == null) {
 					return RESCODE.NOT_FOUND.getJSONRES();
 				} else {
-					changeControllerPortStatusClose(controller, controllerPort);
+					//changeControllerPortStatusClose(controller, controllerPort);
 				}
 				return RESCODE.SUCCESS.getJSONRES();
 			}
@@ -202,7 +192,7 @@ public class BindService {
 		logger.debug("绑定记录Id:" + sensor_Controller.getId() + "绑定状态:((传感器Id及端口:" + sensorId + "、" + sensor_port
 				+ ")&&(控制器Id及端口:" + controllerId + "、" + controller_port + "))...");
 		changeSensorPortStatusOn(sensor, sensor_port);
-		changeControllerPortStatusOn(controller, controller_port);
+		//changeControllerPortStatusOn(controller, controller_port);
 		return RESCODE.SUCCESS.getJSONRES();
 
 	}
@@ -219,17 +209,17 @@ public class BindService {
 		sensor.setPort_status(sb.toString());
 	}
 
-	private void changeControllerPortStatusOn(Controller controller, int port) {
-		StringBuffer sb = new StringBuffer(controller.getPort_status());
-		sb.setCharAt(port - 1, '1');
-		controller.setPort_status(sb.toString());
-	}
-
-	private void changeControllerPortStatusClose(Controller controller, int port) {
-		StringBuffer sb = new StringBuffer(controller.getPort_status());
-		sb.setCharAt(port - 1, '0');
-		controller.setPort_status(sb.toString());
-	}
+//	private void changeControllerPortStatusOn(Controller controller, int port) {
+//		StringBuffer sb = new StringBuffer(controller.getPort_status());
+//		sb.setCharAt(port - 1, '1');
+//		controller.setPort_status(sb.toString());
+//	}
+//
+//	private void changeControllerPortStatusClose(Controller controller, int port) {
+//		StringBuffer sb = new StringBuffer(controller.getPort_status());
+//		sb.setCharAt(port - 1, '0');
+//		controller.setPort_status(sb.toString());
+//	}
 
 	public Map<String, Object> bindState(String device_sn) {
 		if (device_sn == null || device_sn.isEmpty() || device_sn.length() < 2) {

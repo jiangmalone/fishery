@@ -1,41 +1,21 @@
 package com.geariot.platform.fishery.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.geariot.platform.fishery.dao.*;
+import com.geariot.platform.fishery.entities.*;
+import com.geariot.platform.fishery.model.Equipment;
+import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.utils.Constants;
+import com.geariot.platform.fishery.utils.EightInteger;
+import com.geariot.platform.fishery.utils.FishCateList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.geariot.platform.fishery.dao.AIODao;
-import com.geariot.platform.fishery.dao.AeratorStatusDao;
-import com.geariot.platform.fishery.dao.CompanyDao;
-import com.geariot.platform.fishery.dao.ControllerDao;
-import com.geariot.platform.fishery.dao.FishCateDao;
-import com.geariot.platform.fishery.dao.PondDao;
-import com.geariot.platform.fishery.dao.PondFishDao;
-import com.geariot.platform.fishery.dao.SensorDao;
-import com.geariot.platform.fishery.dao.Sensor_ControllerDao;
-import com.geariot.platform.fishery.dao.Sensor_DataDao;
-import com.geariot.platform.fishery.dao.WXUserDao;
-import com.geariot.platform.fishery.entities.AIO;
-import com.geariot.platform.fishery.entities.AeratorStatus;
-import com.geariot.platform.fishery.entities.Company;
-import com.geariot.platform.fishery.entities.Controller;
-import com.geariot.platform.fishery.entities.Fish_Category;
-import com.geariot.platform.fishery.entities.Pond;
-import com.geariot.platform.fishery.entities.Sensor;
-import com.geariot.platform.fishery.entities.Sensor_Controller;
-import com.geariot.platform.fishery.entities.Sensor_Data;
-import com.geariot.platform.fishery.entities.WXUser;
-import com.geariot.platform.fishery.model.Equipment;
-import com.geariot.platform.fishery.model.RESCODE;
-import com.geariot.platform.fishery.utils.Constants;
-import com.geariot.platform.fishery.utils.EightInteger;
-import com.geariot.platform.fishery.utils.FishCateList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -85,11 +65,11 @@ public class PondService {
 		}
 	}
 
-	private void changeControllerPortStatusClose(Controller controller, int port) {
-		StringBuffer sb = new StringBuffer(controller.getPort_status());
-		sb.setCharAt(port - 1, '0');
-		controller.setPort_status(sb.toString());
-	}
+//	private void changeControllerPortStatusClose(Controller controller, int port) {
+//		StringBuffer sb = new StringBuffer(controller.getPort_status());
+//		sb.setCharAt(port - 1, '0');
+//		controller.setPort_status(sb.toString());
+//	}
 	
 	public Map<String, Object> delPonds(Integer... pondIds) {
 		Controller controller = null;
@@ -107,7 +87,7 @@ public class PondService {
 					if(controller == null){
 						continue;
 					}else{
-						changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
+					//	changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
 					}
 				}
 				sensor_ControllerDao.delete(sensor.getId());
@@ -205,7 +185,7 @@ public class PondService {
 		return RESCODE.SUCCESS.getJSONRES(list);
 	}
 
-	public Map<String, Object> WXqueryPond(String relation) {
+	public Map<String, Object> appHomepage(String relation) {
 		if(! relation.contains("WX")){
 			return RESCODE.WRONG_PARAM.getJSONRES();
 		}

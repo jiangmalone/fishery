@@ -1,15 +1,14 @@
 package com.geariot.platform.fishery.controller;
 
-import java.util.Map;
-
+import com.geariot.platform.fishery.entities.Pond;
+import com.geariot.platform.fishery.service.PondService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.geariot.platform.fishery.entities.Pond;
-import com.geariot.platform.fishery.service.PondService;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/pond")
@@ -48,9 +47,9 @@ public class PondController {
 		return pondService.fishCateList();
 	}
 	
-	@RequestMapping(value = "/wxQuery" , method = RequestMethod.GET)
-	public Map<String,Object> WXqueryPond(String relation){
-		return pondService.WXqueryPond(relation);
+	@RequestMapping(value = "/apphomepage" , method = RequestMethod.GET)
+	public Map<String,Object> appHomepage(String relation){
+		return pondService.appHomepage(relation);
 	}
 	
 	@RequestMapping(value = "/pondDetail" , method = RequestMethod.GET)

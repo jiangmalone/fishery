@@ -14,10 +14,10 @@
    </listener>
 
 	<!-- 开启socket服务 -->
-	<listener>
-		<listener-class>com.geariot.platform.fishery.socket.SocketServiceLoader</listener-class>
-	</listener> 
-	
+	<!--<listener>-->
+		<!--<listener-class>com.geariot.platform.fishery.socket.SocketServiceLoader</listener-class>-->
+	<!--</listener>-->
+
 	<welcome-file-list>
 	    <welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>

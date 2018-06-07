@@ -3,11 +3,6 @@
  */
 package com.geariot.test.fishery.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +14,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author mxy940127
@@ -44,7 +44,7 @@ public class PondControllerTest {
 	public void addPondTest() throws Exception{
 		mockMvc.perform(post("/pond/addPond").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("name", "大傻逼")
+				.param("name", "ffffffff")
 				.param("area", "20.0")
 				.param("address", "南京小易信息")
 				.param("longitude", "75.1234")

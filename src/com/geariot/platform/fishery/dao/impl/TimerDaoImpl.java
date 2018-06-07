@@ -18,11 +18,11 @@ public class TimerDaoImpl implements TimerDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
+
 	private Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
-	
+
 	@Override
 	public void save(Timer timer) {
 		this.getSession().save(timer);
@@ -31,20 +31,20 @@ public class TimerDaoImpl implements TimerDao {
 	@Override
 	public void delete(String device_sn) {
 		String hql = "delete from Timer where device_sn = :device_sn";
-		this.getSession().createQuery(hql).setString("device_sn",device_sn).executeUpdate();
+		this.getSession().createQuery(hql).setString("device_sn", device_sn).executeUpdate();
 	}
 
 	@Override
 	public Timer findTimerById(int timerId) {
 		String hql = "from Timer where id= :id ";
-		Timer timer= (Timer) getSession().createQuery(hql).setInteger("id",timerId).setCacheable(Constants.SELECT_CACHE).uniqueResult();
-			return timer;
+		Timer timer = (Timer) getSession().createQuery(hql).setInteger("id", timerId).setCacheable(Constants.SELECT_CACHE).uniqueResult();
+		return timer;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Timer> findAllTimer() {
-		String hql="from Timer";
+		String hql = "from Timer";
 		return this.getSession().createQuery(hql).list();
 	}
 
@@ -53,9 +53,9 @@ public class TimerDaoImpl implements TimerDao {
 	public List<Timer> queryTimerByDeviceSn(String device_sn, int from, int pageSize) {
 		QueryUtils qutils = new QueryUtils(getSession(), " from Timer");
 		Query query = qutils.addStringLike("device_sn", device_sn)
-		.setFirstResult(from)
-		.setMaxResults(pageSize)
-		.getQuery();
+				.setFirstResult(from)
+				.setMaxResults(pageSize)
+				.getQuery();
 		return query.list();
 	}
 
@@ -64,20 +64,26 @@ public class TimerDaoImpl implements TimerDao {
 		// TODO Auto-generated method stub
 		this.getSession().merge(timer);
 	}
-	
+
 	@Override
 	public void delete(String device_sn, int way) {
 		String hql = "delete from Timer where device_sn = :device_sn and way = :way";
-		this.getSession().createQuery(hql).setString("device_sn",device_sn).setInteger("way", way).executeUpdate();
+		this.getSession().createQuery(hql).setString("device_sn", device_sn).setInteger("way", way).executeUpdate();
 	}
-	
-	@SuppressWarnings("unchecked")
+
+
+	//	@Override
+//	public Timer findTimerByDeviceSnAndWay(String device_sn, int way) {
+//		String hql = "from Timer where device_sn= :device_sn and way = :way";
+//		return (List<Timer>) this.getSession().createQuery(hql).setString("device_sn",device_sn)
+//				.setInteger("way", way)
+//				.uniqueResult();
+//
+//	}
 	@Override
-	public List<Timer> findTimerByDeviceSnAndWay(String device_sn, int way) {
-		String hql = "from Timer where device_sn= :device_sn and way = :way";
-		return (List<Timer>) this.getSession().createQuery(hql).setString("device_sn",device_sn)
-				.setInteger("way", way)
-				.list();
-			
+	public Timer findTimerByDeviceSnAndWay(String device_sn, int way) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Timer");
+		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
+		return (Timer) query.uniqueResult();
 	}
 }

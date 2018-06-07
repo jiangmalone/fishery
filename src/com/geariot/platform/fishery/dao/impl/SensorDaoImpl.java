@@ -80,7 +80,7 @@ public class SensorDaoImpl implements SensorDao {
 		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
 		return (Sensor) query.uniqueResult();
 	}
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	@Override
 	public List<Sensor> findSensorsByPondId(int pondId) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");

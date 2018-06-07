@@ -1,33 +1,32 @@
 package com.geariot.platform.fishery.service;
 
+import cmcc.iot.onenet.javasdk.api.datapoints.GetDatapointsListApi;
+import cmcc.iot.onenet.javasdk.api.triggers.AddTriggersApi;
 import cmcc.iot.onenet.javasdk.api.triggers.DeleteTriggersApi;
+import cmcc.iot.onenet.javasdk.response.BasicResponse;
+import cmcc.iot.onenet.javasdk.response.triggers.NewTriggersResponse;
 import com.geariot.platform.fishery.dao.*;
 import com.geariot.platform.fishery.entities.*;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.*;
-//import com.geariot.platform.fishery.socket.CMDUtils;
+import com.geariot.platform.fishery.timer.CMDUtils;
 import com.geariot.platform.fishery.utils.DataExportExcel;
-import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
-
-import cmcc.iot.onenet.javasdk.api.datapoints.GetDatapointsListApi;
-import cmcc.iot.onenet.javasdk.api.triggers.AddTriggersApi;
-import cmcc.iot.onenet.javasdk.response.BasicResponse;
-import cmcc.iot.onenet.javasdk.response.triggers.NewTriggersResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import com.geariot.platform.fishery.service.BindService;
+
+//import com.geariot.platform.fishery.socket.CMDUtils;
 
 @Service
 @Transactional
@@ -91,32 +90,18 @@ public class EquipmentService {
 	private Controller controller = null;
 	private WXUser wxUser = null;
 
-//	public Map<String, Object> setLimit(Limit_Install limit_Install) {
-//		String deviceSn;
-//		try {
-//			deviceSn = limit_Install.getDevice_sn().substring(0, 2);
-//			Map<String, Object> map = CMDUtils.downLimitCMD(limit_Install);
-//			if (!map.containsKey("0"))
-//				return map;
-//		} catch (Exception e) {
-//			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//		}
-//		if (deviceSn.equals("01") || deviceSn.equals("02")) {
-//			if (aioDao.findAIOByDeviceSns(limit_Install.getDevice_sn()) == null) {
-//				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//			}
-//		} else if (deviceSn.equals("03")) {
-//			if (sensorDao.findSensorByDeviceSns(limit_Install.getDevice_sn()) == null) {
-//				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//			}
-//		} else
-//			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//
-//		limitDao.updateLimit(limit_Install);
-//
-//		return RESCODE.SUCCESS.getJSONRES();
-//
-//	}
+	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
+		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
+		List<Sensor> sensors = sensorDao.findSensorsByPondId(controller.getPondId());
+		String sensorsn= sensors.get(0).getDevice_sn();
+		addTrigger("oxygen", sensorsn,  "<", lowlimit, 7);
+		addTrigger("oxygen", sensorsn,  "<", highlimit, 8);
+		addTrigger("oxygen", sensorsn,  "<", higherlimit, 9);
+			return RESCODE.SUCCESS.getJSONRES();
+		// return RESCODE.DEVICESNS_INVALID.getJSONRES();
+
+
+	}
 
 	public Map<String, Object> delEquipment(String device_sn) {
 
@@ -164,356 +149,176 @@ public class EquipmentService {
 			} else if (devices.equals("03")) {
 				int controllerId = controllerDao.findControllerByDeviceSns(device_sn).getId();
 				controllerDao.delete(device_sn);
-				List<Sensor_Controller> list = sensor_ControllerDao.controller(controllerId);
-				for (Sensor_Controller sensor_Controller : list) {
-						sensor = sensorDao.findSensorById(sensor_Controller.getSensorId());
-						if (sensor == null) {
-							continue;
-						} else {
-							changeSensorPortStatusClose(sensor, sensor_Controller.getSensor_port());
-						}
-				}
-				sensor_ControllerDao.deleteController(controllerId);
 			} else {
 				return RESCODE.DELETE_ERROR.getJSONRES();
 			}
-
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
-	private void changeSensorPortStatusClose(Sensor sensor, int port) {
-		StringBuffer sb = new StringBuffer(sensor.getPort_status());
-		sb.setCharAt(port - 1, '0');
-		sensor.setPort_status(sb.toString());
+
+	public void changeControllerWayOnoff(String divsn, int way ,int key) {
+		String text = "KM"+way+":"+key;
+		int results = CMDUtils.sendStrCmd(divsn,text);
 	}
 
-	private void changeSensorPortStatusOn(Sensor sensor, int port) {
-		StringBuffer sb = new StringBuffer(sensor.getPort_status());
-		sb.setCharAt(port - 1, '1');
-		sensor.setPort_status(sb.toString());
-	}
 
-//	private void changeControllerPortStatusOn(Controller controller, int port) {
-//		StringBuffer sb = new StringBuffer(controller.getPort_status());
-//		sb.setCharAt(port - 1, '1');
-//		controller.setPort_status(sb.toString());
+//	public boolean exportData(String device_sn, String startTime, String endTime, HttpServletResponse response) {
+//		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		try {
+//			List<ExcelData> list = sensor_DataDao.getExcelData(device_sn, sdf.parse(startTime), sdf.parse(endTime));
+//			String[] fields = { "Id", "device_sn", "oxygen", "ph", "receiveTime", "waterTemperature" };
+//			DataExportExcel dataExportExcel = new DataExportExcel();
+//			HSSFWorkbook wb = dataExportExcel.generateExcel();
+//			wb = dataExportExcel.generateSheet(wb, "DataTable", fields, list);
+//			dataExportExcel.export(wb, response);
+//			return true;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return false;
+//		}
 //	}
-//
-//	private void changeControllerPortStatusClose(Controller controller, int port) {
-//		StringBuffer sb = new StringBuffer(controller.getPort_status());
-//		sb.setCharAt(port - 1, '0');
-//		controller.setPort_status(sb.toString());
-//	}
 
-	private void addVirtualData(List<Sensor_Data> sensor_Datas){
-		Sensor_Data temp = null;
-		List<Sensor_Data> tempList = new ArrayList<>();
-		if(sensor_Datas.size()>1){
-			for(int i=0;i<sensor_Datas.size()-1;i++){
-				if((sensor_Datas.get(i).getReceiveTime().getTime()+7200000) < sensor_Datas.get(i+1).getReceiveTime().getTime()){
-					temp = new Sensor_Data();
-					temp.setDevice_sn(sensor_Datas.get(i).getDevice_sn());
-					temp.setId(sensor_Datas.size()+i+2);
-					temp.setOxygen(0);
-					temp.setpH_value(0);
-					temp.setWater_temperature(0);
-					temp.setSaturation(0);
-					temp.setWay(sensor_Datas.get(i).getWay());
-					temp.setReceiveTime(new Date(sensor_Datas.get(i).getReceiveTime().getTime()+3600000));
-					tempList.add(temp);
-				}
-			}
-			sensor_Datas.addAll(tempList);
-			Collections.sort(sensor_Datas, new Comparator<Sensor_Data>(){
-				public int compare(Sensor_Data o1, Sensor_Data o2) {
-					if(o1.getReceiveTime().getTime()>o2.getReceiveTime().getTime()){
-						return 1;
-					}
-					if(o1.getReceiveTime().getTime() == o2.getReceiveTime().getTime()){
-						return 0;
-					}
-					return -1;
-				}
-			});
-		}
-
-	}
-
-	public boolean exportData(String device_sn, String startTime, String endTime, HttpServletResponse response) {
-		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		try {
-			List<ExcelData> list = sensor_DataDao.getExcelData(device_sn, sdf.parse(startTime), sdf.parse(endTime));
-			String[] fields = { "Id", "device_sn", "oxygen", "ph", "receiveTime", "waterTemperature" };
-			DataExportExcel dataExportExcel = new DataExportExcel();
-			HSSFWorkbook wb = dataExportExcel.generateExcel();
-			wb = dataExportExcel.generateSheet(wb, "DataTable", fields, list);
-			dataExportExcel.export(wb, response);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	public Map<String, Object> addEquipment(String device_sn, String name, String relation,int type,int pondId) {
+	public Map<String, Object> addSensor(String device_sn, String name, String relation,int type,int pondId) {
 		String deviceSn;
 		try {
 			deviceSn = device_sn.trim().substring(0, 2);
 			device_sn = device_sn.substring(2);
+            Device devexist = deviceDao.findDevice(device_sn);
+            if (devexist != null) {
+                return RESCODE.SENSOR_EXIST.getJSONRES();
+            }
 			Device device = new Device();
 			device.setDevice_sn(device_sn);
 			device.setType(type);
 			deviceDao.save(device);
-			System.out.println("sss");
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 		}
-
-
 		logger.debug("塘口Id:" + pondId + "尝试与传感器设备,设备编号为:" + device_sn + "进行绑定...");
 		Pond pond = pondDao.findPondByPondId(pondId);
 		if (pond == null) {
 			logger.debug("塘口Id:" + pondId + "在数据库中无记录!!!");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
-		if (deviceSn.equals("02")) {
-			AIO exist = aioDao.findAIOByDeviceSns(device_sn);
-			if (exist != null) {
-				return RESCODE.AIO_EXIST.getJSONRES();
-			} else {
-				AIO aio = new AIO();
-				aio.setDevice_sn(device_sn);
-				aio.setName(name);
-				aio.setRelation(relation);
-				aio.setStatus("11");
-				aio.setPondId(pondId);
-				aioDao.save(aio);
-				// 初始化两个增氧机状态
-				AeratorStatus status1 = new AeratorStatus();
-				status1.setDevice_sn(device_sn);
-				status1.setOn_off(false);
-				status1.setTimed(false);
-				status1.setWay(1);
-				statusDao.save(status1);
-				AeratorStatus status2 = new AeratorStatus();
-				status2.setDevice_sn(device_sn);
-				status2.setOn_off(false);
-				status2.setTimed(false);
-				status2.setWay(2);
-				statusDao.save(status2);
-				return RESCODE.SUCCESS.getJSONRES();
-			}
-		} else if (deviceSn.equals("01")) {
-			Sensor exist = sensorDao.findSensorByDeviceSns(device_sn);
-			if (exist != null) {
-				return RESCODE.SENSOR_EXIST.getJSONRES();
-			} else {
-				Sensor sensor = new Sensor();
-				sensor.setDevice_sn(device_sn);
-				sensor.setName(name);
-				sensor.setRelation(relation);
-				sensor.setStatus(1);
-				sensor.setPondId(pondId);
-				sensor.setPort_status("00");
-				sensorDao.save(sensor);
+                  if (deviceSn.equals("01")) {
+                    Sensor exist = sensorDao.findSensorByDeviceSns(device_sn);
+                    if (exist != null) {
+                        return RESCODE.SENSOR_EXIST.getJSONRES();
+                    }
 
+                    Sensor sensor = new Sensor();
+                    sensor.setDevice_sn(device_sn);
+                    sensor.setName(name);
+                    sensor.setRelation(relation);
+                    sensor.setStatus(1);
+                    sensor.setPondId(pondId);
+                    sensor.setPort_status("00");
+                    sensorDao.save(sensor);
+                    Pond sensorbindpond=pondDao.findPondByPondId(pondId);
+                    List<PondFish> senbindfish=pond.getPondFishs();
+                    int pondfishtype;
+                    if (senbindfish!=null){
+                        PondFish senbinfs=senbindfish.get(0);
+                        pondfishtype=senbinfs.getType();
+                    }else return RESCODE.DEVICESNS_INVALID.getJSONRES();
+                    int triggeraddresult=addTrigerbyFishtype(device_sn, pondfishtype);
+                    if (triggeraddresult==0)
+                        return RESCODE.SUCCESS.getJSONRES();
+                    else return RESCODE.DEVICESNS_INVALID.getJSONRES();
 
-				/**
-				 * 触发器新增
-				 * @param title:名称（可选）,String
-				 * @param dsid:数据流名称（id）（可选）,String
-				 * @param devids:设备ID（可选）,List<String>
-				 * @param dsuuids:数据流uuid（可选）,List<String>
-				 * @param desturl:url,String
-				 * @param type:触发类型，String
-				 * @param threshold:阙值，根据type不同，见以下说明,Integer
-				 * @param key:masterkey 或者 设备apikey
-				 */
-				String dsid="Battery";
-				String url = "http://xx.bb.com";
-				List<String> devids=new ArrayList<String>();
-				devids.add(device_sn);
-				String con = "==";
-				int threshold = 100;
-				String key = "LTKhU=GLGsWmPrpHICwWOnzx=bA=";
-				int triggerid;
+                } else
+                    return RESCODE.DEVICESNS_INVALID.getJSONRES();
 
-				AddTriggersApi api = new AddTriggersApi(null, dsid, devids, null, url, con, threshold, key);
-				try{
-					BasicResponse<NewTriggersResponse> response = api.executeApi();
-					System.out.println(response.getJson());
-					JSONObject tempjson = JSONObject.fromObject(response.getJson());
-					int errnoint = tempjson.getInt("errno");
-					if (errnoint==0){
-						JSONObject triobj = tempjson.getJSONObject("data");
-						triggerid = triobj.getInt("trigger_id");
-
-						List<Dev_Trigger> triggerexist = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
-						if (exist != null) {
-							return RESCODE.SENSOR_EXIST.getJSONRES();
-						} else {
-							Dev_Trigger trigger = new Dev_Trigger();
-							trigger.setDevice_sn(device_sn);
-							trigger.setTriger_id(String.valueOf(triggerid));
-							trigger.setTrigertype(3);
-							dev_triggerDao.save(trigger);
-						}
-
-					}
-				}catch(Exception e){
-					System.out.println(e.getMessage());
-				}
-				threshold = 98;
-				AddTriggersApi api1 = new AddTriggersApi(null, dsid, devids, null, url, con, threshold, key);
-				try{
-					BasicResponse<NewTriggersResponse> response = api1.executeApi();
-					System.out.println(response.getJson());
-					JSONObject tempjson = JSONObject.fromObject(response.getJson());
-					int errnoint = tempjson.getInt("errno");
-					if (errnoint==0){
-						JSONObject triobj = tempjson.getJSONObject("data");
-						triggerid = triobj.getInt("trigger_id");
-
-						List<Dev_Trigger> triggerexist = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
-						if (exist != null) {
-							return RESCODE.SENSOR_EXIST.getJSONRES();
-						} else {
-							Dev_Trigger trigger = new Dev_Trigger();
-							trigger.setDevice_sn(device_sn);
-							trigger.setTriger_id(String.valueOf(triggerid));
-							trigger.setTrigertype(3);
-							dev_triggerDao.save(trigger);
-						}
-
-					}
-				}catch(Exception e){
-					System.out.println(e.getMessage());
-				}
-
-				threshold = 50;
-				AddTriggersApi api2 = new AddTriggersApi(null, dsid, devids, null, url, con, threshold, key);
-				try{
-					BasicResponse<NewTriggersResponse> response = api2.executeApi();
-					System.out.println(response.getJson());
-					JSONObject tempjson = JSONObject.fromObject(response.getJson());
-					int errnoint = tempjson.getInt("errno");
-					if (errnoint==0){
-						JSONObject triobj = tempjson.getJSONObject("data");
-						triggerid = triobj.getInt("trigger_id");
-
-						List<Dev_Trigger> triggerexist = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
-						if (exist != null) {
-							return RESCODE.SENSOR_EXIST.getJSONRES();
-						} else {
-							Dev_Trigger trigger = new Dev_Trigger();
-							trigger.setDevice_sn(device_sn);
-							trigger.setTriger_id(String.valueOf(triggerid));
-							trigger.setTrigertype(3);
-							dev_triggerDao.save(trigger);
-						}
-
-					}
-				}catch(Exception e){
-					System.out.println(e.getMessage());
-				}
-
-
-
-				return RESCODE.SUCCESS.getJSONRES();
-			}
-		} else if (deviceSn.equals("03")) {
-			Controller exist = controllerDao.findControllerByDeviceSns(device_sn);
-			if (exist != null) {
-				return RESCODE.SENSOR_EXIST.getJSONRES();
-			} else {
-				Controller controller = new Controller();
-				controller.setDevice_sn(device_sn);
-				controller.setName(name);
-				controller.setRelation(relation);
-				controller.setStatus(1);
-				//controller.setPort_status("0000");
-				controllerDao.save(controller);
-				return RESCODE.SUCCESS.getJSONRES();
-			}
-		} else {
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		}
-		}
+                }
 	}
 
-//	public Map<String, Object> realTimeData(String device_sn, int way) {
-//		String deviceSn;
-//		Sensor_Data data = null;
-//		Map<String, Object> map = null;
-//		Date current_time=new Date();
-//		Date last_time;
-//		try {
-//			deviceSn = device_sn.trim().substring(0, 2);
-//		} catch (Exception e) {
-//			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//		}
-//		if (deviceSn.equals("01") || deviceSn.equals("02")) {
-//			if (aioDao.findAIOByDeviceSns(device_sn) == null) {
-//				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//			}
-//			data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
-//			last_time = data.getReceiveTime();
-//			long diff = current_time.getTime() - last_time.getTime();
-//			long minutes = diff / (1000 * 60);
-//			if (minutes < 6) {
-//				AIO aio = aioDao.findAIOByDeviceSns(device_sn);
-//				map = RESCODE.SUCCESS.getJSONRES(data);
-//				Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
-//				StringBuffer sb = new StringBuffer(aio.getStatus());
-//				if (install != null) {
-//					map.put("low_limit", install.getLow_limit());
-//					map.put("up_limit", install.getUp_limit());
-//					map.put("high_limit", install.getHigh_limit());
-//					map.put("status", String.valueOf(sb.charAt(way - 1)));
-//					map.put("name", aio.getName());
-//				} else {
-//					map.put("status", String.valueOf(sb.charAt(way - 1)));
-//					map.put("name", aio.getName());
-//					map.put("low_limit", 5);
-//					map.put("up_limit", 10);
-//					map.put("high_limit", 15);
-//				}
-//				return map;
-//			}else
-//				return RESCODE.OFF_LINE.getJSONRES();
-//
-//		} else if (deviceSn.equals("03")) {
-//			if (sensorDao.findSensorByDeviceSns(device_sn) == null) {
-//				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//			}
-//			data = sensor_DataDao.findDataByDeviceSns(device_sn);
-//			last_time = data.getReceiveTime();
-//			long diff = current_time.getTime() - last_time.getTime();
-//			long minutes = diff / (1000 * 60);
-//			if (minutes < 6) {
-//				Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
-//				map = RESCODE.SUCCESS.getJSONRES(data);
-//				Limit_Install install = limitDao.findLimitByDeviceSns(device_sn);
-//				if (install != null) {
-//					map.put("low_limit", install.getLow_limit());
-//					map.put("up_limit", install.getUp_limit());
-//					map.put("high_limit", install.getHigh_limit());
-//					map.put("status", sensor.getStatus());
-//					map.put("name", sensor.getName());
-//				} else {
-//					map.put("status", sensor.getStatus());
-//					map.put("name", sensor.getName());
-//					map.put("low_limit", 5);
-//					map.put("up_limit", 10);
-//					map.put("high_limit", 15);
-//				}
-//				return map;
-//			} else
-//				return RESCODE.OFF_LINE.getJSONRES();
-//		}else
-//			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//	}
-//	
+
+	public Map<String, Object> addController(Controller[] controllers) {
+
+		for (Controller controller : controllers ){
+			 controllerDao.save(controller);
+			 System.out.println(controller.getDevice_sn());
+		}
+
+		return RESCODE.SUCCESS.getJSONRES();
+
+	}
+
+
+
+	public Map<String, Object> realTimeData(String device_sn, int way) {
+		String deviceSn;
+		Sensor_Data data = null;
+		Map<String, Object> map = null;
+		Date current_time=new Date();
+		Date last_time;
+		try {
+			deviceSn = device_sn.trim().substring(0, 2);
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
+		if (deviceSn.equals("01") || deviceSn.equals("02")) {
+			if (aioDao.findAIOByDeviceSns(device_sn) == null) {
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
+			}
+			data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
+			last_time = data.getReceiveTime();
+			long diff = current_time.getTime() - last_time.getTime();
+			long minutes = diff / (1000 * 60);
+			if (minutes < 6) {
+				AIO aio = aioDao.findAIOByDeviceSns(device_sn);
+				map = RESCODE.SUCCESS.getJSONRES(data);
+				Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
+				StringBuffer sb = new StringBuffer(aio.getStatus());
+				if (install != null) {
+					map.put("low_limit", install.getLow_limit());
+					map.put("up_limit", install.getUp_limit());
+					map.put("high_limit", install.getHigh_limit());
+					map.put("status", String.valueOf(sb.charAt(way - 1)));
+					map.put("name", aio.getName());
+				} else {
+					map.put("status", String.valueOf(sb.charAt(way - 1)));
+					map.put("name", aio.getName());
+					map.put("low_limit", 5);
+					map.put("up_limit", 10);
+					map.put("high_limit", 15);
+				}
+				return map;
+			}else
+				return RESCODE.OFF_LINE.getJSONRES();
+
+		} else if (deviceSn.equals("03")) {
+			if (sensorDao.findSensorByDeviceSns(device_sn) == null) {
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
+			}
+			data = sensor_DataDao.findDataByDeviceSns(device_sn);
+			last_time = data.getReceiveTime();
+			long diff = current_time.getTime() - last_time.getTime();
+			long minutes = diff / (1000 * 60);
+			if (minutes < 6) {
+				Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+				map = RESCODE.SUCCESS.getJSONRES(data);
+				Limit_Install install = limitDao.findLimitByDeviceSns(device_sn);
+				if (install != null) {
+					map.put("low_limit", install.getLow_limit());
+					map.put("up_limit", install.getUp_limit());
+					map.put("high_limit", install.getHigh_limit());
+					map.put("status", sensor.getStatus());
+					map.put("name", sensor.getName());
+				} else {
+					map.put("status", sensor.getStatus());
+					map.put("name", sensor.getName());
+					map.put("low_limit", 5);
+					map.put("up_limit", 10);
+					map.put("high_limit", 15);
+				}
+				return map;
+			} else
+				return RESCODE.OFF_LINE.getJSONRES();
+		}else
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+	}
+
 	public Map<String, Object> realTimeData(String device_sn) {
 		System.out.println(device_sn);
 		String datastreamIds="temperature";
@@ -820,7 +625,7 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.today(device_sn);
 		}
-		addVirtualData(list);
+	//	addVirtualData(list);
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
@@ -879,7 +684,7 @@ public class EquipmentService {
 			i = i + 8;
 		}
 		if (!list.isEmpty()) {
-			addVirtualData(splitlist);
+		//	addVirtualData(splitlist);
 			for (Sensor_Data sensor_Data : splitlist) {
 				/*if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 					temp = isSameDay.format(sensor_Data.getReceiveTime());
@@ -916,7 +721,7 @@ public class EquipmentService {
 		} else {
 			list = sensor_DataDao.today(device_sn);
 		}
-		addVirtualData(list);
+		//addVirtualData(list);
 		List<PH> phs = new ArrayList<>();
 		List<Oxygen> oxygens = new ArrayList<>();
 		List<Temperature> temperatures = new ArrayList<>();
@@ -973,7 +778,7 @@ public class EquipmentService {
 			}
 			i = i + 8;
 		}
-		addVirtualData(splitlist);
+		//addVirtualData(splitlist);
 		for (Sensor_Data sensor_Data : splitlist) {
 			/*if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 				temp = isSameDay.format(sensor_Data.getReceiveTime());
@@ -1002,132 +807,17 @@ public class EquipmentService {
 		return map;//
 	}
 
-//	public Map<String, Object> autoSet(Limit_Install limit_Install, Timer[] timers) {
-//		String type;
-//		try {
-//			type = limit_Install.getDevice_sn().substring(0, 2);
-//			if (type.equals("01") || type.equals("02")) {
-//				if (aioDao.findAIOByDeviceSns(limit_Install.getDevice_sn()) == null) {
-//					return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//				}
-//			} else if (type.equals("03")) {
-//				if (sensorDao.findSensorByDeviceSns(limit_Install.getDevice_sn()) == null) {
-//					return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//				}
-//			} else {
-//				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//			}
-//			Map<String, Object> map = CMDUtils.downLimitCMD(limit_Install);
-//			/*for(Map.Entry<String, Object> m:map.entrySet()) {
-//			System.out.println(m.getKey()+" : "+m.getValue());
-//			}*/
-//			if (!(map.containsValue("成功"))) {
-//				return map;
-//			}
-//			Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(),
-//					limit_Install.getWay());
-//			logger.debug(limit_Install.toString());
-//			if (install == null) {
-//
-//				limitDao.save(limit_Install);
-//			} else {
-//
-//				install.setHigh_limit(limit_Install.getHigh_limit());
-//				install.setLow_limit(limit_Install.getLow_limit());
-//				install.setUp_limit(limit_Install.getUp_limit());
-//			}
-//
-//			if (timers == null) {
-//				if (statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay()).isOn_off()) {
-//					CMDUtils.serverOnOffOxygenCMD(limit_Install.getDevice_sn(), limit_Install.getWay(), 0);
-//				}
-//				timerDao.delete(limit_Install.getDevice_sn(), limit_Install.getWay());
-//				return RESCODE.SUCCESS.getJSONRES();
-//			} else {
-//				AeratorStatus status = statusDao.findByDeviceSnAndWay(limit_Install.getDevice_sn(),
-//						limit_Install.getWay());
-//
-//				if (timers.length > 0) {
-//					status.setTimed(true);
-//					Timer timer = timers[0];
-//					timerDao.delete(timer.getDevice_sn(), timer.getWay());
-//					for (Timer timersave : timers) {
-//						timerDao.save(timersave);
-//					}
-//				}
-//
-//				return RESCODE.SUCCESS.getJSONRES();
-//			}
-//		} catch (Exception e) {
-//			return RESCODE.SEND_FAILED.getJSONRES();
-//		}
-//	}
-
-	public Map<String, Object> queryAeratorData(String device_sn, int way) {
-
-		String type = null;
-		try {
-			type = device_sn.substring(0, 2);
-		} catch (Exception e) {
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		}
-		if (type.equals("01") || type.equals("02")) {
-			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
-			if (aio == null) {
-				return RESCODE.NOT_FOUND.getJSONRES();
+	public Map<String, Object> setTimer(Timer timer) {
+		Timer exist = timerDao.findTimerByDeviceSnAndWay(timer.getDevice_sn(),timer.getWay());
+		if (exist == null) {
+			timerDao.save(timer);
+			return RESCODE.SUCCESS.getJSONRES();
+		} else {
+			timer.setId(exist.getId());
+			timerDao.updateTimer(timer);
+			return RESCODE.SUCCESS.getJSONRES();
 			}
-			Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-			Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
-			List<Timer> timer = timerDao.findTimerByDeviceSnAndWay(device_sn, way);
-			Sensor_Data sensor_data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
-			if (sensor_data != null) {
-				map.put("currentOxygens", sensor_data.getOxygen());
-			}
-			if (limit != null) {
-				map.put("oxyHighLimit", limit.getHigh_limit());
-				map.put("oxyUpLimit", limit.getUp_limit());
-				map.put("oxyLowLimit", limit.getLow_limit());
-			}
-			if (timer != null) {
-				map.put("timerList", timer);
-			}
-			return map;
-		}
 
-		return RESCODE.DEVICESNS_INVALID.getJSONRES();
-	}
-
-	public Map<String, Object> queryAlarm(String openId) {
-		// TODO Auto-generated method stub
-		WXUser wxuser = wxUserDao.findUserByOpenId(openId);
-
-		if (null == wxuser) {
-			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
-		}
-		String relation = wxuser.getRelation();
-		if (null == relation) {
-			return RESCODE.NO_BIND_RELATION.getJSONRES();
-		}
-		List<DataAlarm> dalist = daDao.queryDataAlarm(relation);
-		if (null == dalist) {
-			return RESCODE.NOT_FOUND.getJSONRES();
-		}
-
-		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-
-		map.put("dataAlarm", dalist);
-
-		return map;
-	}
-
-	public Map<String, Object> alarmIsRead(Integer id) {
-		DataAlarm da = daDao.findDataAlarmById(id);
-		if (null == da) {
-			return RESCODE.NOT_FOUND.getJSONRES();
-		}
-		da.setIsWatch(1);
-		// daDao.updateStatus(da);
-		return RESCODE.SUCCESS.getJSONRES();
 	}
 
 	public Map<String, Object> modifyEquipment(String device_sn, String name) {
@@ -1158,17 +848,134 @@ public class EquipmentService {
 		return map;
 
 	}
+	public void triggeractive(String data){
+		JSONObject tempjson = JSONObject.fromObject(data);
 
-//	public Map<String, Object> aeratorOnOff(String device_sn, int way, int openOrclose) {
-//		AIO aio = aioDao.findAIOByDeviceSns(device_sn);
-//		char aeratorStatus = new StringBuffer(aio.getStatus()).charAt(way-1);
-//		if (aio != null && aeratorStatus == '3') {
-//			String openId = socketService.findWXUserByDeviceSn(device_sn).getOpenId();
-//			WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机失败，因为该增氧机存在缺相报警问题", openId, device_sn);
-//			return RESCODE.SUCCESS.getJSONRES();
-//		}
-//		return CMDUtils.serverOnOffOxygenCMD(device_sn, way, openOrclose);
-//
-//	}
+		JSONObject temp12 = tempjson.getJSONObject("trigger");
+		int triggerid=temp12.getInt("id");
+		String triggertype=temp12.getString("type");
+		JSONArray currentdata=tempjson.getJSONArray("current_data");
+		JSONObject obj1 = currentdata.getJSONObject(0);
+		String dev_id= obj1.getString("dev_id");
+		String ds_id= obj1.getString("ds_id");
+
+		Device device=deviceDao.findDevice(dev_id);
+		if (device!=null){
+		   int type= device.getType();
+		   if(type==1){
+
+		   int pond_id=sensorDao.findSensorByDeviceSns(dev_id).getPondId();
+            Pond pond = pondDao.findPondByPondId(pond_id);
+            //Controller controller=
+
+           }else if(type==2){
+
+
+           }else if(type==3){
+
+
+
+           }
+
+
+
+        }
+
+
+		System.out.println(dev_id);
+		System.out.println(ds_id);
+		System.out.println(""+triggerid);
+
+		//String temp13 = temp12.getString("cmd_uuid");
+	//	System.out.println(temp13);
+//    	JSONArray array= temp.getJSONArray("datastreams");
+//    	JSONObject obj1 = array.getJSONObject(0);
+//    	JSONArray obj2 =obj1.getJSONArray("datapoints");
+//    	JSONObject obj3=obj2.getJSONObject(0);
+//    	int obj4 =obj3.getInt("value");
+//    	//String obj5=obj3.getString("at");
+//     	System.out.println(obj4);
+
+	}
+
+
+	public int addTrigerbyFishtype(String device_sn,int fishtype){
+	    if (fishtype==0) {
+            int trigger1 = addTrigger("pressure", device_sn, "==", 100, 3);
+            if (trigger1 == 0) {
+                int trigger2 = addTrigger("pressure", device_sn, "==", 99, 3);
+                if (trigger2 == 0) {
+                    int trigger3 = addTrigger("pressure", device_sn, "==", 98, 3);
+                    if (trigger3 == 0) {
+                        return 0;
+                    } else return 1;
+                } else return 1;
+            } else return 1;
+        }else if (fishtype==1) {
+            int trigger1 = addTrigger("Battery", device_sn, "==", 100, 3);
+            if (trigger1 == 0) {
+                int trigger2 = addTrigger("Battery", device_sn, "==", 99, 3);
+                if (trigger2 == 0) {
+                    int trigger3 = addTrigger("Battery", device_sn, "==", 98, 3);
+                    if (trigger3 == 0) {
+                        return 0;
+                    } else return 1;
+                } else return 1;
+            } else return 1;
+        }else if (fishtype==3) {
+            int trigger1 = addTrigger("Battery", device_sn, "==", 100, 3);
+            if (trigger1 == 0) {
+                int trigger2 = addTrigger("Battery", device_sn, "==", 99, 3);
+                if (trigger2 == 0) {
+                    int trigger3 = addTrigger("Battery", device_sn, "==", 98, 3);
+                    if (trigger3 == 0) {
+                        return 0;
+                    } else return 1;
+                } else return 1;
+            } else return 1;
+        } else return 1;
+    }
+
+	public int addTrigger(String dsid,String device_sn,String type,int threshold,int localtype){
+		/**
+		 * 触发器新增
+		 * @param title:名称（可选）,String
+		 * @param dsid:数据流名称（id）（可选）,String
+		 * @param devids:设备ID（可选）,List<String>
+		 * @param dsuuids:数据流uuid（可选）,List<String>
+		 * @param desturl:url,String
+		 * @param type:触发类型，String
+		 * @param threshold:阙值，根据type不同，见以下说明,Integer
+		 * @param key:masterkey 或者 设备apikey
+		 */
+		String url = "http://xx.bb.com";
+		List<String> devids=new ArrayList<String>();
+		devids.add(device_sn);
+		String key = "LTKhU=GLGsWmPrpHICwWOnzx=bA=";
+		int triggerid;
+
+		AddTriggersApi api = new AddTriggersApi(null, dsid, devids, null, url, type, threshold, key);
+		try{
+			BasicResponse<NewTriggersResponse> response = api.executeApi();
+			System.out.println(response.getJson());
+			JSONObject tempjson = JSONObject.fromObject(response.getJson());
+			int errnoint = tempjson.getInt("errno");
+			if (errnoint==0){
+				JSONObject triobj = tempjson.getJSONObject("data");
+				triggerid = triobj.getInt("trigger_id");
+				Dev_Trigger trigger = new Dev_Trigger();
+				trigger.setDevice_sn(device_sn);
+				trigger.setTriger_id(String.valueOf(triggerid));
+				trigger.setTrigertype(localtype);
+				dev_triggerDao.save(trigger);
+				return 0;
+			}else return 1;
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			return 1;
+		}
+	}
+
+
 
 }

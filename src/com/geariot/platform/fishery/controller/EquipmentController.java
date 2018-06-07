@@ -1,20 +1,17 @@
 package com.geariot.platform.fishery.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.service.EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import com.geariot.platform.fishery.entities.Controller;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
-import com.geariot.platform.fishery.entities.AIO;
-import com.geariot.platform.fishery.model.ParamBody;
-import com.geariot.platform.fishery.service.EquipmentService;
 //import com.geariot.platform.fishery.socket.CMDUtils;
-import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 @RestController
 @RequestMapping(value = "/equipment")
@@ -23,10 +20,18 @@ public class EquipmentController {
 	@Autowired
 	private EquipmentService equipmentService;
 
-	/*@RequestMapping(value = "/limit", method = RequestMethod.POST)
-	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install) {
-		return equipmentService.setLimit(limit_Install);
-	}*/
+
+	@RequestMapping(value = "/setlimit", method = RequestMethod.GET)
+	public Map<String, Object> setLimit(String devicesn,int way,String lowlimit,String highlimit,String higherlimit) {
+		return equipmentService.setLimit(devicesn,way,lowlimit,highlimit,higherlimit);
+	}
+
+	@RequestMapping(value = "/changeControllerWayOnoff",method = RequestMethod.GET)
+	public void changeControllerWayOnoff(String divsn, int way ,int key){
+		equipmentService.changeControllerWayOnoff(divsn,way,key);
+
+	}
+
 
 	@RequestMapping(value = "/delEquipments", method = RequestMethod.GET)
 	public Map<String, Object> delEquipment(String  device_sn) {
@@ -37,33 +42,17 @@ public class EquipmentController {
 	public Map<String, Object> modifyEquipment(String device_sn,String name) {
 		return equipmentService.modifyEquipment(device_sn,name);
 	}
-	
-	
 
-	/*@RequestMapping(value = "/timer", method = RequestMethod.POST)
-	public Map<String, Object> setTimer(@RequestBody Timer... timer) {
-		return equipmentService.setTimer(timer);
-	}*/
-
-	/*@RequestMapping(value = "/query", method = RequestMethod.GET)
-	public Map<String, Object> queryEquipment(String device_sn, String relation, String name, int page, int number) {
-		return equipmentService.queryEquipment(device_sn, relation, name, page, number);
-	}*/
-
-	@RequestMapping(value = "/exportData", method = RequestMethod.GET)
-	public void exportData(String device_sn, String startTime, String endTime, HttpServletResponse response) {
-		equipmentService.exportData(device_sn, startTime, endTime, response);
-	}
-
-	@RequestMapping(value = "/add", method = RequestMethod.GET)
+	@RequestMapping(value = "/addSensor", method = RequestMethod.GET)
 	public Map<String, Object> addEquipment(String device_sn, String name, String relation,int type,int pondId) {
-		return equipmentService.addEquipment(device_sn, name, relation, type,pondId);
+		return equipmentService.addSensor(device_sn, name, relation, type,pondId);
 	}
 
-//	@RequestMapping(value = "/realTimeData", method = RequestMethod.GET)
-//	public Map<String, Object> realTimeData(String device_sn,int way) {
-//		return equipmentService.realTimeData(device_sn, way);
-//	}
+	@RequestMapping(value = "/addController", method = RequestMethod.POST)
+	public Map<String, Object> addController(@RequestBody Controller... controllers) {
+		return equipmentService.addController(controllers);
+	}
+
 	@RequestMapping(value = "/realTimeData", method = RequestMethod.GET)
 	public Map<String, Object> realTimeData(String device_sn) {
 		return equipmentService.realTimeData(device_sn);
@@ -104,37 +93,14 @@ public class EquipmentController {
 		return equipmentService.companyFindEquipment(device_sn, relation, page, number);
 	}
 	
-//	@RequestMapping(value = "/autoSet", method = RequestMethod.POST)
-//	public Map<String, Object> autoSet(@RequestBody ParamBody body){
-//		return equipmentService.autoSet(body.getLimit_Install(), body.getTimers());
-//	}
-	
-	//服务器设置校准
-//	@RequestMapping(value="/serverCheck",method=RequestMethod.GET)
-//	public Map<String,Object> serverCheck(String device_sn,int way){
-//		return CMDUtils.serverCheckCMD(device_sn,way);
-//	}
-	
-	//增氧机开关
-//	@RequestMapping(value="/aeratorOnOff",method=RequestMethod.GET)
-//	public Map<String,Object> aeratorOnOff(String device_sn,int way,int openOrclose){
-//		return equipmentService.aeratorOnOff(device_sn, way, openOrclose);
-//	}
-//	
-	@RequestMapping(value ="/queryAeratorData", method = RequestMethod.GET)
-	public Map<String, Object> queryAeratorData(String device_sn,int way){
-		return equipmentService.queryAeratorData(device_sn,way);
+	@RequestMapping(value = "/setTimer", method = RequestMethod.POST)
+	public Map<String, Object> autoSet(@RequestBody Timer timer){
+		return equipmentService.setTimer(timer);
 	}
-	
-	@RequestMapping(value ="/queryAlarm", method = RequestMethod.GET)
-	public Map<String, Object> queryAlarm(String openId){
-		return equipmentService.queryAlarm(openId);
+
+	@RequestMapping(value ="/triggeractive", method = RequestMethod.POST)
+	public void alarmIsRead(@RequestBody String data){
+		equipmentService.triggeractive(data);
 	}
-	
-	@RequestMapping(value ="/alarmIsRead", method = RequestMethod.GET)
-	public Map<String, Object> alarmIsRead(Integer id){
-		return equipmentService.alarmIsRead(id);
-	}
-	
 	
 }

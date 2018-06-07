@@ -3,16 +3,15 @@
  */
 package com.geariot.platform.fishery.controller;
 
-import java.util.Map;
-
+import com.geariot.platform.fishery.entities.Admin;
+import com.geariot.platform.fishery.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.geariot.platform.fishery.entities.Admin;
-import com.geariot.platform.fishery.service.AdminService;
+import java.util.Map;
 
 /**
  * @author mxy940127

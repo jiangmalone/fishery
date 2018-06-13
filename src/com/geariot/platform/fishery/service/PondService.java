@@ -139,6 +139,27 @@ public class PondService {
 		map.put("user", "");
 		return map;
 	}
+	
+	public Map<String, Object> WXqueryPond(String relation){
+		List<Pond> ponds = pondDao.queryPondByRelation(relation);
+		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(ponds);
+		if(relation!=null&&relation.length()>0){
+			if(relation.contains("WX")){
+				WXUser wxUser = wxUserDao.findUserByRelation(relation);
+				map.put("user", wxUser==null?"":wxUser.getName());
+				return map;
+			}
+			if(relation.contains("CO")){
+				Company company = companyDao.findCompanyByRelation(relation);
+				map.put("user", company==null?"":company.getName());
+				return map;
+			}
+			map.put("user", "");
+			return map;
+		}
+		map.put("user", "");
+		return map;
+	}
 
 	public Map<String, Object> pondEquipment(int pondId, int page, int number) {
 		int from = (page - 1) * number;
@@ -246,7 +267,7 @@ public class PondService {
 				aioTemp.setName(aio.getName());
 				aioTemp.setPondId(aio.getPondId());
 				aioTemp.setRelation(aio.getRelation());
-				aioTemp.setType(aio.getType());
+			//	aioTemp.setType(aio.getType());
 				aioTemp.setStatus(aio.getStatus());
 				aioTemp.setWay(2);
 				if(twoWay == null){

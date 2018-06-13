@@ -20,10 +20,11 @@ public class AIO {
 
 	private int id;						//一体机Id,自增
 	private String device_sn;			//一体机设备编号
-	private int type; 					//1,2 = 一体机(不含ph功能),一体机(含ph功能)
 	private String name;				//设备名称
 	private String status;				//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
 	private int pondId;					//绑定的塘口Id
+	private int port;					//一体机第几路
+
 	private String relation;			//绑定的用户relation
 	
 	//以下这些字段均用@Transient注解了
@@ -68,11 +69,12 @@ public class AIO {
 	public void setPondId(int pondId) {
 		this.pondId = pondId;
 	}
-	public int getType() {
-		return type;
+
+	public int getPort() {
+		return port;
 	}
-	public void setType(int type) {
-		this.type = type;
+	public void setPort(int port) {
+		this.port = port;
 	}
 	public String getRelation() {
 		return relation;

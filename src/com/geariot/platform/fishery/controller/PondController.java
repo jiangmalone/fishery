@@ -37,6 +37,11 @@ public class PondController {
 		return pondService.queryPond(relation, name, page, number);
 	}
 	
+	@RequestMapping(value = "/WXquery" , method = RequestMethod.GET)
+	public Map<String,Object> queryPond(String relation){
+		return pondService.WXqueryPond(relation);
+	}
+	
 	@RequestMapping(value = "/pondEquipment" , method = RequestMethod.GET)
 	public Map<String,Object> pondEquipment(int pondId, int page, int number){
 		return pondService.pondEquipment(pondId, page, number);

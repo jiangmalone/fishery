@@ -1,9 +1,12 @@
 package com.geariot.platform.fishery.service;
 
 import cmcc.iot.onenet.javasdk.api.datapoints.GetDatapointsListApi;
+import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
 import cmcc.iot.onenet.javasdk.api.triggers.AddTriggersApi;
 import cmcc.iot.onenet.javasdk.api.triggers.DeleteTriggersApi;
 import cmcc.iot.onenet.javasdk.response.BasicResponse;
+import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList;
+import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
 import cmcc.iot.onenet.javasdk.response.triggers.NewTriggersResponse;
 import com.geariot.platform.fishery.dao.*;
 import com.geariot.platform.fishery.entities.*;
@@ -89,6 +92,7 @@ public class EquipmentService {
 	private Sensor sensor = null;
 	private Controller controller = null;
 	private WXUser wxUser = null;
+	private String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
 
 	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
 		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
@@ -102,58 +106,81 @@ public class EquipmentService {
 
 
 	}
-
-	public Map<String, Object> delEquipment(String device_sn) {
-
-		String devices;
-		try {
-			devices = device_sn.trim().substring(0, 2);
-			device_sn = device_sn.substring(2);
-			deviceDao.delete(device_sn);
-			List<Dev_Trigger> trilist = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
-			if (trilist !=null) {
-				for (Dev_Trigger dev_trigger : trilist) {
-					String tirggerid = dev_trigger.getTriger_id();
-					String key = "LTKhU=GLGsWmPrpHICwWOnzx=bA=";
-					/**
-					 * 触发器删除
-					 * @param tirggerid:触发器ID,String
-					 * @param key:masterkey 或者 设备apikey
-					 */
-					DeleteTriggersApi api = new DeleteTriggersApi(tirggerid, key);
-					BasicResponse<Void> response = api.executeApi();
-					System.out.println("errno:"+response.errno+" error:"+response.error);
-				}
+	//删除设备，简版，需添加触发器删除
+	public Map<String, Object> delEquipment(String device_sn){
+		Device  d = deviceDao.findDevice(device_sn);
+		if(d!=null) {
+			int type = d.getType();
+			switch(type) {
+				case 1://传感器
+					sensorDao.delete(device_sn);
+					deviceDao.delete(device_sn);
+					break;
+				case 2://一体机
+					aioDao.delete(device_sn);
+					deviceDao.delete(device_sn);
+					break;
+				case 3://控制器
+					controllerDao.delete(device_sn);
+					deviceDao.delete(device_sn);
+					break;
 			}
-			dev_triggerDao.delete(device_sn);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		}
-			if (devices.equals("02")) {
-				aioDao.delete(device_sn);
-				statusDao.delete(device_sn);
-			} else if (devices.equals("01")) {
-				int sensorId = sensorDao.findSensorByDeviceSns(device_sn).getId();
-				sensorDao.delete(device_sn);
-				List<Sensor_Controller> list = sensor_ControllerDao.list(sensorId);
-				for (Sensor_Controller sensor_Controller : list) {
-					controller = controllerDao.findControllerById(sensor_Controller.getControllerId());
-					if (controller == null) {
-						continue;
-					} else {
-						//changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
-					}
-				}
-				sensor_ControllerDao.delete(sensorId);
-			} else if (devices.equals("03")) {
-				int controllerId = controllerDao.findControllerByDeviceSns(device_sn).getId();
-				controllerDao.delete(device_sn);
-			} else {
-				return RESCODE.DELETE_ERROR.getJSONRES();
-			}
-		return RESCODE.SUCCESS.getJSONRES();
+			return RESCODE.SUCCESS.getJSONRES();
+		}else {
+			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
+		}		
 	}
+//	public Map<String, Object> delEquipment(String device_sn) {
+//
+//		String devices;
+//		try {
+//			devices = device_sn.trim().substring(0, 2);
+//			device_sn = device_sn.substring(2);
+//			deviceDao.delete(device_sn);
+//			List<Dev_Trigger> trilist = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
+//			if (trilist !=null) {
+//				for (Dev_Trigger dev_trigger : trilist) {
+//					String tirggerid = dev_trigger.getTriger_id();
+//					String key = "LTKhU=GLGsWmPrpHICwWOnzx=bA=";
+//					/**
+//					 * 触发器删除
+//					 * @param tirggerid:触发器ID,String
+//					 * @param key:masterkey 或者 设备apikey
+//					 */
+//					DeleteTriggersApi api = new DeleteTriggersApi(tirggerid, key);
+//					BasicResponse<Void> response = api.executeApi();
+//					System.out.println("errno:"+response.errno+" error:"+response.error);
+//				}
+//			}
+//			dev_triggerDao.delete(device_sn);
+//		} catch (Exception e) {
+//			System.out.println(e.getMessage());
+//			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+//		}
+//			if (devices.equals("02")) {
+//				aioDao.delete(device_sn);
+//				statusDao.delete(device_sn);
+//			} else if (devices.equals("01")) {
+//				int sensorId = sensorDao.findSensorByDeviceSns(device_sn).getId();
+//				sensorDao.delete(device_sn);
+//				List<Sensor_Controller> list = sensor_ControllerDao.list(sensorId);
+//				for (Sensor_Controller sensor_Controller : list) {
+//					controller = controllerDao.findControllerById(sensor_Controller.getControllerId());
+//					if (controller == null) {
+//						continue;
+//					} else {
+//						//changeControllerPortStatusClose(controller, sensor_Controller.getController_port());
+//					}
+//				}
+//				sensor_ControllerDao.delete(sensorId);
+//			} else if (devices.equals("03")) {
+//				int controllerId = controllerDao.findControllerByDeviceSns(device_sn).getId();
+//				controllerDao.delete(device_sn);
+//			} else {
+//				return RESCODE.DELETE_ERROR.getJSONRES();
+//			}
+//		return RESCODE.SUCCESS.getJSONRES();
+//	}
 
 
 	public void changeControllerWayOnoff(String divsn, int way ,int key) {
@@ -178,8 +205,24 @@ public class EquipmentService {
 //		}
 //	}
 
-	public Map<String, Object> addSensor(String device_sn, String name, String relation,int type,int pondId) {
-		String deviceSn;
+	public Map<String, Object> addSensor(Sensor[] sensors) {
+		for (Sensor sensor:sensors){
+			if(deviceDao.findDevice(sensor.getDevice_sn())==null) {
+				//	logger.info();					
+					Device device = new Device();
+					device.setDevice_sn(sensor.getDevice_sn());
+					device.setType(1);
+					deviceDao.save(device);
+					System.out.println("添加了一个新的传感器");
+					
+				}
+			sensorDao.save(sensor);
+			System.out.println(sensor.getDevice_sn());
+		}
+		return RESCODE.SUCCESS.getJSONRES();
+
+		/*String device_sn, String name, String relation,int pondId
+		 * String deviceSn;
 		try {
 			deviceSn = device_sn.trim().substring(0, 2);
 			device_sn = device_sn.substring(2);
@@ -189,7 +232,7 @@ public class EquipmentService {
             }
 			Device device = new Device();
 			device.setDevice_sn(device_sn);
-			device.setType(type);
+
 			deviceDao.save(device);
 		} catch (Exception e) {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
@@ -229,21 +272,48 @@ public class EquipmentService {
                 } else
                     return RESCODE.DEVICESNS_INVALID.getJSONRES();
 
-                }
+                }*/
 	}
 
 
 	public Map<String, Object> addController(Controller[] controllers) {
 
 		for (Controller controller : controllers ){
-			 controllerDao.save(controller);
-			 System.out.println(controller.getDevice_sn());
+			if(deviceDao.findDevice(controller.getDevice_sn())==null) {
+			//	logger.info("");
+				
+				Device device = new Device();
+				device.setDevice_sn(controller.getDevice_sn());
+				device.setType(3);
+				deviceDao.save(device);
+				System.out.println("添加了一个新的控制器");
+				
+			}
+			controllerDao.save(controller);
+			System.out.println(controller.getDevice_sn()); 
 		}
 
 		return RESCODE.SUCCESS.getJSONRES();
 
 	}
-
+	//测试用，具体实现后续完成
+	public Map<String, Object> addAio(AIO[] aios) {
+		for (AIO aio:aios){
+			if(deviceDao.findDevice(aio.getDevice_sn())==null) {
+				
+				Device device = new Device();
+				device.setDevice_sn(aio.getDevice_sn());
+				device.setType(2);
+				deviceDao.save(device);
+				System.out.println("添加了一个一体机");
+				
+			}
+			aioDao.save(aio);
+			System.out.println(aio.getDevice_sn());
+			 
+		}
+		return RESCODE.SUCCESS.getJSONRES();
+	}
 
 
 	public Map<String, Object> realTimeData(String device_sn, int way) {
@@ -319,8 +389,8 @@ public class EquipmentService {
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
 	}
 
-	public Map<String, Object> realTimeData(String device_sn) {
-		System.out.println(device_sn);
+	public String realTimeData(String device_sn) {
+		/*System.out.println(device_sn);
 		String datastreamIds="temperature";
 		String devId=device_sn;
 		String sort = "ASC" ;
@@ -339,18 +409,121 @@ public class EquipmentService {
     	int obj4 =obj3.getInt("value");
     	//String obj5=obj3.getString("at");    	
      	System.out.println(obj4);
-    	return temp;
-
+    	return temp;*/
+		
+        /*JSONObject tempjson = JSONObject.fromObject(response.getJson());    
+        System.out.println(tempjson);
+    	JSONObject temp = tempjson.getJSONObject("data");
+    	JSONArray array= temp.getJSONArray("datastreams");
+    	JSONObject obj1 = array.getJSONObject(0);
+    	JSONArray obj2 =obj1.getJSONArray("datapoints");
+    	JSONObject obj3=obj2.getJSONObject(0);
+    	int obj4 =obj3.getInt("value");
+    	//String obj5=obj3.getString("at");    	
+     	System.out.println(obj4);*/
+		
+    	GetLatesDeviceData api = new GetLatesDeviceData(device_sn,key);
+        BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
+		return response.getJson();
 	}
 	
 	public Map<String, Object> myEquipment(String relation) {
 		List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(relation, null);
-		List<AIO> aios = aioDao.queryAIOByNameAndRelation(relation, null);
+ 		List<AIO> aios = aioDao.queryAIOByNameAndRelation(relation, null);
 		List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(relation, null);
+		List<String> conDSN = new ArrayList<String>();
+		List<String> aioDSN = new ArrayList<String>();
+		//控制器
+		//遍历获得设备编号
+		if(controllers!=null) {
+			for(Controller controller:controllers) {
+				if(conDSN==null) {
+					conDSN.add(controller.getDevice_sn());
+				}else {
+					boolean flag = true;
+					for(String s:conDSN) {
+						if(s.equals(controller.getDevice_sn())) {
+							flag = false;
+							break;
+						}
+					}
+					if(flag) {
+						conDSN.add(controller.getDevice_sn());
+					}
+				}
+			}
+		}
+		
+		if(aios!=null) {
+			for(AIO aio:aios) {
+				if(aioDSN==null) {
+					aioDSN.add(aio.getDevice_sn());
+				}else {
+					boolean flag = true;
+					for(String s:aioDSN) {
+						if(s.equals(aio.getDevice_sn())) {
+							flag = false;
+							break;
+						}
+					}
+					if(flag) {
+						aioDSN.add(aio.getDevice_sn());
+					}
+				}
+			}
+		}
+		
+		//根据设备编号获得控制器各路的具体参数
+		List<Object> ConResult = new ArrayList<>();
+		
+		for(String s:conDSN) {
+			Map<String, Object> ConResultSE = new HashMap<>();
+			List<Controller> cl = new ArrayList<Controller>();
+			for(Controller con:controllers) {
+				if(con.getDevice_sn().equals(s)) {
+					cl.add(con);
+				}
+			}
+			ConResultSE.put("id", s);
+			ConResultSE.put("content", cl);
+			ConResult.add(ConResultSE);
+		}
+		//一体机
+		//遍历获得所有一体机设备编号
+		
+		
+		//根据设备编号获得一体机各路的具体参数
+		List<Object> AioResult = new ArrayList<>();
+		
+		for(String s:aioDSN) {
+			Map<String, Object> AioResultSE = new HashMap<>();
+			List<AIO> al = new ArrayList<AIO>();
+			for(AIO aio:aios) {
+				if(aio.getDevice_sn().equals(s)) {
+					al.add(aio);
+				}
+			}
+			AioResultSE.put("id", s);
+			AioResultSE.put("content", al);
+			logger.debug("id:"+s);
+			AioResult.add(AioResultSE);
+		}		
+		
+		List<Object> senResult = new ArrayList<>();
+		
+		for(Sensor s:sensors) {
+			Map<String, Object> senResultSE = new HashMap<>();
+			List<Sensor> sl = new ArrayList<Sensor>();
+			sl.add(s);
+			senResultSE.put("id", s.getDevice_sn());
+			senResultSE.put("content", sl);
+			senResult.add(senResultSE);
+		}
+	
 		Map<String, Object> result = RESCODE.SUCCESS.getJSONRES();
-		result.put("sensor", sensors);
-		result.put("controller", controllers);
-		result.put("aio", aios);
+		result.put("controller", ConResult);
+		result.put("aio", AioResult);
+		result.put("sensor", senResult);
 		if (relation != null && relation.length() > 0) {
 			if (relation.contains("WX")) {
 				WXUser wxUser = wxUserDao.findUserByRelation(relation);
@@ -618,8 +791,8 @@ public class EquipmentService {
 		}
 	}
 
-	public Map<String, Object> dataToday(String device_sn, int way) {
-		List<Sensor_Data> list = new ArrayList<>();
+	public String dataToday(String device_sn, int way) {
+		/*List<Sensor_Data> list = new ArrayList<>();
 		if (way > 0) {
 			list = sensor_DataDao.today(device_sn, way);
 		} else {
@@ -654,8 +827,35 @@ public class EquipmentService {
 		map.put("oxygens", oxygens);
 		map.put("temperatures", temperatures);
 		return map;//
+*/
+		Date date = new Date();
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
+		String dataFormat1 = sdf1.format(date);
+		String dataFormat2  = sdf2.format(date);
+		String dataFormatEnd = dataFormat1+"T"+dataFormat2;
+		String dataFormatStart = dataFormat1+"T00:00:00";
+		
+		GetDatapointsListApi api = new GetDatapointsListApi(null, dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, 137,
+				null, null, null, key);
+		BasicResponse<DatapointsList> response = api.executeApi();
+		return response.getJson();
 	}
 
+	public String data3days(String device_sn, int way) {
+		Date date = new Date();
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
+		String dataFormat1 = sdf1.format(date);
+		String dataFormat2  = sdf2.format(date);
+		String dataFormatEnd = dataFormat1+"-"+date.getDate()+"T"+dataFormat2;
+		String dataFormatStart = dataFormat1+"-"+(date.getDate()-3)+"T"+dataFormat2;
+		GetDatapointsListApi api1 = new GetDatapointsListApi("temperature", dataFormatStart, null, device_sn,null,6000, "122320_31380529_1527020009053",null,
+				null, null, null, key);
+		BasicResponse<DatapointsList> response = api1.executeApi();
+		return response.getJson();
+	}
+	
 	public Map<String, Object> dataAll(String device_sn, int way,int day) {
 		List<Sensor_Data> list = new ArrayList<>();
 		if (way > 0) {
@@ -820,8 +1020,9 @@ public class EquipmentService {
 
 	}
 
-	public Map<String, Object> modifyEquipment(String device_sn, String name) {
-		String type = null;
+	public Map<String, Object> modifyEquipment(String device_sn, Object newEquipment) {
+		newEquipment.getClass().getName();
+		/*String type = null;
 		Map<String, Object> map = null;
 		try {
 			type = device_sn.substring(0, 2);
@@ -845,9 +1046,79 @@ public class EquipmentService {
 			map.put("equipment", controller);
 		}
 
-		return map;
-
+		return map;*/
+		return null;
 	}
+	
+	public Map<String, Object> modifySensor(Sensor sensor){
+		if(deviceDao.findDevice(sensor.getDevice_sn())==null) {
+			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
+		}else {
+			sensorDao.updateSensor(sensor);
+			return RESCODE.SUCCESS.getJSONRES();
+		}
+	}
+	
+	public Map<String, Object> modifyAio(AIO...aios){
+		String DSN = aios[0].getDevice_sn();
+		boolean flag = true;
+		//判断一体机是否存在
+		if(deviceDao.findDevice(DSN)==null) {
+			flag = false;
+		}
+		/*if(aioDao.findAIOByDeviceSns(DSN)==null) {
+			flag = false;
+		}*/
+		//判断是否为一个一体机的多路
+		for(AIO aio:aios) {
+			if(aio.getDevice_sn().equals(DSN)==false) {
+				flag = false;
+				break;
+			}
+		}
+		if(flag) {
+			for(AIO aio:aios) {
+				logger.debug("进入aio循环");
+			//	aioDao.updateByAioId(aio);
+				aioDao.update(aio);
+			}
+			return RESCODE.SUCCESS.getJSONRES();
+		}else {
+			return RESCODE.WRONG_PARAM.getJSONRES();
+		}
+	}
+	
+	public Map<String, Object> modifyController(Controller...controller){
+		String DSN = controller[0].getDevice_sn();
+		boolean flag = true;
+		//判断控制器是否存在
+		if(deviceDao.findDevice(DSN)==null) {
+			flag = false;
+		}
+		/*if(aioDao.findAIOByDeviceSns(DSN)==null) {
+			flag = false;
+		}*/
+		//判断是否为一个控制器的多路
+		for(Controller con:controller) {
+			if(con.getDevice_sn().equals(DSN)==false) {
+				flag = false;
+				break;
+			}
+		}
+		if(flag) {
+			for(Controller con:controller) {
+				logger.debug("进入控制器循环");
+			//	aioDao.updateByAioId(aio);
+				//aioDao.update(aio);
+				controllerDao.updateController(con);
+			}
+			return RESCODE.SUCCESS.getJSONRES();
+		}else {
+			return RESCODE.WRONG_PARAM.getJSONRES();
+		}
+	} 
+
+		
 	public void triggeractive(String data){
 		JSONObject tempjson = JSONObject.fromObject(data);
 

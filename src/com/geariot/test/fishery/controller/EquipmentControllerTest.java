@@ -73,7 +73,22 @@ public class EquipmentControllerTest {
 	@Test
 	public void realTimeData() throws Exception {
 		mockMvc.perform(get("/equipment/realTimeData").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sn", "032222220")
+				.param("device_sn", "31969520")
+		).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+	
+	@Test
+	public void dataToday() throws Exception {
+		mockMvc.perform(get("/equipment/dataToday").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sn", "31380529").param("way", "1")
+
+		).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+	
+	@Test
+	public void data3days() throws Exception {
+		mockMvc.perform(get("/equipment/data3days").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sn", "31380529").param("way", "1")
 
 		).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
@@ -103,6 +118,26 @@ public class EquipmentControllerTest {
 				.andDo(print()).andExpect(status().is2xxSuccessful());
 
 	}
+	
+	@Test
+	public void addSensorTest() throws Exception {
+		mockMvc.perform(post("/equipment/addSensor")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("[{\"device_sn\":\"56454546\",\"pondId\":1,\"relation\":\"WX14\",\"name\":\"小花\"}]"))
+				.andDo(print()).andExpect(status().is2xxSuccessful());
+
+	}
+	
+	@Test
+	public void modifyAioTest() throws Exception {
+		mockMvc.perform(post("/equipment/modifyAio")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("[{\"id\":15,\"device_sn\":\"56454546\",\"pondId\":1,\"relation\":\"WX14\",\"name\":\"小花15\"}]"))
+				.andDo(print()).andExpect(status().is2xxSuccessful());
+
+	}
+	
+	
 
 	@Test
 	public void autosetTest() throws Exception {
@@ -114,15 +149,16 @@ public class EquipmentControllerTest {
 	}
 
 
-
-
-
-
-
 	@Test
 	public void myEquipmentTest() throws Exception {
 		mockMvc.perform(get("/equipment/myEquipment").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("relation", "WX4")).andDo(print()).andExpect(status().is2xxSuccessful());
+				.param("relation", "WX14")).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+	
+	@Test
+	public void delEquipmentTest() throws Exception {
+		mockMvc.perform(get("/equipment/delEquipments").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("device_sn", "12345")).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 	
 	@Test

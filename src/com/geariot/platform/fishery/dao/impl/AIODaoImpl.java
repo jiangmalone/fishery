@@ -114,4 +114,20 @@ public class AIODaoImpl implements AIODao {
 		query.executeUpdate();
 	}
 
+	@Override
+	public void updateByAioId(AIO aio) {
+		String sql = "update aio set name = :name,pondId = :pondId,relation= :relation,status= :status,port= :port where id = :id";
+		getSession().createSQLQuery(sql).
+		setInteger("id", aio.getId()).
+/*		setString("device_sn", aio.getDevice_sn()).*/
+		setString("name",aio.getName()).
+		setInteger("pondId", aio.getPondId()).
+		setString("relation", aio.getRelation()).
+		setString("status", aio.getStatus()).
+		setInteger("port", aio.getPort()).
+		executeUpdate();
+		/*getSession().update(aio);*/
+		
+	}
+
 }

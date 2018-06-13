@@ -192,6 +192,7 @@ public class UserService {
 		exist.setAddress(wxuser.getAddress());
 		exist.setLife(wxuser.getLife());
 		exist.setSex(wxuser.getSex());
+		exist.setHeadimgurl(wxuser.getHeadimgurl());
 		wxuserDao.updateUser(exist);
 		
 		return RESCODE.SUCCESS.getJSONRES(exist);

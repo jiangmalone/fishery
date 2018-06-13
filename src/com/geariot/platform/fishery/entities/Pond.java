@@ -7,6 +7,7 @@ package com.geariot.platform.fishery.entities;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.List;
@@ -31,6 +32,11 @@ public class Pond {
 	private List<Sensor> sensors;		//查询时的传感器
 	private List<AIO> aios;				//查询时的一体机
 	
+	
+/*	private String adCode;				//区域编码
+*/	
+	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getId() {
@@ -121,5 +127,14 @@ public class Pond {
 	public void setAios(List<AIO> aios) {
 		this.aios = aios;
 	}
-	
+/*	@Transient
+	public String getAdCode() {
+		return adCode;
+	}
+	public void setAdCode(String adCode) {
+		
+		
+		this.adCode = adCode;
+	}
+	*/
 }

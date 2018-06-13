@@ -58,4 +58,6 @@ public interface PondDao {
 	long equipmentRelationCount(String relation);
 	
 	void deleteByRelation(String relation);
+
+	List<Pond> queryPondByRelation(String relation);
 }

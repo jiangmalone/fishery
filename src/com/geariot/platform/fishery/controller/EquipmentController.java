@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Controller;
+import com.geariot.platform.fishery.entities.Sensor;
+
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -29,7 +33,6 @@ public class EquipmentController {
 	@RequestMapping(value = "/changeControllerWayOnoff",method = RequestMethod.GET)
 	public void changeControllerWayOnoff(String divsn, int way ,int key){
 		equipmentService.changeControllerWayOnoff(divsn,way,key);
-
 	}
 
 
@@ -43,24 +46,48 @@ public class EquipmentController {
 		return equipmentService.modifyEquipment(device_sn,name);
 	}
 
-	@RequestMapping(value = "/addSensor", method = RequestMethod.GET)
-	public Map<String, Object> addEquipment(String device_sn, String name, String relation,int type,int pondId) {
-		return equipmentService.addSensor(device_sn, name, relation, type,pondId);
+	@RequestMapping(value = "/addSensor", method = RequestMethod.POST)
+	public Map<String, Object> addEquipment(@RequestBody Sensor... sensors) {
+		return equipmentService.addSensor(sensors);
+	}
+	@RequestMapping(value = "/modifySensor", method = RequestMethod.POST)
+	public Map<String, Object> modifySensor(@RequestBody Sensor sensor) {
+		return equipmentService.modifySensor(sensor);
 	}
 
 	@RequestMapping(value = "/addController", method = RequestMethod.POST)
 	public Map<String, Object> addController(@RequestBody Controller... controllers) {
 		return equipmentService.addController(controllers);
 	}
+	
+	@RequestMapping(value = "/modifyController", method = RequestMethod.POST)
+	public Map<String, Object> modifyController(@RequestBody Controller... controllers) {
+		return equipmentService.modifyController(controllers);
+	}
+	
+	@RequestMapping(value = "/addAio", method = RequestMethod.POST)
+	public Map<String, Object> addController(@RequestBody AIO... aios) {
+		return equipmentService.addAio(aios);
+	}
+	
+	@RequestMapping(value = "/modifyAio", method = RequestMethod.POST)
+	public Map<String, Object> modifyAio(@RequestBody AIO... aios) {
+		return equipmentService.modifyAio(aios);
+	}
 
 	@RequestMapping(value = "/realTimeData", method = RequestMethod.GET)
-	public Map<String, Object> realTimeData(String device_sn) {
+	public String realTimeData(String device_sn) {
 		return equipmentService.realTimeData(device_sn);
 	}
 
 	@RequestMapping(value = "/dataToday", method = RequestMethod.GET)
-	public Map<String, Object> dataToday(String device_sn,int way) {
+	public String dataToday(String device_sn,int way) {
 		return equipmentService.dataToday(device_sn,way);
+	}
+	
+	@RequestMapping(value = "/data3days", method = RequestMethod.GET)
+	public String data3days(String device_sn,int way) {
+		return equipmentService.data3days(device_sn,way);
 	}
 	
 	@RequestMapping(value = "/dataAll", method = RequestMethod.GET)

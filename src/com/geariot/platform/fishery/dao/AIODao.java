@@ -17,6 +17,8 @@ public interface AIODao {
 	void deleteByRelation(String relation);
 	
 	void updateByPondId(int pondId);
+	
+	void updateByAioId(AIO aio);
 
 	AIO findAIOById(int AIOId);
 	

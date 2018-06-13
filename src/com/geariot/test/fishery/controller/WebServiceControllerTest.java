@@ -39,11 +39,20 @@ private MockMvc mockMvc;
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context).build();
 	}
 	
-	@Test
+/*	@Test
 	public void weatherTest() throws Exception{
+		
 		mockMvc.perform(get("/webService/weather").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param("city", "320100"))
+		.andDo(print()).andExpect(status().is2xxSuccessful());
+	}*/
+	@Test
+	public void weatherTest() throws Exception{
+		
+		mockMvc.perform(get("/webService/weather").
+				contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("lon", "118.87474").param("lat", "32.13955"))
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 

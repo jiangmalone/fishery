@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.WebServiceService;
 import com.geariot.platform.fishery.utils.Constants;
@@ -24,6 +25,8 @@ import com.geariot.platform.fishery.utils.HttpRequest;
 import com.geariot.platform.fishery.utils.MD5;
 import com.geariot.platform.fishery.wxutils.WechatConfig;
 import com.geariot.platform.fishery.wxutils.WechatLoginUse;
+
+import net.sf.json.JSONArray;
 
 @Controller
 @RequestMapping("/webService")
@@ -33,8 +36,11 @@ public class WebServiceController {
 	private WebServiceService webServiceService;
 
 	private String mapApiKey = "1fb41392b17b0575e03b5374cb7b029f";
-
+	//根据adcode获取天气
 	private String weatherUrl = "http://restapi.amap.com/v3/weather/weatherInfo";
+	//根据经纬度获取adcode
+	private String adcodeUrl = "http://restapi.amap.com/v3/geocode/regeo";
+	private String key = "9c61f7bef1593d00ddbd8fad03070e25";
 
 	private String weatherExtensions = "all";
 
@@ -52,7 +58,7 @@ public class WebServiceController {
 
 	private Logger logger = LogManager.getLogger(WebServiceController.class);
 
-	@RequestMapping(value = "/weather", method = RequestMethod.GET)
+/*	@RequestMapping(value = "/weather", method = RequestMethod.GET)
 	@ResponseBody
 	public String getWeatherTest(String city) {
 		Map<String, Object> param = new HashMap<>();
@@ -62,6 +68,40 @@ public class WebServiceController {
 		Map<String, Object> head = setWeatherHead();
 		String result = HttpRequest.getCall(weatherUrl, param, head);
 		return result;
+
+	}*/
+	
+	@RequestMapping(value = "/weather", method = RequestMethod.GET)
+	@ResponseBody
+	public String getWeatherTest(Float lon,Float lat) {
+		/*经度在前，纬度在后，经纬度间以“,”分割，经纬度小数点后不要超过 6 位。*/
+		lon = (float)(Math.round(lon*1000000))/1000000;
+		lat = (float)(Math.round(lat*1000000))/1000000;
+		
+		String location = lon+","+lat;
+		
+		/*"118.87474,32.13955"*/
+		Map<String, Object> param = new HashMap<>();
+	    param.put("key", mapApiKey);
+		param.put("location", location);
+		Map<String, Object> head = setWeatherHead();
+		String result = HttpRequest.getCall(adcodeUrl, param, head);
+		JSONArray json = JSONArray.fromObject("["+result+"]"); 
+		net.sf.json.JSONObject object = json.getJSONObject(0);
+		String str = object.get("regeocode").toString();
+		JSONArray jso = JSONArray.fromObject("["+str+"]"); 
+		net.sf.json.JSONObject objec = jso.getJSONObject(0);		
+		String st = objec.get("addressComponent").toString();
+		JSONArray js= JSONArray.fromObject("["+st+"]"); 
+		net.sf.json.JSONObject obje = js.getJSONObject(0);
+
+		Map<String, Object> param1 = new HashMap<>();
+		param1.put("city", obje.get("adcode").toString());
+		param1.put("extensions", weatherExtensions);
+		param1.put("key", mapApiKey);
+		Map<String, Object> head1 = setWeatherHead();
+		String result1 = HttpRequest.getCall(weatherUrl, param1, head1);
+		return result1;
 
 	}
 

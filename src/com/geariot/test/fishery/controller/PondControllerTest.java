@@ -44,7 +44,7 @@ public class PondControllerTest {
 	public void addPondTest() throws Exception{
 		mockMvc.perform(post("/pond/addPond").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("name", "ffffffff")
+				.param("name", "dbjkvbjkf")
 				.param("area", "20.0")
 				.param("address", "南京小易信息")
 				.param("longitude", "75.1234")
@@ -53,9 +53,8 @@ public class PondControllerTest {
 				.param("sediment_thickness", "0.5")
 				.param("depth", "15.0")
 				.param("density", "1.2")
-				.param("relation", "WX3")
+				.param("relation", "WX999")
 				.param("fish_categorys", "鲫鱼")
-				.param("fish_categorys", "刀鱼")
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
@@ -94,8 +93,8 @@ public class PondControllerTest {
 	public void queryPondTest() throws Exception{
 		mockMvc.perform(get("/pond/query").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("name", "息")
-				.param("relation", "WX12")
+				.param("name", "小池塘")
+				.param("relation", "WX14")
 				.param("page","1")
 				.param("number","10")
 				)
@@ -115,9 +114,9 @@ public class PondControllerTest {
 	
 	@Test
 	public void wxQueryTest() throws Exception{
-		mockMvc.perform(get("/pond/wxQuery").
+		mockMvc.perform(get("/pond/WXquery").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("relation", "WX4")
+				.param("relation", "CO2")
 				)
 		.andDo(print()).andExpect(status().is2xxSuccessful());
 	}

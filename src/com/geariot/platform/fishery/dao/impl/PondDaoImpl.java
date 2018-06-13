@@ -334,4 +334,11 @@ public class PondDaoImpl implements PondDao {
 		query.executeUpdate();
 	}
 
+	@Override
+	public List<Pond> queryPondByRelation(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Pond");
+		Query query = queryUtils.addString("relation",relation).getQuery();
+		return query.list();
+	}
+
 }

@@ -13,7 +13,7 @@ public interface TimerDao {
 
 	Timer findTimerById(int timerId);
 	
-	Timer findTimerByDeviceSnAndWay(String deviceSn,int way);
+	List<Timer> findTimerByDeviceSnAndWay(String deviceSn,int way);
 	
 	List<Timer> findAllTimer();
 

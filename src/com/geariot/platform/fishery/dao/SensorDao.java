@@ -27,6 +27,8 @@ public interface SensorDao {
 	long querySensorByNameAndRelationCount(String relation, String name);
 
 	List<Sensor> findSensorsByPondId(int pondId);
+	
+	List<Sensor> findSensorsByRelation(String relation);
 
 	void updateByPondId(int pondId);
 	

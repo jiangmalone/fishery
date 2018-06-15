@@ -50,19 +50,22 @@ public class LimitDaoImpl implements LimitDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Limit_Install> queryLimitByDeviceSn(String device_sn, int from, int pageSize) {
-		QueryUtils qutils = new QueryUtils(getSession(), "Limit_Install");
-		Query query = qutils.addStringLike("device_sn", device_sn)
-		.setFirstResult(from)
-		.setMaxResults(pageSize)
+	public List<Limit_Install> queryLimitByDeviceSn(String device_sn) {
+		QueryUtils qutils = new QueryUtils(getSession(), "limit_install");
+		Query query = qutils.addString("device_sn", device_sn)
 		.getQuery();
 		return query.list();
 	}
 
 	@Override
 	public void updateLimit(Limit_Install limit_Install) {
-		// TODO Auto-generated method stub
-		this.getSession().merge(limit_Install);
+		String sql = "update limit_install set high_limit=:high_limit,low_limit=:low_limit,up_limit=:up_limit where device_sn = :device_sn and way = :way";
+		getSession().createSQLQuery(sql)
+		.setFloat("high_limit", limit_Install.getHigh_limit())
+		.setFloat("low_limit", limit_Install.getLow_limit())
+		.setFloat("up_limit", limit_Install.getUp_limit())
+		.setString("device_sn", limit_Install.getDevice_sn())
+		.setInteger("way", limit_Install.getWay()).executeUpdate();
 	}
 
 	@Override

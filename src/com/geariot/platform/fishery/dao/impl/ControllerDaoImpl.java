@@ -114,4 +114,11 @@ public class ControllerDaoImpl implements ControllerDao {
 		query.executeUpdate();
 	}
 
+	@Override
+	public List<Controller> findByRelation(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
+		Query query = queryUtils.addString("relation", relation).getQuery();
+		return query.list();
+	}
+
 } 

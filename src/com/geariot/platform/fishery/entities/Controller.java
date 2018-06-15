@@ -15,7 +15,7 @@ public class Controller {
 
 	private int id;						//控制器Id,自增
 	private String device_sn;			//控制器设备编号
-	private int type;                   //0.增氧机1.投饵机2.打水机4.其他	
+	private int type;                   //0.增氧机1.投饵机2.打水机3.其他	
 	private int pondId;					//绑定的塘口Id
 	private String relation;			//绑定的用户relation
 	private String name;				//控制器名称

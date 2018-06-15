@@ -8,11 +8,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.geariot.platform.fishery.dao.LimitDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Controller;
+import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Sensor;
 
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.List;
 import java.util.Map;
 
 //import com.geariot.platform.fishery.socket.CMDUtils;
@@ -51,8 +55,8 @@ public class EquipmentController {
 		return equipmentService.addSensor(sensors);
 	}
 	@RequestMapping(value = "/modifySensor", method = RequestMethod.POST)
-	public Map<String, Object> modifySensor(@RequestBody Sensor sensor) {
-		return equipmentService.modifySensor(sensor);
+	public Map<String, Object> modifySensor(@RequestBody Sensor...sensors) {
+		return equipmentService.modifySensor(sensors);
 	}
 
 	@RequestMapping(value = "/addController", method = RequestMethod.POST)
@@ -124,7 +128,18 @@ public class EquipmentController {
 	public Map<String, Object> autoSet(@RequestBody Timer timer){
 		return equipmentService.setTimer(timer);
 	}
-
+	
+	@RequestMapping(value = "/setLimit", method = RequestMethod.POST)
+	public void setLimit(@RequestBody Limit_Install limit_Install){
+		equipmentService.setLimit(limit_Install);
+	}
+	
+	@RequestMapping(value = "/getLimit", method = RequestMethod.GET)
+	public List<Limit_Install> getLimit(String device_sn){
+		 List<Limit_Install> limitList = equipmentService.queryLimitByDeviceSn(device_sn);
+		 return limitList;
+	}
+	
 	@RequestMapping(value ="/triggeractive", method = RequestMethod.POST)
 	public void alarmIsRead(@RequestBody String data){
 		equipmentService.triggeractive(data);

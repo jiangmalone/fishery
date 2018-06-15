@@ -114,4 +114,11 @@ public class SensorDaoImpl implements SensorDao {
 		query.executeUpdate();
 	}
 
+	@Override
+	public List<Sensor> findSensorsByRelation(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Sensor");
+		Query query = queryUtils.addString("relation", relation).getQuery();
+		return query.list();
+	}
+
 }

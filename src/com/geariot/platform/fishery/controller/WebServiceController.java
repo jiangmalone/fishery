@@ -97,7 +97,7 @@ public class WebServiceController {
 
 		Map<String, Object> param1 = new HashMap<>();
 		param1.put("city", obje.get("adcode").toString());
-		param1.put("extensions", weatherExtensions);
+		param1.put("extensions", "base");
 		param1.put("key", mapApiKey);
 		Map<String, Object> head1 = setWeatherHead();
 		String result1 = HttpRequest.getCall(weatherUrl, param1, head1);

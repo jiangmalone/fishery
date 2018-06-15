@@ -2,8 +2,10 @@ package com.geariot.platform.fishery.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,20 @@ import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.entities.Controller;
+import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.entities.Sensor;
+import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
+
+import cmcc.iot.onenet.javasdk.api.device.GetDevicesStatus;
+import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
+import cmcc.iot.onenet.javasdk.response.BasicResponse;
+import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
+import cmcc.iot.onenet.javasdk.response.device.DevicesStatusList;
+
 
 @Service
 @Transactional
@@ -67,6 +78,7 @@ public class UserService {
     
     @Autowired
     private PondService pondService;
+    
     
 	public Map<String, Object> addWXUser(WXUser wxuser) {
 		WXUser exist = wxuserDao.findUserByOpenId(wxuser.getOpenId());
@@ -256,5 +268,96 @@ public class UserService {
 			case "CO" :	return CompanyDetail(Integer.parseInt(relation.substring(2)));
 			default : return RESCODE.WRONG_PARAM.getJSONRES();
 		}
+	}
+	public Map<String, Object> HomePageDetail(String relation) {
+		String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+		Map<String, Object> map = new HashMap<>();
+		List<Object> ol = new ArrayList<>();
+ 		WXUser wxu = wxuserDao.findUserByRelation(relation);
+		List<Pond> pondList = pondDao.queryPondByRelation(relation);
+
+		for(Pond pond:pondList) {
+			Map<String, Object> map11=new HashMap<>();
+			map11.put("pondname", pond.getName());
+			map11.put("address", pond.getAddress());
+			map11.put("lat", pond.getLatitude());
+			map11.put("lon", pond.getLongitude());
+			List<Sensor> sensorlist = sensorDao.findSensorsByPondId(pond.getId());
+			List<Map> sensorLM = new ArrayList<>();
+			List<AIO> aioList = aioDao.findAIOsByPondId(pond.getId());
+			List<Map> aioLM = new ArrayList<>();
+			List<Controller> controllerList = controllerDao.findByPondId(pond.getId());
+			List<Map> controllerLM = new ArrayList<>();
+			//获得传感器离线/在线
+			if(sensorlist!=null) {
+				
+				for(Sensor sensor:sensorlist) {
+					Map<String, Object> sensorMap=new HashMap<>();
+					Map<String, Object> sensorDataMap=new HashMap<>();
+					GetDevicesStatus api = new GetDevicesStatus(sensor.getDevice_sn(),key);
+			        BasicResponse<DevicesStatusList> response = api.executeApi();
+			        if(response.errno == 0) {
+			        	sensorMap.put("online", response.data.getDevices().get(0).getIsonline());
+			        }else {
+			        	sensorMap.put("online", false);
+			        }
+			        GetLatesDeviceData lddapi = new GetLatesDeviceData(sensor.getDevice_sn(), key);
+			        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
+			        if(response2.errno == 0) {
+			        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response2.data.getDevices().get(0).getDatastreams();
+				        for(int i=0;i<DatastreamsList.size();i++) {
+				        	sensorDataMap.put(DatastreamsList.get(i).getId(), DatastreamsList.get(i).getValue());
+				        }
+			        	sensorMap.put("data", sensorDataMap);
+			        }else {
+			        	sensorMap.put("data", false);
+			        }
+			        sensorMap.put("sensor", sensor);
+			        sensorLM.add(sensorMap);
+				}
+			}
+			//获得一体机离线/在线
+			if(aioList!=null) {
+				
+				for(AIO aio:aioList) {
+					Map<String, Object> aioMap=new HashMap<>();
+					GetDevicesStatus api = new GetDevicesStatus(aio.getDevice_sn(),key);
+			        BasicResponse<DevicesStatusList> response = api.executeApi();
+			        if(response.errno == 0) {
+			        	aioMap.put("online", response.data.getDevices().get(0).getIsonline());
+			        }
+			        aioMap.put("aio", aio);
+			        aioLM.add(aioMap);
+				}
+			}
+			//获得控制器离线/在线
+			if(controllerList!=null) {
+				
+				for(Controller controller:controllerList) {
+					Map<String, Object> controllerMap=new HashMap<>();
+					GetDevicesStatus api = new GetDevicesStatus(controller.getDevice_sn(),key);
+			        BasicResponse<DevicesStatusList> response = api.executeApi();
+			        if(response.errno == 0) {
+			        	controllerMap.put("online", response.data.getDevices().get(0).getIsonline());
+			        }
+			        List<Timer> timerList = timerDao.queryTimerByDeviceSn(controller.getDevice_sn(), 0, 20);
+			        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
+			       // List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(controller.getDevice_sn());
+			        controllerMap.put("TimerList", timerList);
+			        controllerMap.put("Limit", limit);
+			        controllerMap.put("controller", controller);
+			        controllerLM.add(controllerMap);
+				}
+			}
+			
+			
+			
+			map11.put("sensorlist", sensorLM);
+			map11.put("aioList", aioLM);
+			map11.put("controllerList", controllerLM);	
+			ol.add(map11);			
+		}
+		map.put("myHome", ol);
+		return map;
 	}
 }

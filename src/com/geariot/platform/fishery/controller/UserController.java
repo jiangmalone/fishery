@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -69,5 +70,10 @@ public class UserController {
 	@RequestMapping(value = "/relationDetail" , method = RequestMethod.GET)
 	public Map<String,Object> relationDetail(String relation){
 		return userService.relationDetail(relation);
+	}
+	
+	@RequestMapping(value = "/HomePageDetail" , method = RequestMethod.GET)
+	public Map<String, Object> HomePageDetail(String relation){
+		return userService.HomePageDetail(relation);
 	}
 }

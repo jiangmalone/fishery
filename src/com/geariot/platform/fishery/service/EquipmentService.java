@@ -316,7 +316,7 @@ public class EquipmentService {
 	}
 
 
-	public Map<String, Object> realTimeData(String device_sn, int way) {
+	/*public Map<String, Object> realTimeData(String device_sn, int way) {
 		String deviceSn;
 		Sensor_Data data = null;
 		Map<String, Object> map = null;
@@ -387,7 +387,7 @@ public class EquipmentService {
 				return RESCODE.OFF_LINE.getJSONRES();
 		}else
 			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-	}
+	}*/
 
 	public String realTimeData(String device_sn) {
 		/*System.out.println(device_sn);
@@ -540,6 +540,18 @@ public class EquipmentService {
 		return result;
 	}
 
+	public Map<String, Object> setLimit(Limit_Install limit_Install){
+		String device_sn = limit_Install.getDevice_sn();
+		int way = limit_Install.getWay();
+		if(limitDao.findLimitByDeviceSnsAndWay(device_sn, way)==null) {
+			limitDao.save(limit_Install);
+			return RESCODE.SUCCESS.getJSONRES();
+		}else {
+			limitDao.updateLimit(limit_Install);
+			return RESCODE.SUCCESS.getJSONRES();
+		}		
+	}
+	
 	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number) {
 		int from = (page - 1) * number;
 		if ((device_sn == null || device_sn.length() < 0) && (userName == null || userName.length() < 0)) {
@@ -1008,17 +1020,22 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> setTimer(Timer timer) {
-		Timer exist = timerDao.findTimerByDeviceSnAndWay(timer.getDevice_sn(),timer.getWay());
+		List<Timer> exist = timerDao.findTimerByDeviceSnAndWay(timer.getDevice_sn(),timer.getWay());
 		if (exist == null) {
 			timerDao.save(timer);
 			return RESCODE.SUCCESS.getJSONRES();
 		} else {
-			timer.setId(exist.getId());
 			timerDao.updateTimer(timer);
 			return RESCODE.SUCCESS.getJSONRES();
-			}
+		}
 
 	}
+	
+	/*public Map<String, Object> setTimer(List<Timer> timerList){
+		
+		
+		return null;
+	}*/
 
 	public Map<String, Object> modifyEquipment(String device_sn, Object newEquipment) {
 		newEquipment.getClass().getName();
@@ -1050,13 +1067,22 @@ public class EquipmentService {
 		return null;
 	}
 	
-	public Map<String, Object> modifySensor(Sensor sensor){
-		if(deviceDao.findDevice(sensor.getDevice_sn())==null) {
-			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
-		}else {
-			sensorDao.updateSensor(sensor);
-			return RESCODE.SUCCESS.getJSONRES();
+	public Map<String, Object> modifySensor(Sensor...sensors){
+		boolean flag = false;
+		for(Sensor sensor:sensors) {
+			if(deviceDao.findDevice(sensor.getDevice_sn())==null) {
+				flag = false;
+			}else {
+				sensorDao.updateSensor(sensor);
+				flag = true;
+			}
 		}
+		if(flag) {
+			return RESCODE.SUCCESS.getJSONRES();
+		}else {
+			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
+		}
+		
 	}
 	
 	public Map<String, Object> modifyAio(AIO...aios){
@@ -1118,6 +1144,14 @@ public class EquipmentService {
 		}
 	} 
 
+	/*
+	 * 获取limit_install
+	 */
+	public List<Limit_Install> queryLimitByDeviceSn(String device_sn){
+		List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(device_sn);
+		return limitList;
+	}
+	
 		
 	public void triggeractive(String data){
 		JSONObject tempjson = JSONObject.fromObject(data);

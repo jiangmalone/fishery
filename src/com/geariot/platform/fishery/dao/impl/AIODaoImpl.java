@@ -130,4 +130,11 @@ public class AIODaoImpl implements AIODao {
 		
 	}
 
+	@Override
+	public List<AIO> findAIOByRelation(String relation) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from AIO");
+		Query query = queryUtils.addString("relation", relation).getQuery();
+		return query.list();
+	}
+
 }

@@ -1,7 +1,12 @@
 package com.geariot.platform.fishery.controller;
 
 import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.EquipmentService;
+
+import sun.invoke.empty.Empty;
+import sun.util.logging.resources.logging;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +17,7 @@ import com.geariot.platform.fishery.dao.LimitDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Limit_Install;
+import com.geariot.platform.fishery.entities.Param;
 import com.geariot.platform.fishery.entities.Sensor;
 
 import javax.servlet.http.HttpServletResponse;
@@ -124,14 +130,49 @@ public class EquipmentController {
 		return equipmentService.companyFindEquipment(device_sn, relation, page, number);
 	}
 	
-	@RequestMapping(value = "/setTimer", method = RequestMethod.POST)
-	public Map<String, Object> autoSet(@RequestBody Timer timer){
-		return equipmentService.setTimer(timer);
+	/*@RequestMapping(value = "/addTimer", method = RequestMethod.POST)
+	public Map<String, Object> autoSet(@RequestBody Timer...timers){
+		for(Timer timer:timers) {
+			equipmentService.addTimer(timer);
+		}
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 	
+	@RequestMapping(value = "/modifyTimer", method = RequestMethod.POST)
+	public Map<String, Object> modifySet(@RequestBody Timer...timers){
+		equipmentService.
+		for(Timer timer:timers) {
+			String str = timer.getId()+"";
+			if(str.equals("")) {
+				equipmentService.addTimer(timer);
+			}else {
+				equipmentService.modifyTimer(timer);
+			}
+		}
+		return RESCODE.SUCCESS.getJSONRES();
+	}*/
+	
+	@RequestMapping(value = "/setTimer", method = RequestMethod.POST)
+	public Map<String, Object> autoSet(@RequestBody Param param){
+		System.out.println("设备id："+param.getDevice_sn());
+		System.out.println("设备id："+param.getWay());
+		System.out.println("timer长度："+param.getTimers().length);
+		//先删除
+		equipmentService.delTimer(param.getDevice_sn(),  param.getWay());
+		//后添加
+		for(Timer timer:param.getTimers()) {
+			equipmentService.addTimer(timer);
+		}
+		return RESCODE.SUCCESS.getJSONRES();
+
+		
+	}
+	
+	
 	@RequestMapping(value = "/setLimit", method = RequestMethod.POST)
-	public void setLimit(@RequestBody Limit_Install limit_Install){
+	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){
 		equipmentService.setLimit(limit_Install);
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 	
 	@RequestMapping(value = "/getLimit", method = RequestMethod.GET)

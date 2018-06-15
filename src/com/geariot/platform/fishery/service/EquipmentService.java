@@ -75,8 +75,12 @@ public class EquipmentService {
 
 	@Autowired
 	private Dev_TriggerDao dev_triggerDao;
+	
 	@Autowired
 	private DeviceDao deviceDao;
+	
+	@Autowired
+	private FishCateDao fishcateDao;
 
 	@Autowired
 	private SocketSerivce socketService;
@@ -84,7 +88,8 @@ public class EquipmentService {
 	@Autowired
 	private BindService bindService;
 	
-
+	
+	
 	private String type = "";
 	private String relation = "";
 	private Company company = null;
@@ -106,7 +111,7 @@ public class EquipmentService {
 
 
 	}
-	//删除设备，简版，需添加触发器删除
+	//删除设备，简版,暂未添加触发器删除
 	public Map<String, Object> delEquipment(String device_sn){
 		Device  d = deviceDao.findDevice(device_sn);
 		if(d!=null) {
@@ -115,6 +120,7 @@ public class EquipmentService {
 				case 1://传感器
 					sensorDao.delete(device_sn);
 					deviceDao.delete(device_sn);
+					
 					break;
 				case 2://一体机
 					aioDao.delete(device_sn);
@@ -205,74 +211,43 @@ public class EquipmentService {
 //		}
 //	}
 
-	public Map<String, Object> addSensor(Sensor[] sensors) {
-		for (Sensor sensor:sensors){
-			if(deviceDao.findDevice(sensor.getDevice_sn())==null) {
-				//	logger.info();					
-					Device device = new Device();
-					device.setDevice_sn(sensor.getDevice_sn());
-					device.setType(1);
-					deviceDao.save(device);
-					System.out.println("添加了一个新的传感器");
-					
-				}
-			sensorDao.save(sensor);
-			System.out.println(sensor.getDevice_sn());
-		}
-		return RESCODE.SUCCESS.getJSONRES();
-
-		/*String device_sn, String name, String relation,int pondId
-		 * String deviceSn;
-		try {
-			deviceSn = device_sn.trim().substring(0, 2);
-			device_sn = device_sn.substring(2);
-            Device devexist = deviceDao.findDevice(device_sn);
-            if (devexist != null) {
-                return RESCODE.SENSOR_EXIST.getJSONRES();
-            }
-			Device device = new Device();
-			device.setDevice_sn(device_sn);
-
-			deviceDao.save(device);
-		} catch (Exception e) {
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		}
-		logger.debug("塘口Id:" + pondId + "尝试与传感器设备,设备编号为:" + device_sn + "进行绑定...");
-		Pond pond = pondDao.findPondByPondId(pondId);
-		if (pond == null) {
-			logger.debug("塘口Id:" + pondId + "在数据库中无记录!!!");
-			return RESCODE.NOT_FOUND.getJSONRES();
-		} else {
-                  if (deviceSn.equals("01")) {
-                    Sensor exist = sensorDao.findSensorByDeviceSns(device_sn);
-                    if (exist != null) {
-                        return RESCODE.SENSOR_EXIST.getJSONRES();
-                    }
-
-                    Sensor sensor = new Sensor();
-                    sensor.setDevice_sn(device_sn);
-                    sensor.setName(name);
-                    sensor.setRelation(relation);
-                    sensor.setStatus(1);
-                    sensor.setPondId(pondId);
-                    sensor.setPort_status("00");
-                    sensorDao.save(sensor);
-                    Pond sensorbindpond=pondDao.findPondByPondId(pondId);
-                    List<PondFish> senbindfish=pond.getPondFishs();
-                    int pondfishtype;
-                    if (senbindfish!=null){
-                        PondFish senbinfs=senbindfish.get(0);
-                        pondfishtype=senbinfs.getType();
-                    }else return RESCODE.DEVICESNS_INVALID.getJSONRES();
-                    int triggeraddresult=addTrigerbyFishtype(device_sn, pondfishtype);
-                    if (triggeraddresult==0)
-                        return RESCODE.SUCCESS.getJSONRES();
-                    else return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-                } else
-                    return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-                }*/
+	public Map<String, Object> addSensor(Sensor...sensors) {
+	//只可添加一个传感器，数组形式为便于前端渲染	
+			Sensor sensor  =sensors[0];
+			if(deviceDao.findDevice(sensor.getDevice_sn())==null) {				
+				Device device = new Device();
+				device.setDevice_sn(sensor.getDevice_sn());
+				device.setType(1);
+				deviceDao.save(device);					
+				//添加触发器					
+				logger.debug("在device中添加了一个传感器");
+				sensorDao.save(sensor);
+				logger.debug("在sensor中添加了一个传感器");
+				logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
+				
+				Pond pond = pondDao.findPondByPondId(sensor.getPondId());
+				if (pond == null) {
+					logger.debug("塘口Id:" + pond.getId() + "在数据库中无记录!!!");
+					return RESCODE.NOT_FOUND.getJSONRES();
+				}else {
+					Pond sensorbindpond=pondDao.findPondByPondId(sensor.getPondId());
+		            List<PondFish> senbindfish=pond.getPondFishs();
+		            
+		            int pondfishtype;
+		            String pondfish;
+		            if (senbindfish!=null){
+		                PondFish senbinfs=senbindfish.get(0);
+		                pondfishtype=senbinfs.getType();
+		                pondfish = senbinfs.getFish_name();
+		            }else return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		            int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfish);
+		            if (triggeraddresult==0)
+		                return RESCODE.SUCCESS.getJSONRES();
+		            else return RESCODE.DEVICESNS_INVALID.getJSONRES();					
+				}					
+			}else {
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();	
+			}
 	}
 
 
@@ -541,15 +516,15 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> setLimit(Limit_Install limit_Install){
-		String device_sn = limit_Install.getDevice_sn();
+		/*String device_sn = limit_Install.getDevice_sn();
 		int way = limit_Install.getWay();
 		if(limitDao.findLimitByDeviceSnsAndWay(device_sn, way)==null) {
 			limitDao.save(limit_Install);
 			return RESCODE.SUCCESS.getJSONRES();
-		}else {
+		}else {*/
 			limitDao.updateLimit(limit_Install);
 			return RESCODE.SUCCESS.getJSONRES();
-		}		
+	/*	}	*/	
 	}
 	
 	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number) {
@@ -1019,23 +994,28 @@ public class EquipmentService {
 		return map;//
 	}
 
-	public Map<String, Object> setTimer(Timer timer) {
-		List<Timer> exist = timerDao.findTimerByDeviceSnAndWay(timer.getDevice_sn(),timer.getWay());
-		if (exist == null) {
-			timerDao.save(timer);
-			return RESCODE.SUCCESS.getJSONRES();
-		} else {
-			timerDao.updateTimer(timer);
-			return RESCODE.SUCCESS.getJSONRES();
-		}
+	public Map<String, Object> addTimer(Timer timer) {
+		timerDao.save(timer);
+		return RESCODE.SUCCESS.getJSONRES();
+	}
+	
+	public List<Timer> getTimerByDevice_snandWay(String device_sn,int way){
+		List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(device_sn, way);
+		return timerList;
+	}
+	
+	public Map<String, Object> modifyTimer(Timer timer) {
+		timerDao.updateTimer(timer);
+		return RESCODE.SUCCESS.getJSONRES();
 
 	}
 	
-	/*public Map<String, Object> setTimer(List<Timer> timerList){
-		
-		
-		return null;
-	}*/
+	public Map<String, Object> delTimer(String device_sn,int way) {
+		timerDao.delete(device_sn, way);
+		return RESCODE.SUCCESS.getJSONRES();
+
+	}
+	
 
 	public Map<String, Object> modifyEquipment(String device_sn, Object newEquipment) {
 		newEquipment.getClass().getName();
@@ -1204,9 +1184,10 @@ public class EquipmentService {
 	}
 
 
-	public int addTrigerbyFishtype(String device_sn,int fishtype){
-	    if (fishtype==0) {
-            int trigger1 = addTrigger("pressure", device_sn, "==", 100, 3);
+	public int addTrigerbyFishtype(String device_sn,String pondfish){
+		List<Fish_Category> fishcate = fishcateDao.getallfish();
+	    /*if (fishtype==0) {
+            int trigger1 = addTrigger("pH", device_sn, "==", 100, 3);
             if (trigger1 == 0) {
                 int trigger2 = addTrigger("pressure", device_sn, "==", 99, 3);
                 if (trigger2 == 0) {
@@ -1238,7 +1219,8 @@ public class EquipmentService {
                     } else return 1;
                 } else return 1;
             } else return 1;
-        } else return 1;
+        } else return 1;*/
+		return 0;
     }
 
 	public int addTrigger(String dsid,String device_sn,String type,int threshold,int localtype){

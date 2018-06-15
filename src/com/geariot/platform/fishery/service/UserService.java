@@ -340,7 +340,7 @@ public class UserService {
 			        if(response.errno == 0) {
 			        	controllerMap.put("online", response.data.getDevices().get(0).getIsonline());
 			        }
-			        List<Timer> timerList = timerDao.queryTimerByDeviceSn(controller.getDevice_sn(), 0, 20);
+			        List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(controller.getDevice_sn(), controller.getPort());
 			        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
 			       // List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(controller.getDevice_sn());
 			        controllerMap.put("TimerList", timerList);

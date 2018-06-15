@@ -1,0 +1,287 @@
+<style lang="less">
+.addsensor{
+  color: #323B45;
+  .sensor-item{
+    width: 650rpx;
+    height: 110rpx;
+    box-shadow: 0 2rpx 0 0 rgba(168,182,200,0.30);
+    margin-left: 42rpx;
+    margin-top: 16rpx;
+    line-height: 110rpx;
+    font-size: 32rpx;
+    padding-left: 20rpx;
+    .fright{
+      float: right;
+    }
+    .rightinp{
+      margin-top: 30rpx;
+      float: right;
+    }
+    .num{
+      margin-right: 20rpx;
+      width: 30rpx;
+      height: 30rpx;
+      position: relative;
+      top: 4rpx;
+    }
+    .name{
+      margin-right: 26rpx;
+      width: 24rpx;
+      height: 30rpx;
+      position: relative;
+      top: 4rpx;
+    }
+  }
+  .mask{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    z-index: 9000;
+    opacity: 0.7;
+  }
+  .modalDlg{
+    width: 670rpx;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 9999;
+    margin: -400rpx 40rpx;
+    background-color: #fff;
+    border-radius: 16rpx;
+    font-size: 32rpx;
+    .close{
+      width: 72rpx;
+      height: 72rpx;
+      border-radius: 36rpx;
+      position: absolute;
+      top: -92rpx;
+      right:18rpx;
+      .closeimg{
+        width: 72rpx;
+        height: 72rpx;
+      }
+      .closeline{
+        width: 4rpx;
+        height: 20rpx;
+        background-color: #fff;
+        position: absolute;
+        top:72rpx;
+        left: 36rpx;
+      }
+    }
+    .checkbox-item{
+      height: 100rpx;
+      line-height: 100rpx;
+      border-bottom: 2rpx solid #D4D5D8;
+      image{
+        width: 44rpx;
+        height: 44rpx;
+        margin-left: 226rpx;
+        margin-right: 20rpx;
+        margin-top: 28rpx;
+        position: relative;
+        top:8rpx;
+      }
+      .select{
+        color:#2F70B8;
+      }
+    }
+    .modal-but{
+        width: 480rpx;
+        height: 90rpx;
+        line-height: 90rpx;
+        background: #2F70B8;
+        color: #fff;
+        font-size: 32rpx;
+        border-radius: 120rpx;
+        margin-top: 40rpx;
+        margin-bottom: 40rpx;
+    }
+  }
+  .confirmbut {
+    width: 650rpx;
+    height: 100rpx;
+    font-size: 32rpx;
+    line-height: 100rpx;
+    background: #2F70B8;
+    border-radius: 146rpx;
+    text-align: center;
+    margin-left: 50rpx;
+    color: #ffffff;
+    margin-top: 440rpx;
+  }
+}
+</style>
+<template>
+<view class="addsensor">
+  <view class="sensor-item">
+    <image class="num" src="../images/型@2x.png"></image>设备编号
+    <text class="fright">{{equimentNum}}</text>
+  </view>
+  <view class="sensor-item">
+    <image class="num" src="../images/型@2x.png"></image>设备类型
+    <text class="fright">传感器</text>
+  </view>
+  <view class="sensor-item">
+    <image class="name" src="../images/品名称(1)@2x.png"></image>传感器名称
+    <input class="rightinp" placeholder="请输入传感器名称" placeholder-style="color:#6F6F6F" value="{{equimentinfo[0].name}}" bindinput="bindValue('name')"/>
+  </view>
+  <view class="sensor-item">
+    <image class="num" src="../images/感器@2x.png"></image>绑定塘口
+    <input class="rightinp" placeholder="请选择需绑定的塘口" placeholder-style="color:#6F6F6F" @tap="con" value="{{pondlist[equimentinfo[0].pondId]}}" disabled/>
+  </view>
+  <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+    <view class="modalDlg" wx:if="{{showModal}}">
+      <view class="close" @tap="closemodal">
+        <image class="closeimg" src="../images/叉_cross80@2x.png"></image>
+        <view class="closeline"></view>
+      </view>
+      <repeat for="{{tangkoulist}}" key="index" index="index">
+        <view class="checkbox-item" data-selectindex="{{index}}" data-pondid="{{item.id}}" data-pond="{{item.name}}" @tap="selectRep">
+          <view class="{{id === index ? 'select' : ''}}">
+            <image src="{{id === index ? selectImage : noselectImage}}"></image><text>{{item.name}}</text>
+          </view>
+      </view>
+      </repeat>
+    <button class="modal-but" @tap="go">确定</button>
+    </view>
+    <view class="confirmbut" @tap="confirmEqu">确定</view>
+</view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class Addsensor extends wepy.page {
+  data= {
+    tang: [],
+    showModal: false,
+    list: ['鱼塘1', '鱼塘2', '鱼塘3', '鱼塘4'],
+    id: '',
+    action: '',
+    equimentNum: '',
+    tangkoulist: [],
+    pondlist: {},
+    equimentinfo: [],
+    selectImage: '../images/_14_copy@2x.png',
+    noselectImage: '../images/_14_copy 2@2x.png'
+  }
+  methods= {
+    con() {
+      this.showModal = true
+      this.$apply()
+    },
+    bindValue(key, e) {
+      this.equimentinfo[0][key] = e.detail.value
+      this.equimentinfo[0].device_sn = this.equimentNum
+      this.equimentinfo[0].relation = this.$parent.globalData.relation
+      this.$apply()
+    },
+    go() {
+      this.showModal = false
+      this.$apply()
+    },
+    closemodal() {
+      this.showModal = false
+      this.$apply()
+    },
+    confirmEqu() {
+      if (this.action === 'modify') {
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifySensor',
+          data: this.equimentinfo,
+          method: 'POST',
+          success: res => {
+            console.log(res)
+            if (res.data.code === 0) {
+              wepy.redirectTo({
+                url: 'myequiment'
+              })
+            } else {
+              wepy.showToast({title: res.data.msg, icon: 'none'})
+            }
+          }
+        })
+      } else {
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/addSensor',
+          data: this.equimentinfo,
+          method: 'POST',
+          success: res => {
+            console.log(res)
+            if (res.data.code === 0) {
+              wepy.redirectTo({
+                url: 'equimentsuccess'
+              })
+            } else {
+              wepy.showToast({title: res.data.msg, icon: 'none'})
+            }
+          }
+        })
+      }
+    },
+    // 多选
+    // selectRep(e) {
+    //   let index = e.currentTarget.dataset.selectindex
+    //   let place = e.currentTarget.dataset.selectplace
+    //   // 当前点击元素的自定义数据
+    //   let arr = this.tang
+    //   let selectlist = this.selectlist
+    //   let num = arr.indexOf(place)
+    //   if (num < 0) {
+    //     arr.push(place)
+    //   } else {
+    //     arr.splice(num, 1)
+    //   }
+    //   console.log(this.selectlist, index, arr)
+    //   // 取到data里的selectIndex
+    //   selectlist[index].sureid = !selectlist[index].sureid
+    //   this.selectlist = selectlist
+    //   this.tang = arr
+    //   // 点击就赋相反的值
+    //   this.$apply()
+    // }
+    selectRep(e) {
+      let index = e.currentTarget.dataset.selectindex
+      this.id = index
+      this.tang = e.currentTarget.dataset.pond
+      this.equimentinfo[0].pondId = e.currentTarget.dataset.pondid
+      console.log(index)
+      this.$apply()
+    }
+  }
+  onLoad(options) {
+    this.equimentNum = options.number
+    this.action = options.action ? options.action : 'add'
+    this.equimentinfo = options.data ? JSON.parse(options.data) : [{
+      device_sn: '123',
+      name: '',
+      relation: '',
+      pondId: ''
+    }]
+    wepy.request({
+      url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
+      data: {
+        relation: this.$parent.globalData.relation
+      },
+      method: 'GET',
+      success: res => {
+        console.log(res)
+        if (res.data.code === 0) {
+          this.tangkoulist = res.data.data
+          let pondlist = {}
+          res.data.data.forEach(value => {
+            pondlist[value.id] = value.name
+          })
+          this.pondlist = pondlist
+          this.$apply()
+        } else {
+          wepy.showToast({title: res.data.msg, icon: 'none'})
+        }
+      }
+    })
+  }
+}
+</script>

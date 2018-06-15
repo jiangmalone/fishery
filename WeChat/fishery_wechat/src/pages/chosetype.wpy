@@ -1,0 +1,141 @@
+<style lang="less">
+.chosetype{
+  font-size: 32rpx;
+  .chosen{
+    color:#FF4D26;
+    padding:42rpx;
+  }
+  .type-item{
+    width: 650rpx;
+    height: 110rpx;
+    box-shadow: 0 2rpx 0 0 rgba(168,182,200,0.30);
+    margin-left: 42rpx;
+    margin-top: 16rpx;
+    line-height: 110rpx;
+    padding-left: 20rpx;
+    font-size: 34rpx;
+    image{
+      width: 44rpx;
+      height: 44rpx;
+      float: right;
+      margin-top: 38rpx;
+    }
+  }
+  .confirmbut{
+    width: 650rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    text-align: center;
+    color:#ffffff;
+    background: #2F70B8;
+    border-radius: 146rpx;
+    margin-top: 88rpx;
+    margin-left: 50rpx;
+  }
+}
+</style>
+<template>
+  <view class="chosetype">
+    <view class="chosen">
+      已添加：
+      <repeat for="{{selected}}" key="index">
+        <text>{{item.fish_name}},</text>
+      </repeat>
+    </view>
+    <view>
+      <repeat for="{{list}}" key="index">
+      <view class="type-item" @tap="selectRep" data-selectindex="{{index}}" data-selecttype="{{item}}">
+        <text>{{item.fish_name}}</text>
+        <image src="{{selectlist[index].sureid ? selectImage : noselectImage}}"></image>
+      </view>
+      </repeat>
+    </view>
+    <view class="confirmbut" @tap="typedone">确定</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Chosetype extends wepy.page {
+  config = {
+    navigationBarTitleText: '新增塘口'
+  }
+  data = {
+    list: [
+      {
+        fish_name: '鲫鱼',
+        type: 0
+      },
+      {
+        fish_name: '青鱼',
+        type: 0
+      },
+      {
+        fish_name: '龙虾',
+        type: 1
+      },
+      {
+        fish_name: '鲈鱼',
+        type: 0
+      },
+      {
+        fish_name: '螃蟹',
+        type: 2
+      }
+    ],
+    selectlist: [
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false}
+    ],
+    selected: [],
+    lastdata: {},
+    action: '',
+    selectImage: '../images/_14_copy@2x.png',
+    noselectImage: ''
+  }
+  methods = {
+    selectRep(e) {
+      let index = e.currentTarget.dataset.selectindex
+      let type = e.currentTarget.dataset.selecttype
+      // 当前点击元素的自定义数据，这个很关键
+      let arr = this.selected
+      let selectlist = this.selectlist
+      let num = arr.indexOf(type)
+      if (num < 0) {
+        arr.push(type)
+      } else {
+        arr.splice(num, 1)
+      }
+      console.log(this.selectlist, index, arr)
+      // 取到data里的selectIndex
+      selectlist[index].sureid = !selectlist[index].sureid
+      this.selectlist = selectlist
+      this.selected = arr
+      this.lastdata.pondFishs = arr
+      // 点击就赋相反的值
+      this.$apply()
+    },
+    typedone() {
+      let select = []
+      this.selected.forEach((value) => {
+        console.log(value)
+        select.push(value['fish_name'])
+      })
+      select = JSON.stringify(select)
+      let data = JSON.stringify(this.lastdata)
+      wepy.redirectTo({
+        url: `addtangkou?type=${data}&select=${select}&action=${this.action}`
+      })
+    }
+  }
+  onLoad(option) {
+    console.log(option)
+    let data = JSON.parse(option.data)
+    this.lastdata = data
+    this.action = option.action
+    this.$apply()
+  }
+}
+</script>

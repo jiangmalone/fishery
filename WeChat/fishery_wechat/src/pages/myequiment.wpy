@@ -1,0 +1,237 @@
+<style lang="less">
+.myequiment{
+  background-color: #f0f0f0;
+  padding-top: 42rpx;
+  padding-bottom: 50rpx;
+  .equiment-item{
+    width:686rpx;
+    background-color: #ffffff;
+    margin-left: 34rpx;
+    .equiment-header{
+      height: 80rpx;
+      line-height: 80rpx;
+      font-size: 32rpx;
+      border-bottom: 1px solid #E6E6E6;
+      .three{
+        display: inline-block;
+        height: 0rpx;
+        width: 0rpx;
+        border-top: 50rpx solid #2F70B8;
+        border-right: 50rpx solid transparent;
+        border-bottom: 50rpx solid transparent;
+        position: absolute;
+        text{
+          font-size: 26rpx;
+          color: #ffffff;
+          position: absolute;
+          top: -72rpx;
+          left: 8rpx;
+        }
+      }
+      .equiment-name{
+        color:#FF4D26;
+        padding-right:20rpx;
+        padding-left:36rpx;
+      }
+      .delete{
+        color:#323B45;
+        float: right;
+        padding-right: 20rpx;
+        image{
+          width:30rpx;
+          height:36rpx;
+          position:relative;
+          top:8rpx;
+          right: 8rpx;
+        }
+      }
+      .modify{
+        color:#323B45;
+        padding-right: 20rpx;
+        float: right;
+        margin-right: 20rpx;
+        image{
+          width:30rpx;
+          height:36rpx;
+          position:relative;
+          top:8rpx;
+          right: 8rpx;
+        }
+      }
+    }
+    .cot{
+      margin-bottom: 50rpx;
+      .cot-item{
+        font-size: 26rpx;
+        color: #5C6979;
+        padding: 20rpx;
+      }
+      .status{
+        float: right;
+      }
+    }
+  }
+  .but{
+    width: 650rpx;
+    height: 100rpx;
+    background: #2F70B8;
+    border-radius: 146rpx;
+    margin-left: 50rpx;
+    text-align: center;
+    color: #ffffff;
+    line-height: 100rpx;
+  }
+}
+</style>
+<template>
+  <view class="myequiment">
+    <repeat for="{{equimentlist}}" key="index" index="index" item="item">
+      <view class="equiment-item">
+      <view class="equiment-header">
+        <view class="three"><text>{{index+1}}</text></view>
+        <text class="equiment-name">{{item.content.length === 1 ? '传感器' : item.content.length === 2 ? '一体机' : '控制器' }}</text><text>{{item.id}}</text>
+        <view class="delete" @tap="deleteEquiment({{item}}, {{index}})"><image src="../images/除_3@2x.png"></image><text>删除</text></view>
+        <view class="modify" @tap="modifyEquiment({{item}})"><image src="../images/辑_7@2x.png"></image><text>修改</text></view>
+      </view>
+      <view class="cot">
+        <repeat for="{{item.content}}" key="index" index="index">
+        <view class="cot-item">
+          <text>{{tangkoulist[item.pondId]}}>{{item.port}}路 ({{item.name}})</text>
+          <text class="status">{{item.pondId==='' ? '未绑定' : '已绑定'}}</text>
+        </view>
+        </repeat>
+      </view>
+    </view>
+    </repeat>
+    <view class="but" @tap="scan">
+      添加设备
+    </view>
+  </view>  
+</template>
+>
+<script>
+import wepy from 'wepy'
+
+export default class Myequiment extends wepy.page {
+  data={
+    list: [
+      {
+        name: '一体机',
+        bh: '1233',
+        cot: [{
+          nam: '阿斯顿',
+          status: '1'
+        }, {
+          nam: '尔特完',
+          status: '1'
+        }]
+      },
+      {
+        name: '传感器',
+        bh: '2233',
+        cot: [{
+          nam: '气温器',
+          status: '1'
+        }, {
+          nam: '温度计',
+          status: '2'
+        }]
+      }],
+    equimentlist: [],
+    tangkoulist: []
+  }
+  config= {
+    navigationBarTitleText: '我的设备'
+  }
+  methods= {
+    con() {
+      console.log('1111')
+    },
+    modifyEquiment(item) {
+      console.log(item)
+      let num = item.id.slice(0, 2)
+      let device = item.id.slice(2)
+      let data = JSON.stringify(item.content)
+      if (num === '01' || num === '02') {
+        wepy.redirectTo({
+          url: `addallinone?number=${device}&data=${data}&action=modify`
+        })
+      } else if (num === '03') {
+        wepy.redirectTo({
+          url: `addcontroler?number=${device}&data=${data}&action=modify`
+        })
+      } else if (num === '04') {
+        wepy.redirectTo({
+          url: `addsensor?number=${device}&data=${data}&action=modify`
+        })
+      } else {
+        wepy.showToast({title: '无效设备', icon: 'none'})
+      }
+    },
+    deleteEquiment(item, index) {
+      wepy.showModal({
+        title: '提示',
+        content: `是否删除设备：${item.id}`,
+        success: (res) => {
+          if (res.confirm) {
+            wepy.request({
+              url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/delEquipments',
+              data: {
+                device_sn: item.id.toString()
+              },
+              method: 'GET',
+              success: res => {
+                console.log(res.data)
+                if (res.data.code === 0) {
+                  let data = this.equimentlist
+                  data.splice(index, 1)
+                  this.equimentlist = data
+                  console.log(this.equimentlist, index)
+                  this.$apply()
+                }
+              }
+            })
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
+        }
+      })
+    },
+    scan() {
+      wepy.redirectTo({
+        url: 'scan'
+      })
+    }
+  }
+  onLoad() {
+    wepy.request({
+      url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
+      data: {
+        relation: this.$parent.globalData.relation
+      },
+      method: 'GET',
+      success: res => {
+        console.log(res.data.data)
+        let tangkoulist = {}
+        res.data.data.forEach(value => {
+          tangkoulist[value.id] = value.name
+        })
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/myEquipment',
+          data: {
+            relation: this.$parent.globalData.relation
+          },
+          method: 'GET',
+          success: res => {
+            console.log(res.data)
+            this.equimentlist = res.data.controller.concat(res.data.aio, res.data.sensor)
+            console.log(this.equimentlist)
+            this.tangkoulist = tangkoulist
+            this.$apply()
+          }
+        })
+      }
+    })
+  }
+}
+</script>

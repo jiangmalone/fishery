@@ -1,0 +1,165 @@
+<style lang="less">
+.resultlist{
+  .result-item{
+    width: 686rpx;
+    height: 420rpx;
+    background: #FFFFFF;
+    box-shadow: 0 4rpx 16rpx 0 rgba(225,225,225,0.50);
+    border-radius: 4rpx;
+    border: 2rpx solid #f0f0f0;
+    margin-left: 32rpx;
+    margin-top: 42rpx;
+    .result-top{
+      height: 90rpx;
+      position: relative;
+      .name{
+        display: inline-block;
+        width: 120rpx;
+        height: 40rpx;
+        font-size: 32rpx;
+        margin-left: 36rpx;
+        margin-top: 26rpx;
+      }
+      .arrow{
+        display: inline-block;
+        width: 150rpx;
+        height: 40rpx;
+        font-size: 28rpx;
+        position: absolute;
+        right: 0rpx;
+        top: 26rpx;
+      }
+    }
+    .cut{
+      width: 686rpx;
+      height: 4rpx;
+      background-color: #e6e6e6;
+    }
+    .cut{
+      width: 686rpx;
+      height: 4rpx;
+      background-color: #e6e6e6;
+    }
+    .cut{
+      width: 670rpx;
+      height: 4rpx;
+      background-color: #e6e6e6;
+    }
+    .content{
+      height: 326rpx;
+      padding-left: 36rpx;
+      overflow: hidden;
+      .res{
+        font-size: 28rpx;
+        color: #FF4015;
+        padding-top: 20rpx;
+      }
+      .cause{
+        font-size: 28rpx;
+        padding-top: 20rpx;
+        color: #5C6979;
+      }
+    }
+    .content1{
+      height: 520rpx;
+      font-size: 32rpx;
+      padding-left: 36rpx;
+      overflow: scroll;
+      .res{
+        color: #FF4015;
+        padding-top: 20rpx;
+      }
+      .cause{
+        padding-top: 20rpx;
+        padding-right: 36rpx;
+        color: #5C6979;
+      }
+    }
+    .modal-but{
+      width: 558rpx;
+      height: 100rpx;
+      color:#2F70B8;
+      border: 2rpx solid #2F70B8;
+      border-radius: 120rpx;
+      margin-top: 30rpx;
+      margin-bottom: 30rpx;
+    }
+  }
+}
+.mask{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    z-index: 9000;
+    opacity: 0.7;
+}
+
+.modalDlg{
+    width: 670rpx;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 9999;
+    margin: -400rpx 40rpx;
+    background-color: #fff;
+    border-radius: 16rpx;
+}
+</style>
+<template>
+  <view class="resultlist">
+    <view class="result-item">
+      <view class="result-top">
+        <view class="name">1小鱼塘</view>
+        <view class="arrow" @tap="submit">查看详情<image src="../images/更多_7_@2x.png" style="width:14rpx;height:20rpx;"></image></view>
+      </view>
+      <view class="cut"></view>
+      <view class="content">
+        <view class="res">诊断结果：溶解氧异常</view>
+        <view class="cause">
+          <view>解决方案:</view>
+          <text>首先在数据中定义接收数据的变量，然后调用方法选择图片，将图片显示出来。</text>
+        </view>
+      </view>
+      <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+    <view class="modalDlg" wx:if="{{showModal}}">
+      <view class="result-top">
+        <view class="name">1小鱼塘</view>
+      </view>
+      <view class="cut"></view>
+      <view class="content1">
+        <view class="res">诊断结果：溶解氧异常</view>
+        <view class="cause">
+          <view>解决方案:</view>
+          <text>首先在数据中定义接收数据的变量，然后调用方法选择图片，将图片显示出来。首先在数据中定义接收数据的变量，然后调用方法选择图片，将图片显示出来。首先在数据中定义接收数据的变量，然后调用方法选择图片，将图片显示出来。>首先在数据中定义接收数据的变量，然后调用方法选择图片，将图片显示出来。首先在数据中定义接收数据的变量>首先在数据中定义接收数据的变量，然后调用方法选择图片，将图片显示出来。首先在数据中定义接收数据的变量</text>
+        </view>
+      </view>
+    <button class="modal-but" @tap="go">确定</button>
+    </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class Resultlist extends wepy.page {
+  data= {
+    showModal: false
+  }
+  config= {
+    navigationBarTitleText: '诊断结果'
+  }
+  methods= {
+    submit() {
+      this.showModal = true
+      this.$apply()
+    },
+    go() {
+      this.showModal = false
+      this.$apply()
+    }
+  }
+}
+</script>

@@ -1,0 +1,248 @@
+<style lang="less">
+.mytangkou{
+  background-color: #f0f0f0;
+  padding-top: 42rpx;
+  padding-bottom: 50rpx;
+  .tangkou-item{
+    width:686rpx;
+    background-color: #ffffff;
+    margin-left: 34rpx;
+    .tangkou-header{
+      height: 80rpx;
+      line-height: 80rpx;
+      font-size: 32rpx;
+      border-bottom: 1px solid #E6E6E6;
+      .three{
+        display: inline-block;
+        height: 0rpx;
+        width: 0rpx;
+        border-top: 50rpx solid #2F70B8;
+        border-right: 50rpx solid transparent;
+        border-bottom: 50rpx solid transparent;
+        position: absolute;
+        text{
+          font-size: 26rpx;
+          color: #ffffff;
+          position: absolute;
+          top: -72rpx;
+          left: 8rpx;
+        }
+      }
+      .tangkou-name{
+        color:#FF4D26;
+        padding-right:20rpx;
+        padding-left:36rpx;
+      }
+      .delete{
+        // width: 110rpx;
+        color:#323B45;
+        float: right;
+        padding-right: 20rpx;
+        image{
+          width:30rpx;
+          height:36rpx;
+          position:relative;
+          top:8rpx;
+          right: 8rpx;
+        }
+      }
+      .modify{
+        // width: 200rpx;
+        padding-right: 20rpx;
+        color:#323B45;
+        float: right;
+        margin-right: 20rpx;
+        image{
+          width:30rpx;
+          height:36rpx;
+          position:relative;
+          top:8rpx;
+          right: 8rpx;
+        }
+      }
+    }
+    .cot{
+      margin-bottom: 50rpx;
+      .cot-item{
+        font-size: 28rpx;
+        color: #5C6979;
+        padding: 20rpx;
+        .address{
+          width: 450rpx;
+          height: 40rpx;
+          float: right;
+          overflow: hidden;
+          text-align: right;
+        }
+      }
+      .status{
+        width: 400rpx;
+        text-align: right;
+        overflow: hidden;
+        float: right;
+      }
+    }
+  }
+  .but{
+    width: 650rpx;
+    height: 100rpx;
+    background: #2F70B8;
+    border-radius: 146rpx;
+    margin-left: 50rpx;
+    text-align: center;
+    color: #ffffff;
+    line-height: 100rpx;
+  }
+}
+</style>
+<template>
+  <view class="mytangkou">
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <view class="tangkou-item">
+      <view class="tangkou-header">
+        <text class="tangkou-name">{{item.name}}</text><text>{{item.bh}}</text>
+        <view class="delete" @tap="deleteTangkou({{item}})"><image src="../images/除_3@2x.png"></image><text>删除</text></view>
+        <view class="modify" @tap="modifyTangkou({{item}})"><image src="../images/辑_7@2x.png"></image><text>编辑塘口</text></view>
+      </view>
+      <view class="cot">
+        <view class="cot-item">
+          <text>面积(亩)</text>
+          <text class="status">{{item.area}}</text>
+        </view>
+        <view class="cot-item">
+          <text>深度(m)</text>
+          <text class="status">{{item.depth}}</text>
+        </view>
+        <view class="cot-item">
+          <text>养殖品种</text>
+          <text class="status">
+            <repeat for="{{item.pondFishs}}" key="index" index="index" item="item">
+            <text>{{item.fish_name}},</text>
+          </repeat>
+          </text>
+        </view>
+        <view class="cot-item">
+          <text>池塘水源</text>
+          <text class="status">{{item.water_source}}</text>
+        </view>
+        <view class="cot-item">
+          <text>泥底厚度(cm)</text>
+          <text class="status">{{item.sediment_thickness}}</text>
+        </view>
+        <view class="cot-item">
+          <text>塘口密度(kg/亩)</text>
+          <text class="status">{{item.density}}</text>
+        </view>
+        <view class="cot-item">
+          <text>塘口位置</text>
+          <view class="address"><text>{{item.address}}</text></view>
+        </view>
+      </view>
+    </view>
+    </repeat>
+    <view class="but" @tap="addTangkou">
+      添加塘口
+    </view>
+  </view>  
+</template>
+>
+<script>
+import wepy from 'wepy'
+
+export default class Mytangkou extends wepy.page {
+  data={
+    list: [
+      {
+        name: '一体机',
+        bh: '1233',
+        cot: [{
+          nam: '阿斯顿',
+          status: '1'
+        }, {
+          nam: '尔特完',
+          status: '1'
+        }]
+      },
+      {
+        name: '传感器',
+        bh: '2233',
+        cot: [{
+          nam: '气温器',
+          status: '1'
+        }, {
+          nam: '温度计',
+          status: '2'
+        }]
+      }]
+  }
+  config= {
+    navigationBarTitleText: '我的塘口'
+  }
+  methods= {
+    modifyTangkou(item) {
+      console.log(item)
+      let data = JSON.stringify(item)
+      let select = []
+      item.pondFishs.forEach((value) => {
+        console.log(value)
+        select.push(value['fish_name'])
+      })
+      select = JSON.stringify(select)
+      wepy.redirectTo({
+        url: `addtangkou?type=${data}&select=${select}&action=modify`
+      })
+    },
+    deleteTangkou(item) {
+      wepy.showModal({
+        title: '提示',
+        content: `是否删除鱼塘：${item.name}`,
+        success: (res) => {
+          if (res.confirm) {
+            wepy.request({
+              url: this.$parent.globalData.baseUrl + 'api/' + 'pond/delPonds',
+              data: {
+                pondIds: item.id
+              },
+              method: 'GET',
+              success: (res) => {
+                wepy.request({
+                  url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
+                  data: {
+                    relation: this.$parent.globalData.relation
+                  },
+                  method: 'GET',
+                  success: res => {
+                    this.list = res.data.data
+                    this.$apply()
+                  }
+                })
+              }
+            })
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
+        }
+      })
+    },
+    addTangkou() {
+      wepy.navigateTo({
+        url: 'addtangkou'
+      })
+    }
+  }
+  onLoad() {
+    wepy.request({
+      url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
+      data: {
+        relation: this.$parent.globalData.relation
+      },
+      method: 'GET',
+      success: res => {
+        console.log(res.data.data)
+        this.list = res.data.data
+        this.$apply()
+      }
+    })
+  }
+}
+</script>

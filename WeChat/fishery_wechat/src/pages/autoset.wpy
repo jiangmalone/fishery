@@ -1,0 +1,227 @@
+<style lang="less">
+.autoset{
+  background-color: #f2f2f2;
+  padding-bottom: 60rpx;
+  .autoname{
+    padding: 26rpx;
+    font-size: 28rpx;
+    color: #5D5D5D;
+  }
+  .set-item{
+    width: 686rpx;
+    margin-top: 32rpx;
+    margin-left: 32rpx;
+    font-size: 28rpx;
+    background-color: #ffffff;
+    .set-header{
+      padding: 28rpx;
+      border-bottom: 2rpx solid #E6E6E6
+    }
+    .set-cot{
+      padding:28rpx;
+      color:  #5C6979;
+      .rightinp{
+        float: right;
+        text-align: right;
+      }
+      .time-picker{
+        display: inline-block;
+        margin-left: 20rpx;
+      }
+      .delete{
+        margin-left: 40rpx;
+        display: inline-block;
+        width: 128rpx;
+        height: 52rpx;
+        line-height: 52rpx;
+        text-align: center;
+        border: 2rpx solid #CFCFCF;
+        border-radius: 80rpx;
+      }
+    }
+  }
+  .add-but{
+    width: 650rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    text-align: center;
+    border: 2rpx solid #2F70B8;
+    color: #2F70B8;
+    background-color: #ffffff;
+    border-radius: 146rpx;
+    margin-left: 52rpx;
+    margin-top: 40rpx;
+  }
+  .confirm-but{
+    width: 650rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    text-align: center;
+    color: #ffffff;
+    background-color: #2F70B8;
+    border: 2rpx solid #2F70B8;
+    border-radius: 146rpx;
+    margin-left: 52rpx;
+    margin-top: 40rpx;
+  }
+  .expression{
+      padding: 20rpx;
+      padding-left: 40rpx;
+      font-size: 26rpx;
+      color: #535353;
+  }
+}
+</style>
+<template>
+<view class="autoset">
+  <view class="autoname">
+    <text>{{pondname}}-{{typelist[itemdata.type]}}</text>
+  </view>
+  <view class="set-item" wx:if="{{itemdata.type === 0}}">
+    <view class="set-header">自动增氧设置</view>
+    <view class="set-cot">溶氧下限(mg/L) <input class="rightinp" value="{{limit.low_limit}}" placeholder="请输入" placeholder-style="color:#4D7FB5" bindinput="bindValue('low_limit')"/></view>
+    <view class="set-cot">溶氧上限(mg/L) <input class="rightinp" value="{{limit.up_limit}}" placeholder="请输入" placeholder-style="color:#4D7FB5" bindinput="bindValue('up_limit')"/></view>
+    <view class="set-cot">溶氧高限(mg/L) <input class="rightinp" value="{{limit.high_limit}}" placeholder="请输入" placeholder-style="color:#4D7FB5" bindinput="bindValue('high_limit')"/></view>
+  </view>
+  <view class="set-item">
+    <view class="set-header">定时启停设置</view>
+    <repeat for="{{timelist}}" key="index" index="index" item="item">
+      <view class="set-cot">
+      <picker class="time-picker" mode="time" value="{{item.startTime}}" start="00:00" end="24:00" bindchange="bindTimeChange({{index}},'startTime')">
+        <view class="picker">开启时间:{{item.startTime}}</view>
+      </picker>
+      <picker class="time-picker" mode="time" value="{{item.endTime}}" start="00:00" end="24:00" bindchange="bindTimeChange({{index}},'endTime')">
+        <view class="picker">关闭时间:{{item.endTime}}</view>
+      </picker>
+      <view class="delete" @tap="delete({{index}})">删除</view>
+    </view>
+    </repeat>
+  </view>
+  <view class="add-but" @tap="addtimelist">添加定时设置</view>
+  <view class="confirm-but" @tap="confirmSet">确定</view>
+  <view class="expression" wx:if="{{itemdata.type === 0}}">
+    <view>说明:</view>
+    <view>1.下限（低于下限自动开启增氧）;</view>
+    <view>2.上限（建议上限值比下限值高2）;</view>
+    <view>3.高限（不需要高限增氧时设置为30）;</view>
+    <view>4.定时增氧（设定时段，定时强制增氧）;</view>
+  </view>
+</view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Autoset extends wepy.page {
+  data= {
+    timelist: [],
+    limit: {},
+    typelist: ['增氧机', '投饵机', '打水机', '其他'],
+    itemdata: {},
+    pondname: ''
+  }
+  config= {
+    navigationBarTitleText: '自动设置'
+  }
+  methods= {
+    bindTimeChange(index, type, e) {
+      console.log('picker发送选择改变，携带值为', e.detail.value)
+      if (type === 'startTime') {
+        this.timelist[index].startTime = e.detail.value
+      } else {
+        this.timelist[index].endTime = e.detail.value
+      }
+      this.$apply()
+    },
+    delete(index) {
+      let list = this.timelist
+      console.log(list.splice(index, 1))
+      this.timelist = list
+      this.$apply()
+    },
+    bindValue(name, e) {
+      this.limit[name] = e.detail.value
+    },
+    addtimelist() {
+      this.timelist.push({
+        device_sn: this.itemdata.device_sn,
+        way: this.itemdata.port,
+        startTime: '',
+        endTime: ''
+      })
+      this.$apply()
+    },
+    confirmSet() {
+      if (this.itemdata.type === 0) {
+        if (!this.limit.low_limit) {
+          wepy.showToast({title: '填写下限', icon: 'none'})
+          return 0
+        } else if (!this.limit.up_limit) {
+          wepy.showToast({title: '填写上限', icon: 'none'})
+          return 0
+        } else if (!this.limit.high_limit) {
+          wepy.showToast({title: '填写高限', icon: 'none'})
+          return 0
+        }
+        let timeinfo = {
+          timers: this.timelist,
+          device_sn: this.itemdata.device_sn,
+          way: this.itemdata.port
+        }
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setTimer',
+          data: timeinfo,
+          method: 'POST',
+          success: res => {
+            if (res.data.code === 0) {
+              wepy.request({
+                url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setLimit',
+                data: this.limit,
+                method: 'POST',
+                success: res => {
+                  wepy.showToast({title: '自动设置成功'})
+                  console.log(res)
+                }
+              })
+            }
+          }
+        })
+      } else {
+        let timeinfo = {
+          timers: this.timelist,
+          device_sn: this.itemdata.device_sn,
+          way: this.itemdata.port
+        }
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setTimer',
+          data: timeinfo,
+          method: 'POST',
+          success: res => {
+            if (res.data.code === 0) {
+              wepy.showToast({title: '自动设置成功'})
+            }
+          }
+        })
+      }
+    }
+  }
+  onLoad(options) {
+    let data = JSON.parse(options.data)
+    console.log(options)
+    this.itemdata = data
+    this.pondname = options.pond
+    this.limit = options.limit !== 'null' ? JSON.parse(options.limit) : {
+      device_sn: data.device_sn,
+      high_limit: '',
+      low_limit: '',
+      up_limit: '',
+      way: data.port
+    }
+    this.timelist = options.time ? JSON.parse(options.time) : [{
+      device_sn: data.device_sn,
+      endTime: '',
+      startTime: '',
+      way: data.port
+    }]
+    this.$apply()
+  }
+}
+</script>

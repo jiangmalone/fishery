@@ -1,0 +1,249 @@
+<style lang="less">
+.login {
+  .logo {
+    width:148rpx;
+    height:196rpx;
+    margin-top:82rpx;
+    margin-left:304rpx
+  }
+  .font{
+    width:164rpx;
+    height:50rpx;
+    margin-left: 296rpx;
+    margin-top: 10rpx;
+  }
+  .row {
+    width: 656rpx;
+    height: 110rpx;
+    background-color: #F8FBFC;
+    border-radius: 4rpx;
+    margin-left: 50rpx;
+    margin-top: 54rpx;
+    border: 1px solid #AAC4E2;
+    image {
+      display: inline-block;
+      margin-left: 44rpx;
+      width: 24rpx;
+      height: 36rpx;
+      position: relative;
+      top: -10rpx;
+    }
+    input {
+      display: inline-block;
+      margin-left: 30rpx;
+      margin-top: 34rpx;
+      font-size: 32rpx;
+    }
+  }
+  .row-flex{
+    display: flex;
+  }
+  .row1 {
+    width: 656rpx;
+    border: 1px solid #AAC4E2;
+    height: 110rpx;
+    background-color: #F8FBFC;
+    border-radius: 4rpx;
+    margin-left: 50rpx;
+    margin-top: 16rpx;
+    image {
+      display: inline-block;
+      margin-left: 44rpx;
+      margin-top: 42rpx;
+      width: 26rpx;
+      height: 28rpx;
+    }
+    input {
+      display: inline-block;
+      margin-left: 30rpx;
+      margin-top: 34rpx;
+      font-size: 32rpx;
+    }
+    .getcode1 {
+      font-size: 28rpx;
+      margin-top: 38rpx;
+      color: #B6D5DA;
+      text-align: right;
+    }
+    .getcode {
+      font-size: 28rpx;
+      margin-top: 38rpx;
+      color: #6B93BF;
+      text-align: right;
+    }
+  }
+  .lo-but{
+      width: 582rpx;
+      height: 100rpx;
+      background-color: #2F70B8;
+      box-shadow: 0 4rpx 16rpx 0 #D2EBFD;
+      border-radius: 120rpx;
+      text-align: center;
+      line-height: 100rpx;
+      margin-top: 50rpx;
+      margin-left: 86rpx;
+      color: #ffffff;
+      font-size: 36rpx;
+    }
+}
+</style>
+<template>
+  <view class="login">
+    <image class="logo" src="../images/bitmap@2x.png"></image>
+    <image class="font" src="../images/管在线.png"></image>
+    <view class="row">
+      <image src="../images/fill_1@2x.png"></image><input type="number" placeholder="请输入手机号" placeholder-style="color:#6F6F6F" bindinput="bindPhoneNumber"/>
+    </view>
+    <view class="row1 row-flex">
+      <image src="../images/锁_3@2x.png"></image><input type="number" placeholder="请输入验证码" placeholder-style="color:#6F6F6F" bindinput="bindVerificationCode"/>
+      <view class="getcode1" wx:if="{{waitting}}">{{wait}}s后重试</view>
+      <view class="getcode" @tap="getVerificationCode" wx:else>发送验证码</view>
+    </view>
+    <button class="lo-but" @tap="confirminfo">注册/登录</button>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class Login extends wepy.page {
+  data = {
+    phoneNumber: '',
+    verificationCode: '',
+    wait: 20,
+    waitting: false,
+    timer: ''
+  }
+  config = {
+    navigationBarTitleText: '登录',
+    tabBar: {
+    }
+  }
+  methods = {
+    bindPhoneNumber(e) {
+      this.phoneNumber = e.detail.value
+    },
+    bindVerificationCode(e) {
+      this.verificationCode = e.detail.value
+    },
+    getVerificationCode() {
+      let re = /^1\d{10}$/
+      if (re.test(this.phoneNumber)) {
+        wepy.showLoading()
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/verification',
+          data: {
+            phone: this.phoneNumber
+          },
+          method: 'GET',
+          success: res => {
+            console.log(res.data)
+            if (res.data.code === 0) {
+              this.$parent.globalData.phone = this.phoneNumber
+              wepy.showToast({title: '验证码发送成功'})
+              this.startCount()
+            } else {
+              wepy.showToast({title: res.data.error, icon: 'none'})
+            }
+          },
+          complete: () => {
+            wepy.hideLoading()
+          }
+        })
+      } else {
+        wepy.showToast({
+          title: '手机号码错误',
+          icon: 'none',
+          duration: 2000
+        })
+        return 0
+      }
+    },
+    confirminfo() {
+      if (!this.verificationCode) {
+        wepy.showToast({title: '请输入验证码', icon: 'none'})
+        return 0
+      } else if (!this.phoneNumber) {
+        wepy.showToast({title: '请输入手机号码', icon: 'none'})
+        return 0
+      }
+      console.log(this.$parent.globalData)
+      wepy.request({
+        url: this.$parent.globalData.baseUrl + 'api/' + 'webService/verifySmsCode',
+        data: {
+          openid: this.$parent.globalData.openId,
+          phone: this.phoneNumber,
+          smscode: this.verificationCode
+        },
+        method: 'GET',
+        success: res => {
+          console.log(res)
+          if (res.code === 603) {
+            wepy.showToast({title: '验证码错误', icon: 'none'})
+            return 0
+          }
+          this.$parent.globalData.phone = this.phoneNumber
+          this.$parent.globalData.relation = res.data.data.relation
+          this.$parent.globalData.id = res.data.data.id
+          this.$parent.globalData.name = res.data.data.name
+          this.$parent.globalData.headImg = res.data.data.headimgurl
+          console.log(res.data)
+          let userdata = JSON.stringify(res.data)
+          console.log(userdata)
+          if (res.data.data.name === null) {
+            wepy.navigateTo({
+              url: `saveuserinfo?data=${userdata}`
+            })
+          } else {
+            wepy.switchTab({
+              url: `home`
+            })
+          }
+        }
+      // wepy.navigateTo({
+      //   url: 'saveuserinfo'
+      // })
+      })
+    }
+  }
+  startCount() {
+    this.waitting = true
+    this.timer = setInterval(() => {
+      let wait = this.wait
+      this.wait = wait - 1
+      this.$apply()
+      if (this.wait < 1) {
+        this.wait = 20
+        this.waitting = false
+        this.$apply()
+        clearInterval(this.timer)
+      }
+    }, 1000)
+  }
+  onLoad() {
+    var that = this
+    wepy.login({
+      success: (res) => {
+        let code = res.code
+        console.log(res)
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserinfo',
+          data: {
+            code: code
+          },
+          method: 'GET',
+          success: res => {
+            that.$parent.globalData.openId = res.data.openId
+            console.log(res.data.relation, that.$parent.globalData.openId)
+            // if (res.data.code === 0) {
+            //   wepy.showToast({title: '验证码发送成功'})
+            //   this.startCount()
+            // } else {
+            //   wepy.showToast({title: res.data.msg, icon: 'none'})
+            // }
+          }
+        })
+      }
+    })
+  }
+}
+</script>

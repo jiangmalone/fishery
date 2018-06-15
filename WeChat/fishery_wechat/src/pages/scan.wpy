@@ -1,0 +1,61 @@
+<style lang="less">
+.scan{
+  image{
+    width: 200rpx;
+    height: 192rpx;
+    margin-left: 279rpx;
+    margin-top: 343rpx;
+  }
+  .clicks{
+    text-align: center;
+    color: #939393;
+    letter-spacing: 0;
+    text-align: center;
+    padding-top: 22rpx;
+  }
+  .note{
+    text-align: center;
+    padding-top: 36rpx;
+    font-size: 16px;
+    color: #323B45;
+  }
+}
+</style>
+<template>
+<view class="scan">
+  <image src="../images/码_3@2x.png" @tap="scancode"></image>
+  <view class="clicks">点击屏幕</view>
+  <view class="note">扫一扫设备编码，添加设备</view>
+</view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class Scan extends wepy.page {
+  methods= {
+    scancode() {
+      wepy.scanCode({
+        success: (res) => {
+          let num = res.result.slice(0, 2)
+          console.log(res.result.slice(0, 2))
+          if (num === '01' || num === '02') {
+            wepy.redirectTo({
+              url: `addallinone?number=${res.result}`
+            })
+          } else if (num === '03') {
+            wepy.redirectTo({
+              url: `addcontroler?number=${res.result}`
+            })
+          } else if (num === '04') {
+            wepy.redirectTo({
+              url: `addsensor?number=${res.result}`
+            })
+          } else {
+            wepy.showToast({title: '无效设备', icon: 'none'})
+          }
+        }
+      })
+    }
+  }
+}
+</script>

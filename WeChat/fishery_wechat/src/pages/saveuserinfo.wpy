@@ -1,0 +1,156 @@
+<style lang="less">
+.info {
+  .picture{
+    width: 180rpx;
+    height: 180rpx;
+    background-color: #FAFDFC;
+    border-radius: 90rpx;
+    margin-top: 124rpx;
+    overflow: hidden;
+    margin-left: 288rpx;
+    image {
+      width: 180rpx;
+      height: 180rpx;
+    }
+  }
+  .row-flex {
+    display: flex;
+  }
+  .row{ 
+    width: 656rpx;
+    height: 110rpx;
+    background-color:#FAFDFC;
+    border-radius: 2px;
+    margin-left: 52rpx;
+    margin-top: 66rpx;
+    border: 1px solid #AAC4E2;
+  }
+  .row1{ 
+    width: 656rpx;
+    height: 110rpx;
+    background-color:#FAFDFC;
+    border-radius: 2px;
+    margin-left: 52rpx;
+    margin-top: 16rpx;
+    border: 1px solid #AAC4E2;
+  }
+  button {
+    background: #2F70B8;
+    box-shadow: 0 4rpx 16rpx 0 #D2EBFD;
+    border-radius: 120rpx;
+    width: 582rpx;
+    height: 100rpx;
+    margin-top: 50rpx;
+    margin-left: 88rpx;
+    text-align: center;
+    color: #ffffff;
+  }
+}
+</style>
+<template>
+<view class="info">
+  <view class="picture" @tap="chosePhoto">
+    <image wx:if="{{info.headimgurl===''}}" src="../images/group_4@2x.png"></image>
+    <image wx:else src="{{info.headimgurl}}"></image>
+  </view>
+  <view class="row row-flex">
+    <image src="../images/用户_4@2x.png" style="width:26rpx;height:28rpx;margin-left:44rpx;margin-top:42rpx"></image>
+    <text style="color:#6F6F6F;font-size: 16px;margin-left:28rpx;margin-top:34rpx">姓名</text>
+    <input style="font-size: 28rpx;margin-left: 122rpx;margin-top:34rpx;" placeholder="请输入你的真实姓名" placeholder-style="color:#6B93BF" bindinput="bindValue('name')"/>
+  </view>
+  <view class="row1 row-flex">
+    <image src="../images/性别@2x.png" style="width:24rpx;height:40rpx;margin-left:44rpx;margin-top:40rpx"></image>
+     <text style="color:#6F6F6F;font-size: 16px;margin-left:30rpx;margin-top:38rpx">性别</text>
+    <input style="font-size: 28rpx;margin-left: 122rpx;margin-top:34rpx;" placeholder="男／女" placeholder-style="color:#6B93BF" bindinput="bindValue('sex')"/>
+  </view>
+  <view class="row1 row-flex">
+    <image src="../images/fill_1@2x.png" style="width:24rpx;height:36rpx;margin-left:44rpx;margin-top:38rpx"></image>
+     <text style="color:#6F6F6F;font-size: 16px;margin-left:30rpx;margin-top:38rpx">手机号码</text>
+    <input style="font-size: 28rpx;margin-left: 60rpx;margin-top:34rpx;" value="{{info.phone}}" placeholder="请输入您的手机号码" placeholder-style="color:#6B93BF" bindinput="bindValue('phone')"/>
+  </view>
+  <view class="row1 row-flex">
+    <image src="../images/时间_12@2x.png" style="width:30rpx;height:30rpx;margin-left:42rpx;margin-top:46rpx"></image>
+     <text style="color:#6F6F6F;font-size: 16px;margin-left:26rpx;margin-top:38rpx">养殖年限</text>
+    <input style="font-size: 28rpx;margin-left: 60rpx;margin-top:34rpx;" placeholder="请输入年限" placeholder-style="color:#6B93BF" bindinput="bindValue('life')"/>
+  </view>
+  <button @tap="confirminfo">保存</button>
+</view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Saveuserinfo extends wepy.page {
+  data = {
+    info: {
+      name: '',
+      sex: '',
+      phone: '',
+      life: '',
+      headimgurl: ''
+    }
+  }
+  config = {
+    navigationBarTitleText: '完善信息'
+  }
+  methods = {
+    bindValue(key, e) {
+      this.info[key] = e.detail.value
+    },
+    chosePhoto() {
+      wepy.chooseImage({
+        count: 1, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+        success: (res) => {
+          // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+          let tempFilePaths = res.tempFilePaths
+          this.info.headimgurl = tempFilePaths[0]
+          this.$apply()
+          console.log(tempFilePaths)
+        }
+      })
+    },
+    confirminfo() {
+      let info = this.info
+      if (info.headimgurl === '') {
+        wepy.showToast({title: '头像不能为空', icon: 'none'})
+        return 0
+      } else if (info.name === '') {
+        wepy.showToast({title: '姓名不能为空', icon: 'none'})
+        return 0
+      } else if (info.sex === '') {
+        wepy.showToast({title: '性别不能为空', icon: 'none'})
+        return 0
+      } else if (info.phone === '') {
+        wepy.showToast({title: '手机号码不能为空', icon: 'none'})
+        return 0
+      } else if (info.year === '') {
+        wepy.showToast({title: '养殖年限不能为空', icon: 'none'})
+        return 0
+      }
+      console.log(info)
+      wepy.showLoading()
+      wepy.request({
+        url: this.$parent.globalData.baseUrl + 'api/' + 'usermanagement/modifyWXUser',
+        data: Object.assign({}, info, {openId: this.$parent.globalData.openId}, {id: this.$parent.globalData.id}),
+        method: 'POST',
+        success: res => {
+          this.$parent.globalData.name = res.data.name
+          this.$parent.globalData.headImg = res.data.headimgurl
+          let userdata = JSON.stringify(res.data)
+          wepy.switchTab({
+            url: `home?data=${userdata}`
+          })
+        },
+        complete: () => {
+          wepy.hideLoading()
+        }
+      })
+    }
+  }
+  onLoad(option) {
+    console.log(this.$parent.globalData.phone)
+    this.info.phone = this.$parent.globalData.phone
+    this.$apply()
+  }
+}
+</script>

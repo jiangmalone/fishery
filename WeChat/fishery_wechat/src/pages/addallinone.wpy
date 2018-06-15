@@ -1,0 +1,341 @@
+<style lang="less">
+.addallinone{
+  color: #323B45;
+  font-size: 32rpx;
+  .addallinone-item{
+    width: 650rpx;
+    height: 110rpx;
+    box-shadow: 0 2rpx 0 0 rgba(168,182,200,0.30);
+    margin-left: 42rpx;
+    margin-top: 16rpx;
+    line-height: 110rpx;
+    font-size: 32rpx;
+    padding-left: 20rpx;
+    .fright{
+      float: right;
+    }
+    .rightinp{
+      margin-top: 30rpx;
+      float: right;
+    }
+    .num{
+      margin-right: 20rpx;
+      width: 30rpx;
+      height: 30rpx;
+      position: relative;
+      top: 4rpx;
+    }
+    .name{
+      margin-right: 26rpx;
+      width: 24rpx;
+      height: 30rpx;
+      position: relative;
+      top: 4rpx;
+    }
+  }
+  .addequiment{
+    background-color: #f2f2f2;
+    padding: 33rpx;
+    .equiment-item{
+      width: 686rpx;
+      height: 390rpx;
+      background-color: #ffffff;
+      .name{
+        padding-left: 36rpx;
+        padding-top: 33rpx;
+      }
+      .einput{
+        width:630rpx;
+        height: 100rpx;
+        line-height: 100rpx;
+        margin-left: 30rpx;
+        margin-top: 32rpx;
+        background-color: #FAFDFC;
+        .rightinp{
+          float: right;
+          margin-top: 26rpx;
+        }
+      }
+    }
+  }
+   .confirmbut {
+    width: 650rpx;
+    height: 100rpx;
+    font-size: 32rpx;
+    line-height: 100rpx;
+    background: #2F70B8;
+    border-radius: 146rpx;
+    text-align: center;
+    margin-left: 50rpx;
+    color: #ffffff;
+    margin-top: 30rpx;
+    margin-bottom: 30rpx;
+  }
+  .mask{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    z-index: 9000;
+    opacity: 0.7;
+  }
+  .modalDlg{
+    width: 670rpx;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 9999;
+    margin: -400rpx 40rpx;
+    background-color: #fff;
+    border-radius: 16rpx;
+    font-size: 32rpx;
+    .close{
+      width: 72rpx;
+      height: 72rpx;
+      border-radius: 36rpx;
+      position: absolute;
+      top: -92rpx;
+      right:18rpx;
+      .closeimg{
+        width: 72rpx;
+        height: 72rpx;
+      }
+      .closeline{
+        width: 4rpx;
+        height: 20rpx;
+        background-color: #fff;
+        position: absolute;
+        top:72rpx;
+        left: 36rpx;
+      }
+    }
+    .checkbox-item{
+      height: 100rpx;
+      line-height: 100rpx;
+      border-bottom: 2rpx solid #D4D5D8;
+      image{
+        width: 44rpx;
+        height: 44rpx;
+        margin-left: 226rpx;
+        margin-right: 20rpx;
+        margin-top: 28rpx;
+        position: relative;
+        top:8rpx;
+      }
+      .select{
+        color:#2F70B8;
+      }
+    }
+    .modal-but{
+        width: 480rpx;
+        height: 90rpx;
+        line-height: 90rpx;
+        background: #2F70B8;
+        color: #fff;
+        font-size: 32rpx;
+        border-radius: 120rpx;
+        margin-top: 40rpx;
+        margin-bottom: 40rpx;
+    }
+  }
+}
+</style>
+<template>
+<view class="addallinone">
+    <view class="addallinone-item">
+    <image class="num" src="../images/型@2x.png"></image>设备编号
+    <text class="fright">{{equimentNum}}</text>
+  </view>
+  <view class="addallinone-item">
+    <image class="num" src="../images/型@2x.png"></image>设备类型
+    <text class="fright">一体机</text>
+  </view>
+  <view class="addequiment">
+    <view class="equiment-item">
+      <view class="name">设备1路</view>
+      <view class="einput">
+        <text>设备名称</text>
+        <input class="rightinp" bindinput="bindValue(0)" value="{{equimentinfo[0].name}}" placeholder="请输入设备名称" placeholder-style="color:#4D7FB5" />
+      </view>
+      <view class="einput">
+        <text>绑定塘口</text>
+        <input class="rightinp" @tap="con(0)" value="{{pondlist[equimentinfo[0].pondId]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+      </view>
+    </view>
+  </view>
+  <view class="addequiment">
+    <view class="equiment-item">
+      <view class="name">设备2路</view>
+      <view class="einput">
+        <text>设备名称</text>
+        <input class="rightinp" bindinput="bindValue(1)" value="{{equimentinfo[1].name}}" placeholder="请输入设备名称" placeholder-style="color:#4D7FB5" />
+      </view>
+      <view class="einput">
+        <text>绑定塘口</text>
+        <input class="rightinp" @tap="con(1)" value="{{pondlist[equimentinfo[1].pondId]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+      </view>
+    </view>
+  </view>
+  <view class="confirmbut" @tap="addAllinone">确定</view>
+  <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+    <view class="modalDlg" wx:if="{{showModal}}">
+      <view class="close" @tap="closemodal">
+        <image class="closeimg" src="../images/叉_cross80@2x.png"></image>
+        <view class="closeline"></view>
+      </view>
+      <repeat for="{{tangkoulist}}" key="index" index="index">
+        <view class="checkbox-item" data-selectindex="{{index}}" data-pondid="{{item.id}}" data-pond="{{item.name}}" @tap="selectRep">
+          <view class="{{id === index ? 'select' : ''}}">
+            <image src="{{id === index ? selectImage : noselectImage}}"></image><text>{{item.name}}</text>
+          </view>
+      </view>
+      </repeat>
+    <button class="modal-but" @tap="go">确定</button>
+    </view>
+</view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Addallinone extends wepy.page {
+  data= {
+    showModal: false,
+    id: null,
+    action: '',
+    pondlist: [],
+    equimentNum: '',
+    equimentinfo: [
+      {
+        device_sn: '',
+        name: '',
+        pondId: '',
+        port: 1,
+        relation: ''
+      },
+      {
+        device_sn: '',
+        name: '',
+        pondId: '',
+        port: 2,
+        relation: ''
+      }
+    ],
+    pondId: '',
+    ponslist: {},
+    whichroad: '',
+    pond: '',
+    tangkoulist: ['安德森', '奋斗史', '是非得'],
+    selectImage: '../images/_14_copy@2x.png',
+    noselectImage: '../images/_14_copy 2@2x.png'
+  }
+  methods= {
+    con(num) {
+      this.whichroad = num
+      this.showModal = true
+      this.$apply()
+    },
+    bindValue(num, e) {
+      this.equimentinfo[num].name = e.detail.value
+    },
+    go() {
+      console.log(this.pondId)
+      this.equimentinfo[this.whichroad].pondId = this.pondId
+      this.pondlist[this.whichroad] = this.pond
+      this.equimentinfo[this.whichroad].device_sn = this.equimentNum
+      this.equimentinfo[this.whichroad].relation = this.$parent.globalData.relation
+      this.showModal = false
+      this.$apply()
+    },
+    closemodal() {
+      this.showModal = false
+      this.$apply()
+    },
+    selectRep(e) {
+      this.pondId = e.currentTarget.dataset.pondid
+      let index = e.currentTarget.dataset.selectindex
+      this.pond = e.currentTarget.dataset.pond
+      this.id = index
+      console.log(index)
+      this.$apply()
+    },
+    addAllinone() {
+      if (this.action === 'modify') {
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifyAio',
+          data: this.equimentinfo,
+          method: 'POST',
+          success: res => {
+            console.log(res)
+            if (res.data.code === 0) {
+              wepy.redirectTo({
+                url: 'myequiment'
+              })
+            } else {
+              wepy.showToast({title: res.data.msg, icon: 'none'})
+            }
+          }
+        })
+      } else {
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/addAio',
+          data: this.equimentinfo,
+          method: 'POST',
+          success: res => {
+            console.log(res)
+            if (res.data.code === 0) {
+              wepy.redirectTo({
+                url: 'equimentsuccess'
+              })
+            } else {
+              wepy.showToast({title: res.data.msg, icon: 'none'})
+            }
+          }
+        })
+      }
+    }
+  }
+  onLoad(options) {
+    this.equimentNum = options.number
+    this.action = options.action ? options.action : 'add'
+    this.equimentinfo = options.data ? JSON.parse(options.data) : [
+      {
+        device_sn: '',
+        name: '',
+        pondId: '',
+        port: 1,
+        relation: ''
+      },
+      {
+        device_sn: '',
+        name: '',
+        pondId: '',
+        port: 2,
+        relation: ''
+      }
+    ]
+    console.log(this.equimentinfo)
+    wepy.request({
+      url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
+      data: {
+        relation: this.$parent.globalData.relation
+      },
+      method: 'GET',
+      success: res => {
+        console.log(res)
+        if (res.data.code === 0) {
+          this.tangkoulist = res.data.data
+          let pondlist = {}
+          res.data.data.forEach(value => {
+            pondlist[value.id] = value.name
+          })
+          this.pondlist = pondlist
+          this.$apply()
+        } else {
+          wepy.showToast({title: res.data.msg, icon: 'none'})
+        }
+      }
+    })
+  }
+}
+</script>

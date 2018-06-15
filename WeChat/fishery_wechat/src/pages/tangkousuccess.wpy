@@ -1,0 +1,81 @@
+<style lang="less">
+.tangkousuccess{
+  font-size: 32rpx;
+  .image1{
+    width: 134rpx;
+    height: 134rpx;
+    margin-left: 312rpx;
+    margin-top: 272rpx;
+  }
+  .successmessage{
+    color: #323B45;
+    padding-top:20rpx;
+    text-align: center
+  }
+  .but-equiment{
+    width:554rpx;
+    height: 100rpx;
+    background: #2F70B8;
+    border-radius: 146rpx;
+    text-align: center;
+    line-height: 100rpx;
+    color: #ffffff;
+    margin-left: 98rpx;
+    margin-top: 48rpx;
+  }
+  .but{
+    width:554rpx;
+    height: 100rpx;
+    background: #ffffff;
+    border-radius: 146rpx;
+    border: 2rpx solid #2F70B8;
+    text-align: center;
+    line-height: 100rpx;
+    color: #2F70B8;
+    margin-left: 98rpx;
+    margin-top: 48rpx;
+  }
+  .returnlist{
+    text-align: center;
+    color: #6D6D6D;
+    margin-top: 56rpx;
+    image{
+      width: 16rpx;
+      height: 26rpx;
+    }
+  }
+}
+</style>
+<template>
+<view class="tangkousuccess">
+  <image class="image1" src="../images/交成功@2x.png"></image>
+  <view class="successmessage">
+    <text>添加塘口成功</text>
+  </view>
+  <view class="but-equiment">返回绑定设备</view>
+  <view class="but" @tap="returnAddtangkou">继续新建塘口</view>
+  <view class="returnlist" @tap="returnTangkoulist">返回塘口列表<image src="../images/更多_7_@2x.png"></image></view>
+</view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Tangkousuccess extends wepy.page {
+  methods= {
+    returnEquiment() {
+      wepy.redirectTo({
+        url: 'addtangkou'
+      })
+    },
+    returnAddtangkou() {
+      wepy.redirectTo({
+        url: 'addtangkou'
+      })
+    },
+    returnTangkoulist() {
+      wepy.redirectTo({
+        url: 'mytangkou'
+      })
+    }
+  }
+}
+</script>

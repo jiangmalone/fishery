@@ -1,0 +1,256 @@
+<style lang="less">
+.addcontroler{
+  color: #323B45;
+  font-size: 32rpx;
+  .addcontroler-item{
+    width: 670rpx;
+    height: 110rpx;
+    box-shadow: 0 2rpx 0 0 rgba(168,182,200,0.30);
+    margin-left: 32rpx;
+    margin-top: 16rpx;
+    line-height: 110rpx;
+    font-size: 32rpx;
+    padding-left: 20rpx;
+    .fright{
+      float: right;
+    }
+    .rightinp{
+      float: right;
+      margin-top: 26rpx;
+      text-align: right;
+    }
+    .rightinp1{
+      width: 300rpx;
+      float: right;
+      margin-top: 26rpx;
+      text-align: right;
+    }
+    .num{
+      margin-right: 20rpx;
+      width: 24rpx;
+      height: 30rpx;
+      position: relative;
+      top: 4rpx;
+      padding-right: 6rpx;
+    }
+    .area{
+      margin-right: 20rpx;
+      width: 30rpx;
+      height: 30rpx;
+      position: relative;
+      top: 4rpx;
+    }
+    .yu{
+      margin-right: 20rpx;
+      width: 36rpx;
+      height: 26rpx;
+      position: relative;
+      top: 4rpx;
+    }
+    .name{
+      margin-right: 26rpx;
+      width: 24rpx;
+      height: 30rpx;
+      position: relative;
+      top: 4rpx;
+    }
+  }
+  .confirmbut{
+    width: 650rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    text-align: center;
+    color:#ffffff;
+    background: #2F70B8;
+    border-radius: 146rpx;
+    margin-top: 88rpx;
+    margin-left: 50rpx;
+  }
+  .mask{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    z-index: 9000;
+    opacity: 0.7;
+  }
+  .modalDlg{
+    width: 670rpx;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 9999;
+    margin: -400rpx 40rpx;
+    background-color: #fff;
+    border-radius: 16rpx;
+    font-size: 32rpx;
+    .close{
+      width: 72rpx;
+      height: 72rpx;
+      border-radius: 36rpx;
+      position: absolute;
+      top: -92rpx;
+      right:18rpx;
+      .closeimg{
+        width: 72rpx;
+        height: 72rpx;
+      }
+      .closeline{
+        width: 4rpx;
+        height: 20rpx;
+        background-color: #fff;
+        position: absolute;
+        top:72rpx;
+        left: 36rpx;
+      }
+    }
+    .modal-but{
+        width: 480rpx;
+        height: 90rpx;
+        line-height: 90rpx;
+        background: #2F70B8;
+        color: #fff;
+        font-size: 32rpx;
+        border-radius: 120rpx;
+        margin-top: 40rpx;
+        margin-bottom: 40rpx;
+    }
+    .wxmap{
+      #map{
+        width: 670rpx;
+        height: 600rpx;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <view class="addcontroler">
+  <view class="addcontroler-item">
+    <image class="num" src="../images/品名称(1)@2x.png"></image>塘口名称
+    <input class="rightinp"  placeholder="必填" placeholder-style="color:#FF4D26" value="{{tangkouinfo.name}}" bindinput="bindValue('name')"/>
+  </view>
+  <view class="addcontroler-item">
+    <image class="area" src="../images/积_2@2x.png"></image>面积(亩)
+    <input class="rightinp" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.area}}" bindinput="bindValue('area')"/>
+  </view>
+  <view class="addcontroler-item">
+    <image class="area" src="../images/度6@2x.png"></image>深度(m)
+    <input class="rightinp" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.depth}}" bindinput="bindValue('depth')"/>
+  </view>
+  <view class="addcontroler-item">
+    <image class="yu" src="../images/种关注@2x.png"></image>养殖品种
+    <input class="rightinp" @tap="choseType" placeholder="选填" value="{{fishlist}}" placeholder-style="color:#B8B8B8" disabled/>
+  </view>
+  <view class="addcontroler-item">
+    <image class="num" src="../images/@2x.png"></image>池塘水源
+    <input class="rightinp" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.water_source}}" bindinput="bindValue('water_source')"/>
+  </view>
+  <view class="addcontroler-item">
+    <image class="area" src="../images/度－@2x.png"></image>泥底厚度(cm)
+    <input class="rightinp" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.sediment_thickness}}" bindinput="bindValue('sediment_thickness')"/>
+  </view>
+  <view class="addcontroler-item">
+    <image class="area" src="../images/度@2x.png"></image>塘口密度(kg/亩)
+    <input class="rightinp1" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.density}}" bindinput="bindValue('density')"/>
+  </view>
+  <view class="addcontroler-item">
+    <image class="num" src="../images/置4@2x.png"></image>塘口位置
+    <input class="rightinp" @tap="mapchose" value="{{tangkouinfo.address}}" placeholder="选填" placeholder-style="color:#B8B8B8" disabled/>
+  </view>
+  <view class="confirmbut" @tap="addtangkou">确定</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Addtangkou extends wepy.page {
+  data = {
+    showModal: false,
+    placename: '',
+    fishlist: [],
+    action: '',
+    tangkouinfo: {
+      name: '',
+      area: '',
+      depth: '',
+      density: '',
+      water_source: '',
+      sediment_thickness: '',
+      pondFishs: [],
+      address: '',   // 塘口位置
+      longitude: '', // 塘口经度
+      latitude: ''
+    }
+  }
+  config = {
+    navigationBarTitleText: '新增塘口'
+  }
+  methods = {
+    choseType() {
+      let data = JSON.stringify(this.tangkouinfo)
+      console.log(this.action)
+      wepy.redirectTo({
+        url: `chosetype?data=${data}&action=${this.action}`
+      })
+    },
+    bindValue(key, e) {
+      this.tangkouinfo[key] = e.detail.value
+    },
+    mapchose() {
+      wepy.chooseLocation({
+        success: (res) => {
+          this.tangkouinfo.address = res.address
+          this.tangkouinfo.longitude = res.longitude
+          this.tangkouinfo.latitude = res.latitude
+          console.log(res)
+          this.$apply()
+        }
+      })
+    },
+    addtangkou() {
+      if (!this.tangkouinfo.name) {
+        wepy.showToast({title: '塘口名称不能为空', icon: 'none'})
+        return 0
+      }
+      if (this.action === 'modify') {
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'pond/modifyPond',
+          data: Object.assign({}, this.tangkouinfo, {relation: this.$parent.globalData.relation}),
+          method: 'POST',
+          success: res => {
+            if (res.data.code === 0) {
+              wepy.redirectTo({
+                url: `mytangkou`
+              })
+            }
+          }
+        })
+      } else {
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'pond/addPond',
+          data: Object.assign({}, this.tangkouinfo, {relation: this.$parent.globalData.relation}),
+          method: 'POST',
+          success: res => {
+            if (res.data.code === 0) {
+              wepy.redirectTo({
+                url: `tangkousuccess`
+              })
+            } else {
+              wepy.showToast({title: res.data.msg, icon: 'none'})
+            }
+          }
+        })
+      }
+    }
+  }
+  onLoad(options) {
+    console.log(options.action)
+    this.action = options.action ? options.action : 'add'
+    this.fishlist = options.select ? JSON.parse(options.select) : []
+    this.tangkouinfo = options.type ? JSON.parse(options.type) : {}
+    this.$apply()
+  }
+}
+</script>

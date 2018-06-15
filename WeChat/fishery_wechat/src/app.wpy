@@ -1,0 +1,121 @@
+<style lang="less">
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore()
+setStore(store)
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/login',
+      'pages/home',
+      'pages/autoset',
+      'pages/line',
+      'pages/saveuserinfo',
+      'pages/personal',
+      'pages/chosetype',
+      'pages/mytangkou',
+      'pages/addtangkou',
+      'pages/myequiment',
+      'pages/scan',
+      'pages/tangkousuccess',
+      'pages/addallinone',
+      'pages/addcontroler',
+      'pages/addsensor',
+      'pages/equimentsuccess'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#2F70B8',
+      navigationBarTitleText: '渔管家',
+      navigationBarTextStyle: 'white'
+    },
+    tabBar: {
+      color: '#AEADAD',
+      selectedColor: '#049BFF',
+      backgroundColor: '#fff',
+      borderStyle: 'black',
+      list: [{
+        pagePath: 'pages/home',
+        selectedIconPath: './images/首页_9@2x.png',
+        iconPath: './images/首页@2x.png',
+        text: '首页'
+      }, {
+        pagePath: 'pages/line',
+        selectedIconPath: './images/诊断－@2x.png',
+        iconPath: './images/诊断@2x.png',
+        text: '诊断'
+      }, {
+        pagePath: 'pages/personal',
+        selectedIconPath: './images/我的_12@2x.png',
+        iconPath: './images/我的@2x.png',
+        text: '我的'
+      }]
+    }
+  }
+
+  globalData = {
+    userInfo: null,
+    baseUrl: 'http://192.168.0.111:8080/fishery/',
+    openId: 'owhQb0W9abua0btsWt6CMRfWz158',
+    phone: '13770648649 ',
+    headImg: '',
+    id: '4',
+    name: '',
+    location: '',
+    weather: '',
+    relation: 'WX17',
+    currentId: 0
+  }
+
+  constructor () {
+    super()
+    this.use('requestfix')
+  }
+
+  onLaunch() {
+    this.testAsync()
+  }
+
+  sleep (s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('promise resolved')
+      }, s * 1000)
+    })
+  }
+
+  async testAsync () {
+    const data = await this.sleep(3)
+    console.log(data)
+  }
+
+  getUserInfo(cb) {
+    const that = this
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo
+    }
+    wepy.getUserInfo({
+      success (res) {
+        that.globalData.userInfo = res.userInfo
+        cb && cb(res.userInfo)
+      }
+    })
+  }
+}
+</script>

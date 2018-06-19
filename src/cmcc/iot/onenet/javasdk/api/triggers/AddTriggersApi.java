@@ -26,7 +26,7 @@ public class AddTriggersApi extends AbstractAPI{
 	private List<String>dsuuids;
 	private String desturl;
 	private String type;
-	private Integer threshold;
+	private Object threshold;
 	private HttpPostMethod HttpMethod;
 	
 	
@@ -41,7 +41,7 @@ public class AddTriggersApi extends AbstractAPI{
 	 * @param key
 	 */
 	public AddTriggersApi(String title, String dsid, List<String> devids, List<String> dsuuids, String desturl,
-			String type, Integer threshold,String key) {
+			String type, Object threshold,String key) {
 		super();
 		this.title = title;
 		this.dsid = dsid;

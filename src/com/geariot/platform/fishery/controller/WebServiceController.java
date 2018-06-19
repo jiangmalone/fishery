@@ -40,6 +40,7 @@ public class WebServiceController {
 	private String weatherUrl = "http://restapi.amap.com/v3/weather/weatherInfo";
 	//根据经纬度获取adcode
 	private String adcodeUrl = "http://restapi.amap.com/v3/geocode/regeo";
+	
 	private String key = "9c61f7bef1593d00ddbd8fad03070e25";
 
 	private String weatherExtensions = "all";

@@ -88,6 +88,9 @@ public class EquipmentService {
 	@Autowired
 	private BindService bindService;
 	
+	@Autowired
+	private PondFishDao pondFishDao;
+	
 	
 	
 	private String type = "";
@@ -214,38 +217,44 @@ public class EquipmentService {
 	public Map<String, Object> addSensor(Sensor...sensors) {
 	//只可添加一个传感器，数组形式为便于前端渲染	
 			Sensor sensor  =sensors[0];
-			if(deviceDao.findDevice(sensor.getDevice_sn())==null) {				
+			if(deviceDao.findDevice(sensor.getDevice_sn())==null) {	
+				//设备号不存在，添加设备
 				Device device = new Device();
 				device.setDevice_sn(sensor.getDevice_sn());
 				device.setType(1);
 				deviceDao.save(device);					
-				//添加触发器					
+								
 				logger.debug("在device中添加了一个传感器");
 				sensorDao.save(sensor);
 				logger.debug("在sensor中添加了一个传感器");
-				logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
 				
+				logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
 				Pond pond = pondDao.findPondByPondId(sensor.getPondId());
 				if (pond == null) {
+					//塘口不存在
 					logger.debug("塘口Id:" + pond.getId() + "在数据库中无记录!!!");
 					return RESCODE.NOT_FOUND.getJSONRES();
 				}else {
+					//塘口存在，添加触发器
+					//根据鱼的种类添加触发器1.鱼2.虾3.蟹
 					Pond sensorbindpond=pondDao.findPondByPondId(sensor.getPondId());
-		            List<PondFish> senbindfish=pond.getPondFishs();
-		            
+					List<PondFish> pondFishList = pondFishDao.getFishbyPondId(sensorbindpond.getId());
 		            int pondfishtype;
-		            String pondfish;
-		            if (senbindfish!=null){
-		                PondFish senbinfs=senbindfish.get(0);
+		            if (pondFishList!=null){
+		            	//塘口中有鱼
+		            	logger.debug("塘口中有鱼");
+		            	logger.debug("塘口中共有"+pondFishList.size()+"种");
+		                PondFish senbinfs=pondFishList.get(0);
 		                pondfishtype=senbinfs.getType();
-		                pondfish = senbinfs.getFish_name();
 		            }else return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		            int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfish);
+		        	logger.debug("鱼塘中鱼的种类为："+pondfishtype);
+		            int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
 		            if (triggeraddresult==0)
 		                return RESCODE.SUCCESS.getJSONRES();
 		            else return RESCODE.DEVICESNS_INVALID.getJSONRES();					
 				}					
 			}else {
+				//设备号存在，不可添加
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();	
 			}
 	}
@@ -1184,46 +1193,82 @@ public class EquipmentService {
 	}
 
 
-	public int addTrigerbyFishtype(String device_sn,String pondfish){
+	public int addTrigerbyFishtype(String device_sn,int fishtype){
 		List<Fish_Category> fishcate = fishcateDao.getallfish();
-	    /*if (fishtype==0) {
-            int trigger1 = addTrigger("pH", device_sn, "==", 100, 3);
+	    if (fishtype==1) {//鱼
+	    	//预警触发器与危险触发器
+	    	String threshold1 = "$val[0][‘DO’] >= 2 && $val[0][‘DO’]<= 4 ";
+            int trigger1 = addTrigger("DO", device_sn, "exp",threshold1, 0);
             if (trigger1 == 0) {
-                int trigger2 = addTrigger("pressure", device_sn, "==", 99, 3);
+                int trigger21 = addTrigger("WT", device_sn, "<", 10, 0);
+                int trigger22 =addTrigger("WT", device_sn, ">", 30, 0);
+                if (trigger21 == 0 && trigger22 == 0) {
+                	String threshold31 = "$val[0][‘pH’] > 4.5 && $val[0][‘pH’]< 6.5";
+                	String threshold32 = "$val[0][‘pH’] > 9 && $val[0][‘pH’]< 10.2";
+                    int trigger31 = addTrigger("pH", device_sn, "exp", threshold31, 0);
+                    int trigger32 = addTrigger("pH", device_sn, "exp", threshold32, 0);
+                    if (trigger31 == 0&&trigger32 == 0) {
+                    	 int trigger4 = addTrigger("DO", device_sn, "<", 2, 1);
+                    	 if(trigger4==0) {
+                    		 int trigger51 = addTrigger("pH", device_sn, "<", 4.5, 1);
+                    		 int trigger52 = addTrigger("pH", device_sn, ">", 10.2, 1);
+                    		 if(trigger51 == 0 && trigger52 == 0) {
+                    			 return 0;
+                    		 }else return 1;
+                    	 }else return 1;                       
+                    } else return 1;
+                } else return 1;
+            } else return 1;           
+        }else if (fishtype==2) {//虾
+        	//预警触发器与危险触发器
+	    	String threshold1 = "$val[0][‘DO’] > 2 && $val[0][‘DO’]< 5 ";
+            int trigger1 = addTrigger("DO", device_sn, "exp",threshold1, 0);
+            if (trigger1 == 0) {
+                int trigger2 = addTrigger("WT", device_sn, "<", 18, 0);
                 if (trigger2 == 0) {
-                    int trigger3 = addTrigger("pressure", device_sn, "==", 98, 3);
-                    if (trigger3 == 0) {
-                        return 0;
+                	String threshold31 = "$val[0][‘pH’] > 6.5 && $val[0][‘pH’]< 7.8";
+                	String threshold32 = "$val[0][‘pH’] > 8.5 && $val[0][‘pH’]< 9.2";
+                    int trigger31 = addTrigger("pH", device_sn, "exp", threshold31, 0);
+                    int trigger32 = addTrigger("pH", device_sn, "exp", threshold32, 0);
+                    if (trigger31 == 0&&trigger32 == 0) {
+                    	int trigger4 = addTrigger("DO", device_sn, "<", 2, 1);
+                   	 if(trigger4==0) {
+                   		 int trigger51 = addTrigger("pH", device_sn, "<", 6.5, 1);
+                   		 int trigger52 = addTrigger("pH", device_sn, ">", 9.2, 1);
+                   		 if(trigger51 == 0 && trigger52 == 0) {
+                   			 return 0;
+                   		 }else return 1;
+                   	 }else return 1;   
                     } else return 1;
                 } else return 1;
             } else return 1;
-        }else if (fishtype==1) {
-            int trigger1 = addTrigger("Battery", device_sn, "==", 100, 3);
+        }else if (fishtype==3) {//蟹
+        	//预警触发器与危险触发器
+	    	String threshold1 = "$val[0][‘DO’] > 2.5 && $val[0][‘DO’]< 5 ";
+            int trigger1 = addTrigger("DO", device_sn, "exp",threshold1, 0);
             if (trigger1 == 0) {
-                int trigger2 = addTrigger("Battery", device_sn, "==", 99, 3);
+            	int trigger2 = addTrigger("WT", device_sn, "<", 18, 0);
                 if (trigger2 == 0) {
-                    int trigger3 = addTrigger("Battery", device_sn, "==", 98, 3);
-                    if (trigger3 == 0) {
-                        return 0;
+                	String threshold31 = "$val[0][‘pH’] > 6 && $val[0][‘pH’]< 6.8";
+                	String threshold32 = "$val[0][‘pH’] > 8.3 && $val[0][‘pH’]< 9";
+                    int trigger31 = addTrigger("pH", device_sn, "exp", threshold31, 0);
+                    int trigger32 = addTrigger("pH", device_sn, "exp", threshold32, 0);
+                    if (trigger31 == 0 && trigger32 == 0) {
+                    	int trigger4 = addTrigger("DO", device_sn, "<", 2.5, 1);
+                   	 if(trigger4==0) {
+                   		 int trigger51 = addTrigger("pH", device_sn, "<", 6, 1);
+                   		 int trigger52 = addTrigger("pH", device_sn, ">", 9, 1);
+                   		 if(trigger51 == 0 && trigger52 == 0) {
+                   			 return 0;
+                   		 }else return 1;
+                   	 }else return 1;   
                     } else return 1;
                 } else return 1;
             } else return 1;
-        }else if (fishtype==3) {
-            int trigger1 = addTrigger("Battery", device_sn, "==", 100, 3);
-            if (trigger1 == 0) {
-                int trigger2 = addTrigger("Battery", device_sn, "==", 99, 3);
-                if (trigger2 == 0) {
-                    int trigger3 = addTrigger("Battery", device_sn, "==", 98, 3);
-                    if (trigger3 == 0) {
-                        return 0;
-                    } else return 1;
-                } else return 1;
-            } else return 1;
-        } else return 1;*/
-		return 0;
+        } else return 1;
     }
 
-	public int addTrigger(String dsid,String device_sn,String type,int threshold,int localtype){
+	public int addTrigger(String dsid,String device_sn,String type,Object threshold,int localtype){
 		/**
 		 * 触发器新增
 		 * @param title:名称（可选）,String
@@ -1238,9 +1283,8 @@ public class EquipmentService {
 		String url = "http://xx.bb.com";
 		List<String> devids=new ArrayList<String>();
 		devids.add(device_sn);
-		String key = "LTKhU=GLGsWmPrpHICwWOnzx=bA=";
-		int triggerid;
-
+		String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+		int triggerid;	
 		AddTriggersApi api = new AddTriggersApi(null, dsid, devids, null, url, type, threshold, key);
 		try{
 			BasicResponse<NewTriggersResponse> response = api.executeApi();

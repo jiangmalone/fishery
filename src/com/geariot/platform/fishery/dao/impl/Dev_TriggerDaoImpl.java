@@ -29,7 +29,7 @@ public class Dev_TriggerDaoImpl implements Dev_TriggerDao {
     @Override
     public int delete(int triggerid){
         QueryUtils queryUtils = new QueryUtils(getSession(), "delete from Dev_Trigger");
-        Query query = queryUtils.addInteger("triggerid", triggerid).getQuery();
+        Query query = queryUtils.addInteger("triger_id", triggerid).getQuery();
         return query.executeUpdate();
 
     }
@@ -46,7 +46,7 @@ public class Dev_TriggerDaoImpl implements Dev_TriggerDao {
     @Override
     public Dev_Trigger findTriggerBytriggerId(int triggerId){
         QueryUtils queryUtils = new QueryUtils(getSession(), "from Dev_Trigger");
-        Query query = queryUtils.addInteger("trigger_id", triggerId).getQuery();
+        Query query = queryUtils.addInteger("triger_id", triggerId).getQuery();
         return (Dev_Trigger) query.uniqueResult();
     }
 

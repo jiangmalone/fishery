@@ -415,8 +415,8 @@ public class EquipmentService {
 		List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(relation, null);
  		List<AIO> aios = aioDao.queryAIOByNameAndRelation(relation, null);
 		List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(relation, null);
-		List<String> conDSN = new ArrayList<String>();
-		List<String> aioDSN = new ArrayList<String>();
+		List<String> conDSN = new ArrayList<String>();//控制器设备编号
+		List<String> aioDSN = new ArrayList<String>();//一体机设备编号
 		//控制器
 		//遍历获得设备编号
 		if(controllers!=null) {
@@ -1141,44 +1141,75 @@ public class EquipmentService {
 		return limitList;
 	}
 	
-		
-	public void triggeractive(String data){
-		JSONObject tempjson = JSONObject.fromObject(data);
-
+	/*
+	 * 触发器运作
+	 */	
+	public void triggeractive(JSONObject data) {
+		System.out.println("触发器"+data);
+		/*JSONObject tempjson = JSONObject.fromObject(data);*/
+		JSONObject tempjson = data;
 		JSONObject temp12 = tempjson.getJSONObject("trigger");
-		int triggerid=temp12.getInt("id");
+		//获得触发器id,用于获得触发器类型（预警/危险）,设定传感器状态
+		int triggerid=temp12.getInt("id");		
 		String triggertype=temp12.getString("type");
 		JSONArray currentdata=tempjson.getJSONArray("current_data");
 		JSONObject obj1 = currentdata.getJSONObject(0);
 		String dev_id= obj1.getString("dev_id");
 		String ds_id= obj1.getString("ds_id");
-
-		Device device=deviceDao.findDevice(dev_id);
-		if (device!=null){
-		   int type= device.getType();
-		   if(type==1){
-
-		   int pond_id=sensorDao.findSensorByDeviceSns(dev_id).getPondId();
-            Pond pond = pondDao.findPondByPondId(pond_id);
-            //Controller controller=
-
-           }else if(type==2){
-
-
-           }else if(type==3){
-
-
-
-           }
-
-
-
-        }
-
-
+		
 		System.out.println(dev_id);
 		System.out.println(ds_id);
 		System.out.println(""+triggerid);
+		//根据触发器id获得触发器，根据设备编号获得传感器（传感器只有一路），为传感器设置状态
+		//状态status(0,1,2,3,4,5,6,0对应正常,(1,2)|(3,4)|(5,6)对应DO、WT、pH的(预警，危险))
+		Dev_Trigger trigger = dev_triggerDao.findTriggerBytriggerId(triggerid);
+		if(trigger!=null) {
+			Sensor sensor = sensorDao.findSensorByDeviceSns(trigger.getDevice_sn());
+			if(trigger.getTrigertype()==0) {//预警
+				if(ds_id.equals("DO")) {
+					sensor.setStatus(1);	
+				}else if(ds_id.equals("WT")) {
+					sensor.setStatus(3);
+				}else if(ds_id.equals("pH")) {
+					sensor.setStatus(5);
+				}					
+			}else if(trigger.getTrigertype()==1){//危险
+				if(ds_id.equals("DO")) {
+					sensor.setStatus(2);	
+				}else if(ds_id.equals("WT")) {
+					sensor.setStatus(4);
+				}else if(ds_id.equals("pH")) {
+					sensor.setStatus(6);
+				}
+			}
+			sensorDao.updateSensor(sensor);
+			
+			Device device=deviceDao.findDevice(dev_id);
+			if (device!=null){
+			   int type= device.getType();
+			   if(type==1){
+
+			   int pond_id=sensorDao.findSensorByDeviceSns(dev_id).getPondId();
+	            Pond pond = pondDao.findPondByPondId(pond_id);
+	            //Controller controller=
+
+	           }else if(type==2){
+
+
+	           }else if(type==3){
+
+
+
+	           }
+
+
+
+	        }
+		}
+		
+
+
+		
 
 		//String temp13 = temp12.getString("cmd_uuid");
 	//	System.out.println(temp13);

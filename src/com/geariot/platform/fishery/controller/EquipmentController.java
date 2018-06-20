@@ -4,6 +4,7 @@ import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.EquipmentService;
 
+import net.sf.json.JSONObject;
 import sun.invoke.empty.Empty;
 import sun.util.logging.resources.logging;
 
@@ -182,7 +183,7 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/triggeractive", method = RequestMethod.POST)
-	public void alarmIsRead(@RequestBody String data){
+	public void alarmIsRead(@RequestBody JSONObject data){
 		equipmentService.triggeractive(data);
 	}
 	

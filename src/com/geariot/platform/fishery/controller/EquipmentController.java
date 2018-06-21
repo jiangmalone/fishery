@@ -1,8 +1,10 @@
 package com.geariot.platform.fishery.controller;
 
 import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.entities.controllerParam;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.EquipmentService;
+import com.geariot.platform.fishery.timer.CMDUtils;
 
 import net.sf.json.JSONObject;
 import sun.invoke.empty.Empty;
@@ -164,9 +166,13 @@ public class EquipmentController {
 		for(Timer timer:param.getTimers()) {
 			equipmentService.addTimer(timer);
 		}
+		return RESCODE.SUCCESS.getJSONRES();		
+	}
+	
+	@RequestMapping(value = "/delTimer", method = RequestMethod.POST)
+	public Map<String, Object> delSet(@RequestBody Controller controller){
+		equipmentService.delTimer(controller.getDevice_sn(),  controller.getPort());
 		return RESCODE.SUCCESS.getJSONRES();
-
-		
 	}
 	
 	
@@ -185,6 +191,16 @@ public class EquipmentController {
 	@RequestMapping(value ="/triggeractive", method = RequestMethod.POST)
 	public void alarmIsRead(@RequestBody JSONObject data){
 		equipmentService.triggeractive(data);
+	}
+	
+	@RequestMapping(value ="/sendcmd", method = RequestMethod.POST)
+	public Map<String, Object> sendcmd(@RequestBody controllerParam param){
+		//
+		Controller controller = param.getController();
+		String contents = "KM"+controller.getPort()+":"+param.getKey();
+		CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);
+		
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 	
 }

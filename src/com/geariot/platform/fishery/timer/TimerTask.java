@@ -39,7 +39,7 @@ public class TimerTask {
 			
 			for (Timer timer : lt) {
 
-				//300000毫秒等于5分钟，可能会有处理定时任务上的时间误差所以定个5分钟
+				//300000毫秒=5*60*1000等于5分钟，可能会有处理定时任务上的时间误差所以定个5分钟
 				if (now-sdf.parse(timer.getStartTime()).getTime() <= 300000 && now-sdf.parse(timer.getStartTime()).getTime() >= 0) {
 					logger.debug("检测到数据中有待执行的定时任务，准备向终端发送打开增氧机的命令");
 					int way = timer.getWay();

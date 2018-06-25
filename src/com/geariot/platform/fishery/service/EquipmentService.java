@@ -1320,7 +1320,7 @@ public class EquipmentService {
 		 * @param threshold:阙值，根据type不同，见以下说明,Integer
 		 * @param key:masterkey 或者 设备apikey
 		 */
-		String url = "http://xx.bb.com";
+		String url = "https://www.fisherymanager.net/equipment/triggeractive";
 		List<String> devids=new ArrayList<String>();
 		devids.add(device_sn);
 		String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";

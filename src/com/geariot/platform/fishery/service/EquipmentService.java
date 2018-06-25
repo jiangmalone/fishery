@@ -1,11 +1,13 @@
 package com.geariot.platform.fishery.service;
 
 import cmcc.iot.onenet.javasdk.api.datapoints.GetDatapointsListApi;
+import cmcc.iot.onenet.javasdk.api.datastreams.GetDatastreamApi;
 import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
 import cmcc.iot.onenet.javasdk.api.triggers.AddTriggersApi;
 import cmcc.iot.onenet.javasdk.api.triggers.DeleteTriggersApi;
 import cmcc.iot.onenet.javasdk.response.BasicResponse;
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList;
+import cmcc.iot.onenet.javasdk.response.datastreams.DatastreamsResponse;
 import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
 import cmcc.iot.onenet.javasdk.response.triggers.NewTriggersResponse;
 import com.geariot.platform.fishery.dao.*;
@@ -114,7 +116,7 @@ public class EquipmentService {
 
 
 	}
-	//删除设备，简版,暂未添加触发器删除
+	//删除设备
 	public Map<String, Object> delEquipment(String device_sn){
 		Device  d = deviceDao.findDevice(device_sn);
 		if(d!=null) {
@@ -122,10 +124,17 @@ public class EquipmentService {
 			switch(type) {
 				case 1://传感器
 					sensorDao.delete(device_sn);
-					deviceDao.delete(device_sn);
-					
+					dev_triggerDao.delete(device_sn);
+					List<Dev_Trigger> devTriList = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
+					for(Dev_Trigger devTri:devTriList) {
+						DeleteTriggersApi api = new DeleteTriggersApi(devTri.getTriger_id(), key);
+						BasicResponse<Void> response = api.executeApi();
+						System.out.println("errno:"+response.errno+" error:"+response.error);
+					}
+					deviceDao.delete(device_sn);					
 					break;
 				case 2://一体机
+					//一体机完善后，需加入一体机的传感器的触发器的删除部分
 					aioDao.delete(device_sn);
 					deviceDao.delete(device_sn);
 					break;
@@ -1335,6 +1344,26 @@ public class EquipmentService {
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			return 1;
+		}
+	}
+	
+	public String getControllerPortStatus(String devId,int port) {
+		String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+		String id = "KM"+port;
+		/**
+		 * 查询单个数据流
+		 * @param devid:设备ID,String
+		 * @param datastreamid:数据流名称 ,String
+		 * @param key:masterkey 或者 设备apikey
+		 */
+		GetDatastreamApi api = new GetDatastreamApi(devId, id, key);
+		BasicResponse<DatastreamsResponse> response = api.executeApi();
+		System.out.println("errno:"+response.errno+" error:"+response.error);
+		System.out.println(response.getJson());
+		if(response.errno == 0) {
+			return (String)response.data.getCurrentValue();
+		}else {
+			return "0";
 		}
 	}
 

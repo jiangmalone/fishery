@@ -79,6 +79,9 @@ public class UserService {
     @Autowired
     private PondService pondService;
     
+    @Autowired
+    private EquipmentService equipmentService;
+    
     
 	public Map<String, Object> addWXUser(WXUser wxuser) {
 		WXUser exist = wxuserDao.findUserByOpenId(wxuser.getOpenId());
@@ -339,14 +342,17 @@ public class UserService {
 			        BasicResponse<DevicesStatusList> response = api.executeApi();
 			        if(response.errno == 0) {
 			        	controllerMap.put("online", response.data.getDevices().get(0).getIsonline());
+			        	List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(controller.getDevice_sn(), controller.getPort());
+				        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
+				       // List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(controller.getDevice_sn());
+				        String controllerKey = equipmentService.getControllerPortStatus(controller.getDevice_sn(), controller.getPort());
+				        controllerMap.put("switch", controllerKey);
+				        controllerMap.put("TimerList", timerList);
+				        controllerMap.put("Limit", limit);
+				        controllerMap.put("controller", controller);
+				        controllerLM.add(controllerMap);
 			        }
-			        List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(controller.getDevice_sn(), controller.getPort());
-			        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
-			       // List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(controller.getDevice_sn());
-			        controllerMap.put("TimerList", timerList);
-			        controllerMap.put("Limit", limit);
-			        controllerMap.put("controller", controller);
-			        controllerLM.add(controllerMap);
+			        
 				}
 			}
 			

@@ -89,7 +89,7 @@ public class EquipmentController {
 	}
 
 	@RequestMapping(value = "/realTimeData", method = RequestMethod.GET)
-	public String realTimeData(String device_sn) {
+	public Sensor realTimeData(String device_sn) {
 		return equipmentService.realTimeData(device_sn);
 	}
 
@@ -167,6 +167,12 @@ public class EquipmentController {
 			equipmentService.addTimer(timer);
 		}
 		return RESCODE.SUCCESS.getJSONRES();		
+	}
+	
+	@RequestMapping(value = "/checkTimer", method = RequestMethod.POST)
+	public Integer checkSet(@RequestBody Controller controller){
+		return equipmentService.checkTimer(controller.getDevice_sn(),  controller.getPort());
+		
 	}
 	
 	@RequestMapping(value = "/delTimer", method = RequestMethod.POST)

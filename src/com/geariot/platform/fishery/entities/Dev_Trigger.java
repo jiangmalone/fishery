@@ -21,7 +21,12 @@ public class Dev_Trigger {
 	private String device_sn;            //设备id
 	private String trigger_id;               //触发器id
 	private int triggertype;                //触发器类型
-	//0.预警1.危险
+	/*
+	 * 0.预警
+	 * 1.危险
+	 * 2.类型为inout,需根据获得数据判断
+	 */
+	
 
 	
 	@Id

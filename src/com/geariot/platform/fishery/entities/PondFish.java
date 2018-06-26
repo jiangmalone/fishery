@@ -15,6 +15,11 @@ public class PondFish {
 	private int id;
 	private String fish_name;
 	private int type;
+	/*
+	 * 0.鱼
+	 * 1.虾
+	 * 2.蟹
+	 */
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY )

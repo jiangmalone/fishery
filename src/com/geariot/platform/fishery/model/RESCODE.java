@@ -39,6 +39,8 @@ public enum RESCODE {
 	NO_LOGIN(27, "手机号没登录"),
 	IS_WATCH(28,"报警信息已经被读过了"),
 	OFF_LINE(29,"设备已离线"),
+	POND_NO_FISH(30,"塘口没有鱼的类型"),
+	TRIGGER_FAILED(31,"触发器设置错误"),
 	FOR_EXCEPTION
 	;
 	

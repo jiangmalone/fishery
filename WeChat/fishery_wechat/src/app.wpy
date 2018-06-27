@@ -72,14 +72,15 @@ export default class extends wepy.app {
   globalData = {
     userInfo: null,
     baseUrl: 'http://192.168.0.111:8080/fishery/',
+    // baseUrl: 'https://www.fisherymanager.net/fishery/',
     openId: 'owhQb0W9abua0btsWt6CMRfWz158',
-    phone: '13770648649 ',
-    headImg: '',
+    phone: '13770648649',
+    headImg: '../../images/Bitmap.png',
     id: '4',
-    name: '',
+    name: '张蕾西',
     location: '',
     weather: '',
-    relation: 'WX17',
+    relation: 'WX14',
     currentId: 0
   }
 

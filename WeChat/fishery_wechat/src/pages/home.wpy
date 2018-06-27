@@ -26,18 +26,23 @@
     .weather {
       width: 246rpx;
       height: 158rpx;
-      margin-left: 50rpx;
-      margin-top: 80rpx;
+      margin-left: 10rpx;
+      margin-top: 40rpx;
+      text-align: center;
       .tem{
-        padding-left: 10rpx;
-        font-size: 40rpx;
+        padding: 20rpx;
+        font-size: 60rpx;
+        font-weight: 100;
+      }
+      .time{
+        font-size: 25rpx;
       }
     }
     .week {
       font-size: 29rpx;
       width:64rpx;
       height:44rpx;
-      margin-left: 54rpx;
+      margin-left: 100rpx;
       margin-top: 100rpx;
     }
   }
@@ -76,7 +81,7 @@
     }
   }
   .tab{
-    width: 750rpx;
+    width: 680rpx;
     height: 156rpx;
     background-color:#f2f2f2;
     .tab-index{
@@ -108,14 +113,14 @@
   .tab-eg{
       display: inline-block;
       width: 80rpx;
-      height: 120rpx;
-      line-height: 120rpx;
+      height: 156rpx;
+      line-height: 156rpx;
       color: #323B45;
       background-color: #f2f2f2;
       font-size: 28rpx;
       position: absolute;
       right: 0;
-      top:240rpx;
+      top:220rpx;
   }
   .sensor {
     width:750rpx;
@@ -156,12 +161,15 @@
     }
     .svalue{
       width: 686rpx;
-      height: 200rpx;
+      height: 150rpx;
       background: #FFFFFF;
       box-shadow: 0 2px 8px 0 rgba(225,225,225,0.50);
       border-radius: 8px;
       margin-top: 58rpx;
       margin-left: 32rpx;
+      display: flex;
+      justify-content: space-between;
+      padding: 58rpx 0 0 0;
       .sborder{
         display: inline-block;
         width: 2rpx;
@@ -182,7 +190,6 @@
         color: #323B45;
         letter-spacing: 0;
         text-align: center;
-        margin-top: 58rpx;
         margin-left: 60rpx;
       }
       .ph{
@@ -191,7 +198,6 @@
         color: #323B45;
         letter-spacing: 0;
         text-align: center;
-        margin-top: 58rpx;
         margin-left: 80rpx;
       }
       .phvalue{
@@ -200,7 +206,7 @@
         color: #3A95CF;
         margin-left: 90rpx;
         position: relative;
-        top: -34rpx;
+        top: 16rpx;
         .unit{
           font-size: 36rpx;
         }
@@ -214,12 +220,12 @@
         font-size: 58rpx;
         color: #3A95CF;
         margin-left: 80rpx;
-        .unit{
-          font-size: 36rpx;
+        text-align: center;
+        :first-child{
+          font-size: 60rpx;
         }
-        .unit1{
-          padding-left: 28rpx;
-          font-size: 36rpx;
+        :last-child{
+          font-size: 30rpx;
         }
       }
       .sresult{
@@ -290,6 +296,7 @@
         font-size: 58rpx;
         color: #3A95CF;
         margin-left: 80rpx;
+        height: 112rpx;
         .unit{
           font-size: 36rpx;
         }
@@ -359,14 +366,15 @@
         display: inline-block;
         color:#5C6979;
         margin-left: 52rpx;
-        margin-top: 32rpx;
       }
       //设备状态
+      // 橘黄色
       .lost{
         display: inline-block;
         margin-left: 24rpx;
         color:#DA330E;
       }
+      // 断电
       .losepower{
         display: inline-block;
         width: 64rpx;
@@ -381,7 +389,7 @@
       }
       .off{
         float: right;
-        margin-top: 32rpx;
+        margin-top: 42rpx;
         margin-right: 20rpx;
         color: #5C6979;
       }
@@ -422,6 +430,8 @@
 </style>
 <template>
   <view class="home">
+
+    <!--头部天气等信息-->
     <view class="home-bg home-flex">
       <view class="location">
         <image class="bgimage" src="../images/点1@2x.png"></image>
@@ -429,31 +439,51 @@
       </view>
       <view class="weather" wx:if="{{weather.weather != null}}">
         <text>{{weather.weather}}</text>
-        <text class="tem">{{weather.temperature}}℃</text>
-        <view>{{time}}</view>
+        <text class="tem">{{weather.temperature}}</text>
+        <text>℃</text>
+        <view class="time">{{time}}</view>
       </view>
       <view class="weather" wx:else>
-        <text class="tem">暂无数据 </text>
+        <text>暂无数据</text>
       </view>
       <view class="week">
         <text>{{week}}</text>
       </view>
     </view>
-    <swiper class="tab" display-multiple-items="{{3}}" previous-margin="30rpx" next-margin="20rpx" wx:if="{{tangkoulist.length > 3}}">
+
+    <!--塘口列表滑块（大于3）-->
+    <swiper class="tab" display-multiple-items="{{3}}"
+            previous-margin="30rpx" next-margin="0rpx"
+            wx:if="{{tangkoulist.length > 3}}">
       <repeat for="{{tangkoulist}}" key="index" item="item">
         <swiper-item>
           <text class="{{currentId === index ? 'tab-index-active' : 'tab-index'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{item.pondname}}</text>
         </swiper-item>
       </repeat>
     </swiper>
+
+    <!--塘口列表滑块（小于3）-->
     <view class="tab1" wx:else>
       <repeat for="{{tangkoulist}}" key="index" item="item">
           <text class="{{currentId === index ? 'tab-index-active1' : 'tab-index1'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{item.pondname}}</text>
       </repeat>
     </view>
-    <view class="tab-eg">更多<image src="../images/group_16@2x.png" style="width:24rpx;height:25rpx;"></image></view>
+
+    <!--塘口列表的“更多”-->
+    <view class="tab-eg" @tap="jupMoreTangkou">更多<image src="../images/group_16@2x.png" style="width:24rpx;height:25rpx;"></image></view>
+
+    <!--传感器列表存在-->
     <view class="sensor" wx:if="{{tangkoudetail.sensorlist[0].sensor.name != null}}">
-      <view class="stype">{{tangkoudetail.sensorlist[0].sensor.name}}-数据指标<text class="{{tangkoudetail.sensorlist[0].online === false ? 'isoutline' : 'isonline'}}"><text class="{{tangkoudetail.sensorlist[0].online === false ? 'outl' : 'inl'}}"></text>{{tangkoudetail.sensorlist[0].online === true ? '在线' : '离线'}}</text></view>
+
+      <!--标题栏-->
+      <view class="stype">{{tangkoudetail.sensorlist[0].sensor.name}}-数据指标
+        <text class="{{tangkoudetail.sensorlist[0].online === false ? 'isoutline' : 'isonline'}}">
+          <text class="{{tangkoudetail.sensorlist[0].online === false ? 'outl' : 'inl'}}">
+          </text>{{tangkoudetail.sensorlist[0].online === true ? '在线' : '离线'}}
+        </text>
+      </view>
+
+      <!--溶氧-->
       <view class="svalue">
         <view class="o2">
           <image src="../images/氧_3_copy 2@2x.png" style="width:56rpx;height:56rpx;"></image>
@@ -461,59 +491,82 @@
           </view>
         <view class="sborder"></view>
         <view class="ovalue">
-          <view>{{tangkoudetail.sensorlist[0].data.DO}}</view>
-          <view class="unit">Mg/L</view>
+          <view>{{tangkoudetail.sensorlist[0].data.DO}}8.5</view>
+          <view class="unit">mg/L</view>
         </view>
         <view class="sborder1"></view>
         <view class="sresult">正常</view>
       </view>
+
+      <!--温度-->
       <view class="svalue">
         <view class="o2">
           <image src="../images/温@2x.png" style="width:56rpx;height:56rpx;"></image>
           <view>温度</view>
           </view>
         <view class="sborder"></view>
-        <view class="ovalue">
-          <view>{{tangkoudetail.sensorlist[0].data.WT}}</view>
+        <view class="ovalue" style="color: #f19649">
+          <view>{{tangkoudetail.sensorlist[0].data.WT}}23.9</view>
           <view class="unit1">℃</view>
         </view>
         <view class="sborder1"></view>
         <view class="sresult">正常</view>
       </view>
+
+      <!--ph-->
       <view class="svalue phvalue">
         <view class="ph">
           <image src="../images/ph@2x.png" style="width:50rpx;height:66rpx;"></image>
           <view>PH</view>
           </view>
         <view class="sborder"></view>
-        <view class="phvalue">
-          <view>{{tangkoudetail.sensorlist[0].data.pH}}</view>
+        <view class="phvalue" style="color: #56acb8">
+          <view>{{tangkoudetail.sensorlist[0].data.pH}}6.8</view>
         </view>
         <view class="sborder1"></view>
         <view class="sresult">正常</view>
       </view>
+
     </view>
+
+    <!--传感器列表不存在-->
     <view class="sensor" wx:else>
       <view class="stype">暂无传感器数据</view>
     </view>
+
+    <!--分隔栏-->
     <view class="cut"></view>
+
+    <!--控制管理列表-->
     <view class="phensor">
       <view class="phtype">控制管理</view>
-      <repeat for="{{tangkoudetail.controllerList}}" key="index" index="index" item="item">
+      <repeat wx:for="{{tangkoudetail.controllerList}}" wx:key="index" item="item" wx:for-index="controllerIdx">
         <view class="phvalue">
           <view>
-            <text class="device">{{item.controller.name}}-{{item.controller.type === 0 ? '增氧机' : (item.controller.type === 1 ? '投饵机' : (item.controller.type === 2 ? '打水机' : '其他'))}}</text>
-            <text class="lost">{{item.controller.status === 0 ? '正常' : (item.controller.type === 1 ? '离线' : (item.controller.type === 2 ? '断电' : (item.controller.type === 3 ? '缺相' : '数据异常')))}}</text>
+            <text class="device">
+             {{item.controller.name}}-{{item.controller.type === 0 ? '增氧机' : (item.controller.type === 1 ? '投饵机' : (item.controller.type === 2 ? '打水机' : '其他'))}}
+            </text>
+            <text class="{{item.controller.status === 0 ? 'normal' : (item.controller.type === 1 ? 'off' : (item.controller.type === 2 ? 'losepower' : (item.controller.type === 3 ? 'lost' : 'lost')))}}">
+              {{item.controller.status === 0 ? '正常' : (item.controller.type === 1 ? '离线' : (item.controller.type === 2 ? '断电' : (item.controller.type === 3 ? '缺相' : '数据异常')))}}
+            </text>
             <text class="off">已关闭</text>
           </view>
           <view class="shezhi">
             <view class="choseAuto" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}})">自动设置</view>
-            <view class="but"><text style="color: #5C6979;">开</text><image class='switch' src="../images/toggle@2x.png"></image><text style="color: #5C6979;">关</text></view>
+            <view class="but" @tap="controlSwitch({{item.controller}}, {{item.switch}}, {{controllerIdx}})">
+              <text style="color: #5C6979;">开</text>
+              <image class='switch' src="../images/toggle@2x.png" wx:if="{{item.switch==='0'}}"></image>
+              <image class='switch' src="../images/turnon.jpg" wx:else="{{item.switch==='1'}}"></image>
+              <text style="color: #5C6979;">关</text>
+            </view>
           </view>
         </view>
       </repeat>
     </view>
+
+    <!--分隔栏-->
     <view class="cut"></view>
+
   </view>
 </template>
 <script>
@@ -529,7 +582,35 @@ export default class Home extends wepy.page {
     weather: {},
     currentId: 0
   }
+
   methods = {
+    // 跳转到更多塘口
+    jupMoreTangkou() {
+      wepy.navigateTo({
+        url: `mytangkou`
+      })
+    },
+
+    // 控制管理-开关
+    controlSwitch(controller, s, controllerIdx) {
+      let key = s === '0' ? '1' : '0'
+      wepy.showLoading()
+      wepy.request({
+        url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/sendcmd',
+        data: {
+          controller: controller,
+          key: key
+        },
+        method: 'POST',
+        success: (res) => {
+          wepy.hideLoading()
+          this.tangkoudetail.controllerList[controllerIdx].switch = key
+          this.$apply()
+        }
+      })
+    },
+
+    // 切换塘口
     chosetangkou(e) {
       this.tangkoudetail = e.target.dataset.tangkou
       this.currentId = e.target.dataset.id
@@ -550,7 +631,19 @@ export default class Home extends wepy.page {
           this.$apply()
         }
       })
+      if (e.target.dataset.tangkou.sensorlist.length > 0) {
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
+          data: e.target.dataset.tangkou.sensorlist[0].sensor,
+          method: 'GET',
+          success: res => {
+            console.log(res.data)
+          }
+        })
+      }
     },
+
+    // 自动设置按钮
     autoset(limit, time, item, name) {
       console.log(item)
       console.log(time)
@@ -558,6 +651,40 @@ export default class Home extends wepy.page {
       wepy.showActionSheet({
         itemList: ['确定自动', '取消自动', '设置自动参数'],
         success: (res) => {
+          // 确定自动
+          if (res.tapIndex === 0) {
+            wepy.request({
+              url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/checkTimer',
+              data: item,
+              method: 'POST',
+              success: res => {
+                console.log(typeof res.data)
+                if (res.data === 0) {
+                  let data = JSON.stringify(item)
+                  let timelist = JSON.stringify(time)
+                  let limitlist = JSON.stringify(limit)
+                  wepy.navigateTo({
+                    url: `autoset?data=${data}&pond=${name}&time=${timelist}&limit=${limitlist}`
+                  })
+                }
+              }
+            })
+          }
+
+          // 取消自动
+          if (res.tapIndex === 1) {
+            console.log(item)
+            wepy.request({
+              url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/delTimer',
+              data: item,
+              method: 'POST',
+              success: res => {
+                console.log(res)
+              }
+            })
+          }
+
+          // 设置自动参数
           if (res.tapIndex === 2) {
             let data = JSON.stringify(item)
             let timelist = JSON.stringify(time)
@@ -595,6 +722,8 @@ export default class Home extends wepy.page {
   }
   onShow() {
     wepy.showLoading()
+
+    // 获取用户塘口设备等信息
     wepy.request({
       url: this.$parent.globalData.baseUrl + 'api/' + 'usermanagement/HomePageDetail',
       data: {

@@ -304,7 +304,7 @@ public class EquipmentService {
 				aioDao.save(aio);
 				logger.debug("在aio中添加了一个一体机");
 				
-				logger.debug("塘口Id:" + sensor.getPondId() + "尝试与一体机设备,设备编号为:" + aio.getDevice_sn() + "进行绑定...");
+				logger.debug("塘口Id:" + aio.getPondId() + "尝试与一体机设备,设备编号为:" + aio.getDevice_sn() + "进行绑定...");
 				Pond pond = pondDao.findPondByPondId(aio.getPondId());
 				if (pond == null) {
 					//塘口不存在

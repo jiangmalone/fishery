@@ -116,24 +116,38 @@
 }
 </style>
 <template>
-<view class="addsensor">
-  <view class="sensor-item">
-    <image class="num" src="../images/型@2x.png"></image>设备编号
-    <text class="fright">{{equimentNum}}</text>
-  </view>
-  <view class="sensor-item">
-    <image class="num" src="../images/型@2x.png"></image>设备类型
-    <text class="fright">传感器</text>
-  </view>
-  <view class="sensor-item">
-    <image class="name" src="../images/品名称(1)@2x.png"></image>传感器名称
-    <input class="rightinp" placeholder="请输入传感器名称" placeholder-style="color:#6F6F6F" value="{{equimentinfo[0].name}}" bindinput="bindValue('name')"/>
-  </view>
-  <view class="sensor-item">
-    <image class="num" src="../images/感器@2x.png"></image>绑定塘口
-    <input class="rightinp" placeholder="请选择需绑定的塘口" placeholder-style="color:#6F6F6F" @tap="con" value="{{pondlist[equimentinfo[0].pondId]}}" disabled/>
-  </view>
-  <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+  <view class="addsensor">
+
+    <view class="sensor-item">
+      <image class="num" src="../images/型@2x.png"></image>设备编号
+      <text class="fright">{{equimentNum}}</text>
+    </view>
+
+    <view class="sensor-item">
+      <image class="num" src="../images/型@2x.png"></image>设备类型
+      <text class="fright">传感器</text>
+    </view>
+
+    <view class="sensor-item">
+      <image class="name" src="../images/品名称(1)@2x.png"></image>传感器名称
+      <input class="rightinp" placeholder="请输入传感器名称"
+             placeholder-style="color:#6F6F6F;text-align:right;"
+             value="{{equimentinfo[0].name}}"
+             bindinput="bindValue('name')"/>
+    </view>
+
+    <view class="sensor-item">
+      <image class="num" src="../images/感器@2x.png"></image>绑定塘口
+      <input class="rightinp" placeholder="请选择需绑定的塘口"
+             placeholder-style="color:#6F6F6F;text-align:right;"
+             @tap="con" value="{{pondlist[equimentinfo[0].pondId]}}" disabled/>
+      <image src=""></image>
+    </view>
+
+    <!--模态框的遮罩层-->
+    <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+
+    <!--模态框-->
     <view class="modalDlg" wx:if="{{showModal}}">
       <view class="close" @tap="closemodal">
         <image class="closeimg" src="../images/叉_cross80@2x.png"></image>
@@ -144,12 +158,14 @@
           <view class="{{id === index ? 'select' : ''}}">
             <image src="{{id === index ? selectImage : noselectImage}}"></image><text>{{item.name}}</text>
           </view>
-      </view>
+        </view>
       </repeat>
-    <button class="modal-but" @tap="go">确定</button>
+      <button class="modal-but" @tap="go">确定</button>
     </view>
+
+    <!--确定按钮-->
     <view class="confirmbut" @tap="confirmEqu">确定</view>
-</view>
+  </view>
 </template>
 <script>
 import wepy from 'wepy'

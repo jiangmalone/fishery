@@ -52,26 +52,31 @@
   <view class="successmessage">
     <text>添加塘口成功</text>
   </view>
-  <view class="but-equiment">返回绑定设备</view>
-  <view class="but" @tap="returnAddtangkou">继续新建塘口</view>
-  <view class="returnlist" @tap="returnTangkoulist">返回塘口列表<image src="../images/更多_7_@2x.png"></image></view>
+  <view class="but-equiment" @tap="toBindEquiment">添加设备</view>
+  <view class="but" @tap="toAddtangkou">继续新建塘口</view>
+  <view class="returnlist" @tap="toTangkoulist">返回塘口列表<image src="../images/更多_7_@2x.png"></image></view>
 </view>
 </template>
 <script>
 import wepy from 'wepy'
 export default class Tangkousuccess extends wepy.page {
   methods= {
-    returnEquiment() {
+    // 返回绑定设备
+    toBindEquiment() {
+      wepy.redirectTo({
+        url: 'scan'
+      })
+    },
+
+    // 跳转到新建塘口
+    toAddtangkou() {
       wepy.redirectTo({
         url: 'addtangkou'
       })
     },
-    returnAddtangkou() {
-      wepy.redirectTo({
-        url: 'addtangkou'
-      })
-    },
-    returnTangkoulist() {
+
+    // 返回塘口列表
+    toTangkoulist() {
       wepy.redirectTo({
         url: 'mytangkou'
       })

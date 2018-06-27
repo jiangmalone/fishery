@@ -151,6 +151,14 @@ export default class Personal extends wepy.page {
     navigationBarTitleText: '个人中心'
   }
   methods= {
+    // 跳转到修改资料
+    jupUserInfo() {
+      wepy.navigateTo({
+        url: 'saveuserinfo'
+      })
+    },
+
+    // 跳转到我的塘口
     jupTangkou() {
       wepy.navigateTo({
         url: 'mytangkou'
@@ -161,6 +169,16 @@ export default class Personal extends wepy.page {
     jupEquiment() {
       wepy.navigateTo({
         url: 'myequiment'
+      })
+    },
+
+    // 退出登录
+    signOut() {
+      wepy.request({
+        url: this.$parent.globalData.baseUrl + 'api/' + '',
+        data: {},
+        method: 'GET',
+        success: res => {}
       })
     }
   }

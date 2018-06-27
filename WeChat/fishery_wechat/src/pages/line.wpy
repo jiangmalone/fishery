@@ -120,7 +120,7 @@
     <view class="sensorname">小鱼塘-小A-进水啊实打实的</view><image class="header-img" src="../images/多_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
     <view class="status"><view class="status-dot"></view>异常</view>
     <view class="andmore">
-      <text>更多</text><image src="../images/group_16@2x.png" style="width:26rpx;height:33rpx;"></image>
+      <text @tap="jupMoreEquiment">更多</text><image src="../images/group_16@2x.png" style="width:46rpx;height:33rpx;"></image>
     </view>
   </view>
   <view class="content">
@@ -163,7 +163,20 @@
 </template>
 <script>
 import wepy from 'wepy'
-const wxCharts = require('../units/wxcharts-min.js')
+// const wxCharts = require('../units/wxcharts-min.js')
 export default class Line extends wepy.page {
+  data = {}
+
+  methods = {
+    // 跳转到更多塘口
+    jupMoreEquiment() {
+      wepy.navigateTo({
+        url: `myequiment`
+      })
+    }
+  }
+  events = {}
+  onShow() {}
+  onLoad() {}
 }
 </script>

@@ -37,7 +37,8 @@ export default class extends wepy.app {
       'pages/addallinone',
       'pages/addcontroler',
       'pages/addsensor',
-      'pages/equimentsuccess'
+      'pages/equimentsuccess',
+      'pages/diagnosis'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -56,7 +57,7 @@ export default class extends wepy.app {
         iconPath: './images/首页@2x.png',
         text: '首页'
       }, {
-        pagePath: 'pages/line',
+        pagePath: 'pages/diagnosis',
         selectedIconPath: './images/诊断－@2x.png',
         iconPath: './images/诊断@2x.png',
         text: '诊断'

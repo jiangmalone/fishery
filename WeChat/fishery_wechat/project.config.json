@@ -77,6 +77,12 @@
 					"name": "测试2",
 					"pathName": "pages/addtangkou",
 					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "login",
+					"pathName": "pages/login",
+					"query": ""
 				}
 			]
 		}

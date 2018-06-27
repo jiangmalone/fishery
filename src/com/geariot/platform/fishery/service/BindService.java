@@ -8,6 +8,11 @@ import com.geariot.platform.fishery.entities.*;
 import com.geariot.platform.fishery.model.BindState;
 import com.geariot.platform.fishery.model.PortBind;
 import com.geariot.platform.fishery.model.RESCODE;
+
+import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
+import cmcc.iot.onenet.javasdk.response.BasicResponse;
+import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +36,9 @@ public class BindService {
 
 	@Autowired
 	private PondDao pondDao;
+	
+	@Autowired
+	private DeviceDao deviceDao;
 
 	@Autowired
 	private SensorDao sensorDao;
@@ -43,46 +51,171 @@ public class BindService {
 
 	@Autowired
 	private Sensor_ControllerDao sensor_ControllerDao;
+	
+	@Autowired
+	private WebServiceService webService;
+	
+	String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
 
-	public Map<String, Object> bindPondWithSensor(String device_sn, int pondId) {
-		logger.debug("塘口Id:" + pondId + "尝试与传感器设备,设备编号为:" + device_sn + "进行绑定...");
-		Pond pond = pondDao.findPondByPondId(pondId);
+	public Map<String, Object> bindPondWithSensor(Sensor sensor) {
+		
+		logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
+		Pond pond = pondDao.findPondByPondId(sensor.getPondId());
 		if (pond == null) {
-			logger.debug("塘口Id:" + pondId + "在数据库中无记录!!!");
+			logger.debug("塘口Id:" + sensor.getPondId() + "在数据库中无记录!!!");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
-			Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
-			if (sensor == null) {
-				logger.debug("传感器设备,设备编号:" + device_sn + "在数据库中无记录!!!");
-				return RESCODE.NOT_FOUND.getJSONRES();
+			Sensor sensorChk = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
+			if (sensorChk == null) {
+				//新增
+				
+				sensorDao.save(sensor);
+				
+				Device device = new Device();
+				device.setDevice_sn(sensor.getDevice_sn());
+				device.setType(1);
+				deviceDao.save(device);
+				
+				GetLatesDeviceData api = new GetLatesDeviceData(sensor.getDevice_sn(),key);
+			    BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
+				
+			    List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
+		        for(int i=0;i<DatastreamsList.size();i++) {
+		        	if(DatastreamsList.get(i).getId().equals("location")) {
+		        		
+			        	String location = DatastreamsList.get(i).getValue().toString();
+			        	float lat = Float.parseFloat(location.substring(5, location.indexOf(",")));
+			        	float lon = Float.parseFloat(location.substring(location.indexOf(",")+6,location.length()-1));
+			        	
+			        	pond.setLatitude(lat);
+			        	pond.setLongitude(lon);
+			        	
+			        	String locationGet = webService.getLocation(lon, lat);
+			        	
+			        	pond.setAddress(locationGet);
+			        	
+			        	pondDao.update(pond);
+			        	
+		        	}
+		        	
+		        }
+				
+				logger.debug("传感器设备,设备编号:" + sensor.getDevice_sn() + "在数据库中添加!!!");
+				return RESCODE.SUCCESS.getJSONRES();
 			} else {
+				//修改
 				if (sensor.getPondId() != 0) {
 					return RESCODE.EQUIPMENT_ALREADY_BIND_WITH_ONE_POND.getJSONRES();
 				}
-				sensor.setPondId(pondId);
-				logger.debug("塘口Id:" + pondId + "与传感器设备,设备编号:" + device_sn + "绑定成功。。。");
+				
+				sensorChk.setPondId(sensor.getPondId());
+				sensorDao.updateSensor(sensorChk);
+				
+				GetLatesDeviceData api = new GetLatesDeviceData(sensor.getDevice_sn(),key);
+			    BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
+				
+			    List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
+		        for(int i=0;i<DatastreamsList.size();i++) {
+		        	if(DatastreamsList.get(i).getId().equals("location")) {
+		        		
+			        	String location = DatastreamsList.get(i).getValue().toString();
+			        	float lat = Float.parseFloat(location.substring(5, location.indexOf(",")));
+			        	float lon = Float.parseFloat(location.substring(location.indexOf(",")+6,location.length()-1));
+			        	
+			        	pond.setLatitude(lat);
+			        	pond.setLongitude(lon);
+			        	
+			        	String locationGet = webService.getLocation(lon, lat);
+			        	
+			        	pond.setAddress(locationGet);
+			        	
+			        	pondDao.update(pond);
+			        	
+		        	}
+		        	
+		        }
+		        
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		}
 	}
 
-	public Map<String, Object> bindPondWithAIO(String device_sn, int pondId) {
-		logger.debug("塘口Id:" + pondId + "尝试与一体机设备,设备编号为:" + device_sn + "进行绑定...");
-		Pond pond = pondDao.findPondByPondId(pondId);
+	public Map<String, Object> bindPondWithAIO(AIO aio) {
+		logger.debug("塘口Id:" + aio.getPondId() + "尝试与一体机设备,设备编号为:" + aio.getDevice_sn() +"，设备第"+aio.getPort()+ "路进行绑定...");
+		Pond pond = pondDao.findPondByPondId(aio.getPondId());
 		if (pond == null) {
-			logger.debug("塘口Id:" + pondId + "在数据库中无记录!!!");
+			logger.debug("塘口Id:" + aio.getPondId() + "在数据库中无记录!!!");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
-			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
-			if (aio == null) {
-				logger.debug("一体机设备,设备编号:" + device_sn + "在数据库中无记录!!!");
-				return RESCODE.NOT_FOUND.getJSONRES();
+			AIO aioChk = aioDao.findAIOByDeviceSns(aio.getDevice_sn());
+			if (aioChk == null) {
+				//新增
+				aioDao.save(aio);
+				
+				Device device = new Device();
+				device.setDevice_sn(aio.getDevice_sn());
+				device.setType(1);
+				deviceDao.save(device);
+				
+				logger.debug("一体机设备,设备编号:" + aio.getDevice_sn() + "在数据库中新增!!!");
+				
+				GetLatesDeviceData api = new GetLatesDeviceData(aio.getDevice_sn(),key);
+			    BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
+				
+			    List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
+		        for(int i=0;i<DatastreamsList.size();i++) {
+		        	if(DatastreamsList.get(i).getId().equals("location")) {
+		        		
+			        	String location = DatastreamsList.get(i).getValue().toString();
+			        	float lat = Float.parseFloat(location.substring(5, location.indexOf(",")));
+			        	float lon = Float.parseFloat(location.substring(location.indexOf(",")+6,location.length()-1));
+			        	
+			        	pond.setLatitude(lat);
+			        	pond.setLongitude(lon);
+			        	
+			        	String locationGet = webService.getLocation(lon, lat);
+			        	
+			        	pond.setAddress(locationGet);
+			        	
+			        	pondDao.update(pond);
+			        	
+		        	}
+		        	
+		        }
+				
+				return RESCODE.SUCCESS.getJSONRES();
 			} else {
+				//修改
 				if (aio.getPondId() != 0) {
 					return RESCODE.EQUIPMENT_ALREADY_BIND_WITH_ONE_POND.getJSONRES();
 				}
-				aio.setPondId(pondId);
-				logger.debug("塘口Id:" + pondId + "与一体机设备,设备编号为:" + device_sn + "绑定成功。。。");
+				aioChk.setPondId(aio.getPondId());
+				logger.debug("塘口Id:" + aio.getPondId() + "与一体机设备,设备编号为:" + aio.getDevice_sn() + "绑定成功。。。");
+				
+				GetLatesDeviceData api = new GetLatesDeviceData(aio.getDevice_sn(),key);
+			    BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
+				
+			    List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
+		        for(int i=0;i<DatastreamsList.size();i++) {
+		        	if(DatastreamsList.get(i).getId().equals("location")) {
+		        		
+			        	String location = DatastreamsList.get(i).getValue().toString();
+			        	float lat = Float.parseFloat(location.substring(5, location.indexOf(",")));
+			        	float lon = Float.parseFloat(location.substring(location.indexOf(",")+6,location.length()-1));
+			        	
+			        	pond.setLatitude(lat);
+			        	pond.setLongitude(lon);
+			        	
+			        	String locationGet = webService.getLocation(lon, lat);
+			        	
+			        	pond.setAddress(locationGet);
+			        	
+			        	pondDao.update(pond);
+			        	
+		        	}
+		        	
+		        }
+				
 				return RESCODE.SUCCESS.getJSONRES();
 			}
 		}

@@ -29,7 +29,7 @@
         }
       }
       .tangkou-name{
-        color:#FF4D26;
+        /*color:#FF4D26;*/
         padding-right:20rpx;
         padding-left:36rpx;
       }
@@ -73,6 +73,8 @@
           float: right;
           overflow: hidden;
           text-align: right;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
       .status{
@@ -143,7 +145,7 @@
     <view class="but" @tap="addTangkou">
       添加塘口
     </view>
-  </view>  
+  </view>
 </template>
 >
 <script>

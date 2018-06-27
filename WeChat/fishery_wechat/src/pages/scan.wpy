@@ -33,6 +33,7 @@ import wepy from 'wepy'
 
 export default class Scan extends wepy.page {
   methods= {
+    // 点击屏幕，识别二维码
     scancode() {
       wepy.scanCode({
         success: (res) => {

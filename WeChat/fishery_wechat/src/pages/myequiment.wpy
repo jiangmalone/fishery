@@ -7,6 +7,7 @@
     width:686rpx;
     background-color: #ffffff;
     margin-left: 34rpx;
+    border-radius: 10rpx;
     .equiment-header{
       height: 80rpx;
       line-height: 80rpx;
@@ -16,22 +17,23 @@
         display: inline-block;
         height: 0rpx;
         width: 0rpx;
-        border-top: 50rpx solid #2F70B8;
-        border-right: 50rpx solid transparent;
-        border-bottom: 50rpx solid transparent;
+        border-top: 70rpx solid #2F70B8;
+        border-right: 70rpx solid transparent;
+        border-bottom: 70rpx solid transparent;
         position: absolute;
         text{
           font-size: 26rpx;
           color: #ffffff;
           position: absolute;
           top: -72rpx;
-          left: 8rpx;
+          left: 10rpx;
+          line-height: 50rpx;
         }
       }
       .equiment-name{
         color:#FF4D26;
         padding-right:20rpx;
-        padding-left:36rpx;
+        padding-left:50rpx;
       }
       .delete{
         color:#323B45;
@@ -61,13 +63,19 @@
     }
     .cot{
       margin-bottom: 50rpx;
+      padding: 25rpx 20rpx 25rpx 20rpx;
       .cot-item{
         font-size: 26rpx;
         color: #5C6979;
         padding: 20rpx;
       }
-      .status{
+      .bind{
         float: right;
+        color: #2f70b8;
+      }
+      .unbind{
+        float: right;
+        color: #5C6979;
       }
     }
   }
@@ -85,30 +93,60 @@
 </style>
 <template>
   <view class="myequiment">
+
+    <!--设备列表-->
     <repeat for="{{equimentlist}}" key="index" index="index" item="item">
       <view class="equiment-item">
-      <view class="equiment-header">
-        <view class="three"><text>{{index+1}}</text></view>
-        <text class="equiment-name">{{item.content.length === 1 ? '传感器' : item.content.length === 2 ? '一体机' : '控制器' }}</text><text>{{item.id}}</text>
-        <view class="delete" @tap="deleteEquiment({{item}}, {{index}})"><image src="../images/除_3@2x.png"></image><text>删除</text></view>
-        <view class="modify" @tap="modifyEquiment({{item}})"><image src="../images/辑_7@2x.png"></image><text>修改</text></view>
-      </view>
-      <view class="cot">
-        <repeat for="{{item.content}}" key="index" index="index">
-        <view class="cot-item">
-          <text>{{tangkoulist[item.pondId]}}>{{item.port}}路 ({{item.name}})</text>
-          <text class="status">{{item.pondId==='' ? '未绑定' : '已绑定'}}</text>
+
+        <!--设备标题栏 -->
+        <view class="equiment-header">
+
+          <!--深蓝小三角-->
+          <view class="three">
+            <text>{{index+1}}</text>
+          </view>
+
+          <!--设备类型名称-->
+          <text class="equiment-name">{{item.content.length === 1 ? '传感器' : item.content.length === 2 ? '一体机' : '控制器' }}</text>
+
+          <!--设备编码-->
+          <text>{{item.id}}</text>
+
+          <!--删除按钮-->
+          <view class="delete" @tap="deleteEquiment({{item}}, {{index}})">
+            <image src="../images/除_3@2x.png"></image>
+            <text>删除</text>
+          </view>
+
+          <!--管理设备按钮-->
+          <view class="modify" @tap="modifyEquiment({{item}})">
+            <image src="../images/辑_7@2x.png"></image>
+            <text>设备管理</text>
+          </view>
+
         </view>
-        </repeat>
+
+        <!--详细信息-->
+        <view class="cot">
+          <repeat for="{{item.content}}" key="index" index="index">
+          <view class="cot-item">
+            <text>{{tangkoulist[item.pondId]}}>{{item.port}}路 ({{item.name}})</text>
+            <text class="{{item.pondId==='' ? 'unbind' : 'bind'}}">{{item.pondId==='' ? '未绑定' : '已绑定'}}</text>
+          </view>
+          </repeat>
+        </view>
+
       </view>
-    </view>
     </repeat>
+
+    <!--添加设备按钮-->
     <view class="but" @tap="scan">
       添加设备
     </view>
-  </view>  
+
+  </view>
 </template>
->
+
 <script>
 import wepy from 'wepy'
 
@@ -147,6 +185,8 @@ export default class Myequiment extends wepy.page {
     con() {
       console.log('1111')
     },
+
+    // 管理设备按钮
     modifyEquiment(item) {
       console.log(item)
       let num = item.id.slice(0, 2)
@@ -168,6 +208,8 @@ export default class Myequiment extends wepy.page {
         wepy.showToast({title: '无效设备', icon: 'none'})
       }
     },
+
+    // 删除设备按钮
     deleteEquiment(item, index) {
       wepy.showModal({
         title: '提示',
@@ -197,6 +239,8 @@ export default class Myequiment extends wepy.page {
         }
       })
     },
+
+    // 跳转到扫码添加设备页面
     scan() {
       wepy.redirectTo({
         url: 'scan'
@@ -204,6 +248,7 @@ export default class Myequiment extends wepy.page {
     }
   }
   onLoad() {
+    // 初始化获取列表信息
     wepy.request({
       url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
       data: {

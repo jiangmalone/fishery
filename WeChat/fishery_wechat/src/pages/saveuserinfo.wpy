@@ -16,7 +16,7 @@
   .row-flex {
     display: flex;
   }
-  .row{ 
+  .row{
     width: 656rpx;
     height: 110rpx;
     background-color:#FAFDFC;
@@ -25,7 +25,7 @@
     margin-top: 66rpx;
     border: 1px solid #AAC4E2;
   }
-  .row1{ 
+  .row1{
     width: 656rpx;
     height: 110rpx;
     background-color:#FAFDFC;
@@ -92,9 +92,12 @@ export default class Saveuserinfo extends wepy.page {
     navigationBarTitleText: '完善信息'
   }
   methods = {
+    // 养殖年限
     bindValue(key, e) {
       this.info[key] = e.detail.value
     },
+
+    // 选择照片
     chosePhoto() {
       wepy.chooseImage({
         count: 1, // 默认9
@@ -109,6 +112,8 @@ export default class Saveuserinfo extends wepy.page {
         }
       })
     },
+
+    // 判空、loading、提交、
     confirminfo() {
       let info = this.info
       if (info.headimgurl === '') {

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.BindService;
 
@@ -24,13 +26,21 @@ public class BindController {
 	@Autowired
 	private BindService bindService;
 	
-	@RequestMapping(value = "/pondWithSensorOrAIO", method = RequestMethod.GET)
-	public Map<String, Object> bindPondWithSensorOrAIO(String device_sn, int pondId, int type){
-		switch(type){
-			case 1 : return bindService.bindPondWithSensor(device_sn, pondId);
-			case 2 : return bindService.bindPondWithAIO(device_sn, pondId);
-			default : return RESCODE.WRONG_PARAM.getJSONRES();
-		}
+	
+	
+	@RequestMapping(value = "/pondWithSensor", method = RequestMethod.POST)
+	public Map<String, Object> bindPondWithSensorOrAIO(Sensor sensor){
+	
+			return bindService.bindPondWithSensor(sensor);
+			
+
+	}
+	
+	@RequestMapping(value = "/pondWithAio", method = RequestMethod.POST)
+	public Map<String, Object> bindPondWithSensorOrAIO(AIO aio){
+			
+		return bindService.bindPondWithAIO(aio);
+
 	}
 	
 	@RequestMapping(value = "/delSensorOrAIOBind", method = RequestMethod.GET)

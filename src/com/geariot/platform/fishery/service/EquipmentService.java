@@ -567,7 +567,15 @@ public class EquipmentService {
 			return RESCODE.SUCCESS.getJSONRES();
 		}else {*/
 			limitDao.updateLimit(limit_Install);
-			return RESCODE.SUCCESS.getJSONRES();
+			limit_Install.getUp_limit();
+			
+			int result = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2);
+			if(result==1) {
+				return RESCODE.SUCCESS.getJSONRES();
+			}else {
+				return RESCODE.TRIGGER_FAILED.getJSONRES();
+			}
+			
 	/*	}	*/	
 	}
 	

@@ -21,6 +21,7 @@ public class Dev_Trigger {
 	private String device_sn;            //设备id
 	private String trigger_id;               //触发器id
 	private int triggertype;                //触发器类型
+	private int way;                //触发器属于哪一路
 	/*
 	 * 0.预警
 	 * 1.危险
@@ -56,4 +57,11 @@ public class Dev_Trigger {
 	public void setTrigertype(int trigertype) {
 		this.triggertype = trigertype;
 	}
+	public int getWay() {
+		return way;
+	}
+	public void setWay(int way) {
+		this.way = way;
+	}
+	
 }

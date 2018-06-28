@@ -1295,7 +1295,7 @@ public class EquipmentService {
 					int way = trigger.getWay();
 					String divsn=trigger.getDevice_sn();
 					String text = "KM"+way+":"+1;
-					int results = CMDUtils.sendStrCmd(divsn,text);
+					CMDUtils.sendStrCmd(divsn,text);
 				}
 			}
 			sensorDao.updateSensor(sensor);

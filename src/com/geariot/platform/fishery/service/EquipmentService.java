@@ -1290,6 +1290,12 @@ public class EquipmentService {
 					}else if(ds_id.equals("pH")) {
 						sensor.setStatus(6);
 					}
+				}else if(trigger.getTrigertype()==2) {
+					//低于溶氧下限，打开增氧机
+					int way = trigger.getWay();
+					String divsn=trigger.getDevice_sn();
+					String text = "KM"+way+":"+1;
+					int results = CMDUtils.sendStrCmd(divsn,text);
 				}
 			}
 			sensorDao.updateSensor(sensor);

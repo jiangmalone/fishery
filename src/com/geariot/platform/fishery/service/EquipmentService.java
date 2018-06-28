@@ -103,19 +103,19 @@ public class EquipmentService {
 	private Controller controller = null;
 	private WXUser wxUser = null;
 	private String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
-
-	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
-		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
-		List<Sensor> sensors = sensorDao.findSensorsByPondId(controller.getPondId());
-		String sensorsn= sensors.get(0).getDevice_sn();
-		addTrigger("oxygen", sensorsn,  "<", lowlimit, 7);
-		addTrigger("oxygen", sensorsn,  "<", highlimit, 8);
-		addTrigger("oxygen", sensorsn,  "<", higherlimit, 9);
-			return RESCODE.SUCCESS.getJSONRES();
-		// return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-
-	}
+//
+//	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
+//		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
+//		List<Sensor> sensors = sensorDao.findSensorsByPondId(controller.getPondId());
+//		String sensorsn= sensors.get(0).getDevice_sn();
+//		addTrigger("oxygen", sensorsn,  "<", lowlimit, 7);
+//		addTrigger("oxygen", sensorsn,  "<", highlimit, 8);
+//		addTrigger("oxygen", sensorsn,  "<", higherlimit, 9);
+//			return RESCODE.SUCCESS.getJSONRES();
+//		// return RESCODE.DEVICESNS_INVALID.getJSONRES();
+//
+//
+//	}
 	//删除设备
 	public Map<String, Object> delEquipment(String device_sn){
 		Device  d = deviceDao.findDevice(device_sn);
@@ -598,7 +598,7 @@ public class EquipmentService {
 			limitDao.updateLimit(limit_Install);
 			limit_Install.getUp_limit();
 			
-			int result = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2);
+			int result = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
 			if(result==1) {
 				return RESCODE.SUCCESS.getJSONRES();
 			}else {

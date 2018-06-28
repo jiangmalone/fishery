@@ -69,7 +69,7 @@ public class BindService {
 			if (sensorChk == null) {
 				//新增
 				
-				sensorDao.save(sensor);
+				/*sensorDao.save(sensor);
 				
 				Device device = new Device();
 				device.setDevice_sn(sensor.getDevice_sn());
@@ -98,10 +98,10 @@ public class BindService {
 			        	
 		        	}
 		        	
-		        }
+		        }*/
 				
-				logger.debug("传感器设备,设备编号:" + sensor.getDevice_sn() + "在数据库中添加!!!");
-				return RESCODE.SUCCESS.getJSONRES();
+				logger.debug("传感器设备,设备编号:" + sensor.getDevice_sn() + "在数据库中不存在!!!");
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			} else {
 				//修改
 				if (sensor.getPondId() != 0) {
@@ -150,7 +150,7 @@ public class BindService {
 			AIO aioChk = aioDao.findAIOByDeviceSns(aio.getDevice_sn());
 			if (aioChk == null) {
 				//新增
-				aioDao.save(aio);
+				/*aioDao.save(aio);
 				
 				Device device = new Device();
 				device.setDevice_sn(aio.getDevice_sn());
@@ -181,9 +181,9 @@ public class BindService {
 			        	
 		        	}
 		        	
-		        }
+		        }*/
 				
-				return RESCODE.SUCCESS.getJSONRES();
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			} else {
 				//修改
 				if (aio.getPondId() != 0) {

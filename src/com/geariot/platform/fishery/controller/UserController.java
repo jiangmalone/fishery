@@ -76,4 +76,11 @@ public class UserController {
 	public Map<String, Object> HomePageDetail(String relation){
 		return userService.HomePageDetail(relation);
 	}
+	
+	@RequestMapping(value = "/hasEquipment" , method = RequestMethod.GET)
+	public int hasEquipment(String relation){
+		return userService.hasEquipment(relation);
+	}
+	
+	
 }

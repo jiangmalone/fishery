@@ -32,6 +32,7 @@ import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import cmcc.iot.onenet.javasdk.api.device.GetDevicesStatus;
 import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
@@ -280,6 +281,7 @@ public class UserService {
 		List<Pond> pondList = pondDao.queryPondByRelation(relation);
 
 		for(Pond pond:pondList) {
+			System.out.println("池塘名:"+pond.getName());
 			Map<String, Object> map11=new HashMap<>();
 			map11.put("pondname", pond.getName());
 			map11.put("address", pond.getAddress());
@@ -293,7 +295,7 @@ public class UserService {
 			List<Map> controllerLM = new ArrayList<>();
 			//获得传感器离线/在线
 			if(sensorlist!=null) {
-				
+				System.out.println("sensorlist"+sensorlist.size());
 				for(Sensor sensor:sensorlist) {
 					Map<String, Object> sensorMap=new HashMap<>();
 					Map<String, Object> sensorDataMap=new HashMap<>();
@@ -321,7 +323,7 @@ public class UserService {
 			}
 			//获得一体机离线/在线
 			if(aioList!=null) {
-				
+				System.out.println("aioList"+aioList.size());
 				for(AIO aio:aioList) {
 					Map<String, Object> aioMap=new HashMap<>();
 					GetDevicesStatus api = new GetDevicesStatus(aio.getDevice_sn(),key);
@@ -335,24 +337,23 @@ public class UserService {
 			}
 			//获得控制器离线/在线
 			if(controllerList!=null) {
-				
+				System.out.println("controllerList"+controllerList.size());
 				for(Controller controller:controllerList) {
 					Map<String, Object> controllerMap=new HashMap<>();
 					GetDevicesStatus api = new GetDevicesStatus(controller.getDevice_sn(),key);
 			        BasicResponse<DevicesStatusList> response = api.executeApi();
 			        if(response.errno == 0) {
-			        	controllerMap.put("online", response.data.getDevices().get(0).getIsonline());
-			        	List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(controller.getDevice_sn(), controller.getPort());
-				        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
-				       // List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(controller.getDevice_sn());
-				        String controllerKey = equipmentService.getControllerPortStatus(controller.getDevice_sn(), controller.getPort());
-				        controllerMap.put("switch", controllerKey);
-				        controllerMap.put("TimerList", timerList);
-				        controllerMap.put("Limit", limit);
-				        controllerMap.put("controller", controller);
-				        controllerLM.add(controllerMap);
+			        	controllerMap.put("online", response.data.getDevices().get(0).getIsonline());			        	
 			        }
-			        
+			        List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(controller.getDevice_sn(), controller.getPort());
+			        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
+			       // List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(controller.getDevice_sn());
+			        String controllerKey = equipmentService.getControllerPortStatus(controller.getDevice_sn(), controller.getPort());
+			        controllerMap.put("switch", controllerKey);
+			        controllerMap.put("TimerList", timerList);
+			        controllerMap.put("Limit", limit);
+			        controllerMap.put("controller", controller);
+			        controllerLM.add(controllerMap);
 				}
 			}
 			
@@ -366,4 +367,17 @@ public class UserService {
 		map.put("myHome", ol);
 		return map;
 	}
+	
+	public int hasEquipment(String relation) {
+		List<AIO> aioList = aioDao.findAIOByRelation(relation);
+		List<Sensor> sensorList = sensorDao.findSensorsByRelation(relation);
+		List<Controller> controllerList = controllerDao.findByRelation(relation);
+		if(aioList.size()==0&&sensorList.size()==0&&controllerList.size()==0) {
+			return 0;
+		}else {
+			return 1;
+		}
+	}
+	
+	
 }

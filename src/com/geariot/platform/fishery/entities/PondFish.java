@@ -16,9 +16,9 @@ public class PondFish {
 	private String fish_name;
 	private int type;
 	/*
-	 * 0.鱼
-	 * 1.虾
-	 * 2.蟹
+	 * 1.鱼
+	 * 2.虾
+	 * 3.蟹
 	 */
 	
 	@Id

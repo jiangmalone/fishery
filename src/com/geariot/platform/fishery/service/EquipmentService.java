@@ -5,7 +5,6 @@ import cmcc.iot.onenet.javasdk.api.datastreams.GetDatastreamApi;
 import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
 import cmcc.iot.onenet.javasdk.api.triggers.AddTriggersApi;
 import cmcc.iot.onenet.javasdk.api.triggers.DeleteTriggersApi;
-import cmcc.iot.onenet.javasdk.api.triggers.ModifyTriggersApi;
 import cmcc.iot.onenet.javasdk.response.BasicResponse;
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList;
 import cmcc.iot.onenet.javasdk.response.datastreams.DatastreamsResponse;
@@ -105,18 +104,18 @@ public class EquipmentService {
 	private WXUser wxUser = null;
 	private String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
 
-	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
-		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
-		List<Sensor> sensors = sensorDao.findSensorsByPondId(controller.getPondId());
-		String sensorsn= sensors.get(0).getDevice_sn();
-		addTrigger("oxygen", sensorsn,  "<", lowlimit, 7);
-		addTrigger("oxygen", sensorsn,  "<", highlimit, 8);
-		addTrigger("oxygen", sensorsn,  "<", higherlimit, 9);
-			return RESCODE.SUCCESS.getJSONRES();
-		// return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-
-	}
+//	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
+//		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
+//		List<Sensor> sensors = sensorDao.findSensorsByPondId(controller.getPondId());
+//		String sensorsn= sensors.get(0).getDevice_sn();
+//		addTrigger("oxygen", sensorsn,  "<", lowlimit, 7);
+//		addTrigger("oxygen", sensorsn,  "<", highlimit, 8);
+//		addTrigger("oxygen", sensorsn,  "<", higherlimit, 9);
+//			return RESCODE.SUCCESS.getJSONRES();
+//		// return RESCODE.DEVICESNS_INVALID.getJSONRES();
+//
+//
+//	}
 	//删除设备
 	public Map<String, Object> delEquipment(String device_sn){
 		Device  d = deviceDao.findDevice(device_sn);
@@ -295,18 +294,47 @@ public class EquipmentService {
 		for (AIO aio:aios){
 			if(deviceDao.findDevice(aio.getDevice_sn())==null) {
 				
+				//设备号不存在，添加设备
 				Device device = new Device();
 				device.setDevice_sn(aio.getDevice_sn());
 				device.setType(2);
-				deviceDao.save(device);
-				System.out.println("添加了一个一体机");
+				deviceDao.save(device);					
+								
+				logger.debug("在device中添加了一个一体机");
+				aioDao.save(aio);
+				logger.debug("在aio中添加了一个一体机");
 				
+				logger.debug("塘口Id:" + aio.getPondId() + "尝试与一体机设备,设备编号为:" + aio.getDevice_sn() + "进行绑定...");
+				Pond pond = pondDao.findPondByPondId(aio.getPondId());
+				if (pond == null) {
+					//塘口不存在
+					logger.debug("塘口Id:" + aio.getPondId()+ "在数据库中无记录!!!");
+					return RESCODE.NOT_FOUND.getJSONRES();
+				}else {
+					//塘口存在，添加触发器
+					//根据鱼的种类添加触发器1.鱼2.虾3.蟹
+					Pond bindpond=pondDao.findPondByPondId(aio.getPondId());
+					List<PondFish> pondFishList = pondFishDao.getFishbyPondId(bindpond.getId());
+		            int pondfishtype;
+		            if (pondFishList.size()!=0){
+		            	//塘口中有鱼
+		            	logger.debug("塘口中有鱼");
+		            	logger.debug("塘口中共有"+pondFishList.size()+"种");
+		                PondFish senbinfs=pondFishList.get(0);
+		                pondfishtype=senbinfs.getType();
+		            }else return RESCODE.POND_NO_FISH.getJSONRES();
+		        	logger.debug("鱼塘中鱼的种类为："+pondfishtype);
+		            int triggeraddresult=addAioTrigerbyFishtype(aio.getDevice_sn(), pondfishtype,aio.getWay());
+		            if (triggeraddresult !=0)
+		            	return RESCODE.TRIGGER_FAILED.getJSONRES();					
+				}					
+				
+			}else {
+				//设备号存在，不可添加
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();	
 			}
-			aioDao.save(aio);
-			System.out.println(aio.getDevice_sn());
-			 
 		}
-		return RESCODE.SUCCESS.getJSONRES();
+		  return RESCODE.SUCCESS.getJSONRES();
 	}
 
 
@@ -429,7 +457,7 @@ public class EquipmentService {
                  	System.out.println(DatastreamsList.get(i).getId());
                  	System.out.println(DatastreamsList.get(i).getValue());
                  	String id = DatastreamsList.get(i).getId();
-                 	float value = (float)(DatastreamsList.get(i).getValue());
+                 	float value = (float) DatastreamsList.get(i).getValue();
                  	if(id.equals("pH")) {
                  		sensor.setpH_value(value);
                  	}else if(id.equals("DO")) {
@@ -561,15 +589,23 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> setLimit(Limit_Install limit_Install){
+		/*String device_sn = limit_Install.getDevice_sn();
+		int way = limit_Install.getWay();
+		if(limitDao.findLimitByDeviceSnsAndWay(device_sn, way)==null) {
+			limitDao.save(limit_Install);
+			return RESCODE.SUCCESS.getJSONRES();
+		}else {*/
 			limitDao.updateLimit(limit_Install);
 			limit_Install.getUp_limit();
 			
-			int result = addControllerTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), limit_Install.getWay());
+			int result = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
 			if(result==1) {
 				return RESCODE.SUCCESS.getJSONRES();
 			}else {
 				return RESCODE.TRIGGER_FAILED.getJSONRES();
 			}
+			
+	/*	}	*/	
 	}
 	
 	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number) {
@@ -1255,12 +1291,11 @@ public class EquipmentService {
 						sensor.setStatus(6);
 					}
 				}else if(trigger.getTrigertype()==2) {
-					//超过溶氧下限，打开氧气机
+					//低于溶氧下限，打开增氧机
 					int way = trigger.getWay();
 					String divsn=trigger.getDevice_sn();
 					String text = "KM"+way+":"+1;
 					int results = CMDUtils.sendStrCmd(divsn,text);
-					
 				}
 			}
 			sensorDao.updateSensor(sensor);
@@ -1339,16 +1374,16 @@ public class EquipmentService {
 	    	/*
 	    	 *溶解氧
 	    	 */
-	    	int trigger11 = addTrigger("DO", device_sn, "<", 2, 1);
+	    	int trigger11 = addTrigger("DO", device_sn, "<", 2, 1,0);
 	    	Map threshold12 = new HashMap<String, Float>();
 			threshold12.put("lolmt", 2);
 			threshold12.put("uplmt", 4);
-	    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,2);
+	    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,2,0);
 	    	/*
 	    	 * 水温
 	    	 */
-	    	 int trigger21 = addTrigger("WT", device_sn, "<", 10, 0);
-             int trigger22 =addTrigger("WT", device_sn, ">", 30, 0);
+	    	 int trigger21 = addTrigger("WT", device_sn, "<", 10, 0,0);
+             int trigger22 =addTrigger("WT", device_sn, ">", 30, 0,0);
              /*
               * pH
               */
@@ -1357,14 +1392,14 @@ public class EquipmentService {
 	    		 Map threshold33 = new HashMap<String, Float>();
 	 			threshold33.put("lolmt", 4.5);
 	 			threshold33.put("uplmt", 6.5);
-	    		 int trigger33 = addTrigger("pH", device_sn, "inout", threshold33, 0);
+	    		 int trigger33 = addTrigger("pH", device_sn, "inout", threshold33, 0,0);
 	    		 Map threshold34 = new HashMap<String, Float>();
 	  			threshold34.put("lolmt", 9);
 	  			threshold34.put("uplmt", 10.5);
-	     		 int trigger34 = addTrigger("pH", device_sn, "inout", threshold34, 0);
+	     		 int trigger34 = addTrigger("pH", device_sn, "inout", threshold34, 0,0);
 	     		//危险
-	             int trigger31 = addTrigger("pH", device_sn, "<", 4.5, 1);
-	    		 int trigger32 = addTrigger("pH", device_sn, ">", 10.2, 1);
+	             int trigger31 = addTrigger("pH", device_sn, "<", 4.5, 1,0);
+	    		 int trigger32 = addTrigger("pH", device_sn, ">", 10.2, 1,0);
 	     		 
 	     		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger22==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
 	     			 return 1;
@@ -1381,12 +1416,12 @@ public class EquipmentService {
 	    	Map threshold12 = new HashMap<String, Float>();
 			threshold12.put("lolmt", 2);
 			threshold12.put("uplmt", 5);
-	    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,2);
-	    	int trigger11 = addTrigger("DO", device_sn, "<", 2, 1);
+	    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,2,0);
+	    	int trigger11 = addTrigger("DO", device_sn, "<", 2, 1,0);
 	    	/*
 	    	 * 水温
 	    	 */
-	    	 int trigger21 = addTrigger("WT", device_sn, "<", 18, 0);
+	    	 int trigger21 = addTrigger("WT", device_sn, "<", 18, 0,0);
 	        /*
 	         * pH
 	         */
@@ -1395,14 +1430,14 @@ public class EquipmentService {
 	    	Map threshold33 = new HashMap<String, Float>();
 			threshold33.put("lolmt", 6.5);
 			threshold33.put("uplmt", 7.8);
-			int trigger33 = addTrigger("pH", device_sn, "inout", threshold33, 0);
+			int trigger33 = addTrigger("pH", device_sn, "inout", threshold33, 0,0);
    		 	Map threshold34 = new HashMap<String, Float>();
  			threshold34.put("lolmt", 8.5);
  			threshold34.put("uplmt", 9.2);
-    		 int trigger34 = addTrigger("pH", device_sn, "inout", threshold34, 0);
+    		 int trigger34 = addTrigger("pH", device_sn, "inout", threshold34, 0,0);
     		//危险
-  	        int trigger31 = addTrigger("pH", device_sn, "<", 6.5, 1);
-  			int trigger32 = addTrigger("pH", device_sn, ">", 9.2, 1);
+  	        int trigger31 = addTrigger("pH", device_sn, "<", 6.5, 1,0);
+  			int trigger32 = addTrigger("pH", device_sn, ">", 9.2, 1,0);
     		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
      			 return 1;
      		 }else {
@@ -1418,12 +1453,12 @@ public class EquipmentService {
     	Map threshold12 = new HashMap<String, Float>();
 		threshold12.put("lolmt", 2.5);
 		threshold12.put("uplmt", 5);
-    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,0);
-    	int trigger11 = addTrigger("DO", device_sn, "<", 2.5, 1);
+    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,0,0);
+    	int trigger11 = addTrigger("DO", device_sn, "<", 2.5, 1,0);
     	/*
     	 * 水温
     	 */
-    	 int trigger21 = addTrigger("WT", device_sn, "<", 18, 0);
+    	 int trigger21 = addTrigger("WT", device_sn, "<", 18, 0,0);
     	/*
          * pH
          */
@@ -1432,14 +1467,14 @@ public class EquipmentService {
 		 Map threshold33 = new HashMap<String, Float>();
 			threshold33.put("lolmt", 6);
 			threshold33.put("uplmt", 6.8);
-		 int trigger33 = addTrigger("pH", device_sn, "inout", threshold33, 0);
+		 int trigger33 = addTrigger("pH", device_sn, "inout", threshold33, 0,0);
 		 Map threshold34 = new HashMap<String, Float>();
 			threshold34.put("lolmt", 8.3);
 			threshold34.put("uplmt", 9);
- 		 int trigger34 = addTrigger("pH", device_sn, "inout", threshold34, 0);
+ 		 int trigger34 = addTrigger("pH", device_sn, "inout", threshold34, 0,0);
  		//危险
-         int trigger31 = addTrigger("pH", device_sn, "<", 6, 1);
-		 int trigger32 = addTrigger("pH", device_sn, ">", 9, 1);
+         int trigger31 = addTrigger("pH", device_sn, "<", 6, 1,0);
+		 int trigger32 = addTrigger("pH", device_sn, ">", 9, 1,0);
  		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
  			 return 1;
  		 }else {
@@ -1451,7 +1486,130 @@ public class EquipmentService {
         }
     }
 
-	public int addTrigger(String dsid,String device_sn,String type,Object threshold,int localtype){
+	
+	public int addAioTrigerbyFishtype(String device_sn,int fishtype,int way){
+		List<Fish_Category> fishcate = fishcateDao.getallfish();
+		//危险触发器和预警触发器的添加顺序不能改变，否则传感器状态会出错
+		
+	    if (fishtype==1) {//鱼
+	    	//预警触发器与危险触发器，0预警1危险 
+	    	/*
+	    	 *溶解氧
+	    	 */
+	    	int trigger11 = addTrigger("DO"+way, device_sn, "<", 2, 1,way);
+	    	Map threshold12 = new HashMap<String, Float>();
+			threshold12.put("lolmt", 2);
+			threshold12.put("uplmt", 4);
+	    	int trigger12 = addTrigger("DO"+way,device_sn,"inout",threshold12,2,way);
+	    	/*
+	    	 * 水温
+	    	 */
+	    	 int trigger21 = addTrigger("WT"+way, device_sn, "<", 10, 0,way);
+             int trigger22 =addTrigger("WT"+way, device_sn, ">", 30, 0,way);
+             /*
+              * pH
+              */
+	             
+	    		 //预警
+	    		 Map threshold33 = new HashMap<String, Float>();
+	 			threshold33.put("lolmt", 4.5);
+	 			threshold33.put("uplmt", 6.5);
+	    		 int trigger33 = addTrigger("pH"+way, device_sn, "inout", threshold33, 0,way);
+	    		 Map threshold34 = new HashMap<String, Float>();
+	  			threshold34.put("lolmt", 9);
+	  			threshold34.put("uplmt", 10.5);
+	     		 int trigger34 = addTrigger("pH"+way, device_sn, "inout", threshold34, 0,way);
+	     		//危险
+	             int trigger31 = addTrigger("pH"+way, device_sn, "<", 4.5, 1,way);
+	    		 int trigger32 = addTrigger("pH"+way, device_sn, ">", 10.2, 1,way);
+	     		 
+	     		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger22==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
+	     			 return 1;
+	     		 }else {
+	     			 return 0;
+	     		 }
+	     		
+        }else if (fishtype==2) {//虾
+        	//预警触发器与危险触发器
+        	/*
+	    	 *溶解氧
+	    	 */
+        	
+	    	Map threshold12 = new HashMap<String, Float>();
+			threshold12.put("lolmt", 2);
+			threshold12.put("uplmt", 5);
+	    	int trigger12 = addTrigger("DO"+way,device_sn,"inout",threshold12,2,way);
+	    	int trigger11 = addTrigger("DO"+way, device_sn, "<", 2, 1,way);
+	    	/*
+	    	 * 水温
+	    	 */
+	    	 int trigger21 = addTrigger("WT"+way, device_sn, "<", 18, 0,way);
+	        /*
+	         * pH
+	         */
+	    	
+			//预警
+	    	Map threshold33 = new HashMap<String, Float>();
+			threshold33.put("lolmt", 6.5);
+			threshold33.put("uplmt", 7.8);
+			int trigger33 = addTrigger("pH"+way, device_sn, "inout", threshold33, 0,way);
+   		 	Map threshold34 = new HashMap<String, Float>();
+ 			threshold34.put("lolmt", 8.5);
+ 			threshold34.put("uplmt", 9.2);
+    		 int trigger34 = addTrigger("pH"+way, device_sn, "inout", threshold34, 0,way);
+    		//危险
+  	        int trigger31 = addTrigger("pH"+way, device_sn, "<", 6.5, 1,way);
+  			int trigger32 = addTrigger("pH"+way, device_sn, ">", 9.2, 1,way);
+    		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
+     			 return 1;
+     		 }else {
+     			 return 0;
+     		 }
+    		
+        }else if (fishtype==3) {//蟹
+        	//预警触发器与危险触发器
+    	/*
+    	 *溶解氧
+    	 */
+    	
+    	Map threshold12 = new HashMap<String, Float>();
+		threshold12.put("lolmt", 2.5);
+		threshold12.put("uplmt", 5);
+    	int trigger12 = addTrigger("DO"+way,device_sn,"inout",threshold12,0,way);
+    	int trigger11 = addTrigger("DO"+way, device_sn, "<", 2.5, 1,way);
+    	/*
+    	 * 水温
+    	 */
+    	 int trigger21 = addTrigger("WT"+way, device_sn, "<", 18, 0,way);
+    	/*
+         * pH
+         */
+    	
+		//预警
+		 Map threshold33 = new HashMap<String, Float>();
+			threshold33.put("lolmt", 6);
+			threshold33.put("uplmt", 6.8);
+		 int trigger33 = addTrigger("pH"+way, device_sn, "inout", threshold33, 0,way);
+		 Map threshold34 = new HashMap<String, Float>();
+			threshold34.put("lolmt", 8.3);
+			threshold34.put("uplmt", 9);
+ 		 int trigger34 = addTrigger("pH"+way, device_sn, "inout", threshold34, 0,way);
+ 		//危险
+         int trigger31 = addTrigger("pH"+way, device_sn, "<", 6, 1,way);
+		 int trigger32 = addTrigger("pH"+way, device_sn, ">", 9, 1,way);
+ 		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
+ 			 return 1;
+ 		 }else {
+ 			 return 0;
+ 		 }
+ 		
+        }else {
+        	return 0;
+        }
+    }
+
+	
+	public int addTrigger(String dsid,String device_sn,String type,Object threshold,int localtype,int way){
 		/**
 		 * 触发器新增
 		 * @param title:名称（可选）,String
@@ -1484,6 +1642,7 @@ public class EquipmentService {
 				trigger.setDevice_sn(device_sn);
 				trigger.setTriger_id(String.valueOf(triggerid));
 				trigger.setTrigertype(localtype);
+				trigger.setWay(way);
 				dev_triggerDao.save(trigger);
 				return 0;
 			}else return 1;

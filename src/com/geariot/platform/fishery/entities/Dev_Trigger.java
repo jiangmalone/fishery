@@ -19,15 +19,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 public class Dev_Trigger {
 	private int id;						//触发器本地Id,自增
 	private String device_sn;            //设备id
-	private int way;					//设备第几路
-	public int getWay() {
-		return way;
-	}
-	public void setWay(int way) {
-		this.way = way;
-	}
 	private String trigger_id;               //触发器id
 	private int triggertype;                //触发器类型
+	private int way;                //触发器属于哪一路
 	/*
 	 * 0.预警
 	 * 1.危险
@@ -63,4 +57,11 @@ public class Dev_Trigger {
 	public void setTrigertype(int trigertype) {
 		this.triggertype = trigertype;
 	}
+	public int getWay() {
+		return way;
+	}
+	public void setWay(int way) {
+		this.way = way;
+	}
+	
 }

@@ -1,8 +1,8 @@
 package cmcc.iot.onenet.javasdk.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cmcc.iot.onenet.javasdk.request.RequestInfo.Method;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class AbstractAPI <T>{
 	public String key;

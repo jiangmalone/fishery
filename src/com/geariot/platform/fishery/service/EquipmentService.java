@@ -104,18 +104,18 @@ public class EquipmentService {
 	private WXUser wxUser = null;
 	private String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
 
-//	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
-//		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
-//		List<Sensor> sensors = sensorDao.findSensorsByPondId(controller.getPondId());
-//		String sensorsn= sensors.get(0).getDevice_sn();
-//		addTrigger("oxygen", sensorsn,  "<", lowlimit, 7);
-//		addTrigger("oxygen", sensorsn,  "<", highlimit, 8);
-//		addTrigger("oxygen", sensorsn,  "<", higherlimit, 9);
-//			return RESCODE.SUCCESS.getJSONRES();
-//		// return RESCODE.DEVICESNS_INVALID.getJSONRES();
-//
-//
-//	}
+	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
+		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
+		List<Sensor> sensors = sensorDao.findSensorsByPondId(controller.getPondId());
+		String sensorsn= sensors.get(0).getDevice_sn();
+		addTrigger("oxygen", sensorsn,  "<", lowlimit, 7);
+		addTrigger("oxygen", sensorsn,  "<", highlimit, 8);
+		addTrigger("oxygen", sensorsn,  "<", higherlimit, 9);
+			return RESCODE.SUCCESS.getJSONRES();
+		// return RESCODE.DEVICESNS_INVALID.getJSONRES();
+
+
+	}
 	//删除设备
 	public Map<String, Object> delEquipment(String device_sn){
 		Device  d = deviceDao.findDevice(device_sn);
@@ -598,7 +598,7 @@ public class EquipmentService {
 			limitDao.updateLimit(limit_Install);
 			limit_Install.getUp_limit();
 			
-			int result = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
+			int result = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2);
 			if(result==1) {
 				return RESCODE.SUCCESS.getJSONRES();
 			}else {
@@ -1290,12 +1290,6 @@ public class EquipmentService {
 					}else if(ds_id.equals("pH")) {
 						sensor.setStatus(6);
 					}
-				}else if(trigger.getTrigertype()==2) {
-					//低于溶氧下限，打开增氧机
-					int way = trigger.getWay();
-					String divsn=trigger.getDevice_sn();
-					String text = "KM"+way+":"+1;
-					int results = CMDUtils.sendStrCmd(divsn,text);
 				}
 			}
 			sensorDao.updateSensor(sensor);
@@ -1643,49 +1637,6 @@ public class EquipmentService {
 				trigger.setTriger_id(String.valueOf(triggerid));
 				trigger.setTrigertype(localtype);
 				trigger.setWay(way);
-				dev_triggerDao.save(trigger);
-				return 0;
-			}else return 1;
-		}catch(Exception e){
-			System.out.println(e.getMessage());
-			return 1;
-		}
-	}
-	
-	public int addControllerTrigger(String dsid,String device_sn,String type,Object threshold,int way){
-		/**
-		 * 触发器新增
-		 * @param title:名称（可选）,String
-		 * @param dsid:数据流名称（id）（可选）,String
-		 * @param devids:设备ID（可选）,List<String>
-		 * @param dsuuids:数据流uuid（可选）,List<String>
-		 * @param desturl:url,String
-		 * @param type:触发类型，String
-		 * @param threshold:阙值，根据type不同，见以下说明,Integer
-		 * @param key:masterkey 或者 设备apikey
-		 */
-		//微信小程序使用url
-		//String url = "https://www.fisherymanager.net/fishery/api/equipment/triggeractive";
-		//本机使用
-		String url = "http://fc1d40f2.ngrok.io/fishery/api/equipment/triggeractive";
-		List<String> devids=new ArrayList<String>();
-		devids.add(device_sn);
-		String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
-		int triggerid;	
-		AddTriggersApi api = new AddTriggersApi(null, dsid, devids, null, url, type, threshold, key);
-		try{
-			BasicResponse<NewTriggersResponse> response = api.executeApi();
-			System.out.println(response.getJson());
-			JSONObject tempjson = JSONObject.fromObject(response.getJson());
-			int errnoint = tempjson.getInt("errno");
-			if (errnoint==0){
-				JSONObject triobj = tempjson.getJSONObject("data");
-				triggerid = triobj.getInt("trigger_id");
-				Dev_Trigger trigger = new Dev_Trigger();
-				trigger.setDevice_sn(device_sn);
-				trigger.setTriger_id(String.valueOf(triggerid));
-				trigger.setWay(way);
-				trigger.setTrigertype(2);
 				dev_triggerDao.save(trigger);
 				return 0;
 			}else return 1;

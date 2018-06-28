@@ -18,8 +18,8 @@
       border-bottom: 2rpx solid #E6E6E6
     }
     .set-cot{
-      padding:28rpx;
-      color:  #5C6979;
+      padding: 28rpx;
+      color: #5C6979;
       .rightinp{
         float: right;
         text-align: right;
@@ -27,6 +27,7 @@
       .time-picker{
         display: inline-block;
         margin-left: 20rpx;
+        padding-top: 8rpx;
       }
       .delete{
         margin-left: 40rpx;
@@ -38,6 +39,11 @@
         border: 2rpx solid #CFCFCF;
         border-radius: 80rpx;
       }
+    }
+    .set-time{
+      padding: 40rpx;
+      display: flex;
+      justify-content: space-between;
     }
   }
   .add-but{
@@ -69,6 +75,9 @@
       padding-left: 40rpx;
       font-size: 26rpx;
       color: #535353;
+    &>view{
+      margin: 25rpx;
+    }
   }
 }
 </style>
@@ -86,7 +95,7 @@
   <view class="set-item">
     <view class="set-header">定时启停设置</view>
     <repeat for="{{timelist}}" key="index" index="index" item="item">
-      <view class="set-cot">
+      <view class="set-cot set-time">
       <picker class="time-picker" mode="time" value="{{item.startTime}}" start="00:00" end="24:00" bindchange="bindTimeChange({{index}},'startTime')">
         <view class="picker">开启时间:{{item.startTime}}</view>
       </picker>

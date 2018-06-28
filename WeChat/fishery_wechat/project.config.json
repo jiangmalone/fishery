@@ -1,13 +1,90 @@
 {
-  "description": "A WePY project",
-  "setting": {
-    "urlCheck": true,
-    "es6": false,
-    "postcss": false,
-    "minified": false
-  },
-  "compileType": "miniprogram",
-  "appid": "wx2e6fb6e0e3c10ca3",
-  "projectname": "fishery-wechart",
-  "miniprogramRoot": "./dist"
+	"description": "A WePY project",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"appid": "wx2e6fb6e0e3c10ca3",
+	"projectname": "%E6%B8%94%E7%AE%A1%E5%AE%B6",
+	"miniprogramRoot": "./dist",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": 0,
+			"list": [
+				{
+					"id": 0,
+					"name": "home首页",
+					"pathName": "pages/home",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "personal我的",
+					"pathName": "pages/personal",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "line诊断",
+					"pathName": "pages/line",
+					"query": ""
+				},
+				{
+					"id": 12,
+					"name": "addallinone新增一体机",
+					"pathName": "pages/addallinone",
+					"query": ""
+				},
+				{
+					"id": 13,
+					"name": "addcontroler控制器",
+					"pathName": "pages/addcontroler",
+					"query": ""
+				},
+				{
+					"id": 14,
+					"name": "addsensor传感器",
+					"pathName": "pages/addsensor",
+					"query": ""
+				},
+				{
+					"id": 6,
+					"name": "测试",
+					"pathName": "pages/scan",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "测试2",
+					"pathName": "pages/addtangkou",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "login",
+					"pathName": "pages/login",
+					"query": ""
+				}
+			]
+		}
+	}
 }

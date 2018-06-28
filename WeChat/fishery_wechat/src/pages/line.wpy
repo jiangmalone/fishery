@@ -66,13 +66,13 @@
           border-radius: 16rpx;
           .o2{
             width:80rpx;
-            height:70rpx;
+            height:80rpx;
             margin-left: 70rpx;
             margin-top: 46rpx;
           }
           .ph{
-            width:80rpx;
-            height:94rpx;
+            width:65rpx;
+            height:115rpx;
             margin-left: 70rpx;
             margin-top: 34rpx;
           }
@@ -120,7 +120,7 @@
     <view class="sensorname">小鱼塘-小A-进水啊实打实的</view><image class="header-img" src="../images/多_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
     <view class="status"><view class="status-dot"></view>异常</view>
     <view class="andmore">
-      <text>更多</text><image src="../images/group_16@2x.png" style="width:26rpx;height:33rpx;"></image>
+      <text @tap="jupMoreEquiment">更多</text><image src="../images/group_16@2x.png" style="width:46rpx;height:33rpx;"></image>
     </view>
   </view>
   <view class="content">
@@ -132,21 +132,21 @@
       <view class="cot-index">
         <view class="target">
           <image class="o2" src="../images/氧_3_copy 2@2x.png"></image>
-          <view class="data">溶氧8.5mg/L</view>
+          <view class="data">溶氧 8.5mg/L</view>
         </view>
         <view class="res">正常</view>
       </view>
       <view class="cot-index">
         <view class="target">
           <image class="o2" src="../images/温@2x.png"></image>
-          <view class="data">水温21℃</view>
+          <view class="data">水温 21℃</view>
         </view>
         <view class="res">正常</view>
       </view>
       <view class="cot-index">
         <view class="target">
           <image class="ph" src="../images/ph@2x.png"></image>
-          <view class="data1">PH8.5</view>
+          <view class="data1">PH 8.5</view>
         </view>
         <view class="res">正常</view>
       </view>
@@ -163,7 +163,20 @@
 </template>
 <script>
 import wepy from 'wepy'
-const wxCharts = require('../units/wxcharts-min.js')
+// const wxCharts = require('../units/wxcharts-min.js')
 export default class Line extends wepy.page {
+  data = {}
+
+  methods = {
+    // 跳转到更多塘口
+    jupMoreEquiment() {
+      wepy.navigateTo({
+        url: `myequiment`
+      })
+    }
+  }
+  events = {}
+  onShow() {}
+  onLoad() {}
 }
 </script>

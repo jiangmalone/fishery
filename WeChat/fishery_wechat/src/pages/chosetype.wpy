@@ -36,12 +36,16 @@
 </style>
 <template>
   <view class="chosetype">
+
+    <!--已添加-->
     <view class="chosen">
       已添加：
       <repeat for="{{selected}}" key="index">
-        <text>{{item.fish_name}},</text>
+        <text>{{item.fish_name}}，</text>
       </repeat>
     </view>
+
+    <!--列表-->
     <view>
       <repeat for="{{list}}" key="index">
       <view class="type-item" @tap="selectRep" data-selectindex="{{index}}" data-selecttype="{{item}}">
@@ -50,6 +54,8 @@
       </view>
       </repeat>
     </view>
+
+    <!--确定按钮-->
     <view class="confirmbut" @tap="typedone">确定</view>
   </view>
 </template>
@@ -96,6 +102,7 @@ export default class Chosetype extends wepy.page {
     noselectImage: ''
   }
   methods = {
+    // 勾选列表
     selectRep(e) {
       let index = e.currentTarget.dataset.selectindex
       let type = e.currentTarget.dataset.selecttype
@@ -117,6 +124,8 @@ export default class Chosetype extends wepy.page {
       // 点击就赋相反的值
       this.$apply()
     },
+
+    // 提交
     typedone() {
       let select = []
       this.selected.forEach((value) => {
@@ -129,6 +138,7 @@ export default class Chosetype extends wepy.page {
         url: `addtangkou?type=${data}&select=${select}&action=${this.action}`
       })
     }
+
   }
   onLoad(option) {
     console.log(option)

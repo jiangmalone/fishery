@@ -204,17 +204,17 @@ export default class Addallinone extends wepy.page {
     id: null,
     action: '',
     pondlist: [],
-    equimentNum: '',
+    equimentNum: '34784122',
     equimentinfo: [
       {
-        device_sn: '',
+        device_sn: '34784122',
         name: '',
         pondId: '',
         port: 1,
         relation: ''
       },
       {
-        device_sn: '',
+        device_sn: '34784122',
         name: '',
         pondId: '',
         port: 2,

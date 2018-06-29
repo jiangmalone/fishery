@@ -1,10 +1,13 @@
 <style lang="less">
   .noHomePageData{
     width: 750rpx;
-    text{
-      transform: translateX(-50%);
+    height: 1000rpx;
+    view{
       color: #dcdcdc;
+      position: relative;
       font-size: 30rpx;
+      top: 50%;
+      text-align: center;
     }
   }
 .home {
@@ -20,6 +23,11 @@
     background-size:752rpx 220rpx;
     color: #ffffff;
     font-size: 32rpx;
+    .noWeather{
+      position: relative;
+      text-align: center;
+      top: 35%;
+    }
     .bgimage {
       width:24rpx;
       height:31rpx;
@@ -438,26 +446,32 @@
 </style>
 <template>
   <view>
-    <view class="home">
+    <!--首页-->
+    <view wx:if="{{isHomeDetail}}" class="home">
 
       <!--头部天气等信息-->
-      <view class="home-bg home-flex">
-        <view class="location">
-          <image class="bgimage" src="../images/点1@2x.png"></image>
-          <text>{{location}}</text>
+      <view class="home-bg">
+        <view class="home-flex" wx:if="{{isWeather}}">
+          <view class="location">
+            <image class="bgimage" src="../images/点1@2x.png"></image>
+            <text>{{location}}</text>
+          </view>
+          <view class="weather">
+            <text>{{weather.weather}}</text>
+            <text class="tem">{{weather.temperature}}</text>
+            <text>℃</text>
+            <view class="time">{{time}}</view>
+          </view>
+
+          <view class="week">
+            <text>{{week}}</text>
+          </view>
         </view>
-        <view class="weather" wx:if="{{weather.weather != null}}">
-          <text>{{weather.weather}}</text>
-          <text class="tem">{{weather.temperature}}</text>
-          <text>℃</text>
-          <view class="time">{{time}}</view>
-        </view>
-        <view class="weather" wx:else>
+
+        <view class="noWeather" wx:else>
           <text>暂无数据</text>
         </view>
-        <view class="week">
-          <text>{{week}}</text>
-        </view>
+
       </view>
 
       <!--塘口列表滑块（大于3）-->
@@ -482,7 +496,9 @@
       <view class="tab-eg" @tap="jupMoreTangkou">更多<image src="../images/group_16@2x.png" style="width:24rpx;height:25rpx;"></image></view>
 
       <!--传感器列表存在-->
-      <view class="sensor" wx:if="{{tangkoudetail.sensorlist[0].sensor.name != null}}">
+      <view class="sensor"
+            @tap="jupLine"
+            wx:if="{{tangkoudetail.sensorlist[0].sensor.name != null}}">
 
         <!--标题栏-->
         <view class="stype">{{tangkoudetail.sensorlist[0].sensor.name}}-数据指标
@@ -504,7 +520,7 @@
             <view class="unit">mg/L</view>
           </view>
           <view class="sborder1"></view>
-          <view class="sresult">正常</view>
+          <view class="sresult">{{realTimeDataInfo.oxygen_status===0?'正常': (realTimeDataInfo.oxygen_status===1?'预警':'危险')}}</view>
         </view>
 
         <!--温度-->
@@ -519,7 +535,7 @@
             <view class="unit1">℃</view>
           </view>
           <view class="sborder1"></view>
-          <view class="sresult">正常</view>
+          <view class="sresult">{{realTimeDataInfo.wt_status===0?'正常': (realTimeDataInfo.wt_status===1?'预警':'危险')}}</view>
         </view>
 
         <!--ph-->
@@ -533,7 +549,7 @@
             <view>{{realTimeDataInfo.pH_value}}</view>
           </view>
           <view class="sborder1"></view>
-          <view class="sresult">正常</view>
+          <view class="sresult">{{realTimeDataInfo.pH_status===0?'正常': (realTimeDataInfo.pH_status===1?'预警':'危险')}}</view>
         </view>
 
       </view>
@@ -558,7 +574,7 @@
               <text class="{{item.controller.status === 0 ? 'normal' : (item.controller.type === 1 ? 'off' : (item.controller.type === 2 ? 'losepower' : (item.controller.type === 3 ? 'lost' : 'lost')))}}">
                 {{item.controller.status === 0 ? '正常' : (item.controller.type === 1 ? '离线' : (item.controller.type === 2 ? '断电' : (item.controller.type === 3 ? '缺相' : '数据异常')))}}
               </text>
-              <text class="off">已关闭</text>
+              <text class="off">{{item.switch==='0'?'已关闭':'已开启'}}</text>
             </view>
             <view class="shezhi">
               <view class="choseAuto" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}})">自动设置</view>
@@ -577,8 +593,10 @@
       <view class="cut"></view>
 
     </view>
-    <view class="noHomePageData">
-      <text>暂无信息，请添加设备</text>
+
+    <!--暂无信息-->
+    <view class="noHomePageData" wx:else>
+      <view>暂无信息，请添加塘口</view>
     </view>
   </view>
 </template>
@@ -594,10 +612,19 @@ export default class Home extends wepy.page {
     location: '',
     weather: {},
     currentId: 0,
-    realTimeDataInfo: []
+    realTimeDataInfo: [],
+    isHomeDetail: false,
+    isWeather: false
   }
 
   methods = {
+    // 跳转到图表
+    jupLine() {
+      wepy.navigateTo({
+        url: `line`
+      })
+    },
+
     // 跳转到更多塘口
     jupMoreTangkou() {
       wepy.navigateTo({
@@ -632,19 +659,24 @@ export default class Home extends wepy.page {
       if (!this.location) {
         return 0
       }
-      this.location = e.target.dataset.tangkou.address.split('省')[1].split('市')[0]
-      wepy.request({
-        url: this.$parent.globalData.baseUrl + 'api/' + 'webService/weather',
-        data: {
-          lon: e.target.dataset.tangkou.lon,
-          lat: e.target.dataset.tangkou.lat
-        },
-        method: 'GET',
-        success: res => {
-          this.weather = res.data.lives[0]
-          this.$apply()
-        }
-      })
+      if (e.target.dataset.tangkou.lon !== 0) {
+        this.location = e.target.dataset.tangkou.address.split('省')[1].split('市')[0]
+        this.isWeather = true
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/weather',
+          data: {
+            lon: e.target.dataset.tangkou.lon,
+            lat: e.target.dataset.tangkou.lat
+          },
+          method: 'GET',
+          success: res => {
+            this.weather = res.data.lives[0]
+            this.$apply()
+          }
+        })
+      } else {
+        this.isWeather = false
+      }
       if (e.target.dataset.tangkou.sensorlist.length > 0) {
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
@@ -746,6 +778,7 @@ export default class Home extends wepy.page {
       },
       method: 'GET',
       success: res => {
+        // 如果有设备，就获取塘口信息
         if (res.data === 1) {
           // 获取用户塘口设备等信息
           wepy.request({
@@ -755,8 +788,10 @@ export default class Home extends wepy.page {
             },
             method: 'GET',
             success: res => {
+              // 如果有塘口
               if (res.data.myHome.length > 0) {
                 console.log(res.data.myHome)
+                this.isHomeDetail = true
                 let num = this.$parent.globalData.currentId
                 this.tangkoulist = res.data.myHome
                 this.tangkoudetail = res.data.myHome[num]
@@ -765,23 +800,30 @@ export default class Home extends wepy.page {
                 if (!location) {
                   return 0
                 }
-                this.location = location.split('省')[1].split('市')[0]
                 wepy.showLoading()
-                wepy.request({
-                  url: this.$parent.globalData.baseUrl + 'api/' + 'webService/weather',
-                  data: {
-                    lon: res.data.myHome[num].lon,
-                    lat: res.data.myHome[num].lat
-                  },
-                  method: 'GET',
-                  success: res => {
-                    this.weather = res.data.lives[0]
-                    this.$apply()
-                  },
-                  complete: () => {
-                    wepy.hideLoading()
-                  }
-                })
+                // 获取第一的塘口的天气信息
+                if (res.data.myHome[num].lon !== 0) {
+                  this.location = location.split('省')[1].split('市')[0]
+                  this.isWeather = true
+                  wepy.request({
+                    url: this.$parent.globalData.baseUrl + 'api/' + 'webService/weather',
+                    data: {
+                      lon: res.data.myHome[num].lon,
+                      lat: res.data.myHome[num].lat
+                    },
+                    method: 'GET',
+                    success: res => {
+                      this.weather = res.data.lives[0]
+                      this.$apply()
+                    },
+                    complete: () => {
+                      wepy.hideLoading()
+                    }
+                  })
+                } else {
+                  this.isWeather = false
+                }
+                // 如果有传感器，就获取实时数据
                 if (res.data.myHome[num].sensorlist.length > 0) {
                   wepy.request({
                     url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
@@ -795,7 +837,9 @@ export default class Home extends wepy.page {
                   })
                 }
               } else {
-                //
+                // 如果没塘口，暂无数据
+                this.isHomeDetail = false
+                this.$apply()
               }
             },
             complete: () => {
@@ -803,6 +847,7 @@ export default class Home extends wepy.page {
             }
           })
         } else {
+          // 如果没有设备，就跳转到扫设备
           wepy.navigateTo({
             url: `scan`
           })

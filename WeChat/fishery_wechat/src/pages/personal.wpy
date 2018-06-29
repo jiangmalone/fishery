@@ -175,10 +175,18 @@ export default class Personal extends wepy.page {
     // 退出登录
     signOut() {
       wepy.request({
-        url: this.$parent.globalData.baseUrl + 'api/' + '',
-        data: {},
+        url: this.$parent.globalData.baseUrl + 'api/' + 'admin/logout',
+        data: this.$parent.globalData.phone,
         method: 'GET',
-        success: res => {}
+        success: res => {
+          if (res.data.msg === '成功') {
+            wepy.navigateTo({
+              url: 'login'
+            })
+          } else {
+            wepy.showToast({title: '登出失败', icon: 'none'})
+          }
+        }
       })
     }
   }

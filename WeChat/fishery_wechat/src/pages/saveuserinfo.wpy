@@ -155,6 +155,9 @@ export default class Saveuserinfo extends wepy.page {
   onLoad(option) {
     console.log(this.$parent.globalData.phone)
     this.info.phone = this.$parent.globalData.phone
+    if (this.$parent.globalData.name) {
+      this.info = this.$parent.globalData
+    }
     this.$apply()
   }
 }

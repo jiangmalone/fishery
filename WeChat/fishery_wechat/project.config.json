@@ -43,9 +43,9 @@
 					"query": ""
 				},
 				{
-					"id": -1,
+					"id": 2,
 					"name": "line诊断",
-					"pathName": "pages/line",
+					"pathName": "pages/diagnosis",
 					"query": ""
 				},
 				{
@@ -68,8 +68,8 @@
 				},
 				{
 					"id": 6,
-					"name": "测试",
-					"pathName": "pages/scan",
+					"name": "折线图",
+					"pathName": "pages/line",
 					"query": ""
 				},
 				{

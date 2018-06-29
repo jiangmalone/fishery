@@ -30,9 +30,12 @@ public class Sensor {
 	
 	
 	//以下这些字段均用@Transient注解了
-	private float oxygen;						//溶氧量
+	private float oxygen;						//溶氧量	
+	private int oxygen_status;					//溶氧状态
 	private float water_temperature;			//水温
+	private int WT_status;					//水温状态
 	private float pH_value;						//ph值
+	private int pH_status;						//pH状态
 	private int wayStatus;
 	
 	@Id
@@ -99,6 +102,28 @@ public class Sensor {
 	}
 	public void setpH_value(float pH_value) {
 		this.pH_value = pH_value;
+	}
+	
+	@Transient
+	public int getOxygen_status() {
+		return oxygen_status;
+	}
+	public void setOxygen_status(int oxygen_status) {
+		this.oxygen_status = oxygen_status;
+	}
+	@Transient
+	public int getWT_status() {
+		return WT_status;
+	}
+	public void setWT_status(int wT_status) {
+		WT_status = wT_status;
+	}
+	@Transient
+	public int getpH_status() {
+		return pH_status;
+	}
+	public void setpH_status(int pH_status) {
+		this.pH_status = pH_status;
 	}
 	@Transient
 	public int getWayStatus() {

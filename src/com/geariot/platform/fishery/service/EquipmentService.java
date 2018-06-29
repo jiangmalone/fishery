@@ -7,6 +7,8 @@ import cmcc.iot.onenet.javasdk.api.triggers.AddTriggersApi;
 import cmcc.iot.onenet.javasdk.api.triggers.DeleteTriggersApi;
 import cmcc.iot.onenet.javasdk.response.BasicResponse;
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList;
+import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsItem;
+import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsItem.DatapointsItem;
 import cmcc.iot.onenet.javasdk.response.datastreams.DatastreamsResponse;
 import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
 import cmcc.iot.onenet.javasdk.response.triggers.NewTriggersResponse;
@@ -103,19 +105,19 @@ public class EquipmentService {
 	private Controller controller = null;
 	private WXUser wxUser = null;
 	private String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
-
-	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
-		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
-		List<Sensor> sensors = sensorDao.findSensorsByPondId(controller.getPondId());
-		String sensorsn= sensors.get(0).getDevice_sn();
-		addTrigger("oxygen", sensorsn,  "<", lowlimit, 7);
-		addTrigger("oxygen", sensorsn,  "<", highlimit, 8);
-		addTrigger("oxygen", sensorsn,  "<", higherlimit, 9);
-			return RESCODE.SUCCESS.getJSONRES();
-		// return RESCODE.DEVICESNS_INVALID.getJSONRES();
-
-
-	}
+//
+//	public Map<String, Object> setLimit(String devicesn,int way,int lowlimit,int highlimit,int higherlimit) {
+//		Controller controller = controllerDao.findControllerByDeviceSnAndWay(devicesn,way);
+//		List<Sensor> sensors = sensorDao.findSensorsByPondId(controller.getPondId());
+//		String sensorsn= sensors.get(0).getDevice_sn();
+//		addTrigger("oxygen", sensorsn,  "<", lowlimit, 7);
+//		addTrigger("oxygen", sensorsn,  "<", highlimit, 8);
+//		addTrigger("oxygen", sensorsn,  "<", higherlimit, 9);
+//			return RESCODE.SUCCESS.getJSONRES();
+//		// return RESCODE.DEVICESNS_INVALID.getJSONRES();
+//
+//
+//	}
 	//删除设备
 	public Map<String, Object> delEquipment(String device_sn){
 		Device  d = deviceDao.findDevice(device_sn);
@@ -224,7 +226,8 @@ public class EquipmentService {
 //	}
 
 	public Map<String, Object> addSensor(Sensor...sensors) {
-	//只可添加一个传感器，数组形式为便于前端渲染	
+		//为塘口添加传感器
+		//只可添加一个传感器，数组形式为便于前端渲染	
 			Sensor sensor  =sensors[0];
 			if(deviceDao.findDevice(sensor.getDevice_sn())==null) {	
 				//设备号不存在，添加设备
@@ -263,8 +266,41 @@ public class EquipmentService {
 		            else return RESCODE.TRIGGER_FAILED.getJSONRES();					
 				}					
 			}else {
-				//设备号存在，不可添加
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();	
+				//设备号存在，与塘口重新绑定
+				logger.debug("非新设备，已在其他塘口使用过");
+				/*Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
+				sensorOld.setName(sensor.getName());
+				sensorOld.setPondId(sensor.getPondId());
+				sensorOld.setRelation(sensor.getRelation());
+				sensorOld.setStatus(sensor.getStatus());*/
+				
+				sensorDao.updateSensor(sensor);
+				
+				logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
+				Pond pond = pondDao.findPondByPondId(sensor.getPondId());
+				if (pond == null) {
+					//塘口不存在
+					logger.debug("塘口Id:" + sensor.getPondId()+ "在数据库中无记录!!!");
+					return RESCODE.NOT_FOUND.getJSONRES();
+				}else {
+					//塘口存在，添加触发器
+					//根据鱼的种类添加触发器1.鱼2.虾3.蟹
+					Pond sensorbindpond=pondDao.findPondByPondId(sensor.getPondId());
+					List<PondFish> pondFishList = pondFishDao.getFishbyPondId(sensorbindpond.getId());
+		            int pondfishtype;
+		            if (pondFishList.size()!=0){
+		            	//塘口中有鱼
+		            	logger.debug("塘口中有鱼");
+		            	logger.debug("塘口中共有"+pondFishList.size()+"种");
+		                PondFish senbinfs=pondFishList.get(0);
+		                pondfishtype=senbinfs.getType();
+		            }else return RESCODE.POND_NO_FISH.getJSONRES();
+		        	logger.debug("鱼塘中鱼的种类为："+pondfishtype);
+		            int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
+		            if (triggeraddresult==0)
+		                return RESCODE.SUCCESS.getJSONRES();
+		            else return RESCODE.TRIGGER_FAILED.getJSONRES();					
+				}			
 			}
 	}
 
@@ -412,39 +448,7 @@ public class EquipmentService {
 	}*/
 
 	public Sensor realTimeData(String device_sn) {
-		/*System.out.println(device_sn);
-		String datastreamIds="temperature";
-		String devId=device_sn;
-		String sort = "ASC" ;
-		String key ="BzFI2NGGcWgiMKODrBDiGkA7Psc=";
-		Integer first = 1;
-		
-    	GetDatapointsListApi api = new GetDatapointsListApi(datastreamIds,devId,first,sort,key);
-    	
-    	JSONObject tempjson = JSONObject.fromObject(api.executeApi().getJson());
-    	System.out.println(tempjson);
-    	JSONObject temp = tempjson.getJSONObject("data");
-    	JSONArray array= temp.getJSONArray("datastreams");
-    	JSONObject obj1 = array.getJSONObject(0);
-    	JSONArray obj2 =obj1.getJSONArray("datapoints");
-    	JSONObject obj3=obj2.getJSONObject(0);
-    	int obj4 =obj3.getInt("value");
-    	//String obj5=obj3.getString("at");    	
-     	System.out.println(obj4);
-    	return temp;*/
-		
-        /*JSONObject tempjson = JSONObject.fromObject(response.getJson());    
-        System.out.println(tempjson);
-    	JSONObject temp = tempjson.getJSONObject("data");
-    	JSONArray array= temp.getJSONArray("datastreams");
-    	JSONObject obj1 = array.getJSONObject(0);
-    	JSONArray obj2 =obj1.getJSONArray("datapoints");
-    	JSONObject obj3=obj2.getJSONObject(0);
-    	int obj4 =obj3.getInt("value");
-    	//String obj5=obj3.getString("at");    	
-     	System.out.println(obj4);*/
-		
-		
+		logger.debug("获得"+device_sn+"的实时数据");
     	GetLatesDeviceData api = new GetLatesDeviceData(device_sn,key);
         BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
         logger.debug(response.getJson());
@@ -457,7 +461,7 @@ public class EquipmentService {
                  	System.out.println(DatastreamsList.get(i).getId());
                  	System.out.println(DatastreamsList.get(i).getValue());
                  	String id = DatastreamsList.get(i).getId();
-                 	float value = (float) DatastreamsList.get(i).getValue();
+                 	float value = Float.parseFloat((String)DatastreamsList.get(i).getValue());
                  	if(id.equals("pH")) {
                  		sensor.setpH_value(value);
                  	}else if(id.equals("DO")) {
@@ -598,7 +602,7 @@ public class EquipmentService {
 			limitDao.updateLimit(limit_Install);
 			limit_Install.getUp_limit();
 			
-			int result = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2);
+			int result = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
 			if(result==1) {
 				return RESCODE.SUCCESS.getJSONRES();
 			}else {
@@ -860,42 +864,6 @@ public class EquipmentService {
 	}
 
 	public String dataToday(String device_sn, int way) {
-		/*List<Sensor_Data> list = new ArrayList<>();
-		if (way > 0) {
-			list = sensor_DataDao.today(device_sn, way);
-		} else {
-			list = sensor_DataDao.today(device_sn);
-		}
-	//	addVirtualData(list);
-		List<PH> phs = new ArrayList<>();
-		List<Oxygen> oxygens = new ArrayList<>();
-		List<Temperature> temperatures = new ArrayList<>();
-		PH ph = null;
-		Oxygen oxygen = null;
-		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		// for (Sensor_Data sensor_Data : list) {
-		Sensor_Data sensor_Data = null;
-		for (int i = RandomUtils.nextInt(6); i < 288; i = i + 6) {
-			try {
-				sensor_Data = list.get(i);
-				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
-				temperature = new Temperature(sensor_Data.getWater_temperature(),
-						format.format(sensor_Data.getReceiveTime()));
-				phs.add(ph);
-				oxygens.add(oxygen);
-				temperatures.add(temperature);
-			} catch (Exception e) {
-				break;
-			}
-		}
-		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-		map.put("phs", phs);
-		map.put("oxygens", oxygens);
-		map.put("temperatures", temperatures);
-		return map;//
-*/
 		Date date = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
@@ -907,6 +875,25 @@ public class EquipmentService {
 		GetDatapointsListApi api = new GetDatapointsListApi(null, dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, 137,
 				null, null, null, key);
 		BasicResponse<DatapointsList> response = api.executeApi();
+		Map<String, Object> map = null;
+		List<DatastreamsItem> dl= response.getData().getDevices();
+		System.out.println("参数个数："+dl.size());
+		
+		System.out.println("总共获得数据量为：");
+		System.out.println(response.getData().getCount());
+		for(int i=0;i<dl.size();i++) {				
+			DatastreamsItem di = dl.get(i);
+			List<DatapointsItem> ld =di.getDatapoints();
+			System.out.println(di.getId()+"参数下数据量："+ld.size());
+			if("DO_temperature".equals(di.getId())) {
+			/*	map.put("DO_temperature", value)*/
+				for(int j=0;j<ld.size();j++) {
+					System.out.println(ld.get(j).getValue());
+				}
+			}
+							
+		}
+	System.out.println(response.getJson());
 		return response.getJson();
 	}
 
@@ -1237,7 +1224,7 @@ public class EquipmentService {
 		System.out.println(""+triggerid);
 		System.out.println("数值为："+value);
 		//根据触发器id获得触发器，根据设备编号获得传感器（传感器只有一路），为传感器设置状态
-		//状态status(0,1,2,3,4,5,6,0对应正常,(1,2)|(3,4)|(5,6)对应DO、WT、pH的(预警，危险))
+		//状态值0：正常，1：预警，2：危险
 		Dev_Trigger trigger = dev_triggerDao.findTriggerBytriggerId(triggerid);
 		if(trigger!=null) {
 			System.out.println("触发器本地类型："+trigger.getTrigertype());
@@ -1249,19 +1236,19 @@ public class EquipmentService {
 				if(va>=lolmt&&va<=uplmt) {//触发值在触发范围内
 					if(trigger.getTrigertype() == 0) {//预警
 						if(ds_id.equals("DO")) {
-							sensor.setStatus(1);	
+							sensor.setOxygen_status(1);
 						}else if(ds_id.equals("WT")) {
-							sensor.setStatus(3);
+							sensor.setWT_status(1);
 						}else if(ds_id.equals("pH")) {
-							sensor.setStatus(5);
+							sensor.setpH_status(1);
 						}	
 					}else if(trigger.getTrigertype() == 1){//危险
 						if(ds_id.equals("DO")) {
-							sensor.setStatus(2);	
+							sensor.setOxygen_status(2);	
 						}else if(ds_id.equals("WT")) {
-							sensor.setStatus(4);
+							sensor.setWT_status(2);
 						}else if(ds_id.equals("pH")) {
-							sensor.setStatus(6);
+							sensor.setpH_status(2);
 						}
 					}
 				}else {//触发值离开触发范围
@@ -1290,6 +1277,12 @@ public class EquipmentService {
 					}else if(ds_id.equals("pH")) {
 						sensor.setStatus(6);
 					}
+				}else if(trigger.getTrigertype()==2) {
+					//低于溶氧下限，打开增氧机
+					int way = trigger.getWay();
+					String divsn=trigger.getDevice_sn();
+					String text = "KM"+way+":"+1;
+					CMDUtils.sendStrCmd(divsn,text);
 				}
 			}
 			sensorDao.updateSensor(sensor);

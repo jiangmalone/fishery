@@ -796,7 +796,9 @@ public class EquipmentService {
 		}
 	}
 
-	public String dataToday(String device_sn, int way) {
+	public Map<String, Object> dataToday(String device_sn, int way) {
+		
+		Map<String, Object> mapReturn = new HashMap();
 		//数据的获取针对传感器，传感器不需要way，way为一体机留用
 		//获得当天数据，从零点开始00:00:00
 		Date date = new Date();
@@ -810,26 +812,51 @@ public class EquipmentService {
 		GetDatapointsListApi api = new GetDatapointsListApi(null, dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, 137,
 				null, null, null, key);
 		BasicResponse<DatapointsList> response = api.executeApi();
-		Map<String, Object> map = null;
 		List<DatastreamsItem> dl= response.getData().getDevices();
-		System.out.println("参数个数："+dl.size());
+		logger.debug("获取当天数据");
+		logger.debug("参数个数："+dl.size());
+		logger.debug("总共获得数据量为："+response.getData().getCount());
 		
-		System.out.println("总共获得数据量为：");
-		System.out.println(response.getData().getCount());
 		for(int i=0;i<dl.size();i++) {				
 			DatastreamsItem di = dl.get(i);
 			List<DatapointsItem> ld =di.getDatapoints();
-			System.out.println(di.getId()+"参数下数据量："+ld.size());
-			if("DO_temperature".equals(di.getId())) {
-			/*	map.put("DO_temperature", value)*/
-				for(int j=0;j<ld.size();j++) {
-					System.out.println(ld.get(j).getValue());
+			
+			logger.debug(di.getId()+"参数下数据量："+ld.size());
+			
+			if("DO".equals(di.getId())) {
+				List<DatapointsItem> ldNew =new ArrayList<>();
+				for(int j=1;j<ld.size();j+=6) {//数据5min*6=半小时发一次
+					ldNew.add(ld.get(j));					
 				}
+				mapReturn.put("DO", ldNew);
+				/*以时间划分
+				 * String id = (String) ld.get(0).getValue();
+				String at = (String) ld.get(0).getAt();
+				String time = at.substring(at.indexOf(" "), at.length());
+				logger.debug(time);
+				for(int j=1;j<ld.size();j++) {
+					id = (String) ld.get(j).getValue();
+					 at = (String) ld.get(j).getAt();
+					time = at.substring(at.indexOf(" "), at.length());
+					logger.debug(time);
+				}*/
+			}else if("WT".equals(di.getId())) {
+				List<DatapointsItem> ldNew =new ArrayList<>();
+				for(int j=1;j<ld.size();j+=6) {//数据5min*6=半小时发一次
+					ldNew.add(ld.get(j));
+				}
+				mapReturn.put("WT", ldNew);
+			}else if("pH".equals(di.getId())) {
+				List<DatapointsItem> ldNew =new ArrayList<>();
+				for(int j=1;j<ld.size();j+=6) {//数据5min*6=半小时发一次
+					ldNew.add(ld.get(j));					
+				}
+				mapReturn.put("pH", ldNew);
 			}
 							
 		}
-	System.out.println(response.getJson());
-		return response.getJson();
+		System.out.println(response.getJson());
+		return mapReturn;
 	}
 
 	public Map<String, List<DatapointsItem>> data3days(String device_sn, int way) {

@@ -95,7 +95,7 @@ public class EquipmentController {
 	}
 
 	@RequestMapping(value = "/dataToday", method = RequestMethod.GET)
-	public String dataToday(String device_sn,int way) {
+	public Map dataToday(String device_sn,int way) {
 		return equipmentService.dataToday(device_sn,way);
 	}
 	

@@ -297,6 +297,18 @@ export default class Line extends wepy.page {
   }
   events = {}
   onShow() {}
-  onLoad() {}
+  onLoad() {
+    wepy.request({
+      url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
+      data: {
+        device_sn: 34780506,
+        way: 1
+      },
+      method: 'GET',
+      success: res => {
+        console.log(res.data)
+      }
+    })
+  }
 }
 </script>

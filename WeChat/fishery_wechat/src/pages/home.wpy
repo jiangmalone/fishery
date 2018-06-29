@@ -1,4 +1,12 @@
 <style lang="less">
+  .noHomePageData{
+    width: 750rpx;
+    text{
+      transform: translateX(-50%);
+      color: #dcdcdc;
+      font-size: 30rpx;
+    }
+  }
 .home {
   .home-flex{
     display: flex;
@@ -429,144 +437,149 @@
 }
 </style>
 <template>
-  <view class="home">
+  <view>
+    <view class="home">
 
-    <!--头部天气等信息-->
-    <view class="home-bg home-flex">
-      <view class="location">
-        <image class="bgimage" src="../images/点1@2x.png"></image>
-        <text>{{location}}</text>
+      <!--头部天气等信息-->
+      <view class="home-bg home-flex">
+        <view class="location">
+          <image class="bgimage" src="../images/点1@2x.png"></image>
+          <text>{{location}}</text>
+        </view>
+        <view class="weather" wx:if="{{weather.weather != null}}">
+          <text>{{weather.weather}}</text>
+          <text class="tem">{{weather.temperature}}</text>
+          <text>℃</text>
+          <view class="time">{{time}}</view>
+        </view>
+        <view class="weather" wx:else>
+          <text>暂无数据</text>
+        </view>
+        <view class="week">
+          <text>{{week}}</text>
+        </view>
       </view>
-      <view class="weather" wx:if="{{weather.weather != null}}">
-        <text>{{weather.weather}}</text>
-        <text class="tem">{{weather.temperature}}</text>
-        <text>℃</text>
-        <view class="time">{{time}}</view>
-      </view>
-      <view class="weather" wx:else>
-        <text>暂无数据</text>
-      </view>
-      <view class="week">
-        <text>{{week}}</text>
-      </view>
-    </view>
 
-    <!--塘口列表滑块（大于3）-->
-    <swiper class="tab" display-multiple-items="{{3}}"
-            previous-margin="30rpx" next-margin="0rpx"
-            wx:if="{{tangkoulist.length > 3}}">
-      <repeat for="{{tangkoulist}}" key="index" item="item">
-        <swiper-item>
-          <text class="{{currentId === index ? 'tab-index-active' : 'tab-index'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{item.pondname}}</text>
-        </swiper-item>
-      </repeat>
-    </swiper>
+      <!--塘口列表滑块（大于3）-->
+      <swiper class="tab" display-multiple-items="{{3}}"
+              previous-margin="30rpx" next-margin="0rpx"
+              wx:if="{{tangkoulist.length > 3}}">
+        <repeat for="{{tangkoulist}}" key="index" item="item">
+          <swiper-item>
+            <text class="{{currentId === index ? 'tab-index-active' : 'tab-index'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{item.pondname}}</text>
+          </swiper-item>
+        </repeat>
+      </swiper>
 
-    <!--塘口列表滑块（小于3）-->
-    <view class="tab1" wx:else>
-      <repeat for="{{tangkoulist}}" key="index" item="item">
+      <!--塘口列表滑块（小于3）-->
+      <view class="tab1" wx:else>
+        <repeat for="{{tangkoulist}}" key="index" item="item">
           <text class="{{currentId === index ? 'tab-index-active1' : 'tab-index1'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{item.pondname}}</text>
-      </repeat>
-    </view>
-
-    <!--塘口列表的“更多”-->
-    <view class="tab-eg" @tap="jupMoreTangkou">更多<image src="../images/group_16@2x.png" style="width:24rpx;height:25rpx;"></image></view>
-
-    <!--传感器列表存在-->
-    <view class="sensor" wx:if="{{tangkoudetail.sensorlist[0].sensor.name != null}}">
-
-      <!--标题栏-->
-      <view class="stype">{{tangkoudetail.sensorlist[0].sensor.name}}-数据指标
-        <text class="{{tangkoudetail.sensorlist[0].online === false ? 'isoutline' : 'isonline'}}">
-          <text class="{{tangkoudetail.sensorlist[0].online === false ? 'outl' : 'inl'}}">
-          </text>{{tangkoudetail.sensorlist[0].online === true ? '在线' : '离线'}}
-        </text>
+        </repeat>
       </view>
 
-      <!--溶氧-->
-      <view class="svalue">
-        <view class="o2">
-          <image src="../images/氧_3_copy 2@2x.png" style="width:56rpx;height:56rpx;"></image>
-          <view>溶氧</view>
-          </view>
-        <view class="sborder"></view>
-        <view class="ovalue">
-          <view>{{tangkoudetail.sensorlist[0].data.DO}}8.5</view>
-          <view class="unit">mg/L</view>
+      <!--塘口列表的“更多”-->
+      <view class="tab-eg" @tap="jupMoreTangkou">更多<image src="../images/group_16@2x.png" style="width:24rpx;height:25rpx;"></image></view>
+
+      <!--传感器列表存在-->
+      <view class="sensor" wx:if="{{tangkoudetail.sensorlist[0].sensor.name != null}}">
+
+        <!--标题栏-->
+        <view class="stype">{{tangkoudetail.sensorlist[0].sensor.name}}-数据指标
+          <text class="{{tangkoudetail.sensorlist[0].online === false ? 'isoutline' : 'isonline'}}">
+            <text class="{{tangkoudetail.sensorlist[0].online === false ? 'outl' : 'inl'}}">
+            </text>{{tangkoudetail.sensorlist[0].online === true ? '在线' : '离线'}}
+          </text>
         </view>
-        <view class="sborder1"></view>
-        <view class="sresult">正常</view>
-      </view>
 
-      <!--温度-->
-      <view class="svalue">
-        <view class="o2">
-          <image src="../images/温@2x.png" style="width:56rpx;height:56rpx;"></image>
-          <view>温度</view>
+        <!--溶氧-->
+        <view class="svalue">
+          <view class="o2">
+            <image src="../images/氧_3_copy 2@2x.png" style="width:56rpx;height:56rpx;"></image>
+            <view>溶氧</view>
           </view>
-        <view class="sborder"></view>
-        <view class="ovalue" style="color: #f19649">
-          <view>{{tangkoudetail.sensorlist[0].data.WT}}23.9</view>
-          <view class="unit1">℃</view>
+          <view class="sborder"></view>
+          <view class="ovalue">
+            <view>{{realTimeDataInfo.oxygen}}</view>
+            <view class="unit">mg/L</view>
+          </view>
+          <view class="sborder1"></view>
+          <view class="sresult">正常</view>
         </view>
-        <view class="sborder1"></view>
-        <view class="sresult">正常</view>
-      </view>
 
-      <!--ph-->
-      <view class="svalue phvalue">
-        <view class="ph">
-          <image src="../images/ph@2x.png" style="width:50rpx;height:66rpx;"></image>
-          <view>PH</view>
+        <!--温度-->
+        <view class="svalue">
+          <view class="o2">
+            <image src="../images/温@2x.png" style="width:56rpx;height:56rpx;"></image>
+            <view>温度</view>
           </view>
-        <view class="sborder"></view>
-        <view class="phvalue" style="color: #56acb8">
-          <view>{{tangkoudetail.sensorlist[0].data.pH}}6.8</view>
+          <view class="sborder"></view>
+          <view class="ovalue" style="color: #f19649">
+            <view>{{realTimeDataInfo.water_temperature}}</view>
+            <view class="unit1">℃</view>
+          </view>
+          <view class="sborder1"></view>
+          <view class="sresult">正常</view>
         </view>
-        <view class="sborder1"></view>
-        <view class="sresult">正常</view>
+
+        <!--ph-->
+        <view class="svalue phvalue">
+          <view class="ph">
+            <image src="../images/ph@2x.png" style="width:50rpx;height:66rpx;"></image>
+            <view>PH</view>
+          </view>
+          <view class="sborder"></view>
+          <view class="phvalue" style="color: #56acb8">
+            <view>{{realTimeDataInfo.pH_value}}</view>
+          </view>
+          <view class="sborder1"></view>
+          <view class="sresult">正常</view>
+        </view>
+
       </view>
 
-    </view>
+      <!--传感器列表不存在-->
+      <view class="sensor" wx:else>
+        <view class="stype">暂无传感器数据</view>
+      </view>
 
-    <!--传感器列表不存在-->
-    <view class="sensor" wx:else>
-      <view class="stype">暂无传感器数据</view>
-    </view>
+      <!--分隔栏-->
+      <view class="cut"></view>
 
-    <!--分隔栏-->
-    <view class="cut"></view>
-
-    <!--控制管理列表-->
-    <view class="phensor">
-      <view class="phtype">控制管理</view>
-      <repeat wx:for="{{tangkoudetail.controllerList}}" wx:key="index" item="item" wx:for-index="controllerIdx">
-        <view class="phvalue">
-          <view>
-            <text class="device">
-             {{item.controller.name}}-{{item.controller.type === 0 ? '增氧机' : (item.controller.type === 1 ? '投饵机' : (item.controller.type === 2 ? '打水机' : '其他'))}}
-            </text>
-            <text class="{{item.controller.status === 0 ? 'normal' : (item.controller.type === 1 ? 'off' : (item.controller.type === 2 ? 'losepower' : (item.controller.type === 3 ? 'lost' : 'lost')))}}">
-              {{item.controller.status === 0 ? '正常' : (item.controller.type === 1 ? '离线' : (item.controller.type === 2 ? '断电' : (item.controller.type === 3 ? '缺相' : '数据异常')))}}
-            </text>
-            <text class="off">已关闭</text>
-          </view>
-          <view class="shezhi">
-            <view class="choseAuto" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}})">自动设置</view>
-            <view class="but" @tap="controlSwitch({{item.controller}}, {{item.switch}}, {{controllerIdx}})">
-              <text style="color: #5C6979;">开</text>
-              <image class='switch' src="../images/toggle@2x.png" wx:if="{{item.switch==='0'}}"></image>
-              <image class='switch' src="../images/turnon.jpg" wx:else="{{item.switch==='1'}}"></image>
-              <text style="color: #5C6979;">关</text>
+      <!--控制管理列表-->
+      <view class="phensor">
+        <view class="phtype">控制管理</view>
+        <repeat wx:for="{{tangkoudetail.controllerList}}" wx:key="index" item="item" wx:for-index="controllerIdx">
+          <view class="phvalue">
+            <view>
+              <text class="device">
+                {{item.controller.name}}-{{item.controller.type === 0 ? '增氧机' : (item.controller.type === 1 ? '投饵机' : (item.controller.type === 2 ? '打水机' : '其他'))}}
+              </text>
+              <text class="{{item.controller.status === 0 ? 'normal' : (item.controller.type === 1 ? 'off' : (item.controller.type === 2 ? 'losepower' : (item.controller.type === 3 ? 'lost' : 'lost')))}}">
+                {{item.controller.status === 0 ? '正常' : (item.controller.type === 1 ? '离线' : (item.controller.type === 2 ? '断电' : (item.controller.type === 3 ? '缺相' : '数据异常')))}}
+              </text>
+              <text class="off">已关闭</text>
+            </view>
+            <view class="shezhi">
+              <view class="choseAuto" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}})">自动设置</view>
+              <view class="but" @tap="controlSwitch({{item.controller}}, {{item.switch}}, {{controllerIdx}})">
+                <text style="color: #5C6979;">开</text>
+                <image class='switch' src="../images/toggle@2x.png" wx:if="{{item.switch==='0'}}"></image>
+                <image class='switch' src="../images/turnon.jpg" wx:else="{{item.switch==='1'}}"></image>
+                <text style="color: #5C6979;">关</text>
+              </view>
             </view>
           </view>
-        </view>
-      </repeat>
+        </repeat>
+      </view>
+
+      <!--分隔栏-->
+      <view class="cut"></view>
+
     </view>
-
-    <!--分隔栏-->
-    <view class="cut"></view>
-
+    <view class="noHomePageData">
+      <text>暂无信息，请添加设备</text>
+    </view>
   </view>
 </template>
 <script>
@@ -580,7 +593,8 @@ export default class Home extends wepy.page {
     week: '',
     location: '',
     weather: {},
-    currentId: 0
+    currentId: 0,
+    realTimeDataInfo: []
   }
 
   methods = {
@@ -638,6 +652,7 @@ export default class Home extends wepy.page {
           method: 'GET',
           success: res => {
             console.log(res.data)
+            this.realTimeDataInfo = res.data
           }
         })
       }
@@ -723,43 +738,75 @@ export default class Home extends wepy.page {
   onShow() {
     wepy.showLoading()
 
-    // 获取用户塘口设备等信息
+    // 查询有没有设备
     wepy.request({
-      url: this.$parent.globalData.baseUrl + 'api/' + 'usermanagement/HomePageDetail',
+      url: this.$parent.globalData.baseUrl + 'api/' + 'usermanagement/hasEquipment',
       data: {
         relation: this.$parent.globalData.relation
       },
       method: 'GET',
       success: res => {
-        console.log(res.data.myHome)
-        let num = this.$parent.globalData.currentId
-        this.tangkoulist = res.data.myHome
-        this.tangkoudetail = res.data.myHome[num]
-        this.$apply()
-        let location = res.data.myHome[num].address
-        if (!location) {
-          return 0
+        if (res.data === 1) {
+          // 获取用户塘口设备等信息
+          wepy.request({
+            url: this.$parent.globalData.baseUrl + 'api/' + 'usermanagement/HomePageDetail',
+            data: {
+              relation: this.$parent.globalData.relation
+            },
+            method: 'GET',
+            success: res => {
+              if (res.data.myHome.length > 0) {
+                console.log(res.data.myHome)
+                let num = this.$parent.globalData.currentId
+                this.tangkoulist = res.data.myHome
+                this.tangkoudetail = res.data.myHome[num]
+                this.$apply()
+                let location = res.data.myHome[num].address
+                if (!location) {
+                  return 0
+                }
+                this.location = location.split('省')[1].split('市')[0]
+                wepy.showLoading()
+                wepy.request({
+                  url: this.$parent.globalData.baseUrl + 'api/' + 'webService/weather',
+                  data: {
+                    lon: res.data.myHome[num].lon,
+                    lat: res.data.myHome[num].lat
+                  },
+                  method: 'GET',
+                  success: res => {
+                    this.weather = res.data.lives[0]
+                    this.$apply()
+                  },
+                  complete: () => {
+                    wepy.hideLoading()
+                  }
+                })
+                if (res.data.myHome[num].sensorlist.length > 0) {
+                  wepy.request({
+                    url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
+                    data: res.data.myHome[num].sensorlist[0].sensor,
+                    method: 'GET',
+                    success: res => {
+                      console.log(res.data)
+                      this.realTimeDataInfo = res.data
+                      this.$apply()
+                    }
+                  })
+                }
+              } else {
+                //
+              }
+            },
+            complete: () => {
+              wepy.hideLoading()
+            }
+          })
+        } else {
+          wepy.navigateTo({
+            url: `scan`
+          })
         }
-        this.location = location.split('省')[1].split('市')[0]
-        wepy.showLoading()
-        wepy.request({
-          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/weather',
-          data: {
-            lon: res.data.myHome[num].lon,
-            lat: res.data.myHome[num].lat
-          },
-          method: 'GET',
-          success: res => {
-            this.weather = res.data.lives[0]
-            this.$apply()
-          },
-          complete: () => {
-            wepy.hideLoading()
-          }
-        })
-      },
-      complete: () => {
-        wepy.hideLoading()
       }
     })
   }

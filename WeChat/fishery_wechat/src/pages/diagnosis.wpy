@@ -1,0 +1,154 @@
+<style lang="less">
+  .diagnosis{
+    background: #f2f2f2;
+    padding-top: 42rpx;
+    padding-bottom: 50rpx;
+    color: #323b45;
+    min-height: 1334rpx;
+    .modalDlg{
+      width: 670rpx;
+      position: fixed;
+      top: 50%;
+      left: 0;
+      z-index: 9999;
+      margin: -400rpx 40rpx;
+      background-color: #fff;
+      border-radius: 16rpx;
+      font-size: 32rpx;
+      .modal-but{
+        width: 480rpx;
+        height: 90rpx;
+        line-height: 90rpx;
+        background: #fff;
+        color: #2F70B8;
+        border: solid 2rpx #2F70B8;
+        font-size: 32rpx;
+        border-radius: 120rpx;
+        margin-top: 40rpx;
+        margin-bottom: 40rpx;
+      }
+      text{
+        line-height: 76rpx;
+        font-size: 33rpx;
+      }
+    }
+    .mask{
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #000;
+      z-index: 9000;
+      opacity: 0.7;
+    }
+    .diaBox{
+      width: 686rpx;
+      background-color: #ffffff;
+      margin-left: 34rpx;
+      box-shadow: 0 0 50rpx #dcdcdc;
+      }
+    .diaTitle{
+      height: 92rpx;
+      border-bottom: solid 2rpx #e6e6e6;
+      text{
+        line-height: 92rpx;
+        font-size: 35rpx;
+        padding: 0 0 0 49rpx;
+      }
+      view{
+        line-height: 92rpx;
+        float: right;
+        font-size: 30rpx;
+        padding: 0 22rpx 0 0;
+        image{
+          height: 30rpx;
+          width: 30rpx;
+          top: 5rpx;
+          position: relative;
+        }
+      }
+    }
+    .diaContent{
+      color: #5c6979;
+      font-size: 30rpx;
+      padding: 20rpx 50rpx 30rpx 50rpx;
+      line-height: 55rpx;
+      text{
+        display: block;
+      }
+      .mark{
+        color: #ff5a35;
+      }
+    }
+  }
+</style>
+<template>
+  <view class="diagnosis">
+    <!--列表-->
+    <view class="diaBox" @tap="openModal">
+      <!--标题-->
+      <view class="diaTitle">
+        <text>1小鱼塘</text>
+        <view class="diaMore">
+          查看详情<image src="../images/更多_7_@2x.png"></image>
+        </view>
+      </view>
+
+      <!--内容-->
+      <view class="diaContent">
+        <text class="mark">诊断结果：溶氧数据异常</text>
+        <text>解决方案：</text>
+        <text>1、观察增氧机设备是否已自动开启
+          2、检查是否需要更换电解液
+          3、观察增氧机设备是否已自动开启
+        </text>
+      </view>
+    </view>
+
+    <!--模态框的遮罩层-->
+    <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+
+    <!--模态框-->
+    <view class="modalDlg" wx:if="{{showModal}}">
+
+      <!--标题-->
+      <view class="diaTitle">
+        <text>1小鱼塘</text>
+      </view>
+
+      <!--内容-->
+      <view class="diaContent">
+        <text class="mark">诊断结果：溶氧数据异常</text>
+        <text>解决方案：</text>
+        <text>1、观察增氧机设备是否已自动开启
+          2、检查是否需要更换电解液
+          3、观察增氧机设备是否已自动开启
+        </text>
+      </view>
+      <button class="modal-but" @tap="closeModal">确定</button>
+    </view>
+
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class Diagnosis extends wepy.page {
+    data = {
+      showModal: false
+    }
+
+    methods = {
+      openModal() {
+        this.showModal = true
+      },
+      closeModal() {
+        this.showModal = false
+      }
+    }
+    events = {}
+    onShow() {}
+    onLoad() {}
+  }
+</script>

@@ -6,6 +6,7 @@ import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.EquipmentService;
 import com.geariot.platform.fishery.timer.CMDUtils;
 
+import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsItem.DatapointsItem;
 import net.sf.json.JSONObject;
 import sun.invoke.empty.Empty;
 import sun.util.logging.resources.logging;
@@ -99,7 +100,7 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value = "/data3days", method = RequestMethod.GET)
-	public String data3days(String device_sn,int way) {
+	public Map<String,List<DatapointsItem>> data3days(String device_sn,int way) {
 		return equipmentService.data3days(device_sn,way);
 	}
 	

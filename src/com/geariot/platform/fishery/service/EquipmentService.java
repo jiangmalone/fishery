@@ -374,92 +374,22 @@ public class EquipmentService {
 	}
 
 
-	/*public Map<String, Object> realTimeData(String device_sn, int way) {
-		String deviceSn;
-		Sensor_Data data = null;
-		Map<String, Object> map = null;
-		Date current_time=new Date();
-		Date last_time;
-		try {
-			deviceSn = device_sn.trim().substring(0, 2);
-		} catch (Exception e) {
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		}
-		if (deviceSn.equals("01") || deviceSn.equals("02")) {
-			if (aioDao.findAIOByDeviceSns(device_sn) == null) {
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-			}
-			data = sensor_DataDao.findDataByDeviceSnAndWay(device_sn, way);
-			last_time = data.getReceiveTime();
-			long diff = current_time.getTime() - last_time.getTime();
-			long minutes = diff / (1000 * 60);
-			if (minutes < 6) {
-				AIO aio = aioDao.findAIOByDeviceSns(device_sn);
-				map = RESCODE.SUCCESS.getJSONRES(data);
-				Limit_Install install = limitDao.findLimitByDeviceSnsAndWay(device_sn, way);
-				StringBuffer sb = new StringBuffer(aio.getStatus());
-				if (install != null) {
-					map.put("low_limit", install.getLow_limit());
-					map.put("up_limit", install.getUp_limit());
-					map.put("high_limit", install.getHigh_limit());
-					map.put("status", String.valueOf(sb.charAt(way - 1)));
-					map.put("name", aio.getName());
-				} else {
-					map.put("status", String.valueOf(sb.charAt(way - 1)));
-					map.put("name", aio.getName());
-					map.put("low_limit", 5);
-					map.put("up_limit", 10);
-					map.put("high_limit", 15);
-				}
-				return map;
-			}else
-				return RESCODE.OFF_LINE.getJSONRES();
-
-		} else if (deviceSn.equals("03")) {
-			if (sensorDao.findSensorByDeviceSns(device_sn) == null) {
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-			}
-			data = sensor_DataDao.findDataByDeviceSns(device_sn);
-			last_time = data.getReceiveTime();
-			long diff = current_time.getTime() - last_time.getTime();
-			long minutes = diff / (1000 * 60);
-			if (minutes < 6) {
-				Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
-				map = RESCODE.SUCCESS.getJSONRES(data);
-				Limit_Install install = limitDao.findLimitByDeviceSns(device_sn);
-				if (install != null) {
-					map.put("low_limit", install.getLow_limit());
-					map.put("up_limit", install.getUp_limit());
-					map.put("high_limit", install.getHigh_limit());
-					map.put("status", sensor.getStatus());
-					map.put("name", sensor.getName());
-				} else {
-					map.put("status", sensor.getStatus());
-					map.put("name", sensor.getName());
-					map.put("low_limit", 5);
-					map.put("up_limit", 10);
-					map.put("high_limit", 15);
-				}
-				return map;
-			} else
-				return RESCODE.OFF_LINE.getJSONRES();
-		}else
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-	}*/
-
 	public Sensor realTimeData(String device_sn) {
-		logger.debug("获得"+device_sn+"的实时数据");
+		logger.debug("获取"+device_sn+"的实时数据");
     	GetLatesDeviceData api = new GetLatesDeviceData(device_sn,key);
         BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
         logger.debug(response.getJson());
         if(response.getErrno()==0) {
+        	
         	 List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
-        	//实时数据仅提供给传感器
+        	
+        	 //实时数据仅提供给传感器
              if(sensorDao.findSensorByDeviceSns(device_sn)!=null) {//设备为传感器，将水温、溶解氧、pH存入传感器表
              	Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+             	
              	for(int i=0;i<DatastreamsList.size();i++) {
-                 	System.out.println(DatastreamsList.get(i).getId());
-                 	System.out.println(DatastreamsList.get(i).getValue());
+             		logger.debug("数据流："+DatastreamsList.get(i).getId());
+             		logger.debug("数据流数值："+DatastreamsList.get(i).getValue());
                  	String id = DatastreamsList.get(i).getId();
                  	float value = Float.parseFloat((String)DatastreamsList.get(i).getValue());
                  	if(id.equals("pH")) {
@@ -468,10 +398,13 @@ public class EquipmentService {
                  		sensor.setOxygen(value);
                  	}else if(id.equals("WT")) {
                  		sensor.setWater_temperature(value);
-                 	}            	
+                 	}  
+                 	
                  }
+             	logger.debug("将数据存入到传感器中");
              	return sensor;
              }else {
+            	 logger.debug("数据库中不存在该设备");
             	 return null;
              }
         }else {
@@ -864,6 +797,8 @@ public class EquipmentService {
 	}
 
 	public String dataToday(String device_sn, int way) {
+		//数据的获取针对传感器，传感器不需要way，way为一体机留用
+		//获得当天数据，从零点开始00:00:00
 		Date date = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
@@ -897,19 +832,45 @@ public class EquipmentService {
 		return response.getJson();
 	}
 
-	public String data3days(String device_sn, int way) {
+	public Map<String, List<DatapointsItem>> data3days(String device_sn, int way) {
 		Date date = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
 		String dataFormat1 = sdf1.format(date);
 		String dataFormat2  = sdf2.format(date);
 		String dataFormatEnd = dataFormat1+"-"+date.getDate()+"T"+dataFormat2;
-		String dataFormatStart = dataFormat1+"-"+(date.getDate()-3)+"T"+dataFormat2;
-		GetDatapointsListApi api1 = new GetDatapointsListApi("temperature", dataFormatStart, null, device_sn,null,6000, "122320_31380529_1527020009053",null,
+		String dataFormatStart = dataFormat1+"-"+(date.getDate()-2)+"T00:00:00";
+		
+		Map<String, List<DatapointsItem>> data3days = new HashMap<>();
+		
+		GetDatapointsListApi api1 = new GetDatapointsListApi("pH", dataFormatStart, null, device_sn,null,6000, null,null,
 				null, null, null, key);
-		BasicResponse<DatapointsList> response = api1.executeApi();
-		return response.getJson();
+		BasicResponse<DatapointsList> response1 = api1.executeApi();		
+		DatastreamsItem di1  = response1.data.getDevices().get(0);
+		String id1 =  di1.getId();
+		List<DatapointsItem> dpil1 = di1.getDatapoints();
+		data3days.put(id1, dpil1);
+		
+		GetDatapointsListApi api2 = new GetDatapointsListApi("DO", dataFormatStart, null, device_sn,null,6000, null,null,
+				null, null, null, key);
+		BasicResponse<DatapointsList> response2 = api2.executeApi();
+		DatastreamsItem di2  = response2.data.getDevices().get(0);
+		String id2 =  di2.getId();
+		List<DatapointsItem> dpil2 = di2.getDatapoints();
+		data3days.put(id2, dpil2);
+		
+		GetDatapointsListApi api3 = new GetDatapointsListApi("WT", dataFormatStart, null, device_sn,null,6000, null,null,
+				null, null, null, key);
+		BasicResponse<DatapointsList> response3 = api3.executeApi();
+		DatastreamsItem di3  = response3.data.getDevices().get(0);
+		String id3 =  di3.getId();
+		List<DatapointsItem> dpil3 = di3.getDatapoints();
+		data3days.put(id3, dpil3);
+		
+		return data3days;
 	}
+	
+	
 	
 	public Map<String, Object> dataAll(String device_sn, int way,int day) {
 		List<Sensor_Data> list = new ArrayList<>();

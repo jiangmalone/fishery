@@ -62,13 +62,9 @@ public class DatapointsList {
 			return id;
 		}
 
-
-
 		public void setId(String id) {
 			this.id = id;
 		}
-
-
 
 		public List<DatapointsItem> getDatapoints() {
 			return datapoints;

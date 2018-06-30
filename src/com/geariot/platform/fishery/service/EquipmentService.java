@@ -825,10 +825,20 @@ public class EquipmentService {
 			
 			if("DO".equals(di.getId())) {
 				List<DatapointsItem> ldNew =new ArrayList<>();
-				for(int j=1;j<ld.size();j+=6) {//数据5min*6=半小时发一次
+		
+				for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
 					ldNew.add(ld.get(j));					
 				}
-				mapReturn.put("DO", ldNew);
+				List<String> value = new ArrayList<>();
+				List<String> at = new ArrayList<>();
+				for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
+					value.add((String)ldNew.get(j).getValue());	
+					at.add(ldNew.get(j).getAt());
+				}
+				Map<String, List<String>> singlemap = new HashMap<>();
+				singlemap.put("value", value);
+				singlemap.put("at", at);
+				mapReturn.put("DO", singlemap);
 				/*以时间划分
 				 * String id = (String) ld.get(0).getValue();
 				String at = (String) ld.get(0).getAt();
@@ -842,16 +852,34 @@ public class EquipmentService {
 				}*/
 			}else if("WT".equals(di.getId())) {
 				List<DatapointsItem> ldNew =new ArrayList<>();
-				for(int j=1;j<ld.size();j+=6) {//数据5min*6=半小时发一次
+				for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
 					ldNew.add(ld.get(j));
 				}
-				mapReturn.put("WT", ldNew);
+				List<String> value = new ArrayList<>();
+				List<String> at = new ArrayList<>();
+				for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
+					value.add((String)ldNew.get(j).getValue());	
+					at.add(ldNew.get(j).getAt());
+				}
+				Map<String, List<String>> singlemap = new HashMap<>();
+				singlemap.put("value", value);
+				singlemap.put("at", at);
+				mapReturn.put("WT", singlemap);
 			}else if("pH".equals(di.getId())) {
 				List<DatapointsItem> ldNew =new ArrayList<>();
-				for(int j=1;j<ld.size();j+=6) {//数据5min*6=半小时发一次
+				for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
 					ldNew.add(ld.get(j));					
 				}
-				mapReturn.put("pH", ldNew);
+				List<String> value = new ArrayList<>();
+				List<String> at = new ArrayList<>();
+				for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
+					value.add((String)ldNew.get(j).getValue());	
+					at.add(ldNew.get(j).getAt());
+				}
+				Map<String, List<String>> singlemap = new HashMap<>();
+				singlemap.put("value", value);
+				singlemap.put("at", at);
+				mapReturn.put("pH", singlemap);
 			}
 							
 		}
@@ -876,7 +904,11 @@ public class EquipmentService {
 		DatastreamsItem di1  = response1.data.getDevices().get(0);
 		String id1 =  di1.getId();
 		List<DatapointsItem> dpil1 = di1.getDatapoints();
-		data3days.put(id1, dpil1);
+		List<DatapointsItem> dpil11 =new ArrayList<>();
+		for(int j=0;j<dpil1.size();j+=18) {//数据5min*18=一个半小时发一次
+			dpil11.add(dpil1.get(j));					
+		}
+		data3days.put(id1, dpil11);
 		
 		GetDatapointsListApi api2 = new GetDatapointsListApi("DO", dataFormatStart, null, device_sn,null,6000, null,null,
 				null, null, null, key);
@@ -884,7 +916,11 @@ public class EquipmentService {
 		DatastreamsItem di2  = response2.data.getDevices().get(0);
 		String id2 =  di2.getId();
 		List<DatapointsItem> dpil2 = di2.getDatapoints();
-		data3days.put(id2, dpil2);
+		List<DatapointsItem> dpil12 =new ArrayList<>();
+		for(int j=0;j<dpil2.size();j+=18) {//数据5min*18=一个半小时发一次
+			dpil12.add(dpil2.get(j));					
+		}
+		data3days.put(id2, dpil12);
 		
 		GetDatapointsListApi api3 = new GetDatapointsListApi("WT", dataFormatStart, null, device_sn,null,6000, null,null,
 				null, null, null, key);
@@ -892,8 +928,11 @@ public class EquipmentService {
 		DatastreamsItem di3  = response3.data.getDevices().get(0);
 		String id3 =  di3.getId();
 		List<DatapointsItem> dpil3 = di3.getDatapoints();
-		data3days.put(id3, dpil3);
-		
+		List<DatapointsItem> dpil13 =new ArrayList<>();
+		for(int j=0;j<dpil3.size();j+=18) {//数据5min*18=一个半小时发一次
+			dpil13.add(dpil3.get(j));					
+		}
+		data3days.put(id3, dpil13);		
 		return data3days;
 	}
 	

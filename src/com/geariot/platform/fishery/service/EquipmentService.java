@@ -1643,7 +1643,7 @@ public class EquipmentService {
 		if(response.errno == 0) {
 			return (String)response.data.getCurrentValue();
 		}else {
-			return "0";
+			return "2";
 		}
 	}
 	
@@ -1657,6 +1657,30 @@ public class EquipmentService {
 		}
 	}
 
+	public Map<String, Object> refeshcondition(String device_sn,int port,String status){
 
+		Map<String, Object> refeshflag = new HashMap<>();
+		String controllerKey = getControllerPortStatus(device_sn,port);
+		if (controllerKey.equals("2")== false){
+
+
+			if (controllerKey.equals(status)==false){
+				refeshflag.put("ifnext", 0);
+				refeshflag.put("switch",controllerKey);
+			}
+			if (controllerKey.equals(status)==true){
+				refeshflag.put("ifnext", 1);
+				refeshflag.put("switch",status);
+
+			}
+			return refeshflag;
+		}else {
+			refeshflag.put("success", 1);
+			return refeshflag;
+		}
+
+		//String controllerKey = "0";
+
+	}
 
 }

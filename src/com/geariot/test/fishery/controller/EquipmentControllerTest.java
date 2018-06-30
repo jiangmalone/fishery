@@ -201,4 +201,26 @@ public class EquipmentControllerTest {
 		mockMvc.perform(post("/equipment/triggeractive").contentType(MediaType.APPLICATION_JSON).content("{ \"trigger\" : { \"id\" : 110680, \"threshold\" : 50, \"type\" : \"<\" }, \"current_data\" : [{ \"user_id\" : 134874, \"dev_id\" : \"31538332\", \"ds_id\" : \"temperature\", \"at\" : \"2018-06-01 17:34:04.000\", \"value\" : 1 }] }")).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 
+
+	@Test
+	public void refestTest() throws Exception {
+		mockMvc.perform(get("/equipment/refeshcondition").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+						.param("device_sn", "11").param("status","0").param("port","1")
+				//.param("id", "1")
+				//.param("device_sn", "010001")
+				//.param("relation", "WX1")
+		).andDo(print()).andExpect(status().is2xxSuccessful());
+	}
+
+
+    @Test
+    public void diagno() throws Exception {
+        mockMvc.perform(get("/usermanagement/diagnosing").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("relation", "WX17")
+                //.param("id", "1")
+                //.param("device_sn", "010001")
+                //.param("relation", "WX1")
+        ).andDo(print()).andExpect(status().is2xxSuccessful());
+    }
+
 }

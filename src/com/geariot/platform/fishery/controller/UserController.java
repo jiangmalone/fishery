@@ -81,6 +81,11 @@ public class UserController {
 	public int hasEquipment(String relation){
 		return userService.hasEquipment(relation);
 	}
-	
-	
+
+
+	@RequestMapping(value = "/diagnosing" , method = RequestMethod.GET)
+	public Map<String, Object> diagnosing(String relation){
+		return userService.diagnosing(relation);
+	}
+
 }

@@ -208,15 +208,12 @@ export default class Addtangkou extends wepy.page {
 
     // 选择地图坐标
     mapchose() {
-      wepy.chooseLocation({
-        success: (res) => {
-          this.tangkouinfo.address = res.address
-          this.tangkouinfo.longitude = res.longitude
-          this.tangkouinfo.latitude = res.latitude
-          console.log(res)
-          this.$apply()
-        }
-      })
+      if (this.tangkouinfo.latitude !== 0 || this.tangkouinfo.longitude !== 0) {
+        wepy.openLocation({
+          latitude: this.tangkouinfo.latitude,
+          longitude: this.tangkouinfo.longitude
+        })
+      }
     },
 
     // 新增塘口

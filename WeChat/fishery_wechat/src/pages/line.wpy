@@ -113,12 +113,14 @@
     }
   }
   #cha{
-    height: 600rpx;
-    width: 600rpx;
+    height: 518rpx;
+    width: 698rpx;
+    background: #f9f9f9;
+    margin: 30rpx;
   }
   ec-canvas {
-    width: 600rpx;
-    height: 600rpx;
+    width: 698rpx;
+    height: 518rpx;
   }
 
 }
@@ -128,9 +130,6 @@
   <view class="header">
     <view class="sensorname">小鱼塘-小A-进水啊实打实的</view><image class="header-img" src="../images/多_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
     <view class="status"><view class="status-dot"></view>异常</view>
-    <view class="andmore">
-      <text @tap="jupMoreEquiment">更多</text><image src="../images/group_16@2x.png" style="width:46rpx;height:33rpx;"></image>
-    </view>
   </view>
   <view class="content">
     <view class="cot-name">
@@ -176,103 +175,91 @@
 <script>
 import wepy from 'wepy'
 
-const options = {
-  color: ['#37a2da', '#32c5e9', '#67e0e3'],
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-      type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-    }
+let options = {
+  // tooltip: {
+  //   trigger: 'axis',
+  //   axisPointer: {//鼠标滑过的线条样式
+  //     type: 'line',
+  //     lineStyle: {
+  //       color: 'red',//颜色
+  //       width: 1,//宽度
+  //       type: 'solid'//实线
+  //     }
+  //   },
+  //   formatter: function(value) {//鼠标滑过时显示内容的格式化
+  //     var template = "";
+  //     template += 'Value1：' + value[0].axisValue + "<br/>";
+  //     template += 'Value2：' + value[0].data;
+  //     return template;
+  //   }
+  // },
+  textStyle: {
+    color: '#c4c4c4'
   },
-  legend: {
-    data: ['热度', '正面', '负面']
-  },
-  grid: {
-    left: 20,
-    right: 20,
-    bottom: 15,
-    top: 40,
-    containLabel: true
-  },
-  xAxis: [
-    {
-      type: 'value',
-      axisLine: {
-        lineStyle: {
-          color: '#999'
-        }
-      },
-      axisLabel: {
-        color: '#666'
+  color: ['#8dc1aa'],
+  xAxis: [{
+    type: 'category',
+    boundaryGap: false,
+    data: [1, 2, 3, 4, 5],
+    axisLine: {
+      lineStyle: {
+        color: '#c4c4c4'
       }
     }
-  ],
-  yAxis: [
-    {
-      type: 'category',
-      axisTick: { show: false },
-      data: ['汽车之家', '今日头条', '百度贴吧', '一点资讯', '微信', '微博', '知乎'],
-      axisLine: {
-        lineStyle: {
-          color: '#999'
-        }
-      },
-      axisLabel: {
-        color: '#666'
-      }
-    }
-  ],
-  series: [
-    {
-      name: '热度',
-      type: 'bar',
-      label: {
-        normal: {
-          show: true,
-          position: 'inside'
-        }
-      },
-      data: [300, 270, 340, 344, 300, 320, 310],
-      itemStyle: {
-        // emphasis: {
-        //   color: '#37a2da'
-        // }
+    // axisLabel: {//y轴的内容格式化,很有用的属性
+    //   formatter: '{value} xUnit'
+    // }
+  }],
+  yAxis: [{
+    type: 'value',
+    axisLine: {
+      lineStyle: {
+        color: '#c4c4c4'
       }
     },
-    {
-      name: '正面',
-      type: 'bar',
-      stack: '总量',
-      label: {
-        normal: {
-          show: true
-        }
-      },
-      data: [120, 102, 141, 174, 190, 250, 220],
-      itemStyle: {
-        // emphasis: {
-        //   color: '#32c5e9'
-        // }
-      }
-    },
-    {
-      name: '负面',
-      type: 'bar',
-      stack: '总量',
-      label: {
-        normal: {
-          show: true,
-          position: 'left'
-        }
-      },
-      data: [-20, -32, -21, -34, -90, -130, -110],
-      itemStyle: {
-        // emphasis: {
-        //   color: '#67e0e3'
-        // }
+    splitLine: {
+      lineStyle: {
+        color: '#e9e7de',
+        type: 'dashed'
       }
     }
-  ]
+    // axisLabel: {//y轴的内容格式化,很有用的属性
+    //   formatter: '{value} yUnit'
+    // }
+  }],
+  series: [{
+    lineStyle: {
+      color: '#2c90f7'
+    },
+    type: 'line',
+    data: [1, 2, 3, 4, 5],
+    markLine: {
+      symbol: '',
+      itemStyle: {
+        lineStyle: {type: 'solid'},
+        label: {show: true, position: 'left', formatter: 'aaa'}
+      },
+      data: [
+        { yAxis: 2,
+          itemStyle: {
+            color: '#beac00'
+          }
+        },
+        { yAxis: 3,
+          itemStyle: {
+            width: 1.5,
+            color: '#45795b'
+          }
+        },
+        { yAxis: 5,
+          itemStyle: {
+            width: 1.5,
+            color: '#b3675b'
+          }
+        }
+      ]
+    }
+  }]
 }
 
 // const wxCharts = require('../units/wxcharts-min.js')

@@ -181,7 +181,6 @@
       background: #FFFFFF;
       box-shadow: 0 2px 8px 0 rgba(225,225,225,0.50);
       border-radius: 8px;
-      margin-top: 58rpx;
       margin-left: 32rpx;
       display: flex;
       justify-content: space-between;
@@ -568,20 +567,33 @@
         <repeat wx:for="{{tangkoudetail.controllerList}}" wx:key="index" item="item" wx:for-index="controllerIdx">
           <view class="phvalue">
             <view>
+
+              <!--标题-->
               <text class="device">
-                {{item.controller.name}}-{{item.controller.type === 0 ? '增氧机' : (item.controller.type === 1 ? '投饵机' : (item.controller.type === 2 ? '打水机' : '其他'))}}
+                {{item.controller.name}}-{{item.controller.type === 0 ? '增氧机' :
+                (item.controller.type === 1 ? '投饵机' :
+                (item.controller.type === 2 ? '打水机' : '其他'))}}
               </text>
+
+              <!--是否正常-->
               <text class="{{item.controller.status === 0 ? 'normal' : (item.controller.type === 1 ? 'off' : (item.controller.type === 2 ? 'losepower' : (item.controller.type === 3 ? 'lost' : 'lost')))}}">
                 {{item.controller.status === 0 ? '正常' : (item.controller.type === 1 ? '离线' : (item.controller.type === 2 ? '断电' : (item.controller.type === 3 ? '缺相' : '数据异常')))}}
               </text>
-              <text class="off">{{item.switch==='0'?'已关闭':'已开启'}}</text>
+
+              <!--右侧开关上方-->
+              <text class="off">{{item.switch==='0'?'已关闭':(item.switch==='1'?'已开启':'设备离线')}}</text>
             </view>
+
             <view class="shezhi">
+
+              <!--自动设置-->
               <view class="choseAuto" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}})">自动设置</view>
+
+              <!--开关-->
               <view class="but" @tap="controlSwitch({{item.controller}}, {{item.switch}}, {{controllerIdx}})">
                 <text style="color: #5C6979;">开</text>
-                <image class='switch' src="../images/toggle@2x.png" wx:if="{{item.switch==='0'}}"></image>
-                <image class='switch' src="../images/turnon.jpg" wx:else="{{item.switch==='1'}}"></image>
+                <image class='switch' src="../images/turnon.jpg" wx:if="{{item.switch==='1'}}"></image>
+                <image class='switch' src="../images/toggle@2x.png" wx:else></image>
                 <text style="color: #5C6979;">关</text>
               </view>
             </view>
@@ -634,21 +646,23 @@ export default class Home extends wepy.page {
 
     // 控制管理-开关
     controlSwitch(controller, s, controllerIdx) {
-      let key = s === '0' ? '1' : '0'
-      wepy.showLoading()
-      wepy.request({
-        url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/sendcmd',
-        data: {
-          controller: controller,
-          key: key
-        },
-        method: 'POST',
-        success: (res) => {
-          wepy.hideLoading()
-          this.tangkoudetail.controllerList[controllerIdx].switch = key
-          this.$apply()
-        }
-      })
+      if (s !== '2') {
+        let key = s === '0' ? '1' : '0'
+        wepy.showLoading()
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/sendcmd',
+          data: {
+            controller: controller,
+            key: key
+          },
+          method: 'POST',
+          success: (res) => {
+            wepy.hideLoading()
+            this.tangkoudetail.controllerList[controllerIdx].switch = key
+            this.$apply()
+          }
+        })
+      }
     },
 
     // 切换塘口

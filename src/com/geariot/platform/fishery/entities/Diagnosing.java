@@ -13,8 +13,12 @@ import javax.persistence.Id;
 public class Diagnosing {
 
     private int id;
+    //0.DO;1.WT;2.pH
     private int type;
-    private String broken_name;
+    //0.正常;1.预警;2.危险
+    private int status;
+    
+	private String broken_name;		//
     private String solution;
 
     @Id
@@ -45,5 +49,10 @@ public class Diagnosing {
     public void setSolution(String solution) {
         this.solution = solution;
     }
-
+    public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
 }

@@ -22,7 +22,7 @@ public class Sensor {
 	private String device_sn;				//设备编号
 	private int pondId;						//绑定的塘口Id
 	/*private int status;						//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
-*/	//状态(0,1,2,3,4,5,6,0对应正常,(1,2)|(3,4)|(5,6)对应DO、WT、pH的(预警，危险))
+*/	
 	private int status;						
 	private String name;					//传感器名称,可自己定义
 	private String relation;				//绑定的用户relation

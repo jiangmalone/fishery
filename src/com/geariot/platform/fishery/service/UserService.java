@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import com.geariot.platform.fishery.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,14 +23,7 @@ import com.geariot.platform.fishery.dao.SensorDao;
 import com.geariot.platform.fishery.dao.Sensor_ControllerDao;
 import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
-import com.geariot.platform.fishery.entities.AIO;
-import com.geariot.platform.fishery.entities.Company;
-import com.geariot.platform.fishery.entities.Controller;
-import com.geariot.platform.fishery.entities.Limit_Install;
-import com.geariot.platform.fishery.entities.Pond;
-import com.geariot.platform.fishery.entities.Sensor;
-import com.geariot.platform.fishery.entities.Timer;
-import com.geariot.platform.fishery.entities.WXUser;
+import com.geariot.platform.fishery.dao.DiagDao;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.sun.media.jfxmedia.logging.Logger;
@@ -76,6 +70,9 @@ public class UserService {
     
     @Autowired
     private PondFishDao pondFishDao;
+
+	@Autowired
+	private DiagDao diagDao;
     
     @Autowired
     private PondService pondService;
@@ -378,6 +375,43 @@ public class UserService {
 			return 1;
 		}
 	}
-	
-	
+
+	public Map<String, Object> diagnosing(String relation) {
+		Map<String, Object> map = new HashMap<>();
+		List<Pond> pondList = pondDao.queryPondByRelation(relation);
+		List<Object> allbrokenpond = new ArrayList<>();
+		for(Pond pond:pondList) {
+			//System.out.println("池塘名:"+pond.getName());
+			Map<String, Object> onemap=new HashMap<>();
+			String pondname = pond.getName();
+			List<Object> onepondbroken = new ArrayList<>();
+			List<Sensor> sensorlist = sensorDao.findSensorsByPondId(pond.getId());
+			if(sensorlist!=null) {
+				//System.out.println("sensorlist"+sensorlist.size());
+				for(Sensor sensor:sensorlist) {
+					int brokentype= sensor.getStatus();
+					if (brokentype!=0){
+						List<Diagnosing> diagnos=diagDao.getDiagnosingByType(brokentype);
+						if(diagnos!=null){
+							Map<String, Object> onesensormap=new HashMap<>();
+							String brokenname=diagnos.get(0).getBroken_name();
+							List<String> solutions=new ArrayList<>(); ;
+							for(Diagnosing dia:diagnos){
+								solutions.add(dia.getSolution());
+							}
+							onesensormap.put("brokenname",brokenname);
+							onesensormap.put("solutions",solutions);
+							onepondbroken.add(onesensormap);
+						}
+					}
+					}
+			}
+			onemap.put("pondname",pondname);
+			onemap.put("brokenlist",onepondbroken);
+			allbrokenpond.add(onemap);
+		}
+		map.put("brokenpondlist",allbrokenpond);
+		return map;
+	}
+
 }

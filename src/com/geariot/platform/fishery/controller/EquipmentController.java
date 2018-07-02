@@ -210,4 +210,13 @@ public class EquipmentController {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 	
+	@RequestMapping(value ="/refeshcondition", method = RequestMethod.GET)
+
+	public Map<String, Object> refeshcondition(String device_sn,int port,String status){
+
+			return  equipmentService.refeshcondition( device_sn, port, status);
+
+	}
+
+	
 }

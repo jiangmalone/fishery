@@ -50,18 +50,18 @@
 <template>
 <view class="info">
   <view class="picture" @tap="chosePhoto">
-    <image wx:if="{{info.headimgurl===''}}" src="../images/group_4@2x.png"></image>
-    <image wx:else src="{{info.headimgurl}}"></image>
+    <image wx:if="{{info.headImg===''}}" src="../images/group_4@2x.png"></image>
+    <image wx:else src="{{info.headImg}}"></image>
   </view>
   <view class="row row-flex">
     <image src="../images/用户_4@2x.png" style="width:26rpx;height:28rpx;margin-left:44rpx;margin-top:42rpx"></image>
     <text style="color:#6F6F6F;font-size: 16px;margin-left:28rpx;margin-top:34rpx">姓名</text>
-    <input style="font-size: 28rpx;margin-left: 122rpx;margin-top:34rpx;" placeholder="请输入你的真实姓名" placeholder-style="color:#6B93BF" bindinput="bindValue('name')"/>
+    <input style="font-size: 28rpx;margin-left: 122rpx;margin-top:34rpx;" value="{{info.name}}" placeholder="请输入你的真实姓名" placeholder-style="color:#6B93BF" bindinput="bindValue('name')"/>
   </view>
   <view class="row1 row-flex">
     <image src="../images/性别@2x.png" style="width:24rpx;height:40rpx;margin-left:44rpx;margin-top:40rpx"></image>
      <text style="color:#6F6F6F;font-size: 16px;margin-left:30rpx;margin-top:38rpx">性别</text>
-    <input style="font-size: 28rpx;margin-left: 122rpx;margin-top:34rpx;" placeholder="男／女" placeholder-style="color:#6B93BF" bindinput="bindValue('sex')"/>
+    <input style="font-size: 28rpx;margin-left: 122rpx;margin-top:34rpx;" value="{{info.sex}}" placeholder="男／女" placeholder-style="color:#6B93BF" bindinput="bindValue('sex')"/>
   </view>
   <view class="row1 row-flex">
     <image src="../images/fill_1@2x.png" style="width:24rpx;height:36rpx;margin-left:44rpx;margin-top:38rpx"></image>
@@ -71,7 +71,7 @@
   <view class="row1 row-flex">
     <image src="../images/时间_12@2x.png" style="width:30rpx;height:30rpx;margin-left:42rpx;margin-top:46rpx"></image>
      <text style="color:#6F6F6F;font-size: 16px;margin-left:26rpx;margin-top:38rpx">养殖年限</text>
-    <input style="font-size: 28rpx;margin-left: 60rpx;margin-top:34rpx;" placeholder="请输入年限" placeholder-style="color:#6B93BF" bindinput="bindValue('life')"/>
+    <input style="font-size: 28rpx;margin-left: 60rpx;margin-top:34rpx;" placeholder="请输入年限" placeholder-style="color:#6B93BF" bindinput="bindValue('life')" value="{{info.life}}"/>
   </view>
   <button @tap="confirminfo">保存</button>
 </view>
@@ -85,7 +85,7 @@ export default class Saveuserinfo extends wepy.page {
       sex: '',
       phone: '',
       life: '',
-      headimgurl: ''
+      headImg: ''
     }
   }
   config = {
@@ -106,7 +106,7 @@ export default class Saveuserinfo extends wepy.page {
         success: (res) => {
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
           let tempFilePaths = res.tempFilePaths
-          this.info.headimgurl = tempFilePaths[0]
+          this.info.headImg = tempFilePaths[0]
           this.$apply()
           console.log(tempFilePaths)
         }
@@ -116,7 +116,7 @@ export default class Saveuserinfo extends wepy.page {
     // 判空、loading、提交、
     confirminfo() {
       let info = this.info
-      if (info.headimgurl === '') {
+      if (info.headImg === '') {
         wepy.showToast({title: '头像不能为空', icon: 'none'})
         return 0
       } else if (info.name === '') {
@@ -136,11 +136,20 @@ export default class Saveuserinfo extends wepy.page {
       wepy.showLoading()
       wepy.request({
         url: this.$parent.globalData.baseUrl + 'api/' + 'usermanagement/modifyWXUser',
-        data: Object.assign({}, info, {openId: this.$parent.globalData.openId}, {id: this.$parent.globalData.id}),
+        data: {
+          headimgurl: this.info.headImg,
+          id: this.info.id,
+          relation: this.info.relation,
+          name: this.info.name,
+          sex: this.info.sex,
+          life: this.info.life,
+          phone: this.info.phone
+        },
+          // Object.assign({}, info, {openId: this.$parent.globalData.openId}, {id: this.$parent.globalData.id}),
         method: 'POST',
         success: res => {
           this.$parent.globalData.name = res.data.name
-          this.$parent.globalData.headImg = res.data.headimgurl
+          this.$parent.globalData.headImg = res.data.headImg
           let userdata = JSON.stringify(res.data)
           wepy.switchTab({
             url: `home?data=${userdata}`
@@ -153,11 +162,8 @@ export default class Saveuserinfo extends wepy.page {
     }
   }
   onLoad(option) {
-    console.log(this.$parent.globalData.phone)
-    this.info.phone = this.$parent.globalData.phone
-    if (this.$parent.globalData.name) {
-      this.info = this.$parent.globalData
-    }
+    this.info = this.$parent.globalData
+    console.log(this.info)
     this.$apply()
   }
 }

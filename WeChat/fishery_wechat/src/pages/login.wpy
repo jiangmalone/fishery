@@ -183,11 +183,13 @@ export default class Login extends wepy.page {
             wepy.showToast({title: '验证码错误', icon: 'none'})
             return 0
           }
-          this.$parent.globalData.phone = this.phoneNumber
-          this.$parent.globalData.relation = res.data.data.relation
           this.$parent.globalData.id = res.data.data.id
           this.$parent.globalData.name = res.data.data.name
+          this.$parent.globalData.sex = res.data.data.sex
+          this.$parent.globalData.phone = this.phoneNumber
+          this.$parent.globalData.life = res.data.data.life
           this.$parent.globalData.headImg = res.data.data.headimgurl
+          this.$parent.globalData.relation = res.data.data.relation
           console.log(res.data)
           let userdata = JSON.stringify(res.data)
           console.log(userdata)

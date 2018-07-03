@@ -74,10 +74,10 @@ public class ControllerDaoImpl implements ControllerDao {
 	}
 	
 	@Override
-	public Controller findControllerByDeviceSnAndWay(String device_sn, int way) {
+	public List<Controller> findControllerByDeviceSnAndWay(String device_sn, int way) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
-		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
-		return (Controller) query.uniqueResult();
+		Query query = queryUtils.addString("device_sn", device_sn).addInteger("port", way).getQuery();
+		return  query.list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -104,6 +104,7 @@ public class ControllerDaoImpl implements ControllerDao {
 	public List<Controller> findByPondId(int pondId) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
 		Query query = queryUtils.addInteger("pondId", pondId).getQuery();
+				/*queryUtils.addStringLike("pondIds", name).addString("relation", relation).getQuery();*/
 		return query.list();
 	}
 

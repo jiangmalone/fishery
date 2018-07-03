@@ -19,9 +19,10 @@ public class Controller {
 	private int pondId;					//绑定的塘口Id
 	private String relation;			//绑定的用户relation
 	private String name;				//控制器名称
-	private int port;    				//控制器第几路
+	private int port;    				//控制器第几路，1，2，3，4
+	
 	private int status;					//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
-
+	private String pondIds;				//全部塘口
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,10 +46,11 @@ public class Controller {
 	}
 	public int getPondId() {
 		return pondId;
-	}
+	}	
 	public void setPondId(int pondId) {
 		this.pondId = pondId;
 	}
+	
 	public String getRelation() {
 		return relation;
 	}
@@ -72,8 +74,18 @@ public class Controller {
 	public int getStatus() {
 		return status;
 	}
+
 	public void setStatus(int status) {
 		this.status = status;
+	}
+	
+	
+	@Transient
+	public String getPondIds() {
+		return pondIds;
+	}
+	public void setPondIds(String pondIds) {
+		this.pondIds = pondIds;
 	}
 
 

@@ -227,20 +227,43 @@ public class EquipmentService {
 
 
 	public Map<String, Object> addController(Controller[] controllers) {
-
 		for (Controller controller : controllers ){
+			//截掉扫码编码的前两位
 			controller.setDevice_sn(controller.getDevice_sn().substring(2, controller.getDevice_sn().length()));
 			if(deviceDao.findDevice(controller.getDevice_sn())==null) {
-			//	logger.info("");
-				
+			//	在设备表中，若没有改设备编号，在设备表中添加设备				
 				Device device = new Device();
 				device.setDevice_sn(controller.getDevice_sn());
 				device.setType(3);
 				deviceDao.save(device);
 				logger.debug("添加了一个新的控制器设备");
 			}
-			controllerDao.save(controller);
-			logger.debug("添加了一个新的控制器，设备编码为："+controller.getDevice_sn());
+			//获取控制器绑定的塘口
+			/*private int id;						//控制器Id,自增
+			private String device_sn;			//控制器设备编号
+			private int type;                   //0.增氧机1.投饵机2.打水机3.其他	
+			private int pondId;					//绑定的塘口Id
+			private String relation;			//绑定的用户relation
+			private String name;				//控制器名称
+			private int port;    				//控制器第几路
+*/			String pondIds = controller.getPondIds();
+			logger.debug(pondIds);
+			String[]  pondIDList=pondIds.split(",");
+			for(int i=0;i<pondIDList.length;i++) {
+				Controller con = new Controller();
+				con.setDevice_sn(controller.getDevice_sn());
+				con.setType(controller.getType());
+				con.setPondId(Integer.parseInt(pondIDList[i]));
+				con.setRelation(controller.getRelation());
+				con.setName(controller.getName());
+				con.setPort(controller.getPort());
+				con.setPondIds(controller.getPondIds());
+				logger.debug("添加塘口为"+con.getPondId());
+				controllerDao.save(con);
+				logger.debug("根据塘口添加控制器");
+			}
+			
+			
 		}
 
 		return RESCODE.SUCCESS.getJSONRES();
@@ -1154,15 +1177,16 @@ public class EquipmentService {
 	}
 	
 	public Map<String, Object> modifyController(Controller...controller){
-		String DSN = controller[0].getDevice_sn();
+		//传入controller对象需要device_sn,port,type
+		/*String DSN = controller[0].getDevice_sn();
 		boolean flag = true;
 		//判断控制器是否存在
 		if(deviceDao.findDevice(DSN)==null) {
 			flag = false;
 		}
-		/*if(aioDao.findAIOByDeviceSns(DSN)==null) {
+		if(aioDao.findAIOByDeviceSns(DSN)==null) {
 			flag = false;
-		}*/
+		}
 		//判断是否为一个控制器的多路
 		for(Controller con:controller) {
 			if(con.getDevice_sn().equals(DSN)==false) {
@@ -1180,6 +1204,39 @@ public class EquipmentService {
 			return RESCODE.SUCCESS.getJSONRES();
 		}else {
 			return RESCODE.WRONG_PARAM.getJSONRES();
+		}*/
+		//修改时控制器至少存在一路
+		String device_sn = controller[0].getDevice_sn();
+		
+		if(deviceDao.findDevice(device_sn)==null) {
+			return RESCODE.WRONG_PARAM.getJSONRES();
+		}else {			
+			for(Controller con : controller) {
+				List<Controller> conList = controllerDao.findControllerByDeviceSnAndWay(con.getDevice_sn(), con.getPort());
+				for(Controller co:conList) {
+					
+					controllerDao.delete(co.getId());
+					
+				}
+				
+				String s = con.getPondIds();
+				String[] ss =s.split(",");
+				for(int j=0;j<ss.length;j++) {
+					Controller cont = new Controller();
+					cont.setDevice_sn(con.getDevice_sn());
+					cont.setType(con.getType());
+					cont.setPondId(Integer.parseInt(ss[j]));
+					cont.setRelation(con.getRelation());
+					cont.setName(con.getName());
+					cont.setPort(con.getPort());
+					cont.setPondIds(con.getPondIds());
+					
+					controllerDao.save(cont);
+					
+				}				
+			}
+			return RESCODE.SUCCESS.getJSONRES();
+			
 		}
 	} 
 
@@ -1710,19 +1767,14 @@ public class EquipmentService {
 			//pH分析
 			List<Float> valueList = (List<Float>) pHMap.get("value");
 			float max=valueList.get(0);
-			int maxi = 0;
 			float min = valueList.get(0);
-			int mini=0;
 			float sum = (float) 0.0;
-			
 			for(int j=1;j<valueList.size();j++) {				
 				if(valueList.get(j)>max) {
 					max=valueList.get(j);
-					maxi=j;
 				} 
 				if(valueList.get(j)<min) {
 					min=valueList.get(j);
-					mini=j;
 				} 				
 				sum+=valueList.get(j);
 			}
@@ -1730,13 +1782,49 @@ public class EquipmentService {
 			Map<String , Object> pHResult = new HashMap<>();
 			pHResult.put("max", max);
 			pHResult.put("min", min);
-			pHResult.put("average", average);			
+			pHResult.put("average", average);
+			returnMap.put("pH", pHResult);
 			//DO分析
-			
+			valueList = (List<Float>) DOMap.get("value");
+			max=valueList.get(0);
+			min = valueList.get(0);
+			sum = (float) 0.0;			
+			for(int j=1;j<valueList.size();j++) {				
+				if(valueList.get(j)>max) {
+					max=valueList.get(j);
+				} 
+				if(valueList.get(j)<min) {
+					min=valueList.get(j);
+				} 				
+				sum+=valueList.get(j);
+			}
+			average = sum/valueList.size();
+			Map<String , Object> DOResult = new HashMap<>();
+			DOResult.put("max", max);
+			DOResult.put("min", min);
+			DOResult.put("average", average);
+			returnMap.put("DO", DOResult);
 			//WT分析
-			
-			
-			return null;
+			valueList = (List<Float>) DOMap.get("value");
+			max=valueList.get(0);
+			min = valueList.get(0);
+			sum = (float) 0.0;			
+			for(int j=1;j<valueList.size();j++) {				
+				if(valueList.get(j)>max) {
+					max=valueList.get(j);
+				} 
+				if(valueList.get(j)<min) {
+					min=valueList.get(j);
+				} 				
+				sum+=valueList.get(j);
+			}
+			average = sum/valueList.size();
+			Map<String , Object> WTResult = new HashMap<>();
+			WTResult.put("max", max);
+			WTResult.put("min", min);
+			WTResult.put("average", average);
+			returnMap.put("WT", WTResult);
+			return returnMap;
 			
 		}
 	}

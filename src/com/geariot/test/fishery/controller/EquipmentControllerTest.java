@@ -12,10 +12,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.geariot.platform.fishery.dao.TimerDao;
+import com.geariot.platform.fishery.entities.Timer;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author mxy940127
@@ -31,6 +39,8 @@ public class EquipmentControllerTest {
 
 	@Autowired
 	private WebApplicationContext context;
+	@Autowired
+	private TimerDao timerDao;
 
 	@Before
 	public void setup() {
@@ -221,6 +231,48 @@ public class EquipmentControllerTest {
                 //.param("device_sn", "010001")
                 //.param("relation", "WX1")
         ).andDo(print()).andExpect(status().is2xxSuccessful());
+    }
+    
+    @Test
+    public void testTimer() {
+    	/*SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+    	Date date = new Date();
+    	String s = sdf.format(date);
+    	System.out.println(date.getHours());
+    	System.out.println(date.getMinutes());
+    	System.out.println(s);*/
+
+
+    	
+    	/*List<Timer> lt = timerDao.findAllTimer();
+    	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+    	try {
+			long now = sdf.parse(sdf.format(new Date())).getTime();
+			for(Timer timer:lt) {
+	        	System.out.println(now);
+	    	}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}*/
+    	/*List<Timer> lt = timerDao.findAllTimer();
+    	for(Timer timer:lt) {
+    		String start = timer.getStartTime();
+    		Date startTime = new Date();
+    		
+//    		startTime.setHours(Integer.parseInt(start.substring(0, 2)));
+//    		startTime.setMinutes(minutes);
+    		String end = timer.getEndTime();
+    		
+    	}
+    	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+    	try {
+			long now = sdf.parse(sdf.format(new Date())).getTime();
+			System.out.println(now);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+    	System.out.println("123456");*/
+    	
     }
 
 }

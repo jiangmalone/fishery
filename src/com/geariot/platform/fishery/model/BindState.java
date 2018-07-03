@@ -11,11 +11,11 @@ import java.util.Set;
  */
 public class BindState {
 	
-	private int pondId;
-	private String pondName;
-	private String status;
-	private String deviceName;
-	private Set<PortBind> portBinds;
+	private int pondId;			//塘口id
+	private String pondName;	//塘口名称
+	private String status;		//绑定状态
+	private String deviceName;	//设备名称
+	private Set<PortBind> portBinds; 	//端口绑定
 	public BindState(){
 		
 	}

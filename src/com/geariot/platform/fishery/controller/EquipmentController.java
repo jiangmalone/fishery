@@ -156,6 +156,8 @@ public class EquipmentController {
 		return RESCODE.SUCCESS.getJSONRES();
 	}*/
 	
+	
+	
 	@RequestMapping(value = "/setTimer", method = RequestMethod.POST)
 	public Map<String, Object> autoSet(@RequestBody Param param){
 		System.out.println("设备id："+param.getDevice_sn());

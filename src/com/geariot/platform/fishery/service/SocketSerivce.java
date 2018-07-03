@@ -142,7 +142,7 @@ public class SocketSerivce {
 		return aioDao.findAIOByDeviceSnAndWay(deviceSn, way);
 	}
 	
-	public Controller findControllerByDeviceSnAndWay(String deviceSn,int way) {
+	public List<Controller> findControllerByDeviceSnAndWay(String deviceSn,int way) {
 		return controllerDao.findControllerByDeviceSnAndWay(deviceSn, way);
 	}
 	

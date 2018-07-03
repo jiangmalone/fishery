@@ -358,7 +358,44 @@ public class BindService {
 		if (device_sn == null || device_sn.isEmpty() || device_sn.length() < 2) {
 			return RESCODE.WRONG_PARAM.getJSONRES();
 		} else {
-			String type = device_sn.substring(0, 2);
+			Device device = deviceDao.findDevice(device_sn);
+			int type = device.getType(); //设备类型  1 传感器 2 一体机 3 控制器
+			switch(type) {
+			case 1:
+				Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+				if (sensor == null) {
+					return RESCODE.NOT_FOUND.getJSONRES();
+				} else {
+					BindState bindState = new BindState();
+					bindState.setDeviceName(sensor.getName());
+					bindState.setStatus(Integer.toString(sensor.getStatus()));
+					PortBind bind = null;
+					Controller controller = null;
+					List<Sensor_Controller> list = sensor_ControllerDao.list(sensor.getId());
+					Set<PortBind> portBinds = new HashSet<>();
+					for (Sensor_Controller sensor_Controller : list) {
+						bind = new PortBind();
+						controller = controllerDao.findControllerById(sensor_Controller.getControllerId());
+						bind.setPort(sensor_Controller.getSensor_port());
+						bind.setBindId(controller.getId());
+						bind.setBindName(controller.getName());
+						bind.setBindDeviceSn(controller.getDevice_sn());
+						bind.setBindPort(sensor_Controller.getController_port());
+						portBinds.add(bind);
+					}
+					if (sensor.getPondId() > 0) {
+						bindState.setPondId(sensor.getPondId());
+						bindState.setPondName(pondDao.findPondByPondId(sensor.getPondId()).getName());
+					} else {
+						bindState.setPondId(sensor.getPondId());
+					}
+					bindState.setPortBinds(portBinds);
+					return RESCODE.SUCCESS.getJSONRES(bindState);
+				}
+			case 2:
+			case 3:
+			}
+			/*String type = device_sn.substring(0, 2);
 			switch (type) {
 			case "01":
 				AIO aio = aioDao.findAIOByDeviceSns(device_sn);
@@ -456,7 +493,8 @@ public class BindService {
 				}
 			default:
 				return RESCODE.WRONG_PARAM.getJSONRES();
-			}
+			}*/
+			return null;
 		}
 	}
 }

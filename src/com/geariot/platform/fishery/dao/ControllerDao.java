@@ -18,7 +18,7 @@ public interface ControllerDao {
 	
 	Controller findControllerByDeviceSns(String deviceSns);
 	
-	Controller findControllerByDeviceSnAndWay(String deviceSn,int way);
+	List<Controller> findControllerByDeviceSnAndWay(String deviceSn,int way);
 
 	List<Controller> queryControllerByNameAndRelation(String relation, String name, int from, int pageSize);
 	

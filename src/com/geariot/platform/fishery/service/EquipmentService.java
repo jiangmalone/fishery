@@ -18,6 +18,8 @@ import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.*;
 import com.geariot.platform.fishery.timer.CMDUtils;
 import com.geariot.platform.fishery.utils.DataExportExcel;
+import com.sun.net.httpserver.Authenticator.Success;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.math.RandomUtils;
@@ -148,25 +150,27 @@ public class EquipmentService {
 		//为塘口添加传感器
 		//只可添加一个传感器，数组形式为便于前端渲染	
 			Sensor sensor  =sensors[0];
+			//截除前两个表示设备类型的编号
 			String device_sn = sensor.getDevice_sn().substring(2, sensor.getDevice_sn().length());
+			
+			
+			
+			
 			if(deviceDao.findDevice(device_sn)==null) {	
 				//设备号不存在，添加设备
 				Device device = new Device();
 				device.setDevice_sn(device_sn);
 				device.setType(1);
-				deviceDao.save(device);					
-				
+				deviceDao.save(device);									
 				sensor.setDevice_sn(device_sn);
 				logger.debug("在device中添加了一个传感器");
-				sensorDao.save(sensor);
-				logger.debug("在sensor中添加了一个传感器");
-				
 				logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
 				Pond pond = pondDao.findPondByPondId(sensor.getPondId());
 				if (pond == null) {
-					//塘口不存在
+					//塘口不存在,传感器的塘口Id设为0
 					logger.debug("塘口Id:" + sensor.getPondId()+ "在数据库中无记录!!!");
-					return RESCODE.NOT_FOUND.getJSONRES();
+					sensor.setPondId(0);
+					//return RESCODE.POND_NOT_EXIST.getJSONRES();
 				}else {
 					//塘口存在，添加触发器
 					//根据鱼的种类添加触发器1.鱼2.虾3.蟹
@@ -179,13 +183,18 @@ public class EquipmentService {
 		            	logger.debug("塘口中共有"+pondFishList.size()+"种");
 		                PondFish senbinfs=pondFishList.get(0);
 		                pondfishtype=senbinfs.getType();
-		            }else return RESCODE.POND_NO_FISH.getJSONRES();
-		        	logger.debug("鱼塘中鱼的种类为："+pondfishtype);
-		            int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
-		            if (triggeraddresult==0)
-		                return RESCODE.SUCCESS.getJSONRES();
-		            else return RESCODE.TRIGGER_FAILED.getJSONRES();					
-				}					
+		                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
+		                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
+		                if(triggeraddresult==1) {
+		                	//return RESCODE.SUCCESS.getJSONRES();
+		                }else {
+		                	//return RESCODE.TRIGGER_FAILED.getJSONRES();
+		                }
+		            }/*else return RESCODE.POND_NO_FISH.getJSONRES();*/		        	
+				}	
+				sensorDao.save(sensor);
+				logger.debug("在sensor中添加了一个传感器");	
+				return RESCODE.SUCCESS.getJSONRES();
 			}else {
 				//设备号存在，与塘口重新绑定
 				logger.debug("非新设备，已在其他塘口使用过");
@@ -193,16 +202,14 @@ public class EquipmentService {
 				sensorOld.setName(sensor.getName());
 				sensorOld.setPondId(sensor.getPondId());
 				sensorOld.setRelation(sensor.getRelation());
-				sensorOld.setStatus(sensor.getStatus());*/
-				
-				sensorDao.updateSensor(sensor);
-				
+				sensorOld.setStatus(sensor.getStatus());*/				
 				logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
 				Pond pond = pondDao.findPondByPondId(sensor.getPondId());
 				if (pond == null) {
 					//塘口不存在
+					sensor.setPondId(0);
 					logger.debug("塘口Id:" + sensor.getPondId()+ "在数据库中无记录!!!");
-					return RESCODE.NOT_FOUND.getJSONRES();
+					return RESCODE.POND_NOT_EXIST.getJSONRES();
 				}else {
 					//塘口存在，添加触发器
 					//根据鱼的种类添加触发器1.鱼2.虾3.蟹
@@ -215,14 +222,14 @@ public class EquipmentService {
 		            	logger.debug("塘口中共有"+pondFishList.size()+"种");
 		                PondFish senbinfs=pondFishList.get(0);
 		                pondfishtype=senbinfs.getType();
-		            }else return RESCODE.POND_NO_FISH.getJSONRES();
-		        	logger.debug("鱼塘中鱼的种类为："+pondfishtype);
-		            int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
-		            if (triggeraddresult==0)
-		                return RESCODE.SUCCESS.getJSONRES();
-		            else return RESCODE.TRIGGER_FAILED.getJSONRES();					
-				}			
+		                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
+		                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
+		            }/*else return RESCODE.POND_NO_FISH.getJSONRES();*/		      
+				}
+				sensorDao.updateSensor(sensor);
+				return RESCODE.SUCCESS.getJSONRES();
 			}
+
 	}
 
 
@@ -1722,20 +1729,22 @@ public class EquipmentService {
 		Map<String, Object> refeshflag = new HashMap<>();
 		String controllerKey = getControllerPortStatus(device_sn,port);
 		if (controllerKey.equals("2")== false){
-
-
+			//查询成功
 			if (controllerKey.equals(status)==false){
+				//状态已改，不需要下一次
 				refeshflag.put("ifnext", 0);
 				refeshflag.put("switch",controllerKey);
 			}
 			if (controllerKey.equals(status)==true){
+				//状态未改变，需要再次打开
 				refeshflag.put("ifnext", 1);
 				refeshflag.put("switch",status);
 
 			}
 			return refeshflag;
 		}else {
-			refeshflag.put("success", 1);
+			//查询失败
+			refeshflag.put("false", 1);//?
 			return refeshflag;
 		}
 

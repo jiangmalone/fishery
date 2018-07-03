@@ -296,6 +296,7 @@ public class UserService {
 				for(Sensor sensor:sensorlist) {
 					Map<String, Object> sensorMap=new HashMap<>();
 					Map<String, Object> sensorDataMap=new HashMap<>();
+					//获得传感器在线/离线状态
 					GetDevicesStatus api = new GetDevicesStatus(sensor.getDevice_sn(),key);
 			        BasicResponse<DevicesStatusList> response = api.executeApi();
 			        if(response.errno == 0) {
@@ -303,6 +304,7 @@ public class UserService {
 			        }else {
 			        	sensorMap.put("online", false);
 			        }
+			        //获得传感器最新数据
 			        GetLatesDeviceData lddapi = new GetLatesDeviceData(sensor.getDevice_sn(), key);
 			        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
 			        if(response2.errno == 0) {
@@ -318,7 +320,7 @@ public class UserService {
 			        sensorLM.add(sensorMap);
 				}
 			}
-			//获得一体机离线/在线
+			//获得一体机离线/在线，功能不完善，有待继续。。。。
 			if(aioList!=null) {
 				System.out.println("aioList"+aioList.size());
 				for(AIO aio:aioList) {
@@ -337,11 +339,26 @@ public class UserService {
 				System.out.println("controllerList"+controllerList.size());
 				for(Controller controller:controllerList) {
 					Map<String, Object> controllerMap=new HashMap<>();
+					Map<String, Object> controllerDataMap=new HashMap<>();
+					//获得设备离线/在线状态
 					GetDevicesStatus api = new GetDevicesStatus(controller.getDevice_sn(),key);
 			        BasicResponse<DevicesStatusList> response = api.executeApi();
 			        if(response.errno == 0) {
 			        	controllerMap.put("online", response.data.getDevices().get(0).getIsonline());			        	
 			        }
+			      //获得控制器最新数据
+			        GetLatesDeviceData lddapi = new GetLatesDeviceData(controller.getDevice_sn(), key);
+			        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
+			        if(response2.errno == 0) {
+			        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response2.data.getDevices().get(0).getDatastreams();
+				        for(int i=0;i<DatastreamsList.size();i++) {
+				        	controllerDataMap.put(DatastreamsList.get(i).getId(), DatastreamsList.get(i).getValue());
+				        }
+				        controllerMap.put("data", controllerDataMap);
+			        }else {
+			        	controllerMap.put("data", false);
+			        }
+			        
 			        List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(controller.getDevice_sn(), controller.getPort());
 			        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
 			       // List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(controller.getDevice_sn());

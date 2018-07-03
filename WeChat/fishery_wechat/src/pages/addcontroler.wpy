@@ -243,6 +243,8 @@
       </view>
       <!-- 塘口多选 -->
 
+      <!--模态框-->
+
       <!-- 塘口单选 -->
       <view wx:if="{{ whatShow === 'tangkou' }}" >
         <repeat for="{{tangkoulist}}" key="index" index="index">
@@ -255,6 +257,7 @@
         <view class="add-but"><image src="../images/_5@2x.png"></image><text>新增塘口</text></view>
         <button class="modal-but" @tap="confirmTangkou">确定</button>
       </view>
+
       <!-- 设备单选 -->
       <view wx:else >
         <repeat for="{{typelist}}" key="index" index="index">
@@ -296,6 +299,7 @@ export default class Addcontroler extends wepy.page {
     equimentinfo: []
   }
   methods= {
+    // 显示模态框
     showmodal(how, num) {
       this.whatShow = how
       this.whichroad = num

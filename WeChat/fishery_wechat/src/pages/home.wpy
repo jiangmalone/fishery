@@ -633,7 +633,7 @@ export default class Home extends wepy.page {
     // 跳转到图表
     jupLine() {
       wepy.navigateTo({
-        url: `line`
+        url: `line?id=${this.currentId}`
       })
     },
 

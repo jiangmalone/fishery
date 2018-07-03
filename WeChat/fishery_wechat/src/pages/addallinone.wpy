@@ -188,7 +188,8 @@
       <repeat for="{{tangkoulist}}" key="index" index="index">
         <view class="checkbox-item" data-selectindex="{{index}}" data-pondid="{{item.id}}" data-pond="{{item.name}}" @tap="selectRep">
           <view class="{{id === index ? 'select' : ''}}">
-            <image src="{{id === index ? selectImage : noselectImage}}"></image><text>{{item.name}}</text>
+            <image src="{{id === index ? selectImage : noselectImage}}"></image>
+            <text>{{item.name}}</text>
           </view>
       </view>
       </repeat>

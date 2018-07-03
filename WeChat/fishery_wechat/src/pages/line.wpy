@@ -126,143 +126,55 @@
 }
 </style>
 <template>
-<view class="line">
-  <view class="header">
-    <view class="sensorname">小鱼塘-小A-进水啊实打实的</view><image class="header-img" src="../images/多_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
-    <view class="status"><view class="status-dot"></view>异常</view>
-  </view>
-  <view class="content">
-    <view class="cot-name">
-      <text>传感器2-数据指标</text>
-      <text class="time">2018/05/12 13:23</text>
-    </view>
-    <view class="cot">
-      <view class="cot-index">
-        <view class="target">
-          <image class="o2" src="../images/氧_3_copy 2@2x.png"></image>
-          <view class="data">溶氧 8.5mg/L</view>
-        </view>
-        <view class="res">正常</view>
-      </view>
-      <view class="cot-index">
-        <view class="target">
-          <image class="o2" src="../images/温@2x.png"></image>
-          <view class="data">水温 21℃</view>
-        </view>
-        <view class="res">正常</view>
-      </view>
-      <view class="cot-index">
-        <view class="target">
-          <image class="ph" src="../images/ph@2x.png"></image>
-          <view class="data1">PH 8.5</view>
-        </view>
-        <view class="res">正常</view>
-      </view>
-      <view class="cut"></view>
-    </view>
-  </view>
   <view class="line">
-    <view class="line-but">
-      <view class="but-index">今日</view>
-      <view class="but-index">三日</view>
+    <view class="header">
+      <view class="sensorname">小鱼塘-小A-进水啊实打实的</view><image class="header-img" src="../images/多_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
+      <view class="status"><view class="status-dot"></view>异常</view>
+    </view>
+    <view class="content">
+      <view class="cot-name">
+        <text>传感器2-数据指标</text>
+        <text class="time">2018/05/12 13:23</text>
+      </view>
+      <view class="cot">
+        <view class="cot-index">
+          <view class="target">
+            <image class="o2" src="../images/氧_3_copy 2@2x.png"></image>
+            <view class="data">溶氧 8.5mg/L</view>
+          </view>
+          <view class="res">正常</view>
+        </view>
+        <view class="cot-index">
+          <view class="target">
+            <image class="o2" src="../images/温@2x.png"></image>
+            <view class="data">水温 21℃</view>
+          </view>
+          <view class="res">正常</view>
+        </view>
+        <view class="cot-index">
+          <view class="target">
+            <image class="ph" src="../images/ph@2x.png"></image>
+            <view class="data1">PH 8.5</view>
+          </view>
+          <view class="res">正常</view>
+        </view>
+        <view class="cut"></view>
+      </view>
+    </view>
+    <view class="line">
+      <view class="line-but">
+        <view class="but-index">今日</view>
+        <view class="but-index">三日</view>
+      </view>
+    </view>
+    <view id="cha">
+      <ec-canvas class="canvas" id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ ec }}"></ec-canvas>
     </view>
   </view>
-  <view id="cha">
-    <ec-canvas class="canvas" id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ ec }}"></ec-canvas>
-  </view>
-</view>
 </template>
 <script>
-import wepy from 'wepy'
+  import wepy from 'wepy'
 
-let options = {
-  // tooltip: {
-  //   trigger: 'axis',
-  //   axisPointer: {//鼠标滑过的线条样式
-  //     type: 'line',
-  //     lineStyle: {
-  //       color: 'red',//颜色
-  //       width: 1,//宽度
-  //       type: 'solid'//实线
-  //     }
-  //   },
-  //   formatter: function(value) {//鼠标滑过时显示内容的格式化
-  //     var template = "";
-  //     template += 'Value1：' + value[0].axisValue + "<br/>";
-  //     template += 'Value2：' + value[0].data;
-  //     return template;
-  //   }
-  // },
-  textStyle: {
-    color: '#c4c4c4'
-  },
-  color: ['#8dc1aa'],
-  xAxis: [{
-    type: 'category',
-    boundaryGap: false,
-    data: [1, 2, 3, 4, 5],
-    axisLine: {
-      lineStyle: {
-        color: '#c4c4c4'
-      }
-    }
-    // axisLabel: {//y轴的内容格式化,很有用的属性
-    //   formatter: '{value} xUnit'
-    // }
-  }],
-  yAxis: [{
-    type: 'value',
-    axisLine: {
-      lineStyle: {
-        color: '#c4c4c4'
-      }
-    },
-    splitLine: {
-      lineStyle: {
-        color: '#e9e7de',
-        type: 'dashed'
-      }
-    }
-    // axisLabel: {//y轴的内容格式化,很有用的属性
-    //   formatter: '{value} yUnit'
-    // }
-  }],
-  series: [{
-    lineStyle: {
-      color: '#2c90f7'
-    },
-    type: 'line',
-    data: [1, 2, 3, 4, 5],
-    markLine: {
-      symbol: '',
-      itemStyle: {
-        lineStyle: {type: 'solid'},
-        label: {show: true, position: 'left', formatter: 'aaa'}
-      },
-      data: [
-        { yAxis: 2,
-          itemStyle: {
-            color: '#beac00'
-          }
-        },
-        { yAxis: 3,
-          itemStyle: {
-            width: 1.5,
-            color: '#45795b'
-          }
-        },
-        { yAxis: 5,
-          itemStyle: {
-            width: 1.5,
-            color: '#b3675b'
-          }
-        }
-      ]
-    }
-  }]
-}
-
-// const wxCharts = require('../units/wxcharts-min.js')
 export default class Line extends wepy.page {
   config = {
     usingComponents: {
@@ -271,7 +183,75 @@ export default class Line extends wepy.page {
   }
   data = {
     ec: {
-      options: options
+      options: {
+        textStyle: {
+          color: '#c4c4c4'
+        },
+        color: ['#8dc1aa'],
+        xAxis: [{
+          type: 'category',
+          boundaryGap: false,
+          data: [1,2,3,4,5],
+          axisLine: {
+            lineStyle: {
+              color: '#c4c4c4'
+            }
+          }
+          // axisLabel: {//y轴的内容格式化,很有用的属性
+          //   formatter: '{value} xUnit'
+          // }
+        }],
+        yAxis: [{
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#c4c4c4'
+            }
+          },
+          splitLine: {
+            lineStyle: {
+              color: '#e9e7de',
+              type: 'dashed'
+            }
+          }
+          // axisLabel: {//y轴的内容格式化,很有用的属性
+          //   formatter: '{value} yUnit'
+          // }
+        }],
+        series: [{
+          lineStyle: {
+            color: '#2c90f7'
+          },
+          type: 'line',
+          data: [1, 2, 3, 4, 5],
+          markLine: {
+            symbol: '',
+            itemStyle: {
+              lineStyle: {type: 'solid'},
+              label: {show: true, position: 'left', formatter: 'aaa'}
+            },
+            data: [
+              { yAxis: 2,
+                itemStyle: {
+                  color: '#beac00'
+                }
+              },
+              { yAxis: 3,
+                itemStyle: {
+                  width: 1.5,
+                  color: '#45795b'
+                }
+              },
+              { yAxis: 5,
+                itemStyle: {
+                  width: 1.5,
+                  color: '#b3675b'
+                }
+              }
+            ]
+          }
+        }]
+      }
     }
   }
   methods = {
@@ -280,20 +260,46 @@ export default class Line extends wepy.page {
       wepy.navigateTo({
         url: `myequiment`
       })
+    },
+    drawEcharts(){
+
     }
   }
   events = {}
   onShow() {}
   onLoad() {
     wepy.request({
-      url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
+      url: this.$parent.globalData.baseUrl + 'api/' + 'usermanagement/HomePageDetail',
       data: {
-        device_sn: 34780506,
-        way: 1
+        relation: this.$parent.globalData.relation
       },
       method: 'GET',
       success: res => {
-        console.log(res.data)
+        // 如果有塘口
+        console.log(res.data.myHome)
+        this.tangkoulist = res.data.myHome
+        let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
+        // 34780506
+
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
+          data: {
+            device_sn: deviceSn,
+            way: 1
+          },
+          method: 'GET',
+          success: res => {
+            console.log(res.data)
+            console.log(res.data.DO.at)
+            this.chartOption.xAxis.data = res.data.DO.at
+            this.chartOption.series.data = res.data.DO.value
+            this.$apply()
+          },
+          complete: () => {
+
+            wepy.hideLoading()
+          }
+        })
       }
     })
   }

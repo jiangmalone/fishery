@@ -31,6 +31,8 @@ Component({
       if (!this.data.ec.lazyLoad) {
         this.init();
       }
+      console.log('eeeeecccccccccc')
+      console.log(this.data.ec)
     }, 10)
   },
 

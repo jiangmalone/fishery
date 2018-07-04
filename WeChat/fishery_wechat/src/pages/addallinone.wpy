@@ -164,6 +164,8 @@
 </style>
 <template>
 <view class="addallinone">
+
+  <!--头部-->
     <view class="addallinone-item">
     <image class="num" src="../images/型@2x.png"></image>设备编号
     <text class="fright">{{equimentNum}}</text>
@@ -172,6 +174,8 @@
     <image class="num" src="../images/型@2x.png"></image>设备类型
     <text class="fright">一体机</text>
   </view>
+
+  <!--循环部分-->
   <view class="addequiment">
     <view class="equiment-item">
       <view class="name">设备1路</view>
@@ -199,6 +203,7 @@
     </view>
   </view>
   <view class="confirmbut" @tap="addAllinone">确定</view>
+
   <!--模态框-->
   <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
     <view class="modalDlg" wx:if="{{showModal}}">
@@ -217,7 +222,7 @@
       <view @tap="jumAddTangkou" class="add-but"><image src="../images/_5@2x.png"></image><text>新增塘口</text></view>
     <button wx:if="{{tangkoulist.length !== 0}}" class="modal-but" @tap="go">确定</button>
   </view>
-</view>
+  </view>
 </template>
 <script>
 import wepy from 'wepy'
@@ -227,17 +232,17 @@ export default class Addallinone extends wepy.page {
     id: null,
     action: '',
     pondlist: [],
-    equimentNum: '34784122',
+    equimentNum: '0134784122',
     equimentinfo: [
       {
-        device_sn: '34784122',
+        device_sn: '0134784122',
         name: '',
         pondId: '',
         port: 1,
         relation: ''
       },
       {
-        device_sn: '34784122',
+        device_sn: '0134784122',
         name: '',
         pondId: '',
         port: 2,

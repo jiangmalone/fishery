@@ -165,7 +165,9 @@
 </style>
 <template>
 <view class="addcontroler">
-    <view class="addcontroler-item">
+
+  <!--头部-->
+  <view class="addcontroler-item">
     <image class="num" src="../images/型@2x.png"></image>设备编号
     <text class="fright">{{equimentNum}}</text>
   </view>
@@ -173,6 +175,8 @@
     <image class="num" src="../images/型@2x.png"></image>设备类型
     <text class="fright">控制器</text>
   </view>
+
+  <!--列表部分-->
   <view class="addequiment">
     <view class="equiment-item">
       <view class="name">1路控制器</view>
@@ -218,7 +222,8 @@
         <text>绑定塘口</text>
         <input class="rightinp" @tap="showmodal('tangkou', 2)" value="{{pondlist[equimentinfo[2].pondId]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
-    </view><view class="equiment-item">
+    </view>
+    <view class="equiment-item">
       <view class="name">4路控制器</view>
       <view class="einput">
         <text>设备名称</text>
@@ -234,7 +239,11 @@
       </view>
     </view>
   </view>
+
+  <!--确定按钮-->
   <view class="confirmbut" @tap="addCon">确定</view>
+
+  <!--模态框-->
   <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
     <view class="modalDlg" wx:if="{{showModal}}">
       <view class="close" @tap="closemodal">
@@ -295,7 +304,7 @@ export default class Addcontroler extends wepy.page {
     oneselectImage: '../images/group_2@2x.png',
     moreselectImage: '../images/_14_copy@2x.png',
     noselectImage: '../images/_14_copy 2@2x.png',
-    equimentNum: '',
+    equimentNum: '0430083262',
     equimentinfo: []
   }
   methods= {
@@ -336,6 +345,7 @@ export default class Addcontroler extends wepy.page {
       this.equimentinfo[this.whichroad].relation = this.$parent.globalData.relation
       this.showModal = false
       this.$apply()
+      console.log(this.equimentinfo)
     },
     selectEqu(e) {
       this.type = e.currentTarget.dataset.type
@@ -385,11 +395,13 @@ export default class Addcontroler extends wepy.page {
     }
   }
   onLoad(options) {
-    this.equimentNum = options.number
+    if (options.number) {
+      this.equimentNum = options.number
+    }
     this.action = options.action ? options.action : 'add'
     this.equimentinfo = options.data ? JSON.parse(options.data) : [
       {
-        device_sn: '343242',
+        device_sn: '30083262',
         name: '',
         pondId: '',
         port: 1,
@@ -397,7 +409,7 @@ export default class Addcontroler extends wepy.page {
         type: ''
       },
       {
-        device_sn: '343242',
+        device_sn: '0430083262',
         name: '',
         pondId: '',
         port: 2,
@@ -405,7 +417,7 @@ export default class Addcontroler extends wepy.page {
         type: ''
       },
       {
-        device_sn: '343242',
+        device_sn: '0430083262',
         name: '',
         pondId: '',
         port: 3,
@@ -413,7 +425,7 @@ export default class Addcontroler extends wepy.page {
         type: ''
       },
       {
-        device_sn: '343242',
+        device_sn: '0430083262',
         name: '',
         pondId: '',
         port: 4,

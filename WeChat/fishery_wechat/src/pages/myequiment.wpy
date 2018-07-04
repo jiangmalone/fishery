@@ -193,15 +193,15 @@ export default class Myequiment extends wepy.page {
       let device = item.id.slice(2)
       let data = JSON.stringify(item.content)
       if (num === '01' || num === '02') {
-        wepy.redirectTo({
+        wepy.navigateTo({
           url: `addallinone?number=${device}&data=${data}&action=modify`
         })
       } else if (num === '03') {
-        wepy.redirectTo({
+        wepy.navigateTo({
           url: `addcontroler?number=${device}&data=${data}&action=modify`
         })
       } else if (num === '04') {
-        wepy.redirectTo({
+        wepy.navigateTo({
           url: `addsensor?number=${device}&data=${data}&action=modify`
         })
       } else {

@@ -190,7 +190,7 @@ export default class Mytangkou extends wepy.page {
         select.push(value['fish_name'])
       })
       select = JSON.stringify(select)
-      wepy.redirectTo({
+      wepy.navigateTo({
         url: `addtangkou?type=${data}&select=${select}&action=modify`
       })
     },

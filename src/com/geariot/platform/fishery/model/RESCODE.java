@@ -41,6 +41,7 @@ public enum RESCODE {
 	OFF_LINE(29,"设备已离线"),
 	POND_NO_FISH(30,"塘口没有鱼的类型"),
 	TRIGGER_FAILED(31,"触发器设置错误"),
+	NO_DEVICE(32,"无设备"),
 	FOR_EXCEPTION
 	;
 	

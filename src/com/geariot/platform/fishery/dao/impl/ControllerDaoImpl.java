@@ -67,10 +67,10 @@ public class ControllerDaoImpl implements ControllerDao {
 	}
 
 	@Override
-	public Controller findControllerByDeviceSns(String deviceSns) {
+	public List<Controller> findControllerByDeviceSns(String deviceSns) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
 		Query query = queryUtils.addString("device_sn", deviceSns).getQuery();
-		return (Controller) query.uniqueResult();
+		return query.list();
 	}
 	
 	@Override

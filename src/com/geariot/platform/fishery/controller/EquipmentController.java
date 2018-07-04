@@ -78,6 +78,11 @@ public class EquipmentController {
 	public Map<String, Object> modifyController(@RequestBody Controller... controllers) {
 		return equipmentService.modifyController(controllers);
 	}
+	@RequestMapping(value = "/getControllersBydevice_sn", method = RequestMethod.POST)
+	public Map<String, Object> getControllersBydevice_sn(String device_sn) {
+		return equipmentService.getControllersBydevice_sn(device_sn);
+	}
+	
 	
 	@RequestMapping(value = "/addAio", method = RequestMethod.POST)
 	public Map<String, Object> addController(@RequestBody AIO... aios) {
@@ -124,10 +129,10 @@ public class EquipmentController {
 		return equipmentService.myEquipment(relation);
 	}
 	
-	@RequestMapping(value ="/adminFindEquipment", method = RequestMethod.GET)
+	/*@RequestMapping(value ="/adminFindEquipment", method = RequestMethod.GET)
 	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number){
 		return equipmentService.adminFindEquipment(device_sn,userName,page,number);
-	}
+	}*/
 	
 	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
 	public Map<String, Object> companyFindEquipment(String device_sn, String relation, int page, int number){

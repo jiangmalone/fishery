@@ -130,10 +130,10 @@ public class SocketSerivce {
 		return aioDao.findAIOByDeviceSns(deviceSn);
 	}
 	
-	public Controller findControllerByDeviceSn(String deviceSn) {
+/*	public Controller findControllerByDeviceSn(String deviceSn) {
 		return controllerDao.findControllerByDeviceSns(deviceSn);
 	}
-	
+	*/
 	public Sensor findSensorByDeviceSnAndWay(String deviceSn,int way) {
 		return sensorDao.findSensorByDeviceSnAndWay(deviceSn, way);
 	}
@@ -194,7 +194,7 @@ public class SocketSerivce {
 		}
 		return null;
 	}
-	
+/*	
 	public WXUser findWXUserByDeviceSnController(String deviceSn) {
 		Controller controller = findControllerByDeviceSn(deviceSn);
 		WXUser wxuser=null;
@@ -204,7 +204,7 @@ public class SocketSerivce {
 				return wxuser;
 		}
 		return null;
-	}
+	}*/
 	
 	public List<PondFish> queryFishCategorysByDeviceSn(String deviceSn){
 		AIO aio=findAIOByDeviceSn(deviceSn);

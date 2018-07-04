@@ -497,4 +497,33 @@ public class BindService {
 			return null;
 		}
 	}
+	/*List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(device_sn, port);
+	if(controllerList.size()>0) {
+		Controller controller = controllerList.get(0);			
+		controllerDao.updateController(controller);
+		for(int i=1;i<controllerList.size();i++) {
+			controllerDao.delete(controllerList.get(i).getId());
+		}
+	}
+			
+	
+	return null;*/
+	public Map<String , Object> delControllerBind(String device_sn,int port){
+		List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(device_sn, port);
+		if(controllerList.size()>0) {
+			Controller controller = controllerList.get(0);
+			controller.setPondId(0);
+			controller.setPondIds(null);
+			controllerDao.updateController(controller);
+			for(int i=1;i<controllerList.size();i++) {
+				controllerDao.delete(controllerList.get(i).getId());
+			}
+			return RESCODE.SUCCESS.getJSONRES();
+		}else {
+			return RESCODE.NO_DEVICE.getJSONRES();
+		}		
+	}
+	
+	
+	
 }

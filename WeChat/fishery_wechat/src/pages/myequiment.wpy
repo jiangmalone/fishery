@@ -107,7 +107,7 @@
           </view>
 
           <!--设备类型名称-->
-          <text class="equiment-name">{{item.content.length === 1 ? '传感器' : item.content.length === 2 ? '一体机' : '控制器' }}</text>
+          <text class="equiment-name">{{item.type === 1 ? '传感器' : ( item.type === 2 ? '一体机' : '控制器' )}}</text>
 
           <!--设备编码-->
           <text>{{item.id}}</text>
@@ -189,18 +189,18 @@ export default class Myequiment extends wepy.page {
     // 管理设备按钮
     modifyEquiment(item) {
       console.log(item)
-      let num = item.id.slice(0, 2)
+      let num = item.type
       let device = item.id.slice(2)
       let data = JSON.stringify(item.content)
-      if (num === '01' || num === '02') {
+      if (num === 2) {
         wepy.navigateTo({
           url: `addallinone?number=${device}&data=${data}&action=modify`
         })
-      } else if (num === '04') {
+      } else if (num === 3) {
         wepy.navigateTo({
           url: `addcontroler?number=${device}&data=${data}&action=modify`
         })
-      } else if (num === '03') {
+      } else if (num === 1) {
         wepy.navigateTo({
           url: `addsensor?number=${device}&data=${data}&action=modify`
         })
@@ -271,6 +271,7 @@ export default class Myequiment extends wepy.page {
             console.log(res.data)
             this.equimentlist = res.data.controller.concat(res.data.aio, res.data.sensor)
             console.log(this.equimentlist)
+            console.log(typeof this.equimentlist[0].type)
             this.tangkoulist = tangkoulist
             this.$apply()
           }

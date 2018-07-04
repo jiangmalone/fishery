@@ -196,11 +196,11 @@ export default class Myequiment extends wepy.page {
         wepy.navigateTo({
           url: `addallinone?number=${device}&data=${data}&action=modify`
         })
-      } else if (num === '03') {
+      } else if (num === '04') {
         wepy.navigateTo({
           url: `addcontroler?number=${device}&data=${data}&action=modify`
         })
-      } else if (num === '04') {
+      } else if (num === '03') {
         wepy.navigateTo({
           url: `addsensor?number=${device}&data=${data}&action=modify`
         })

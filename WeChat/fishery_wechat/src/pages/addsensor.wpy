@@ -13,9 +13,22 @@
     .fright{
       float: right;
     }
+    .unbindport{
+      float:right;
+      margin-top:26rpx;
+      border:1rpx solid #2f70b8;
+      border-radius:40rpx;
+      height:50rpx;
+      line-height:50rpx;
+      width:100rpx;
+      text-align:center;
+      color: #2f70b8;
+      margin-left:20rpx;
+    }
     .rightinp{
-      margin-top: 30rpx;
       float: right;
+      margin-top: 26rpx;
+      text-align: right;
     }
     .num{
       margin-right: 20rpx;
@@ -161,6 +174,7 @@
       <input class="rightinp" placeholder="请选择需绑定的塘口"
              placeholder-style="color:#6F6F6F;text-align:right;"
              @tap="con" value="{{pondlist[equimentinfo[0].pondId]}}" disabled/>
+      <view class="unbindport" @tap="unBindBtn" wx:if="{{pondlist[equimentinfo[0].pondId]}}">解绑</view>
       <image src=""></image>
     </view>
 
@@ -206,6 +220,37 @@ export default class Addsensor extends wepy.page {
     noselectImage: '../images/_14_copy 2@2x.png'
   }
   methods= {
+    unBindBtn() {
+      wepy.request({
+        url: this.$parent.globalData.baseUrl + 'api/' + 'bind/delSensorOrAIOBind',
+        data: {
+          type: 1,
+          device_sn: this.equimentNum
+        },
+        method: 'GET',
+        success: res => {
+          if (res.data.msg === '成功') {
+            wepy.showToast({
+              title: '解绑成功',
+              icon: 'success',
+              duration: 2000,
+              success: res => {
+                wepy.navigateBack({
+                  delta: 1
+                })
+              }
+            })
+          } else {
+            wepy.showToast({
+              title: '解绑失败',
+              icon: 'none',
+              duration: 2000
+            })
+          }
+          console.log(res)
+        }
+      })
+    },
     jumAddTangkou() {
       wepy.navigateTo({
         url: 'addtangkou'
@@ -295,7 +340,10 @@ export default class Addsensor extends wepy.page {
     }
   }
   onLoad(options) {
-    this.equimentNum = options.number
+    if (options.number) {
+      this.equimentNum = options.number
+      console.log(this.equimentNum)
+    }
     this.action = options.action ? options.action : 'add'
     this.equimentinfo = options.data ? JSON.parse(options.data) : [{
       device_sn: '0334784122',

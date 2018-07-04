@@ -1,5 +1,17 @@
 <style lang="less">
 .addallinone{
+  .unbindport{
+    float:right;
+    margin-top:26rpx;
+    border:1rpx solid #2f70b8;
+    border-radius:40rpx;
+    height:50rpx;
+    line-height:50rpx;
+    width:100rpx;
+    text-align:center;
+    color: #2f70b8;
+    margin-left:20rpx;
+  }
   .add-but{
     width: 480rpx;
     height: 90rpx;
@@ -74,6 +86,7 @@
         .rightinp{
           float: right;
           margin-top: 26rpx;
+          text-align: right;
         }
       }
     }
@@ -185,6 +198,7 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
+        <view class="unbindport" wx:if="{{pondlist[equimentinfo[0].pondId]}}">解绑</view>
         <input class="rightinp" @tap="con(0)" value="{{pondlist[equimentinfo[0].pondId]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
@@ -198,6 +212,7 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
+        <view class="unbindport" wx:if="{{pondlist[equimentinfo[1].pondId]}}">解绑</view>
         <input class="rightinp" @tap="con(1)" value="{{pondlist[equimentinfo[1].pondId]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>

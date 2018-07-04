@@ -52,9 +52,22 @@
         margin-left: 30rpx;
         margin-top: 32rpx;
         background-color: #FAFDFC;
+        .unbindport{
+          float:right;
+          margin-top:26rpx;
+          border:1rpx solid #2f70b8;
+          border-radius:40rpx;
+          height:50rpx;
+          line-height:50rpx;
+          width:100rpx;
+          text-align:center;
+          color: #2f70b8;
+          margin-left:20rpx;
+        }
         .rightinp{
           float: right;
           margin-top: 26rpx;
+          text-align: right;
         }
       }
     }
@@ -190,7 +203,8 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <input class="rightinp" @tap="showmodal('tangkou', 0)" value="{{pondlist[equimentinfo[0].pondId]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <view class="unbindport" @tap="unBindBtn(0)" wx:if="{{pondlist[equimentinfo[0].pondIds]}}">解绑</view>
+        <input class="rightinp" @tap="showmodal('tangkou', 0)" value="{{pondlist[equimentinfo[0].pondIds]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
     <view class="equiment-item">
@@ -205,7 +219,8 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <input class="rightinp" @tap="showmodal('tangkou', 1)"  value="{{pondlist[equimentinfo[1].pondId]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <view class="unbindport" @tap="unBindBtn(1)" wx:if="{{pondlist[equimentinfo[1].pondIds]}}">解绑</view>
+        <input class="rightinp" @tap="showmodal('tangkou', 1)"  value="{{pondlist[equimentinfo[1].pondIds]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
     <view class="equiment-item">
@@ -220,7 +235,8 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <input class="rightinp" @tap="showmodal('tangkou', 2)" value="{{pondlist[equimentinfo[2].pondId]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <view class="unbindport" @tap="unBindBtn(2)" wx:if="{{pondlist[equimentinfo[2].pondIds]}}">解绑</view>
+        <input class="rightinp" @tap="showmodal('tangkou', 2)" value="{{pondlist[equimentinfo[2].pondIds]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
     <view class="equiment-item">
@@ -235,7 +251,8 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <input class="rightinp" @tap="showmodal('tangkou', 3)" value="{{pondlist[equimentinfo[3].pondId]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <view class="unbindport" @tap="unBindBtn(3)" wx:if="{{pondlist[equimentinfo[3].pondIds]}}">解绑</view>
+        <input class="rightinp" @tap="showmodal('tangkou', 3)" value="{{pondlist[equimentinfo[3].pondIds]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
   </view>
@@ -308,6 +325,37 @@ export default class Addcontroler extends wepy.page {
     equimentinfo: []
   }
   methods= {
+    unBindBtn(port) {
+      wepy.request({
+        url: this.$parent.globalData.baseUrl + 'api/' + 'bind/delControllerBind',
+        data: {
+          port: port,
+          device_sn: this.equimentinfo[port].device_sn
+        },
+        method: 'GET',
+        success: res => {
+          if (res.data.msg === '成功') {
+            wepy.showToast({
+              title: '解绑成功',
+              icon: 'success',
+              duration: 2000,
+              success: res => {
+                wepy.navigateBack({
+                  delta: 1
+                })
+              }
+            })
+          } else {
+            wepy.showToast({
+              title: '解绑失败',
+              icon: 'none',
+              duration: 2000
+            })
+          }
+          console.log(res)
+        }
+      })
+    },
     jumAddTangkou() {
       wepy.navigateTo({
         url: 'addtangkou'

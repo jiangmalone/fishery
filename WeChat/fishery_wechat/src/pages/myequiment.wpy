@@ -190,7 +190,7 @@ export default class Myequiment extends wepy.page {
     modifyEquiment(item) {
       console.log(item)
       let num = item.type
-      let device = item.id.slice(2)
+      let device = item.id
       let data = JSON.stringify(item.content)
       if (num === 2) {
         wepy.navigateTo({

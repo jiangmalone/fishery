@@ -657,9 +657,74 @@ export default class Home extends wepy.page {
           },
           method: 'POST',
           success: (res) => {
-            wepy.hideLoading()
+            // wepy.hideLoading()
             this.tangkoudetail.controllerList[controllerIdx].switch = key
             this.$apply()
+            // 获取结果第一次
+            setTimeout(() => {
+              wepy.request({
+                url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/refeshcondition',
+                data: {
+                  device_sn: controller.device_sn,
+                  port: controller.port,
+                  status: '' + s
+                },
+                method: 'GET',
+                success: (res) => {
+                  console.log(res.data)
+                  if (res.data.ifnext === 1) {
+                    // 获取结果第二次
+                    setTimeout(() => {
+                      wepy.request({
+                        url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/refeshcondition',
+                        data: {
+                          device_sn: controller.device_sn,
+                          port: controller.port,
+                          status: '' + s
+                        },
+                        method: 'GET',
+                        success: (res) => {
+                          console.log(res.data)
+                          if (res.data.ifnext === 1) {
+                            // 获取结果第三次
+                            setTimeout(() => {
+                              wepy.request({
+                                url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/refeshcondition',
+                                data: {
+                                  device_sn: controller.device_sn,
+                                  port: controller.port,
+                                  status: '' + s
+                                },
+                                method: 'GET',
+                                success: (res) => {
+                                  console.log(res.data)
+                                  if (res.data.ifnext === 1) {
+                                    this.tangkoudetail.controllerList[controllerIdx].switch = s
+                                    this.$apply()
+                                    wepy.hideLoading()
+                                    wepy.showToast({
+                                      title: '开关操作失败',
+                                      icon: 'none',
+                                      duration: 2000
+                                    })
+                                  } else {
+                                    wepy.hideLoading()
+                                  }
+                                }
+                              })
+                            }, 5000)
+                          } else {
+                            wepy.hideLoading()
+                          }
+                        }
+                      })
+                    }, 5000)
+                  } else {
+                    wepy.hideLoading()
+                  }
+                }
+              })
+            }, 10000)
           }
         })
       }

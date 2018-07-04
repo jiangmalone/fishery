@@ -254,8 +254,8 @@
             </view>
           </view>
         </repeat>
-        <view class="add-but"><image src="../images/_5@2x.png"></image><text>新增塘口</text></view>
-        <button class="modal-but" @tap="confirmTangkou">确定</button>
+        <view @tap="jumAddTangkou" class="add-but"><image src="../images/_5@2x.png"></image><text>新增塘口</text></view>
+        <button wx:if="{{tangkoulist.length !== 0}}" class="modal-but" @tap="confirmTangkou">确定</button>
       </view>
 
       <!-- 设备单选 -->
@@ -299,6 +299,11 @@ export default class Addcontroler extends wepy.page {
     equimentinfo: []
   }
   methods= {
+    jumAddTangkou() {
+      wepy.navigateTo({
+        url: 'addtangkou'
+      })
+    },
     // 显示模态框
     showmodal(how, num) {
       this.whatShow = how

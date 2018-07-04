@@ -1,5 +1,25 @@
 <style lang="less">
 .addallinone{
+  .add-but{
+    width: 480rpx;
+    height: 90rpx;
+    line-height: 90rpx;
+    border: 2rpx solid #2F70B8;
+    color: #2F70B8;
+    font-size: 32rpx;
+    border-radius: 120rpx;
+    margin-top: 40rpx;
+    margin-left: 94rpx;
+    margin-bottom: 40rpx;
+    image{
+      width:32rpx;
+      height:32rpx;
+      margin-left: 152rpx;
+      position: relative;
+      top:4rpx;
+      left:-6rpx;
+    }
+  }
   color: #323B45;
   font-size: 32rpx;
   .addallinone-item{
@@ -179,6 +199,7 @@
     </view>
   </view>
   <view class="confirmbut" @tap="addAllinone">确定</view>
+  <!--模态框-->
   <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
     <view class="modalDlg" wx:if="{{showModal}}">
       <view class="close" @tap="closemodal">
@@ -193,8 +214,9 @@
           </view>
       </view>
       </repeat>
-    <button class="modal-but" @tap="go">确定</button>
-    </view>
+      <view @tap="jumAddTangkou" class="add-but"><image src="../images/_5@2x.png"></image><text>新增塘口</text></view>
+    <button wx:if="{{tangkoulist.length !== 0}}" class="modal-but" @tap="go">确定</button>
+  </view>
 </view>
 </template>
 <script>
@@ -231,6 +253,11 @@ export default class Addallinone extends wepy.page {
     noselectImage: '../images/_14_copy 2@2x.png'
   }
   methods= {
+    jumAddTangkou() {
+      wepy.navigateTo({
+        url: 'addtangkou'
+      })
+    },
     con(num) {
       this.whichroad = num
       this.showModal = true

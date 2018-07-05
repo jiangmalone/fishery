@@ -658,8 +658,8 @@ export default class Home extends wepy.page {
           method: 'POST',
           success: (res) => {
             // wepy.hideLoading()
-            this.tangkoudetail.controllerList[controllerIdx].switch = key
-            this.$apply()
+            // this.tangkoudetail.controllerList[controllerIdx].switch = key
+            // this.$apply()
             // 获取结果第一次
             setTimeout(() => {
               wepy.request({
@@ -699,8 +699,6 @@ export default class Home extends wepy.page {
                                 success: (res) => {
                                   console.log(res.data)
                                   if (res.data.ifnext === 1) {
-                                    this.tangkoudetail.controllerList[controllerIdx].switch = s
-                                    this.$apply()
                                     wepy.hideLoading()
                                     wepy.showToast({
                                       title: '开关操作失败',
@@ -709,18 +707,24 @@ export default class Home extends wepy.page {
                                     })
                                   } else {
                                     wepy.hideLoading()
+                                    this.tangkoudetail.controllerList[controllerIdx].switch = s
+                                    this.$apply()
                                   }
                                 }
                               })
                             }, 5000)
                           } else {
                             wepy.hideLoading()
+                            this.tangkoudetail.controllerList[controllerIdx].switch = s
+                            this.$apply()
                           }
                         }
                       })
                     }, 5000)
                   } else {
                     wepy.hideLoading()
+                    this.tangkoudetail.controllerList[controllerIdx].switch = s
+                    this.$apply()
                   }
                 }
               })

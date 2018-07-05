@@ -34,11 +34,8 @@ public class BindController {
 	private ControllerDao controllerDao;
 	
 	@RequestMapping(value = "/pondWithSensor", method = RequestMethod.POST)
-	public Map<String, Object> bindPondWithSensorOrAIO(Sensor sensor){
-	
-			return bindService.bindPondWithSensor(sensor);
-			
-
+	public Map<String, Object> bindPondWithSensorOrAIO(Sensor sensor){	
+			return bindService.bindPondWithSensor(sensor);			
 	}
 	
 	@RequestMapping(value = "/pondWithAio", method = RequestMethod.POST)

@@ -42,6 +42,13 @@ public class ControllerDaoImpl implements ControllerDao {
 		Query query = queryUtils.addInteger("id", ControllerId).getQuery();
 		return (Controller) query.uniqueResult();
 	}
+	
+	@Override
+	public List<Controller> findControllerByPondId(int PondId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
+		Query query = queryUtils.addInteger("pondId", PondId).getQuery();
+		return query.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

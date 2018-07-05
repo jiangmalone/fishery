@@ -200,16 +200,48 @@ public class EquipmentService {
 					logger.debug("在sensor中添加了一个传感器");	
 					return RESCODE.SUCCESS.getJSONRES();
 				}else {
-					//设备号存在，传感器已使用过，更新传感器，与塘口重新绑定
-					Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
+					//设备号存在，设备使用过
+					Sensor sensorFind = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
+					//传感器不存在，用户已删除设备
+					if(sensorFind==null) {
+						logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
+						Pond pond = pondDao.findPondByPondId(sensor.getPondId());
+						if (pond == null) {
+							//塘口不存在
+							sensor.setPondId(0);
+							logger.debug("塘口Id:" + sensor.getPondId()+ "在数据库中无记录!!!");
+							return RESCODE.POND_NOT_EXIST.getJSONRES();
+						}else {
+							sensor.setPondId(sensor.getPondId());
+							//塘口存在，添加触发器
+							//根据鱼的种类添加触发器1.鱼2.虾3.蟹
+							Pond sensorbindpond=pondDao.findPondByPondId(sensor.getPondId());
+							List<PondFish> pondFishList = pondFishDao.getFishbyPondId(sensorbindpond.getId());
+				            int pondfishtype;
+				            if (pondFishList.size()!=0){
+				            	//塘口中有鱼
+				            	logger.debug("塘口中有鱼");
+				            	logger.debug("塘口中共有"+pondFishList.size()+"种");
+				                PondFish senbinfs=pondFishList.get(0);
+				                pondfishtype=senbinfs.getType();
+				                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
+				                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
+				            }else return RESCODE.POND_NO_FISH.getJSONRES();		      
+						}
+						sensorDao.updateSensor(sensor);
+						return RESCODE.SUCCESS.getJSONRES();
+					}else {
+						return RESCODE.DEVICESNS_INVALID.getJSONRES();
+					}
+					/*Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
 					sensorOld.setName(sensor.getName());
 					sensorOld.setRelation(sensor.getRelation());
 					logger.debug("非新设备，已在其他塘口使用过");
-					/*Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
+					Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
 					sensorOld.setName(sensor.getName());
 					sensorOld.setPondId(sensor.getPondId());
 					sensorOld.setRelation(sensor.getRelation());
-					sensorOld.setStatus(sensor.getStatus());*/				
+					sensorOld.setStatus(sensor.getStatus());				
 					logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
 					Pond pond = pondDao.findPondByPondId(sensor.getPondId());
 					if (pond == null) {
@@ -232,10 +264,10 @@ public class EquipmentService {
 			                pondfishtype=senbinfs.getType();
 			                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
 			                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
-			            }/*else return RESCODE.POND_NO_FISH.getJSONRES();*/		      
+			            }else return RESCODE.POND_NO_FISH.getJSONRES();		      
 					}
 					sensorDao.updateSensor(sensorOld);
-					return RESCODE.SUCCESS.getJSONRES();
+					return RESCODE.SUCCESS.getJSONRES();*/
 				}
 			}else {//onenet上没有设备，设备号无效
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
@@ -249,8 +281,7 @@ public class EquipmentService {
 
 
 	public Map<String, Object> addController(Controller[] controllers) {
-		
-/*		*/
+
 		if(controllers.length>0) {
 			String device_sn = controllers[0].getDevice_sn();
 			String api_device_sn = device_sn.substring(2, device_sn.length());
@@ -270,14 +301,22 @@ public class EquipmentService {
 						logger.debug("添加了一个新的控制器设备");
 					}
 					//获取控制器绑定的塘口
-					/*private int id;						//控制器Id,自增
-					private String device_sn;			//控制器设备编号
-					private int type;                   //0.增氧机1.投饵机2.打水机3.其他	
-					private int pondId;					//绑定的塘口Id
-					private String relation;			//绑定的用户relation
-					private String name;				//控制器名称
-					private int port;    				//控制器第几路
-		*/			String pondIds = controller.getPondIds();
+					int[] pondIds = controller.getPondIds();
+					logger.debug(pondIds);
+					for(int k = 0;k<pondIds.length;k++) {
+						Controller con = new Controller();
+						con.setDevice_sn(controller.getDevice_sn());
+						con.setType(controller.getType());
+						con.setPondId(pondIds[k]);
+						con.setRelation(controller.getRelation());
+						con.setName(controller.getName());
+						con.setPort(controller.getPort());
+						con.setPondIds(controller.getPondIds());
+						logger.debug("添加塘口为"+con.getPondId());
+						controllerDao.save(con);
+						logger.debug("根据塘口添加控制器");
+					}
+					/*String pondIds = controller.getPondIds();
 					logger.debug(pondIds);
 					
 					if(pondIds.contains(",")) {
@@ -319,7 +358,7 @@ public class EquipmentService {
 						logger.debug("添加塘口为"+con.getPondId());
 						controllerDao.save(con);
 						logger.debug("根据塘口添加控制器");
-					}
+					}*/
 					
 									
 				}
@@ -520,16 +559,29 @@ public class EquipmentService {
 		
 		//根据设备编号获得控制器各路的具体参数
 		List<Object> ConResult = new ArrayList<>();
-		
-		for(String s:conDSN) {
+		for(String s:conDSN) {			
+			List<Integer> pondIdList = new ArrayList<>();
+			for(Controller con:controllers) {
+				if(con.getDevice_sn().equals(s)) {
+					pondIdList.add(con.getPondId());
+				}
+			}
+			Object[] a = (Object[])pondIdList.toArray();
+			int[] ai = new int[a.length];
+			for(int j=0;j<ai.length;j++) {
+				ai[j] = (int)a[j];
+			}
+			
 			Map<String, Object> ConResultSE = new HashMap<>();
 			List<Controller> cl = new ArrayList<Controller>();
 			for(Controller con:controllers) {
 				if(con.getDevice_sn().equals(s)) {
+					con.setPondIds(ai);
 					cl.add(con);
+					pondIdList.add(con.getPondId());
 				}
 			}
-			ConResultSE.put("id", s);
+			ConResultSE.put("id", s);		
 			ConResultSE.put("content", cl);
 			ConResultSE.put("type", 3);
 			ConResult.add(ConResultSE);
@@ -860,18 +912,19 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> dataToday(String device_sn, int way) {
-		
+		logger.debug(device_sn);
 		Map<String, Object> mapReturn = new HashMap();
 		//数据的获取针对传感器，传感器不需要way，way为一体机留用
 		//获得当天数据，从零点开始00:00:00
 		Date date = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
 		String dataFormat1 = sdf1.format(date);
 		String dataFormat2  = sdf2.format(date);
 		String dataFormatEnd = dataFormat1+"T"+dataFormat2;
 		String dataFormatStart = dataFormat1+"T00:00:00";
-		
+		logger.debug(dataFormatStart);
+		logger.debug(dataFormatEnd);
 		GetDatapointsListApi api = new GetDatapointsListApi(null, dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, 137,
 				null, null, null, key);
 		BasicResponse<DatapointsList> response = api.executeApi();
@@ -892,13 +945,13 @@ public class EquipmentService {
 				for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
 					ldNew.add(ld.get(j));					
 				}
-				List<String> value = new ArrayList<>();
+				List<Float> value = new ArrayList<>();
 				List<String> at = new ArrayList<>();
 				for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
-					value.add((String)ldNew.get(j).getValue());	
+					value.add(Float.parseFloat((String) ldNew.get(j).getValue()) );	
 					at.add(ldNew.get(j).getAt());
 				}
-				Map<String, List<String>> singlemap = new HashMap<>();
+				Map<String, Object> singlemap = new HashMap<>();
 				singlemap.put("value", value);
 				singlemap.put("at", at);
 				mapReturn.put("DO", singlemap);
@@ -918,13 +971,13 @@ public class EquipmentService {
 				for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
 					ldNew.add(ld.get(j));
 				}
-				List<String> value = new ArrayList<>();
+				List<Float> value = new ArrayList<>();
 				List<String> at = new ArrayList<>();
 				for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
-					value.add((String)ldNew.get(j).getValue());	
+					value.add(Float.parseFloat((String)ldNew.get(j).getValue()) );	
 					at.add(ldNew.get(j).getAt());
 				}
-				Map<String, List<String>> singlemap = new HashMap<>();
+				Map<String, Object> singlemap = new HashMap<>();
 				singlemap.put("value", value);
 				singlemap.put("at", at);
 				mapReturn.put("WT", singlemap);
@@ -933,20 +986,32 @@ public class EquipmentService {
 				for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
 					ldNew.add(ld.get(j));					
 				}
-				List<String> value = new ArrayList<>();
+				List<Float> value = new ArrayList<>();
 				List<String> at = new ArrayList<>();
 				for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
-					value.add((String)ldNew.get(j).getValue());	
+					value.add(Float.parseFloat((String)ldNew.get(j).getValue()));	
 					at.add(ldNew.get(j).getAt());
 				}
-				Map<String, List<String>> singlemap = new HashMap<>();
+				Map<String, Object> singlemap = new HashMap<>();
 				singlemap.put("value", value);
 				singlemap.put("at", at);
 				mapReturn.put("pH", singlemap);
 			}
 							
 		}
-		System.out.println(response.getJson());
+		//System.out.println(response.getJson());
+		
+		/*if(sensorDao.findSensorByDeviceSns(device_sn) != null) {
+			controllerDao  sensor.getPondId();
+		}*/
+		
+		
+		
+		
+		
+		
+		/* List<Limit_Install> limitList = queryLimitByDeviceSn(device_sn);
+		 mapReturn.put("Limit", limitList);*/
 		return mapReturn;
 	}
 	
@@ -1300,56 +1365,26 @@ public class EquipmentService {
 	}
 	
 	public Map<String, Object> modifyController(Controller...controller){
-		//传入controller对象需要device_sn,port,type
-		/*String DSN = controller[0].getDevice_sn();
-		boolean flag = true;
-		//判断控制器是否存在
-		if(deviceDao.findDevice(DSN)==null) {
-			flag = false;
-		}
-		if(aioDao.findAIOByDeviceSns(DSN)==null) {
-			flag = false;
-		}
-		//判断是否为一个控制器的多路
-		for(Controller con:controller) {
-			if(con.getDevice_sn().equals(DSN)==false) {
-				flag = false;
-				break;
-			}
-		}
-		if(flag) {
-			for(Controller con:controller) {
-				logger.debug("进入控制器循环");
-			//	aioDao.updateByAioId(aio);
-				//aioDao.update(aio);
-				controllerDao.updateController(con);
-			}
-			return RESCODE.SUCCESS.getJSONRES();
-		}else {
-			return RESCODE.WRONG_PARAM.getJSONRES();
-		}*/
+		//传入controller对象需要device_sn,port,pondIds,type
 		//修改时控制器至少存在一路
 		if(controller.length>0) {
 			String device_sn = controller[0].getDevice_sn();
-			
+			//查看设备是否存在
 			if(deviceDao.findDevice(device_sn)==null) {
 				return RESCODE.WRONG_PARAM.getJSONRES();
 			}else {			
 				for(Controller con : controller) {
 					List<Controller> conList = controllerDao.findControllerByDeviceSnAndWay(con.getDevice_sn(), con.getPort());
-					for(Controller co:conList) {
-						
-						controllerDao.delete(co.getId());
-						
+					for(Controller co:conList) {						
+						controllerDao.delete(co.getId());						
 					}
 					
-					String s = con.getPondIds();
-					String[] ss =s.split(",");
-					for(int j=0;j<ss.length;j++) {
+					int[] s = con.getPondIds();
+					for(int j=0;j<s.length;j++) {
 						Controller cont = new Controller();
 						cont.setDevice_sn(con.getDevice_sn());
 						cont.setType(con.getType());
-						cont.setPondId(Integer.parseInt(ss[j]));
+						cont.setPondId(s[j]);
 						cont.setRelation(con.getRelation());
 						cont.setName(con.getName());
 						cont.setPort(con.getPort());
@@ -1873,20 +1908,40 @@ public class EquipmentService {
 
 	}
 	
+	public Map<String, Object> getPersonalAnalysis(String relation){
+	
+		List<Pond> pondList = pondDao.queryPondByRelation(relation);
+		for(Pond pond:pondList) {
+			Map<String, Object> pondData = analysisData(pond.getId());
+		}
+		return null;
+	}
+	
+	
 	public Map<String, Object> analysisData(int pondId){
+		//分析塘口数据
+		/*
+		 * 传感器和一体机都可以获得鱼塘的数据
+		 * 优先使用传感器设备数据
+		 * 目前，只分析一台设备的数据
+		 */
+		
 		List<Sensor> sensorList= sensorDao.findSensorsByPondId(pondId); 
 		List<AIO> aioList = aioDao.findAIOsByPondId(pondId);
 		Map<String, Object> dataY = new HashMap<>();
 		if(sensorList.size()==0 && aioList.size()==0) {//传感器和一体机都没有
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}else {
-			if(aioList.size()==0) {//没有一体机
+			if(aioList.size()==0) {
+				//没有一体机，使用传感器
 				Sensor sensor = sensorList.get(0);	
 				dataY =dataYesterday(sensor.getDevice_sn());
-			}else if(sensorList.size()==0) {//没有传感器
+			}else if(sensorList.size()==0) {
+				//没有传感器
 				AIO aio = aioList.get(0);
 				dataY =dataYesterday(aio.getDevice_sn());
-			}else {//一体机和传感器都有，使用传感器
+			}else {
+				//一体机和传感器都有，使用传感器
 				Sensor sensor = sensorList.get(0);	
 				dataY =dataYesterday(sensor.getDevice_sn());
 			}

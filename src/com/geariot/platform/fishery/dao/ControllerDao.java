@@ -33,4 +33,6 @@ public interface ControllerDao {
 	List<Controller> findByRelation(String relation);
 	
 	void deleteByRelation(String relation);
+	
+	List<Controller> findControllerByPondId(int PondId);
 }

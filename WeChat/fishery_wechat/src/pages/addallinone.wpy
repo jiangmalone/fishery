@@ -363,6 +363,11 @@ export default class Addallinone extends wepy.page {
       }
     ]
     console.log(this.equimentinfo)
+    if (this.action === 'modify') {
+      wepy.setNavigationBarTitle({
+        title: '修改设备'
+      })
+    }
     wepy.request({
       url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
       data: {

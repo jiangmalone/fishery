@@ -135,6 +135,9 @@
   import wepy from 'wepy'
 
   export default class Diagnosis extends wepy.page {
+    config = {
+      navigationBarTitleText: '诊断'
+    }
     data = {
       showModal: false
     }

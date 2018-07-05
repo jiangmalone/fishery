@@ -120,12 +120,12 @@
         <text class="menu-text">我的设备</text>
         <image class="menu-arrow" src="../images/更多_7_@2x.png" ></image>
       </view>
-      <view class="menu-item">
+      <view @tap="callUs" class="menu-item">
         <image class="menu-pic1" src="../images/系电话@2x.png"></image>
         <text class="menu-text">联系我们</text>
         <image class="menu-arrow" src="../images/更多_7_@2x.png" ></image>
       </view>
-      <view class="menu-item">
+      <view @tap="aboutFish" class="menu-item">
         <image class="menu-pic2" src="../images/yu.jpg"></image>
         <text class="menu-text">关于渔管在线</text>
         <image class="menu-arrow1" src="../images/更多_7_@2x.png" ></image>
@@ -151,6 +151,28 @@ export default class Personal extends wepy.page {
     navigationBarTitleText: '个人中心'
   }
   methods= {
+    // 联系我们
+    callUs() {
+      wepy.showModal({
+        title: '提示',
+        content: '确定拨打电话：18012945010 吗？',
+        success: function(res) {
+          if (res.confirm) {
+            wepy.makePhoneCall({
+              phoneNumber: '18012945010'
+            })
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
+        }
+      })
+    },
+    // 关于鱼管
+    aboutFish() {
+      wepy.navigateTo({
+        url: 'aboutfish'
+      })
+    },
     // 跳转到修改资料
     jupUserInfo() {
       wepy.navigateTo({

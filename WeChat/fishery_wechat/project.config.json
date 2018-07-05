@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 1,
 			"list": [
 				{
 					"id": 0,
@@ -45,7 +45,7 @@
 				},
 				{
 					"id": 2,
-					"name": "line诊断",
+					"name": "诊断",
 					"pathName": "pages/diagnosis",
 					"query": ""
 				},
@@ -74,15 +74,21 @@
 					"query": ""
 				},
 				{
-					"id": -1,
+					"id": 7,
 					"name": "测试2",
-					"pathName": "pages/addtangkou",
+					"pathName": "pages/myequiment",
 					"query": ""
 				},
 				{
 					"id": -1,
 					"name": "login",
 					"pathName": "pages/login",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "传感器",
+					"pathName": "pages/myequiment",
 					"query": ""
 				}
 			]

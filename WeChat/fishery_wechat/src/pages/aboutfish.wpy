@@ -1,0 +1,9 @@
+<template>
+  <view>
+    <web-view src="http://v1.rabbitpre.com/m/NuqyzFRIK?mobile=1&openid=o7kepwR53UD0UUW-ycj-CXyhgeGY&access_token=11_VlkR1GcswK8j0cNZR2KmOFO8W90zPZZ211O5ZkNl8-a7IwuHyyiWtIDhlIaGqazyNAtbVC5e27OJLIwAPiPjA_I7HSLzG9IezrZprZVrlJs"></web-view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  export default class Personal extends wepy.page {}
+</script>

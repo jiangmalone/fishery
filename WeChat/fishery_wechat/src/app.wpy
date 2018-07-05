@@ -38,6 +38,7 @@ export default class extends wepy.app {
       'pages/addcontroler',
       'pages/addsensor',
       'pages/equimentsuccess',
+      'pages/aboutfish',
       'pages/diagnosis'
     ],
     window: {

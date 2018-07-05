@@ -168,93 +168,90 @@
       </view>
     </view>
     <view id="cha">
-      <ec-canvas class="canvas" id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ ec }}"></ec-canvas>
+      <echarts :ec.sync="ec" />
     </view>
   </view>
 </template>
 <script>
   import wepy from 'wepy'
+  import Echarts from './echart'
 
 export default class Line extends wepy.page {
-    config = {
-      usingComponents: {
-        'ec-canvas': './ec-canvas/ec-canvas'
-      }
+    components = {
+      echarts: Echarts
     }
     data = {
+      // newo: {
+      //   textStyle: {
+      //     color: '#c4c4c4'
+      //   },
+      //   color: ['#8dc1aa'],
+      //   xAxis: [{
+      //     type: 'category',
+      //     boundaryGap: false,
+      //     data: [1, 2, 3, 4, 5],
+      //     axisLine: {
+      //       lineStyle: {
+      //         color: '#c4c4c4'
+      //       }
+      //     }
+      //     // axisLabel: {//y轴的内容格式化,很有用的属性
+      //     //   formatter: '{value} xUnit'
+      //     // }
+      //   }],
+      //   yAxis: [{
+      //     type: 'value',
+      //     axisLine: {
+      //       lineStyle: {
+      //         color: '#c4c4c4'
+      //       }
+      //     },
+      //     splitLine: {
+      //       lineStyle: {
+      //         color: '#e9e7de',
+      //         type: 'dashed'
+      //       }
+      //     }
+      //     // axisLabel: {//y轴的内容格式化,很有用的属性
+      //     //   formatter: '{value} yUnit'
+      //     // }
+      //   }],
+      //   series: [{
+      //     lineStyle: {
+      //       color: '#2c90f7'
+      //     },
+      //     type: 'line',
+      //     data: [1, 2, 3, 4, 5],
+      //     markLine: {
+      //       symbol: '',
+      //       itemStyle: {
+      //         lineStyle: {type: 'solid'},
+      //         label: {show: true, position: 'left', formatter: 'aaa'}
+      //       },
+      //       data: [
+      //         { yAxis: 2,
+      //           itemStyle: {
+      //             color: '#beac00'
+      //           }
+      //         },
+      //         { yAxis: 3,
+      //           itemStyle: {
+      //             width: 1.5,
+      //             color: '#45795b'
+      //           }
+      //         },
+      //         { yAxis: 5,
+      //           itemStyle: {
+      //             width: 1.5,
+      //             color: '#b3675b'
+      //           }
+      //         }
+      //       ]
+      //     }
+      //   }]
+      // },
       ec: {
-        options: {
-          textStyle: {
-            color: '#c4c4c4'
-          },
-          color: ['#8dc1aa'],
-          xAxis: [{
-            type: 'category',
-            boundaryGap: false,
-            data: [1, 2, 3, 4, 5],
-            axisLine: {
-              lineStyle: {
-                color: '#c4c4c4'
-              }
-            }
-            // axisLabel: {//y轴的内容格式化,很有用的属性
-            //   formatter: '{value} xUnit'
-            // }
-          }],
-          yAxis: [{
-            type: 'value',
-            axisLine: {
-              lineStyle: {
-                color: '#c4c4c4'
-              }
-            },
-            splitLine: {
-              lineStyle: {
-                color: '#e9e7de',
-                type: 'dashed'
-              }
-            }
-            // axisLabel: {//y轴的内容格式化,很有用的属性
-            //   formatter: '{value} yUnit'
-            // }
-          }],
-          series: [{
-            lineStyle: {
-              color: '#2c90f7'
-            },
-            type: 'line',
-            data: [1, 2, 3, 4, 5],
-            markLine: {
-              symbol: '',
-              itemStyle: {
-                lineStyle: {type: 'solid'},
-                label: {show: true, position: 'left', formatter: 'aaa'}
-              },
-              data: [
-                { yAxis: 2,
-                  itemStyle: {
-                    color: '#beac00'
-                  }
-                },
-                { yAxis: 3,
-                  itemStyle: {
-                    width: 1.5,
-                    color: '#45795b'
-                  }
-                },
-                { yAxis: 5,
-                  itemStyle: {
-                    width: 1.5,
-                    color: '#b3675b'
-                  }
-                }
-              ]
-            }
-          }]
-        }
-      },
-      newEc: {
-        options: {
+        option: {
           textStyle: {
             color: '#c4c4c4'
           },
@@ -334,47 +331,188 @@ export default class Line extends wepy.page {
         })
       }
     }
-  events = {}
-  onShow() {}
-  onLoad(options) {
-    if (options.id) {
-      this.ind = options.id
-    }
-    wepy.request({
-      url: this.$parent.globalData.baseUrl + 'api/' + 'usermanagement/HomePageDetail',
-      data: {
-        relation: this.$parent.globalData.relation
-      },
-      method: 'GET',
-      success: res => {
-        // 如果有塘口
-        console.log(res.data.myHome)
-        this.tangkoulist = res.data.myHome
-        let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
-        // 34780506
-
-        wepy.request({
-          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
-          data: {
-            device_sn: deviceSn,
-            way: 1
-          },
-          method: 'GET',
-          success: res => {
-            console.log(res.data)
-            console.log(res.data.DO.at)
-            this.newEc.options.xAxis.data = res.data.DO.at
-            this.newEc.options.series.data = res.data.DO.value
-            this.ec = this.newEc
-            this.$apply()
-          },
-          complete: () => {
-
-            wepy.hideLoading()
+    events = {}
+    onShow() {}
+    onLoad(options) {
+      var newOtion = {
+        textStyle: {
+          color: '#c4c4c4'
+        },
+        color: ['#8dc1aa'],
+        xAxis: [{
+          type: 'category',
+          boundaryGap: false,
+          data: [5, 6, 7, 8, 9],
+          axisLine: {
+            lineStyle: {
+              color: '#c4c4c4'
+            }
           }
-        })
+          // axisLabel: {//y轴的内容格式化,很有用的属性
+          //   formatter: '{value} xUnit'
+          // }
+        }],
+        yAxis: [{
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#c4c4c4'
+            }
+          },
+          splitLine: {
+            lineStyle: {
+              color: '#e9e7de',
+              type: 'dashed'
+            }
+          }
+          // axisLabel: {//y轴的内容格式化,很有用的属性
+          //   formatter: '{value} yUnit'
+          // }
+        }],
+        series: [{
+          lineStyle: {
+            color: '#2c90f7'
+          },
+          type: 'line',
+          data: [5, 6, 7, 8, 9],
+          markLine: {
+            symbol: '',
+            itemStyle: {
+              lineStyle: {type: 'solid'},
+              label: {show: true, position: 'left', formatter: 'aaa'}
+            },
+            data: [
+              { yAxis: 2,
+                itemStyle: {
+                  color: '#beac00'
+                }
+              },
+              { yAxis: 3,
+                itemStyle: {
+                  width: 1.5,
+                  color: '#45795b'
+                }
+              },
+              { yAxis: 5,
+                itemStyle: {
+                  width: 1.5,
+                  color: '#b3675b'
+                }
+              }
+            ]
+          }
+        }]
       }
-    })
-  }
+      setTimeout(() => {
+        this.ec.option = newOtion
+        this.$apply()
+      }, 5000)
+      if (options.id) {
+        this.ind = options.id
+      }
+      wepy.request({
+        url: this.$parent.globalData.baseUrl + 'api/' + 'usermanagement/HomePageDetail',
+        data: {
+          relation: this.$parent.globalData.relation
+        },
+        method: 'GET',
+        success: res => {
+          // 如果有塘口
+          console.log(res.data.myHome)
+          this.tangkoulist = res.data.myHome
+          let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
+          // 34780506
+          wepy.request({
+            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
+            data: {
+              device_sn: 34784122,
+              way: 1
+            },
+            method: 'GET',
+            success: res => {
+              // console.log(res.data)
+              console.log(typeof res.data.DO.value[1])
+              this.newOtion.xAxis.data = res.data.DO.at
+              this.newOtion.series.data = res.data.DO.value
+              this.ec.option = newOtion
+            },
+            complete: () => {
+              // let option = {
+              //   textStyle: {
+              //     color: '#c4c4c4'
+              //   },
+              //   color: ['#8dc1aa'],
+              //   xAxis: [{
+              //     type: 'category',
+              //     boundaryGap: false,
+              //     data: [5, 6, 7, 8, 9],
+              //     axisLine: {
+              //       lineStyle: {
+              //         color: '#c4c4c4'
+              //       }
+              //     }
+              //     // axisLabel: {//y轴的内容格式化,很有用的属性
+              //     //   formatter: '{value} xUnit'
+              //     // }
+              //   }],
+              //   yAxis: [{
+              //     type: 'value',
+              //     axisLine: {
+              //       lineStyle: {
+              //         color: '#c4c4c4'
+              //       }
+              //     },
+              //     splitLine: {
+              //       lineStyle: {
+              //         color: '#e9e7de',
+              //         type: 'dashed'
+              //       }
+              //     }
+              //     // axisLabel: {//y轴的内容格式化,很有用的属性
+              //     //   formatter: '{value} yUnit'
+              //     // }
+              //   }],
+              //   series: [{
+              //     lineStyle: {
+              //       color: '#2c90f7'
+              //     },
+              //     type: 'line',
+              //     data: [5, 6, 7, 8, 9],
+              //     markLine: {
+              //       symbol: '',
+              //       itemStyle: {
+              //         lineStyle: {type: 'solid'},
+              //         label: {show: true, position: 'left', formatter: 'aaa'}
+              //       },
+              //       data: [
+              //         { yAxis: 2,
+              //           itemStyle: {
+              //             color: '#beac00'
+              //           }
+              //         },
+              //         { yAxis: 3,
+              //           itemStyle: {
+              //             width: 1.5,
+              //             color: '#45795b'
+              //           }
+              //         },
+              //         { yAxis: 5,
+              //           itemStyle: {
+              //             width: 1.5,
+              //             color: '#b3675b'
+              //           }
+              //         }
+              //       ]
+              //     }
+              //   }]
+              // }
+              // this.ec.option = option
+              // this.$apply()
+              wepy.hideLoading()
+            }
+          })
+        }
+      })
+    }
 }
 </script>

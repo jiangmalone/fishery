@@ -182,10 +182,6 @@ export default class Myequiment extends wepy.page {
     navigationBarTitleText: '我的设备'
   }
   methods= {
-    con() {
-      console.log('1111')
-    },
-
     // 管理设备按钮
     modifyEquiment(item) {
       console.log(item)
@@ -256,7 +252,6 @@ export default class Myequiment extends wepy.page {
       },
       method: 'GET',
       success: res => {
-        console.log(res.data.data)
         let tangkoulist = {}
         res.data.data.forEach(value => {
           tangkoulist[value.id] = value.name
@@ -268,10 +263,7 @@ export default class Myequiment extends wepy.page {
           },
           method: 'GET',
           success: res => {
-            console.log(res.data)
             this.equimentlist = res.data.controller.concat(res.data.aio, res.data.sensor)
-            console.log(this.equimentlist)
-            console.log(typeof this.equimentlist[0].type)
             this.tangkoulist = tangkoulist
             this.$apply()
           }

@@ -37,23 +37,34 @@ export default class Scan extends wepy.page {
     scancode() {
       wepy.scanCode({
         success: (res) => {
-          let num = res.result.slice(0, 2)
-          console.log(res.result.slice(0, 2))
-          if (num === '01' || num === '02') {
-            wepy.redirectTo({
-              url: `addallinone?number=${res.result}`
-            })
-          } else if (num === '04') {
-            wepy.redirectTo({
-              url: `addcontroler?number=${res.result}`
-            })
-          } else if (num === '03') {
-            wepy.redirectTo({
-              url: `addsensor?number=${res.result}`
-            })
-          } else {
-            wepy.showToast({title: '无效设备', icon: 'none'})
-          }
+          wepy.request({
+            url: this.$parent.globalData.baseUrl + 'api/' + 'webService/verifySmsCode',
+            data: res.result,
+            method: 'GET',
+            success: res => {
+              if (res.data.code === 0) {
+                let num = res.result.slice(0, 2)
+                console.log(res.result.slice(0, 2))
+                if (num === '01' || num === '02') {
+                  wepy.redirectTo({
+                    url: `addallinone?number=${res.result}`
+                  })
+                } else if (num === '04') {
+                  wepy.redirectTo({
+                    url: `addcontroler?number=${res.result}`
+                  })
+                } else if (num === '03') {
+                  wepy.redirectTo({
+                    url: `addsensor?number=${res.result}`
+                  })
+                } else {
+                  wepy.showToast({title: '无效设备', icon: 'none'})
+                }
+              } else {
+                wepy.showToast({title: res.data.msg, icon: 'none'})
+              }
+            }
+          })
         }
       })
     }

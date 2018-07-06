@@ -203,10 +203,11 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <view class="unbindport" @tap="unBindBtn(0)" wx:if="{{pondlist[equimentinfo[0].pondIds]}}">解绑</view>
-        <input class="rightinp" @tap="showmodal('tangkou', 0)" value="{{pondlist[equimentinfo[0].pondIds]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <view class="unbindport" @tap="unBindBtn(0)" wx:if="{{pond[0]}}">解绑</view>
+        <input class="rightinp" @tap="showmodal('tangkou', 0)" value="{{pond[0]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
+
     <view class="equiment-item">
       <view class="name">2路控制器</view>
       <view class="einput">
@@ -219,10 +220,11 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <view class="unbindport" @tap="unBindBtn(1)" wx:if="{{pondlist[equimentinfo[1].pondIds]}}">解绑</view>
-        <input class="rightinp" @tap="showmodal('tangkou', 1)"  value="{{pondlist[equimentinfo[1].pondIds]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <view class="unbindport" @tap="unBindBtn(1)" wx:if="{{pond[1]}}">解绑</view>
+        <input class="rightinp" @tap="showmodal('tangkou', 1)"  value="{{pond[1]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
+
     <view class="equiment-item">
       <view class="name">3路控制器</view>
       <view class="einput">
@@ -235,24 +237,36 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <view class="unbindport" @tap="unBindBtn(2)" wx:if="{{pondlist[equimentinfo[2].pondIds]}}">解绑</view>
-        <input class="rightinp" @tap="showmodal('tangkou', 2)" value="{{pondlist[equimentinfo[2].pondIds]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <view class="unbindport" @tap="unBindBtn(2)" wx:if="{{pond[2]}}">解绑</view>
+        <input class="rightinp" @tap="showmodal('tangkou', 2)" value="{{pond[2]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
+
     <view class="equiment-item">
       <view class="name">4路控制器</view>
+      <!--设备名称-->
       <view class="einput">
         <text>设备名称</text>
-        <input class="rightinp" value="{{equimentinfo[3].name}}" placeholder="请输入控制器名称" bindinput="bindValue(3)" placeholder-style="color:#4D7FB5" />
+        <input class="rightinp" value="{{equimentinfo[3].name}}"
+               placeholder="请输入控制器名称"
+               bindinput="bindValue(3)" placeholder-style="color:#4D7FB5" />
       </view>
+      <!--类型选择-->
       <view class="einput">
         <text>类型选择</text>
-        <input class="rightinp" @tap="showmodal('type', 3)" value="{{typelist[equimentinfo[3].type]}}" placeholder="请选择控制器类型" placeholder-style="color:#4D7FB5" disabled/>
+        <input class="rightinp" @tap="showmodal('type', 3)"
+               value="{{typelist[equimentinfo[3].type]}}"
+               placeholder="请选择控制器类型"
+               placeholder-style="color:#4D7FB5" disabled/>
       </view>
+      <!--绑定塘口-->
       <view class="einput">
         <text>绑定塘口</text>
-        <view class="unbindport" @tap="unBindBtn(3)" wx:if="{{pondlist[equimentinfo[3].pondIds]}}">解绑</view>
-        <input class="rightinp" @tap="showmodal('tangkou', 3)" value="{{pondlist[equimentinfo[3].pondIds]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <view class="unbindport" @tap="unBindBtn(3)"
+              wx:if="{{pond[3]}}">解绑</view>
+        <input class="rightinp" @tap="showmodal('tangkou', 3)"
+               value="{{pond[3]}}"
+               placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
   </view>
@@ -267,21 +281,34 @@
         <image class="closeimg" src="../images/叉_cross80@2x.png"></image>
         <view class="closeline"></view>
       </view>
-      <!-- 塘口多选 -->
-
-      <!--模态框-->
 
       <!-- 塘口单选 -->
       <view wx:if="{{ whatShow === 'tangkou' }}" >
-        <repeat for="{{tangkoulist}}" key="index" index="index">
-          <view class="checkbox-item" data-selectindex="{{index}}" data-pondid="{{item.id}}" data-pond="{{item.name}}" @tap="selectTangkou">
-            <view class="{{selectid === index ? 'select' : ''}}">
-              <image src="{{selectid === index ? moreselectImage : noselectImage}}"></image><text>{{item.name}}</text>
+
+        <!--列表-->
+        <repeat for="{{pondlist}}" key="index" index="index">
+
+          <!--循环展示的那一部分-->
+          <view class="checkbox-item" data-selectindex="{{index}}"
+                data-pondid="{{item.id}}" data-pond="{{item.name}}"
+                @tap="selectTangkou">
+
+            <!--添加选中效果的那一部分-->
+            <view class="{{item.status === 1 ? 'select' : ''}}">
+              <image src="{{item.status === 1 ? moreselectImage : noselectImage}}"></image>
+              <text>{{item.name}}</text>
             </view>
+
           </view>
+
         </repeat>
-        <view @tap="jumAddTangkou" class="add-but"><image src="../images/_5@2x.png"></image><text>新增塘口</text></view>
-        <button wx:if="{{tangkoulist.length !== 0}}" class="modal-but" @tap="confirmTangkou">确定</button>
+
+        <!--两个按钮-->
+        <view @tap="jumAddTangkou" class="add-but">
+          <image src="../images/_5@2x.png"></image><text>新增塘口</text>
+        </view>
+        <button wx:if="{{tangkoulist.length !== 0}}" class="modal-but"
+                @tap="confirmTangkou">确定</button>
       </view>
 
       <!-- 设备单选 -->
@@ -306,25 +333,58 @@ export default class Addcontroler extends wepy.page {
   }
   data= {
     showModal: false,
-    selectid: '',
-    typeid: '',
-    tangkoulist: [],
-    pondId: '',
-    pond: '',
-    pondlist: {},
-    action: '',
-    list: ['安德森', '奋斗史', '是非得'],
-    typelist: ['增氧机', '投饵机', '打水机', '其他'],
-    whatShow: '',
-    whichroad: '',
-    type: '',
-    oneselectImage: '../images/group_2@2x.png',
-    moreselectImage: '../images/_14_copy@2x.png',
-    noselectImage: '../images/_14_copy 2@2x.png',
-    equimentNum: '0430083262',
-    equimentinfo: []
+    selectid: '',   // 选中的塘口的index
+    typeid: '',     // 选设备
+    tangkoulist: [],    // 塘口所有信息列表
+    pondIds: [[], [], [], []],      // 塘口id
+    pond: ['', '', '', ''],     // 塘口名称展示的字符串
+    pondlist: [],   // 塘口id:名字列表
+    action: '',     // 修改还是新增
+    typelist: ['增氧机', '投饵机', '打水机', '其他'],  // 设备类型列表
+    whatShow: '',   // 显示塘口还是类型
+    whichroad: '',    // 哪一路
+    type: '',     // 设备类型
+    oneselectImage: '../images/group_2@2x.png',   // 中间圆点的选中图（设备）
+    moreselectImage: '../images/_14_copy@2x.png',   // 中间对勾的选中图（塘口）
+    noselectImage: '../images/_14_copy 2@2x.png',   // 没选中
+    equimentNum: '0430083262',    // 设备编号
+    equimentinfo: [
+      {
+      device_sn: '',
+      name: '',
+      pondIds: [],
+      port: 1,
+      relation: '',
+      type: ''
+    },
+      {
+        device_sn: '',
+        name: '',
+        pondIds: [],
+        port: 2,
+        relation: '',
+        type: ''
+      },
+      {
+        device_sn: '',
+        name: '',
+        pondIds: [],
+        port: 3,
+        relation: '',
+        type: ''
+      },
+      {
+        device_sn: '',
+        name: '',
+        pondIds: [],
+        port: 4,
+        relation: '',
+        type: ''
+      }
+      ]    // 设备绑定信息列表
   }
   methods= {
+    // 解绑
     unBindBtn(port) {
       wepy.request({
         url: this.$parent.globalData.baseUrl + 'api/' + 'bind/delControllerBind',
@@ -352,60 +412,100 @@ export default class Addcontroler extends wepy.page {
               duration: 2000
             })
           }
-          console.log(res)
         }
       })
     },
+
+    // 新增塘口
     jumAddTangkou() {
       wepy.navigateTo({
         url: 'addtangkou'
       })
     },
+
     // 显示模态框
     showmodal(how, num) {
       this.whatShow = how
       this.whichroad = num
+      let ids = this.pondIds[num]
+      ids.map(value => {
+        for (let i = 0; i < ids.length; i++) {
+          if (value === this.pond[i].id) {
+            this.pond[i].status = 1
+          }
+        }
+      })
       this.showModal = true
       this.$apply()
     },
-    confirmmodal() {
-      this.showModal = false
-      this.$apply()
-    },
+
+    // 关闭模态框
     closemodal() {
+      for (let i = 0; i < ids.length; i++) {
+        this.pond[i].status = 0
+      }
       this.showModal = false
       this.$apply()
     },
+
+    // 绑定信息列表，对应的那一路，绑定名字
     bindValue(num, e) {
       this.equimentinfo[num].name = e.detail.value
     },
+
+    // 选塘口
     selectTangkou(e) {
-      this.pondId = e.currentTarget.dataset.pondid
-      this.pond = e.currentTarget.dataset.pond
+      // 更新塘口id
+      this.pondIds[this.whichroad].push(e.currentTarget.dataset.pondid)
+      let newIds = new Set(this.pondIds[this.whichroad])
+      this.pondIds[this.whichroad] = Array.from(newIds)
+      // 获得点击的那个塘口的index
       let index = e.currentTarget.dataset.selectindex
       this.selectid = index
-      console.log(index)
       this.$apply()
+      console.log('ids', this.pondIds)
     },
+
+    // 模态框确定塘口
     confirmTangkou() {
-      this.equimentinfo[this.whichroad].pondId = this.pondId
+      this.equimentinfo[this.whichroad].pondIds = this.pondIds[this.whichroad]
       this.equimentinfo[this.whichroad].device_sn = this.equimentNum
       this.equimentinfo[this.whichroad].relation = this.$parent.globalData.relation
+      // 更新塘口列表
+      this.pondIds[this.whichroad].map(value => {
+        // 最后for塘口列表
+        this.pondlist.map(v => {
+          if (v.id === value) {
+            let newPond = []
+            newPond.push(v.name)
+            this.pond[this.whichroad] = newPond.join()
+          }
+        })
+      })
+      for (let i = 0; i < ids.length; i++) {
+        this.pond[i].status = 0
+      }
       this.showModal = false
       this.$apply()
-      console.log(this.equimentinfo)
+      console.log('this.pond[this.whichroad]', this.pond[this.whichroad])
     },
+
+    // 选定设备类型
     selectEqu(e) {
       this.type = e.currentTarget.dataset.type
       let index = e.currentTarget.dataset.type
       this.typeid = index
       this.$apply()
     },
+
+    // 确定设备类型
     confirmEqu() {
       this.equimentinfo[this.whichroad].type = this.type
       this.showModal = false
       this.$apply()
     },
+
+    // 设备的确定按钮
     addCon() {
       if (this.action === 'modify') {
         wepy.request({
@@ -413,7 +513,6 @@ export default class Addcontroler extends wepy.page {
           data: this.equimentinfo,
           method: 'POST',
           success: res => {
-            console.log(res)
             if (res.data.code === 0) {
               wepy.redirectTo({
                 url: 'myequiment'
@@ -429,7 +528,6 @@ export default class Addcontroler extends wepy.page {
           data: this.equimentinfo,
           method: 'POST',
           success: res => {
-            console.log(res)
             if (res.data.code === 0) {
               wepy.redirectTo({
                 url: 'equimentsuccess'
@@ -443,44 +541,37 @@ export default class Addcontroler extends wepy.page {
     }
   }
   onLoad(options) {
+    // 获取url中参数（设备号和操作类型）
     if (options.number) {
       this.equimentNum = options.number
+      this.equimentinfo.map(value => {
+        value.device_sn = this.equimentNum
+      })
     }
     this.action = options.action ? options.action : 'add'
-    this.equimentinfo = options.data ? JSON.parse(options.data) : [
-      {
-        device_sn: '30083262',
-        name: '',
-        pondId: '',
-        port: 1,
-        relation: '',
-        type: ''
-      },
-      {
-        device_sn: '0430083262',
-        name: '',
-        pondId: '',
-        port: 2,
-        relation: '',
-        type: ''
-      },
-      {
-        device_sn: '0430083262',
-        name: '',
-        pondId: '',
-        port: 3,
-        relation: '',
-        type: ''
-      },
-      {
-        device_sn: '0430083262',
-        name: '',
-        pondId: '',
-        port: 4,
-        relation: '',
-        type: ''
+    console.log('options', options.data)
+    // 修改页面标题
+    if (this.action === 'modify') {
+      wepy.setNavigationBarTitle({
+        title: '修改设备'
+      })
+    }
+    // 把每路设备的信息一个一个填进去
+    if (options.data) {
+      let list = JSON.parse(options.data)
+      for (let i = 0; i < list.length; i++) {
+        this.equimentinfo.map(value => {
+          if (value.port === list[i].port) {
+            value.device_sn = list[i].device_sn
+            value.name = list[i].name
+            value.pondIds = list[i].pondIds
+            value.relation = list[i].relation
+            value.type = list[i].type
+          }
+        })
       }
-    ]
+    }
+    // 查询塘口
     wepy.request({
       url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
       data: {
@@ -488,14 +579,33 @@ export default class Addcontroler extends wepy.page {
       },
       method: 'GET',
       success: res => {
-        console.log(res)
         if (res.data.code === 0) {
+          // 塘口列表
           this.tangkoulist = res.data.data
-          let pondlist = {}
+          // 塘口名字列表
+          let pondlist = []
           res.data.data.forEach(value => {
-            pondlist[value.id] = value.name
+            pondlist.push({id: value.id,name: value.name, status: 0})
           })
           this.pondlist = pondlist
+          console.log('pondlist', pondlist)
+          // 把列表一个一个填满
+          // 先for塘口ids
+          for (let i = 0; i < this.equimentinfo.length; i++) {
+            this.pondIds[i] = this.equimentinfo[i].pondIds
+            console.log('this.pondIds[i]', this.pondIds[i])
+            // 再for塘口名字
+            this.pondIds[i].map(value => {
+              // 最后for塘口列表
+              this.pondlist.map(v => {
+                if (v.id === value) {
+                  let newPond = []
+                  newPond.push(v.name)
+                  this.pond[i] = newPond.join()
+                }
+              })
+            })
+          }
           this.$apply()
         } else {
           wepy.showToast({title: res.data.msg, icon: 'none'})

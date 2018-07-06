@@ -111,7 +111,7 @@ export default class Login extends wepy.page {
   data = {
     phoneNumber: '',
     verificationCode: '',
-    wait: 20,
+    wait: 60,
     waitting: false,
     timer: ''
   }
@@ -182,30 +182,28 @@ export default class Login extends wepy.page {
           if (res.code === 603) {
             wepy.showToast({title: '验证码错误', icon: 'none'})
             return 0
-          }
-          this.$parent.globalData.id = res.data.data.id
-          this.$parent.globalData.name = res.data.data.name
-          this.$parent.globalData.sex = res.data.data.sex
-          this.$parent.globalData.phone = this.phoneNumber
-          this.$parent.globalData.life = res.data.data.life
-          this.$parent.globalData.headImg = res.data.data.headimgurl
-          this.$parent.globalData.relation = res.data.data.relation
-          console.log(res.data)
-          let userdata = JSON.stringify(res.data)
-          console.log(userdata)
-          if (res.data.data.name === null) {
-            wepy.navigateTo({
-              url: `saveuserinfo?data=${userdata}`
-            })
           } else {
-            wepy.switchTab({
-              url: `home`
-            })
+            this.$parent.globalData.id = res.data.data.id
+            this.$parent.globalData.name = res.data.data.name
+            this.$parent.globalData.sex = res.data.data.sex
+            this.$parent.globalData.phone = this.phoneNumber
+            this.$parent.globalData.life = res.data.data.life
+            this.$parent.globalData.headImg = res.data.data.headimgurl
+            this.$parent.globalData.relation = res.data.data.relation
+            console.log(res.data)
+            let userdata = JSON.stringify(res.data)
+            console.log(userdata)
+            if (res.data.data.name === null) {
+              wepy.navigateTo({
+                url: `saveuserinfo?data=${userdata}`
+              })
+            } else {
+              wepy.switchTab({
+                url: `home`
+              })
+            }
           }
         }
-      // wepy.navigateTo({
-      //   url: 'saveuserinfo'
-      // })
       })
     }
   }
@@ -216,7 +214,7 @@ export default class Login extends wepy.page {
       this.wait = wait - 1
       this.$apply()
       if (this.wait < 1) {
-        this.wait = 20
+        this.wait = 60
         this.waitting = false
         this.$apply()
         clearInterval(this.timer)

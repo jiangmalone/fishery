@@ -342,15 +342,23 @@ export default class Line extends wepy.page {
         xAxis: [{
           type: 'category',
           boundaryGap: false,
-          data: [5, 6, 7, 8, 9],
+          data: ['2018-07-05 09:03:04.687', '2018-07-05 09:39:27.329',
+            '2018-07-05 10:15:10.846', '2018-07-05 11:02:03.828',
+            '2018-07-05 11:37:45.406', '2018-07-05 12:14:07.787',
+            '2018-07-05 12:50:27.692', '2018-07-05 13:26:49.888',
+            '2018-07-05 14:03:12.771', '2018-07-05 14:39:33.913',
+            '2018-07-05 15:15:54.387', '2018-07-05 15:51:36.951',
+            '2018-07-05 16:27:57.529', '2018-07-05 17:04:18.973',
+            '2018-07-05 17:40:41.530', '2018-07-05 18:17:04.550',
+            '2018-07-05 19:02:42.225'],
           axisLine: {
             lineStyle: {
               color: '#c4c4c4'
             }
+          },
+          axisLabel: {//y轴的内容格式化,很有用的属性
+            formatter: '{value} xUnit'
           }
-          // axisLabel: {//y轴的内容格式化,很有用的属性
-          //   formatter: '{value} xUnit'
-          // }
         }],
         yAxis: [{
           type: 'value',
@@ -374,7 +382,7 @@ export default class Line extends wepy.page {
             color: '#2c90f7'
           },
           type: 'line',
-          data: [5, 6, 7, 8, 9],
+          data: [7.3, 7.1, 7, 6.9, 6.9, 6.9, 6.9, 6.8, 6.8, 6.8, 6.8, 6.7, 6.7, 6.7, 6.7, 6.8, 6.8, 6.7],
           markLine: {
             symbol: '',
             itemStyle: {
@@ -403,10 +411,10 @@ export default class Line extends wepy.page {
           }
         }]
       }
-      setTimeout(() => {
-        this.ec.option = newOtion
-        this.$apply()
-      }, 5000)
+      // setTimeout(() => {
+      //   this.ec.option = newOtion
+      //   this.$apply()
+      // }, 5000)
       if (options.id) {
         this.ind = options.id
       }
@@ -430,84 +438,13 @@ export default class Line extends wepy.page {
             },
             method: 'GET',
             success: res => {
-              // console.log(res.data)
-              console.log(typeof res.data.DO.value[1])
-              this.newOtion.xAxis.data = res.data.DO.at
-              this.newOtion.series.data = res.data.DO.value
+              newOtion.xAxis.data = res.data.DO.at
+              newOtion.series.data = res.data.DO.value
               this.ec.option = newOtion
+              this.$apply()
+              console.log(this.ec.option)
             },
             complete: () => {
-              // let option = {
-              //   textStyle: {
-              //     color: '#c4c4c4'
-              //   },
-              //   color: ['#8dc1aa'],
-              //   xAxis: [{
-              //     type: 'category',
-              //     boundaryGap: false,
-              //     data: [5, 6, 7, 8, 9],
-              //     axisLine: {
-              //       lineStyle: {
-              //         color: '#c4c4c4'
-              //       }
-              //     }
-              //     // axisLabel: {//y轴的内容格式化,很有用的属性
-              //     //   formatter: '{value} xUnit'
-              //     // }
-              //   }],
-              //   yAxis: [{
-              //     type: 'value',
-              //     axisLine: {
-              //       lineStyle: {
-              //         color: '#c4c4c4'
-              //       }
-              //     },
-              //     splitLine: {
-              //       lineStyle: {
-              //         color: '#e9e7de',
-              //         type: 'dashed'
-              //       }
-              //     }
-              //     // axisLabel: {//y轴的内容格式化,很有用的属性
-              //     //   formatter: '{value} yUnit'
-              //     // }
-              //   }],
-              //   series: [{
-              //     lineStyle: {
-              //       color: '#2c90f7'
-              //     },
-              //     type: 'line',
-              //     data: [5, 6, 7, 8, 9],
-              //     markLine: {
-              //       symbol: '',
-              //       itemStyle: {
-              //         lineStyle: {type: 'solid'},
-              //         label: {show: true, position: 'left', formatter: 'aaa'}
-              //       },
-              //       data: [
-              //         { yAxis: 2,
-              //           itemStyle: {
-              //             color: '#beac00'
-              //           }
-              //         },
-              //         { yAxis: 3,
-              //           itemStyle: {
-              //             width: 1.5,
-              //             color: '#45795b'
-              //           }
-              //         },
-              //         { yAxis: 5,
-              //           itemStyle: {
-              //             width: 1.5,
-              //             color: '#b3675b'
-              //           }
-              //         }
-              //       ]
-              //     }
-              //   }]
-              // }
-              // this.ec.option = option
-              // this.$apply()
               wepy.hideLoading()
             }
           })

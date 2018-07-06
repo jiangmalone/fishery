@@ -21,11 +21,11 @@
     }
 
     data = {
-      canvasId: 'ec-canvas',
+      canvasId: 'ec-canvas'
     }
 
     watch = {
-      ec(newV,oldv){
+      ec(newV, oldv) {
         mychart.setOption(newV.option)
         //    this.$parent.$apply()
       }

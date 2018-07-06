@@ -22,7 +22,7 @@ public class Controller {
 	private int port;    				//控制器第几路，1，2，3，4
 	
 	private int status;					//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
-	private String pondIds;				//全部塘口
+	private int[] pondIds;				//全部塘口
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -81,10 +81,10 @@ public class Controller {
 	
 	
 	@Transient
-	public String getPondIds() {
+	public int[] getPondIds() {
 		return pondIds;
 	}
-	public void setPondIds(String pondIds) {
+	public void setPondIds(int[] pondIds) {
 		this.pondIds = pondIds;
 	}
 

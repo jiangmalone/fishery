@@ -44,6 +44,11 @@ public class EquipmentController {
 //		//return equipmentService.setLimit(devicesn,way,lowlimit,highlimit,higherlimit);
 //	}
 
+	@RequestMapping(value = "/VertifyDevicesn",method = RequestMethod.GET)
+	public Map<String, Object> VertifyDevicesn(String divsn){
+		return equipmentService.VertifyDevicesn(divsn);
+	}
+	
 	@RequestMapping(value = "/changeControllerWayOnoff",method = RequestMethod.GET)
 	public void changeControllerWayOnoff(String divsn, int way ,int key){
 		equipmentService.changeControllerWayOnoff(divsn,way,key);
@@ -224,6 +229,11 @@ public class EquipmentController {
 			return  equipmentService.refeshcondition( device_sn, port, status);
 
 	}
+	
+	@RequestMapping(value ="/analysisData", method = RequestMethod.GET)
 
+	public Map<String, Object> analysisData(int pondId){
+			return  equipmentService.analysisData(pondId);
+	}
 	
 }

@@ -20,6 +20,7 @@ import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.*;
 import com.geariot.platform.fishery.timer.CMDUtils;
 import com.geariot.platform.fishery.utils.DataExportExcel;
+import com.mysql.fabric.xmlrpc.base.Array;
 import com.sun.net.httpserver.Authenticator.Success;
 
 import net.sf.json.JSONArray;
@@ -109,6 +110,24 @@ public class EquipmentService {
 	private Controller controller = null;
 	private WXUser wxUser = null;
 	private String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+
+	public Map<String, Object> VertifyDevicesn(String divsn) {
+		/**
+		 * 精确查询单个设备
+		 * 参数顺序与构造函数顺序一致
+		 * @param devid:设备名，String
+		 * @param key:masterkey 或者 设备apikey,String
+		 */
+		GetDeviceApi api = new GetDeviceApi(divsn.substring(2, divsn.length()), key);
+		BasicResponse<DeviceResponse> response = api.executeApi();
+		System.out.println("errno:"+response.errno+" error:"+response.error);
+		System.out.println(response.getJson());
+		if(response.errno == 0) {
+			return RESCODE.SUCCESS.getJSONRES();
+		}else {
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}
+	}
 
 	//删除设备
 	public Map<String, Object> delEquipment(String device_sn){
@@ -200,16 +219,48 @@ public class EquipmentService {
 					logger.debug("在sensor中添加了一个传感器");	
 					return RESCODE.SUCCESS.getJSONRES();
 				}else {
-					//设备号存在，传感器已使用过，更新传感器，与塘口重新绑定
-					Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
+					//设备号存在，设备使用过
+					Sensor sensorFind = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
+					//传感器不存在，用户已删除设备
+					if(sensorFind==null) {
+						logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
+						Pond pond = pondDao.findPondByPondId(sensor.getPondId());
+						if (pond == null) {
+							//塘口不存在
+							sensor.setPondId(0);
+							logger.debug("塘口Id:" + sensor.getPondId()+ "在数据库中无记录!!!");
+							return RESCODE.POND_NOT_EXIST.getJSONRES();
+						}else {
+							sensor.setPondId(sensor.getPondId());
+							//塘口存在，添加触发器
+							//根据鱼的种类添加触发器1.鱼2.虾3.蟹
+							Pond sensorbindpond=pondDao.findPondByPondId(sensor.getPondId());
+							List<PondFish> pondFishList = pondFishDao.getFishbyPondId(sensorbindpond.getId());
+				            int pondfishtype;
+				            if (pondFishList.size()!=0){
+				            	//塘口中有鱼
+				            	logger.debug("塘口中有鱼");
+				            	logger.debug("塘口中共有"+pondFishList.size()+"种");
+				                PondFish senbinfs=pondFishList.get(0);
+				                pondfishtype=senbinfs.getType();
+				                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
+				                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
+				            }else return RESCODE.POND_NO_FISH.getJSONRES();		      
+						}
+						sensorDao.updateSensor(sensor);
+						return RESCODE.SUCCESS.getJSONRES();
+					}else {
+						return RESCODE.DEVICESNS_INVALID.getJSONRES();
+					}
+					/*Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
 					sensorOld.setName(sensor.getName());
 					sensorOld.setRelation(sensor.getRelation());
 					logger.debug("非新设备，已在其他塘口使用过");
-					/*Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
+					Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
 					sensorOld.setName(sensor.getName());
 					sensorOld.setPondId(sensor.getPondId());
 					sensorOld.setRelation(sensor.getRelation());
-					sensorOld.setStatus(sensor.getStatus());*/				
+					sensorOld.setStatus(sensor.getStatus());				
 					logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
 					Pond pond = pondDao.findPondByPondId(sensor.getPondId());
 					if (pond == null) {
@@ -232,10 +283,10 @@ public class EquipmentService {
 			                pondfishtype=senbinfs.getType();
 			                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
 			                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
-			            }/*else return RESCODE.POND_NO_FISH.getJSONRES();*/		      
+			            }else return RESCODE.POND_NO_FISH.getJSONRES();		      
 					}
 					sensorDao.updateSensor(sensorOld);
-					return RESCODE.SUCCESS.getJSONRES();
+					return RESCODE.SUCCESS.getJSONRES();*/
 				}
 			}else {//onenet上没有设备，设备号无效
 				return RESCODE.DEVICESNS_INVALID.getJSONRES();
@@ -249,8 +300,7 @@ public class EquipmentService {
 
 
 	public Map<String, Object> addController(Controller[] controllers) {
-		
-/*		*/
+
 		if(controllers.length>0) {
 			String device_sn = controllers[0].getDevice_sn();
 			String api_device_sn = device_sn.substring(2, device_sn.length());
@@ -270,14 +320,22 @@ public class EquipmentService {
 						logger.debug("添加了一个新的控制器设备");
 					}
 					//获取控制器绑定的塘口
-					/*private int id;						//控制器Id,自增
-					private String device_sn;			//控制器设备编号
-					private int type;                   //0.增氧机1.投饵机2.打水机3.其他	
-					private int pondId;					//绑定的塘口Id
-					private String relation;			//绑定的用户relation
-					private String name;				//控制器名称
-					private int port;    				//控制器第几路
-		*/			String pondIds = controller.getPondIds();
+					int[] pondIds = controller.getPondIds();
+					logger.debug(pondIds);
+					for(int k = 0;k<pondIds.length;k++) {
+						Controller con = new Controller();
+						con.setDevice_sn(controller.getDevice_sn());
+						con.setType(controller.getType());
+						con.setPondId(pondIds[k]);
+						con.setRelation(controller.getRelation());
+						con.setName(controller.getName());
+						con.setPort(controller.getPort());
+						con.setPondIds(controller.getPondIds());
+						logger.debug("添加塘口为"+con.getPondId());
+						controllerDao.save(con);
+						logger.debug("根据塘口添加控制器");
+					}
+					/*String pondIds = controller.getPondIds();
 					logger.debug(pondIds);
 					
 					if(pondIds.contains(",")) {
@@ -319,7 +377,7 @@ public class EquipmentService {
 						logger.debug("添加塘口为"+con.getPondId());
 						controllerDao.save(con);
 						logger.debug("根据塘口添加控制器");
-					}
+					}*/
 					
 									
 				}
@@ -520,16 +578,53 @@ public class EquipmentService {
 		
 		//根据设备编号获得控制器各路的具体参数
 		List<Object> ConResult = new ArrayList<>();
-		
-		for(String s:conDSN) {
+		for(String s:conDSN) {//根据设备编号处理数据
 			Map<String, Object> ConResultSE = new HashMap<>();
-			List<Controller> cl = new ArrayList<Controller>();
+			//获得编号下所有controller
+			List<Controller> controllerAll = new ArrayList<>();
 			for(Controller con:controllers) {
 				if(con.getDevice_sn().equals(s)) {
-					cl.add(con);
-				}
+					controllerAll.add(con);
+				}				
 			}
-			ConResultSE.put("id", s);
+			//获得所有port
+			Set<Integer> portSet = new HashSet<>();
+			for(Controller con:controllerAll) {
+				portSet.add(con.getPort());
+			}
+			//根据port获得controller
+			List<Controller> cl = new ArrayList<>();
+			for(int port:portSet) {	
+				Controller conNew  = new Controller();
+				List<Controller> conList1 = new ArrayList<>();
+				for(Controller con:controllerAll) {					
+					if(con.getPort() == port) {
+						conList1.add(con);
+					}
+				}
+				//获得一路下的所有塘口
+				//将设备编号下的塘口id取出放入list中
+				List<Integer> pondIdList = new ArrayList<>();
+				for(Controller con:conList1) {
+					if(con.getDevice_sn().equals(s)) {
+						pondIdList.add(con.getPondId());
+					}
+				}
+				//将list转成数组ai
+				Object[] a = (Object[])pondIdList.toArray();
+				int[] ai = new int[a.length];
+				for(int j=0;j<ai.length;j++) {
+					ai[j] = (int)a[j];
+				}
+				
+				if(conList1.size()>0) {
+					conNew = conList1.get(0);
+					conNew.setPondIds(ai);
+					cl.add(conNew);
+				}
+								
+			}
+			ConResultSE.put("id", s);		
 			ConResultSE.put("content", cl);
 			ConResultSE.put("type", 3);
 			ConResult.add(ConResultSE);
@@ -860,18 +955,19 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> dataToday(String device_sn, int way) {
-		
+		logger.debug(device_sn);
 		Map<String, Object> mapReturn = new HashMap();
 		//数据的获取针对传感器，传感器不需要way，way为一体机留用
 		//获得当天数据，从零点开始00:00:00
 		Date date = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
 		String dataFormat1 = sdf1.format(date);
 		String dataFormat2  = sdf2.format(date);
 		String dataFormatEnd = dataFormat1+"T"+dataFormat2;
 		String dataFormatStart = dataFormat1+"T00:00:00";
-		
+		logger.debug(dataFormatStart);
+		logger.debug(dataFormatEnd);
 		GetDatapointsListApi api = new GetDatapointsListApi(null, dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, 137,
 				null, null, null, key);
 		BasicResponse<DatapointsList> response = api.executeApi();
@@ -892,13 +988,13 @@ public class EquipmentService {
 				for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
 					ldNew.add(ld.get(j));					
 				}
-				List<String> value = new ArrayList<>();
+				List<Float> value = new ArrayList<>();
 				List<String> at = new ArrayList<>();
 				for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
-					value.add((String)ldNew.get(j).getValue());	
+					value.add(Float.parseFloat((String) ldNew.get(j).getValue()) );	
 					at.add(ldNew.get(j).getAt());
 				}
-				Map<String, List<String>> singlemap = new HashMap<>();
+				Map<String, Object> singlemap = new HashMap<>();
 				singlemap.put("value", value);
 				singlemap.put("at", at);
 				mapReturn.put("DO", singlemap);
@@ -918,13 +1014,13 @@ public class EquipmentService {
 				for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
 					ldNew.add(ld.get(j));
 				}
-				List<String> value = new ArrayList<>();
+				List<Float> value = new ArrayList<>();
 				List<String> at = new ArrayList<>();
 				for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
-					value.add((String)ldNew.get(j).getValue());	
+					value.add(Float.parseFloat((String)ldNew.get(j).getValue()) );	
 					at.add(ldNew.get(j).getAt());
 				}
-				Map<String, List<String>> singlemap = new HashMap<>();
+				Map<String, Object> singlemap = new HashMap<>();
 				singlemap.put("value", value);
 				singlemap.put("at", at);
 				mapReturn.put("WT", singlemap);
@@ -933,20 +1029,38 @@ public class EquipmentService {
 				for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
 					ldNew.add(ld.get(j));					
 				}
-				List<String> value = new ArrayList<>();
+				List<Float> value = new ArrayList<>();
 				List<String> at = new ArrayList<>();
 				for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
-					value.add((String)ldNew.get(j).getValue());	
+					value.add(Float.parseFloat((String)ldNew.get(j).getValue()));	
 					at.add(ldNew.get(j).getAt());
 				}
-				Map<String, List<String>> singlemap = new HashMap<>();
+				Map<String, Object> singlemap = new HashMap<>();
 				singlemap.put("value", value);
 				singlemap.put("at", at);
 				mapReturn.put("pH", singlemap);
 			}
 							
 		}
-		System.out.println(response.getJson());
+		//System.out.println(response.getJson());
+		
+		/*if(sensorDao.findSensorByDeviceSns(device_sn) != null) {
+			controllerDao  sensor.getPondId();
+		}*/
+		Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+		if(sensor!=null) {
+			logger.debug(sensor.getPondId());
+		    List<Controller> controllerList= controllerDao.findByPondId(sensor.getPondId());
+		    Controller conOxygen = new Controller();
+			for(Controller controller:controllerList) {
+				if(controller.getType()==0) {
+					conOxygen = controller;
+					break;
+				}
+			}
+			Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(conOxygen.getDevice_sn(), conOxygen.getPort());
+			mapReturn.put("Limit", limit);
+		}
 		return mapReturn;
 	}
 	
@@ -965,29 +1079,33 @@ public class EquipmentService {
 		GetDatapointsListApi api = new GetDatapointsListApi(null, dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, 137,
 				null, null, null, key);
 		BasicResponse<DatapointsList> response = api.executeApi();
-		List<DatastreamsItem> datastreamsItemList = response.data.getDevices();
-		List<DatastreamsItem> dl= response.getData().getDevices();
-		/*System.out.println("参数个数："+dl.size());
-		
-		System.out.println("总共获得数据量为：");
-		System.out.println(response.getData().getCount());*/
 		List<Object> returnList = new ArrayList<Object>();	
 		Map<String, Object> oneMap = new HashMap<String, Object>();
-		for(int i=0;i<dl.size();i++) {
-			List<String> atList = new ArrayList<String>();
-			List<Float> valueList = new ArrayList<Float>();
-			DatastreamsItem di = dl.get(i);
-			List<DatapointsItem> ld =di.getDatapoints();
-			System.out.println(di.getId()+"参数下数据量："+ld.size());
-				for(int j=0;j<ld.size();j++) {
-					atList.add(ld.get(j).getAt());
-					valueList.add(Float.parseFloat((String)ld.get(j).getValue()));
-				}
+		int count = Integer.parseInt(response.data.getCount()) ;
+		if(response.errno == 0 && count!=0) {
+			List<DatastreamsItem> datastreamsItemList = response.data.getDevices();
+			List<DatastreamsItem> dl= response.getData().getDevices();
+			/*System.out.println("参数个数："+dl.size());
 			
-			Map<String, Object> oneValueMap = new HashMap<String, Object>();
-			oneValueMap.put("at", atList);
-			oneValueMap.put("value",valueList);
-			oneMap.put(di.getId(), oneValueMap);
+			System.out.println("总共获得数据量为：");
+			System.out.println(response.getData().getCount());*/
+			
+			for(int i=0;i<dl.size();i++) {
+				List<String> atList = new ArrayList<String>();
+				List<Float> valueList = new ArrayList<Float>();
+				DatastreamsItem di = dl.get(i);
+				List<DatapointsItem> ld =di.getDatapoints();
+				System.out.println(di.getId()+"参数下数据量："+ld.size());
+					for(int j=0;j<ld.size();j++) {
+						atList.add(ld.get(j).getAt());
+						valueList.add(Float.parseFloat((String)ld.get(j).getValue()));
+					}
+				
+				Map<String, Object> oneValueMap = new HashMap<String, Object>();
+				oneValueMap.put("at", atList);
+				oneValueMap.put("value",valueList);
+				oneMap.put(di.getId(), oneValueMap);
+			}
 		}
 		return oneMap;
 	}
@@ -996,48 +1114,81 @@ public class EquipmentService {
 		Date date = new Date();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
+		SimpleDateFormat sdf3 = new SimpleDateFormat("dd");
 		String dataFormat1 = sdf1.format(date);
 		String dataFormat2  = sdf2.format(date);
-		String dataFormatEnd = dataFormat1+"-"+date.getDate()+"T"+dataFormat2;
-		String dataFormatStart = dataFormat1+"-"+(date.getDate()-2)+"T00:00:00";
+		String dates = sdf3.format(date);
+		String dataFormatEnd = dataFormat1+"-"+dates+"T"+dataFormat2;
+		date.setDate(date.getDate()-2);
+		dates = sdf3.format(date);
+		String dataFormatStart = dataFormat1+"-"+dates+"T00:00:00";
 		
 		Map<String, List<DatapointsItem>> data3days = new HashMap<>();
 		
-		GetDatapointsListApi api1 = new GetDatapointsListApi("pH", dataFormatStart, null, device_sn,null,6000, null,null,
+		GetDatapointsListApi api1 = new GetDatapointsListApi("pH", dataFormatStart, dataFormatEnd, device_sn,null,6000, null,null,
 				null, null, null, key);
-		BasicResponse<DatapointsList> response1 = api1.executeApi();		
-		DatastreamsItem di1  = response1.data.getDevices().get(0);
-		String id1 =  di1.getId();
-		List<DatapointsItem> dpil1 = di1.getDatapoints();
-		List<DatapointsItem> dpil11 =new ArrayList<>();
-		for(int j=0;j<dpil1.size();j+=18) {//数据5min*18=一个半小时发一次
-			dpil11.add(dpil1.get(j));					
-		}
-		data3days.put(id1, dpil11);
+		BasicResponse<DatapointsList> response1 = api1.executeApi();
 		
-		GetDatapointsListApi api2 = new GetDatapointsListApi("DO", dataFormatStart, null, device_sn,null,6000, null,null,
+		logger.debug(response1.getJson());
+		int count = Integer.parseInt(response1.data.getCount()) ;
+		if(response1.errno == 0 && count!=0) {
+			DatastreamsItem di1  = response1.data.getDevices().get(0);
+			String id1 =  di1.getId();
+			List<DatapointsItem> dpil1 = di1.getDatapoints();
+			List<DatapointsItem> dpil11 =new ArrayList<>();
+			for(int j=0;j<dpil1.size();j+=18) {//数据5min*18=一个半小时发一次
+				dpil11.add(dpil1.get(j));					
+			}
+			data3days.put(id1, dpil11);
+		}
+		
+		
+		GetDatapointsListApi api2 = new GetDatapointsListApi("DO", dataFormatStart, dataFormatEnd, device_sn,null,6000, null,null,
 				null, null, null, key);
 		BasicResponse<DatapointsList> response2 = api2.executeApi();
-		DatastreamsItem di2  = response2.data.getDevices().get(0);
-		String id2 =  di2.getId();
-		List<DatapointsItem> dpil2 = di2.getDatapoints();
-		List<DatapointsItem> dpil12 =new ArrayList<>();
-		for(int j=0;j<dpil2.size();j+=18) {//数据5min*18=一个半小时发一次
-			dpil12.add(dpil2.get(j));					
+		count = Integer.parseInt(response2.data.getCount()) ;
+		if(response2.errno == 0 && count!=0) {
+			DatastreamsItem di2  = response2.data.getDevices().get(0);
+			String id2 =  di2.getId();
+			List<DatapointsItem> dpil2 = di2.getDatapoints();
+			List<DatapointsItem> dpil12 =new ArrayList<>();
+			for(int j=0;j<dpil2.size();j+=18) {//数据5min*18=一个半小时发一次
+				dpil12.add(dpil2.get(j));					
+			}
+			data3days.put(id2, dpil12);
 		}
-		data3days.put(id2, dpil12);
 		
-		GetDatapointsListApi api3 = new GetDatapointsListApi("WT", dataFormatStart, null, device_sn,null,6000, null,null,
+		
+		GetDatapointsListApi api3 = new GetDatapointsListApi("WT", dataFormatStart, dataFormatEnd, device_sn,null,6000, null,null,
 				null, null, null, key);
 		BasicResponse<DatapointsList> response3 = api3.executeApi();
-		DatastreamsItem di3  = response3.data.getDevices().get(0);
-		String id3 =  di3.getId();
-		List<DatapointsItem> dpil3 = di3.getDatapoints();
-		List<DatapointsItem> dpil13 =new ArrayList<>();
-		for(int j=0;j<dpil3.size();j+=18) {//数据5min*18=一个半小时发一次
-			dpil13.add(dpil3.get(j));					
+		count = Integer.parseInt(response3.data.getCount()) ;
+		if(response3.errno == 0 && count!=0) {
+			DatastreamsItem di3  = response3.data.getDevices().get(0);
+			String id3 =  di3.getId();
+			List<DatapointsItem> dpil3 = di3.getDatapoints();
+			List<DatapointsItem> dpil13 =new ArrayList<>();
+			for(int j=0;j<dpil3.size();j+=18) {//数据5min*18=一个半小时发一次
+				dpil13.add(dpil3.get(j));					
+			}
+			data3days.put(id3, dpil13);
 		}
-		data3days.put(id3, dpil13);		
+		
+		
+//		Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+//		if(sensor!=null) {
+//			logger.debug(sensor.getPondId());
+//		    List<Controller> controllerList= controllerDao.findByPondId(sensor.getPondId());
+//		    Controller conOxygen = new Controller();
+//			for(Controller controller:controllerList) {
+//				if(controller.getType()==0) {
+//					conOxygen = controller;
+//					break;
+//				}
+//			}
+//			Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(conOxygen.getDevice_sn(), conOxygen.getPort());
+//			data3days.put("Limit", limit);
+//		}
 		return data3days;
 	}
 	
@@ -1300,56 +1451,26 @@ public class EquipmentService {
 	}
 	
 	public Map<String, Object> modifyController(Controller...controller){
-		//传入controller对象需要device_sn,port,type
-		/*String DSN = controller[0].getDevice_sn();
-		boolean flag = true;
-		//判断控制器是否存在
-		if(deviceDao.findDevice(DSN)==null) {
-			flag = false;
-		}
-		if(aioDao.findAIOByDeviceSns(DSN)==null) {
-			flag = false;
-		}
-		//判断是否为一个控制器的多路
-		for(Controller con:controller) {
-			if(con.getDevice_sn().equals(DSN)==false) {
-				flag = false;
-				break;
-			}
-		}
-		if(flag) {
-			for(Controller con:controller) {
-				logger.debug("进入控制器循环");
-			//	aioDao.updateByAioId(aio);
-				//aioDao.update(aio);
-				controllerDao.updateController(con);
-			}
-			return RESCODE.SUCCESS.getJSONRES();
-		}else {
-			return RESCODE.WRONG_PARAM.getJSONRES();
-		}*/
+		//传入controller对象需要device_sn,port,pondIds,type
 		//修改时控制器至少存在一路
 		if(controller.length>0) {
 			String device_sn = controller[0].getDevice_sn();
-			
+			//查看设备是否存在
 			if(deviceDao.findDevice(device_sn)==null) {
 				return RESCODE.WRONG_PARAM.getJSONRES();
 			}else {			
 				for(Controller con : controller) {
 					List<Controller> conList = controllerDao.findControllerByDeviceSnAndWay(con.getDevice_sn(), con.getPort());
-					for(Controller co:conList) {
-						
-						controllerDao.delete(co.getId());
-						
+					for(Controller co:conList) {						
+						controllerDao.delete(co.getId());						
 					}
 					
-					String s = con.getPondIds();
-					String[] ss =s.split(",");
-					for(int j=0;j<ss.length;j++) {
+					int[] s = con.getPondIds();
+					for(int j=0;j<s.length;j++) {
 						Controller cont = new Controller();
 						cont.setDevice_sn(con.getDevice_sn());
 						cont.setType(con.getType());
-						cont.setPondId(Integer.parseInt(ss[j]));
+						cont.setPondId(s[j]);
 						cont.setRelation(con.getRelation());
 						cont.setName(con.getName());
 						cont.setPort(con.getPort());
@@ -1873,89 +1994,158 @@ public class EquipmentService {
 
 	}
 	
+	public Map<String, Object> getPersonalAnalysis(String relation){
+	
+		List<Pond> pondList = pondDao.queryPondByRelation(relation);
+		for(Pond pond:pondList) {
+			Map<String, Object> pondData = analysisData(pond.getId());
+		}
+		return null;
+	}
+	
+	public Map<String, Object> getDianosing(int pondId){
+		Map<String, Object> dataResult = analysisData(pondId);
+		if(dataResult !=null) {
+			//分析pH，获得pH诊断
+			Map<String , Object> pHMap =   (Map<String, Object>) dataResult.get("pH");
+			if(pHMap != null) {
+				Float min = (Float) pHMap.get("min");
+				Float max = (Float) pHMap.get("max");
+				Float average = (Float) pHMap.get("average");
+				
+			}
+			//分析DO，获得DO诊断
+			Map<String , Object> DOMap =  (Map<String, Object>) dataResult.get("DO");
+			if(pHMap != null) {
+				Float min = (Float) pHMap.get("min");
+				Float max = (Float) pHMap.get("max");
+				Float average = (Float) pHMap.get("average");
+			}
+			//分析WT，获得WT诊断
+			Map<String , Object> WTMap =  (Map<String, Object>) dataResult.get("WT");
+			if(pHMap != null) {
+				Float min = (Float) pHMap.get("min");
+				Float max = (Float) pHMap.get("max");
+				Float average = (Float) pHMap.get("average");
+			}
+		}
+		return null;
+	}
+	
+	
+	
+	
+	
 	public Map<String, Object> analysisData(int pondId){
-		List<Sensor> sensorList= sensorDao.findSensorsByPondId(pondId); 
+		//分析塘口数据,获得pH、DO、WT的最高、最低、以及平均值
+		/*
+		 * 传感器和一体机都可以获得鱼塘的数据
+		 * 优先使用传感器设备数据
+		 * 目前，只分析一台设备的数据
+		 */
+		logger.debug("塘口"+pondId);
+		List<Sensor> sensorList= sensorDao.findSensorsByPondId(pondId);
+		logger.debug("传感器"+sensorList.size());
 		List<AIO> aioList = aioDao.findAIOsByPondId(pondId);
+		logger.debug("一体机"+aioList.size());
 		Map<String, Object> dataY = new HashMap<>();
 		if(sensorList.size()==0 && aioList.size()==0) {//传感器和一体机都没有
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}else {
-			if(aioList.size()==0) {//没有一体机
+			if(aioList.size()==0) {
+				//没有一体机，使用传感器
 				Sensor sensor = sensorList.get(0);	
+				logger.debug("设备编号："+sensor.getDevice_sn());
 				dataY =dataYesterday(sensor.getDevice_sn());
-			}else if(sensorList.size()==0) {//没有传感器
+			}else if(sensorList.size()==0) {
+				//没有传感器
 				AIO aio = aioList.get(0);
 				dataY =dataYesterday(aio.getDevice_sn());
-			}else {//一体机和传感器都有，使用传感器
+			}else {
+				//一体机和传感器都有，使用传感器
 				Sensor sensor = sensorList.get(0);	
+				logger.debug("设备编号："+sensor.getDevice_sn());
 				dataY =dataYesterday(sensor.getDevice_sn());
 			}
 			Map<String , Object> pHMap =  (Map<String, Object>) dataY.get("pH");
 			Map<String , Object> DOMap = (Map<String, Object>) dataY.get("DO");
 			Map<String , Object> WTMap = (Map<String, Object>) dataY.get("WT");
 			Map<String , Object> returnMap = new HashMap<>();
+			List<Float> valueList = new ArrayList<Float>();
+			float max;
+			float min;
+			float sum;
+			float average;
 			//pH分析
-			List<Float> valueList = (List<Float>) pHMap.get("value");
-			float max=valueList.get(0);
-			float min = valueList.get(0);
-			float sum = (float) 0.0;
-			for(int j=1;j<valueList.size();j++) {				
-				if(valueList.get(j)>max) {
-					max=valueList.get(j);
-				} 
-				if(valueList.get(j)<min) {
-					min=valueList.get(j);
-				} 				
-				sum+=valueList.get(j);
+			if(pHMap != null) {
+				valueList = (List<Float>) pHMap.get("value");
+				max=valueList.get(0);
+				 min = valueList.get(0);
+				sum = (float) 0.0;
+				for(int j=1;j<valueList.size();j++) {				
+					if(valueList.get(j)>max) {
+						max=valueList.get(j);
+					} 
+					if(valueList.get(j)<min) {
+						min=valueList.get(j);
+					} 				
+					sum+=valueList.get(j);
+				}
+				average = sum/valueList.size();
+				Map<String , Object> pHResult = new HashMap<>();
+				pHResult.put("max", max);
+				pHResult.put("min", min);
+				pHResult.put("average", average);
+				returnMap.put("pH", pHResult);
 			}
-			float average = sum/valueList.size();
-			Map<String , Object> pHResult = new HashMap<>();
-			pHResult.put("max", max);
-			pHResult.put("min", min);
-			pHResult.put("average", average);
-			returnMap.put("pH", pHResult);
-			//DO分析
-			valueList = (List<Float>) DOMap.get("value");
-			max=valueList.get(0);
-			min = valueList.get(0);
-			sum = (float) 0.0;			
-			for(int j=1;j<valueList.size();j++) {				
-				if(valueList.get(j)>max) {
-					max=valueList.get(j);
-				} 
-				if(valueList.get(j)<min) {
-					min=valueList.get(j);
-				} 				
-				sum+=valueList.get(j);
-			}
-			average = sum/valueList.size();
-			Map<String , Object> DOResult = new HashMap<>();
-			DOResult.put("max", max);
-			DOResult.put("min", min);
-			DOResult.put("average", average);
-			returnMap.put("DO", DOResult);
-			//WT分析
-			valueList = (List<Float>) DOMap.get("value");
-			max=valueList.get(0);
-			min = valueList.get(0);
-			sum = (float) 0.0;			
-			for(int j=1;j<valueList.size();j++) {				
-				if(valueList.get(j)>max) {
-					max=valueList.get(j);
-				} 
-				if(valueList.get(j)<min) {
-					min=valueList.get(j);
-				} 				
-				sum+=valueList.get(j);
-			}
-			average = sum/valueList.size();
-			Map<String , Object> WTResult = new HashMap<>();
-			WTResult.put("max", max);
-			WTResult.put("min", min);
-			WTResult.put("average", average);
-			returnMap.put("WT", WTResult);
-			return returnMap;
 			
+			//DO分析
+			if(DOMap !=null) {
+				valueList = (List<Float>) DOMap.get("value");
+				max=valueList.get(0);
+				min = valueList.get(0);
+				sum = (float) 0.0;			
+				for(int j=1;j<valueList.size();j++) {				
+					if(valueList.get(j)>max) {
+						max=valueList.get(j);
+					} 
+					if(valueList.get(j)<min) {
+						min=valueList.get(j);
+					} 				
+					sum+=valueList.get(j);
+				}
+				average = sum/valueList.size();
+				Map<String , Object> DOResult = new HashMap<>();
+				DOResult.put("max", max);
+				DOResult.put("min", min);
+				DOResult.put("average", average);
+				returnMap.put("DO", DOResult);
+			}
+			
+			//WT分析
+			if(DOMap!=null) {
+				valueList = (List<Float>) DOMap.get("value");
+				max=valueList.get(0);
+				min = valueList.get(0);
+				sum = (float) 0.0;			
+				for(int j=1;j<valueList.size();j++) {				
+					if(valueList.get(j)>max) {
+						max=valueList.get(j);
+					} 
+					if(valueList.get(j)<min) {
+						min=valueList.get(j);
+					} 				
+					sum+=valueList.get(j);
+				}
+				average = sum/valueList.size();
+				Map<String , Object> WTResult = new HashMap<>();
+				WTResult.put("max", max);
+				WTResult.put("min", min);
+				WTResult.put("average", average);
+				returnMap.put("WT", WTResult);
+			}
+			
+			return returnMap;			
 		}
 	}
 

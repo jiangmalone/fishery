@@ -35,27 +35,36 @@ export default class Scan extends wepy.page {
   methods= {
     // 点击屏幕，识别二维码
     scancode() {
+      console.log('扫码~~~')
       wepy.scanCode({
+        fail:(res) => {
+        console.log('扫码失败')
+      },
         success: (res) => {
+          console.log('扫码成功的res',res)
+          let resResult = res.result.toString();
+          let num = res.result.slice(0, 2);
           wepy.request({
-            url: this.$parent.globalData.baseUrl + 'api/' + 'webService/verifySmsCode',
-            data: res.result,
+            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/VertifyDevicesn',
+            data: {
+              divsn :  res.result.toString()
+            },
             method: 'GET',
             success: res => {
+              console.log('扫码成功的res',res)
               if (res.data.code === 0) {
-                let num = res.result.slice(0, 2)
-                console.log(res.result.slice(0, 2))
+                console.log('num')
                 if (num === '01' || num === '02') {
                   wepy.redirectTo({
-                    url: `addallinone?number=${res.result}`
+                    url: `addallinone?number=${resResult}`
                   })
                 } else if (num === '04') {
                   wepy.redirectTo({
-                    url: `addcontroler?number=${res.result}`
+                    url: `addcontroler?number=${resResult}`
                   })
                 } else if (num === '03') {
                   wepy.redirectTo({
-                    url: `addsensor?number=${res.result}`
+                    url: `addsensor?number=${resResult}`
                   })
                 } else {
                   wepy.showToast({title: '无效设备', icon: 'none'})

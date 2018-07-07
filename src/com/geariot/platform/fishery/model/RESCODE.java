@@ -42,6 +42,7 @@ public enum RESCODE {
 	POND_NO_FISH(30,"塘口没有鱼的类型"),
 	TRIGGER_FAILED(31,"触发器设置错误"),
 	NO_DEVICE(32,"无设备"),
+	DEVICESNS_REPEAT(33,"无法添加，系统已存在该设备"),
 	FOR_EXCEPTION
 	;
 	

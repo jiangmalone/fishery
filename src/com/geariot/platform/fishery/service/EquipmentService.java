@@ -118,6 +118,8 @@ public class EquipmentService {
 		 * @param devid:设备名，String
 		 * @param key:masterkey 或者 设备apikey,String
 		 */
+		
+		logger.debug("获得编码"+divsn);
 		GetDeviceApi api = new GetDeviceApi(divsn.substring(2, divsn.length()), key);
 		BasicResponse<DeviceResponse> response = api.executeApi();
 		System.out.println("errno:"+response.errno+" error:"+response.error);
@@ -179,7 +181,8 @@ public class EquipmentService {
 			BasicResponse<DeviceResponse> response = api.executeApi();
 			//判断onenet上是否有设备
 			if(response.errno == 0) {//onenet上存在设备
-				if(deviceDao.findDevice(device_sn)==null) {	
+				if(deviceDao.findDevice(api_device_sn)==null) {	
+					logger.debug("设备不存在，添加设备");
 					//设备号不存在，添加设备
 					Device device = new Device();
 					device.setDevice_sn(api_device_sn);
@@ -220,7 +223,8 @@ public class EquipmentService {
 					return RESCODE.SUCCESS.getJSONRES();
 				}else {
 					//设备号存在，设备使用过
-					Sensor sensorFind = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
+					System.out.println("设备号存在，设备使用过");
+					Sensor sensorFind = sensorDao.findSensorByDeviceSns(api_device_sn);
 					//传感器不存在，用户已删除设备
 					if(sensorFind==null) {
 						logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
@@ -250,7 +254,7 @@ public class EquipmentService {
 						sensorDao.updateSensor(sensor);
 						return RESCODE.SUCCESS.getJSONRES();
 					}else {
-						return RESCODE.DEVICESNS_INVALID.getJSONRES();
+						return RESCODE.DEVICESNS_REPEAT.getJSONRES();
 					}
 					/*Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
 					sensorOld.setName(sensor.getName());

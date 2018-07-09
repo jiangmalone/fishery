@@ -77,8 +77,6 @@
   .lo-but{
       width: 582rpx;
       height: 100rpx;
-      background-color: #2F70B8;
-      box-shadow: 0 4rpx 16rpx 0 #D2EBFD;
       border-radius: 120rpx;
       text-align: center;
       line-height: 100rpx;
@@ -87,6 +85,14 @@
       color: #ffffff;
       font-size: 36rpx;
     }
+  .able{
+    background-color: #2F70B8;
+    box-shadow: 0 4rpx 16rpx 0 #D2EBFD;
+  }
+  .disable{
+    background-color: #dcdcdc;
+    box-shadow: 0 4rpx 16rpx 0 #dcdcdc;
+  }
 }
 </style>
 <template>
@@ -99,9 +105,9 @@
     <view class="row1 row-flex">
       <image src="../images/锁_3@2x.png"></image><input type="number" placeholder="请输入验证码" placeholder-style="color:#6F6F6F" bindinput="bindVerificationCode"/>
       <view class="getcode1" wx:if="{{waitting}}">{{wait}}s后重试</view>
-      <view class="getcode" @tap="getVerificationCode" wx:else>发送验证码</view>
+      <view class="{{phoneNumber!==''?'getcode':'getcode1'}}" @tap="getVerificationCode" wx:else>发送验证码</view>
     </view>
-    <button class="lo-but" @tap="confirminfo">注册/登录</button>
+    <button class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}" @tap="confirminfo">注册/登录</button>
   </view>
 </template>
 <script>
@@ -222,7 +228,6 @@ export default class Login extends wepy.page {
     }, 1000)
   }
   onLoad() {
-    var that = this
     wepy.login({
       success: (res) => {
         let code = res.code
@@ -234,14 +239,19 @@ export default class Login extends wepy.page {
           },
           method: 'GET',
           success: res => {
-            that.$parent.globalData.openId = res.data.openId
-            console.log(res.data.relation, that.$parent.globalData.openId)
-            // if (res.data.code === 0) {
-            //   wepy.showToast({title: '验证码发送成功'})
-            //   this.startCount()
-            // } else {
-            //   wepy.showToast({title: res.data.msg, icon: 'none'})
-            // }
+            console.log('res.data', res.data)
+            if (res.data.data) {
+              this.$parent.globalData.id = res.data.data.id
+              this.$parent.globalData.name = res.data.data.name
+              this.$parent.globalData.sex = res.data.data.sex
+              this.$parent.globalData.phone = this.phoneNumber
+              this.$parent.globalData.life = res.data.data.life
+              this.$parent.globalData.headImg = res.data.data.headimgurl
+              this.$parent.globalData.relation = res.data.data.relation
+              wepy.switchTab({
+                url: `home`
+              })
+            }
           }
         })
       }

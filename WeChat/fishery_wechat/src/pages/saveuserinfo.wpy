@@ -35,8 +35,6 @@
     border: 1px solid #AAC4E2;
   }
   button {
-    background: #2F70B8;
-    box-shadow: 0 4rpx 16rpx 0 #D2EBFD;
     border-radius: 120rpx;
     width: 582rpx;
     height: 100rpx;
@@ -45,6 +43,14 @@
     text-align: center;
     color: #ffffff;
   }
+}
+.disable{
+  background-color: #dcdcdc;
+  box-shadow: 0 4rpx 16rpx 0 #dcdcdc;
+}
+.able{
+  background: #2F70B8;
+  box-shadow: 0 4rpx 16rpx 0 #D2EBFD;
 }
 </style>
 <template>
@@ -73,7 +79,7 @@
      <text style="color:#6F6F6F;font-size: 16px;margin-left:26rpx;margin-top:38rpx">养殖年限</text>
     <input style="font-size: 28rpx;margin-left: 60rpx;margin-top:34rpx;" placeholder="请输入年限" placeholder-style="color:#6B93BF" bindinput="bindValue('life')" value="{{info.life}}"/>
   </view>
-  <button @tap="confirminfo">保存</button>
+  <button class="{{info.name===''?'disable':(info.sex===''?'disable':(info.phone===''?'disable':'able'))}}" @tap="confirminfo">保存</button>
 </view>
 </template>
 <script>

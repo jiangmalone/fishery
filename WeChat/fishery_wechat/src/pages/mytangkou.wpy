@@ -109,11 +109,11 @@
       <view class="cot">
         <view class="cot-item">
           <text>面积(亩)</text>
-          <text class="status">{{item.area}}</text>
+          <text class="status">{{item.area === 0 ? '' : item.area}}</text>
         </view>
         <view class="cot-item">
           <text>深度(m)</text>
-          <text class="status">{{item.depth}}</text>
+          <text class="status">{{item.depth === 0 ? '' : item.depth}}</text>
         </view>
         <view class="cot-item">
           <text>养殖品种</text>
@@ -125,19 +125,19 @@
         </view>
         <view class="cot-item">
           <text>池塘水源</text>
-          <text class="status">{{item.water_source}}</text>
+          <text class="status">{{item.water_source === null ? '' : item.water_source}}</text>
         </view>
         <view class="cot-item">
           <text>泥底厚度(cm)</text>
-          <text class="status">{{item.sediment_thickness}}</text>
+          <text class="status">{{item.sediment_thickness === 0 ? '' : item.sediment_thickness}}</text>
         </view>
         <view class="cot-item">
           <text>塘口密度(kg/亩)</text>
-          <text class="status">{{item.density}}</text>
+          <text class="status">{{item.density === 0 ? '' : item.density}}</text>
         </view>
         <view class="cot-item">
           <text>塘口位置</text>
-          <view class="address"><text>{{item.address}}</text></view>
+          <view class="address"><text>{{item.address === null ? '' : item.address}}</text></view>
         </view>
       </view>
     </view>

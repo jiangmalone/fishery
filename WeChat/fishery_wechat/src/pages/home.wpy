@@ -82,8 +82,8 @@
     }
     .tab-index-active1{
       display: inline-block;
-      width: 200rpx;
       height: 80rpx;
+      width: 200rpx;
       margin-right: 10rpx;
       margin-left: 10rpx;
       font-size: 30rpx;
@@ -97,7 +97,7 @@
     }
   }
   .tab{
-    width: 680rpx;
+    width: 750rpx;
     height: 156rpx;
     background-color:#f2f2f2;
     .tab-index{
@@ -479,7 +479,7 @@
               wx:if="{{tangkoulist.length > 3}}">
         <repeat for="{{tangkoulist}}" key="index" item="item">
           <swiper-item>
-            <text class="{{currentId === index ? 'tab-index-active' : 'tab-index'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{item.pondname}}</text>
+            <text class="{{currentId === index ? 'tab-index-active' : 'tab-index'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{index+1}} {{item.pondname}}</text>
           </swiper-item>
         </repeat>
       </swiper>
@@ -487,12 +487,12 @@
       <!--塘口列表滑块（小于3）-->
       <view class="tab1" wx:else>
         <repeat for="{{tangkoulist}}" key="index" item="item">
-          <text class="{{currentId === index ? 'tab-index-active1' : 'tab-index1'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{item.pondname}}</text>
+          <text class="{{currentId === index ? 'tab-index-active1' : 'tab-index1'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{index+1}} {{item.pondname}}</text>
         </repeat>
       </view>
 
       <!--塘口列表的“更多”-->
-      <view class="tab-eg" @tap="jupMoreTangkou">更多<image src="../images/group_16@2x.png" style="width:24rpx;height:25rpx;"></image></view>
+      <!--<view class="tab-eg" @tap="jupMoreTangkou">更多<image src="../images/group_16@2x.png" style="width:24rpx;height:25rpx;"></image></view>-->
 
       <!--传感器列表存在-->
       <view class="sensor"
@@ -562,7 +562,7 @@
       <view class="cut"></view>
 
       <!--控制管理列表-->
-      <view class="phensor">
+      <view class="phensor" wx:if="{{tangkoudetail.controllerList.length > 0}}">
         <view class="phtype">控制管理</view>
         <repeat wx:for="{{tangkoudetail.controllerList}}" wx:key="index" item="item" wx:for-index="controllerIdx">
           <view class="phvalue">

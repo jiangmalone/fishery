@@ -235,8 +235,8 @@ export default class Addsensor extends wepy.page {
               icon: 'success',
               duration: 2000,
               success: res => {
-                wepy.navigateBack({
-                  delta: 1
+                wepy.navigateTo({
+                  url: `myequiment`
                 })
               }
             })

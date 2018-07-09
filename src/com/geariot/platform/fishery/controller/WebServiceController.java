@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.service.UserService;
 import com.geariot.platform.fishery.service.WebServiceService;
 import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.HttpRequest;
@@ -34,6 +36,9 @@ public class WebServiceController {
 
 	@Autowired
 	private WebServiceService webServiceService;
+	
+	@Autowired
+	private UserService userService;
 
 	private String mapApiKey = "1fb41392b17b0575e03b5374cb7b029f";
 	//根据adcode获取天气
@@ -164,8 +169,23 @@ public class WebServiceController {
 	@RequestMapping(value = "/getuserinfo", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> wechatLogin(String code) {
-		return getWechatInfo(code);
+		logger.debug("code:"+code);
+		Map<String, Object> map =  getWechatInfo(code);
+		if(map.get("openId")==null) {
+			logger.debug("未获得openId");
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else {
+			logger.debug("openId:"+(String)map.get("openId"));
+			WXUser wxUser =  userService.findWXUser((String)map.get("openId"));
+			if(wxUser == null) {
+				return RESCODE.NOT_FOUND.getJSONRES();
+			}else {
+				return RESCODE.SUCCESS.getJSONRES(wxUser);
+			}
+		}
 	}
+	
+
 
 	// 微信jsapi
 	@RequestMapping(value = "/wx/getJSSDKConfig", method = RequestMethod.GET)
@@ -221,13 +241,14 @@ public class WebServiceController {
 	@ResponseBody
 	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl) {
 		JSONObject json = this.verifySmscode(phone, smscode);
-		if (json.getString("error") != null) {
+		logger.debug("openId:"+openId);
+		if (json.getString("error") != null) {//验证失败
 			logger.debug(phone + ";code:" + smscode + " 验证失败。。。");
 			Map<String, Object> obj = new HashMap<>();
 			obj.put(Constants.RESPONSE_CODE_KEY, json.getInt("code"));
 			obj.put(Constants.RESPONSE_MSG_KEY, json.getString("error"));
 			return obj;
-		} else {
+		} else {//验证成功
 			return webServiceService.login(phone,openId,headimgurl);
 		}
 	}

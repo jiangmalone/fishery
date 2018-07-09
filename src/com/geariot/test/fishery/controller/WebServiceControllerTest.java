@@ -60,7 +60,7 @@ private MockMvc mockMvc;
 	public void infoTest() throws Exception{
 		mockMvc.perform(get("/webService/getuserinfo").
 				contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("code", "023oRal426IqLL0BTxm42Lsbl42oRalk"))
+				.param("code", "023knkAw0ZK5Gj19DMAw0TylAw0knkA2"))
 				.andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 

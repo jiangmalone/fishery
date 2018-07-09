@@ -91,6 +91,11 @@ public class UserService {
 		wxuser.setRelation("WX"+wxuser.getId());
 		return RESCODE.SUCCESS.getJSONRES(wxuser);
 	}
+	
+	public WXUser findWXUser(String openId) {
+		return wxuserDao.findUserByOpenId(openId);
+				
+	}
 
 	public Map<String, Object> addCompany(Company company) {
 		Company exist = companyDao.findCompanyByName(company.getName());

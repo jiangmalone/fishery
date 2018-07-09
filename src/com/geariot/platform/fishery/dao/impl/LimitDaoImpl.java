@@ -33,6 +33,13 @@ public class LimitDaoImpl implements LimitDao {
 		String hql = "delete from Limit_Install where device_sn = :device_sn";
 		this.getSession().createQuery(hql).setString("device_sn",device_sn).executeUpdate();
 	}
+	
+	@Override
+	public void deleteByDevice_snandWay(String device_sn,int way) {
+		String hql = "delete from Limit_Install where device_sn = :device_sn and way = :way";
+		this.getSession().createQuery(hql).setString("device_sn",device_sn).setInteger("way", way)										
+										.executeUpdate();
+	}
 
 	@Override
 	public Limit_Install findLimitById(int limitId) {

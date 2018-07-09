@@ -421,6 +421,7 @@ public class EquipmentService {
 			port_controller.put("port", i);
 			port_controller.put("controller", controller_port_List);
 			returnController.put(j+"", port_controller);
+			j++;
 		}
 		
 		

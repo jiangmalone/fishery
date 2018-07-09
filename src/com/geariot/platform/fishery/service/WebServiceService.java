@@ -77,6 +77,7 @@ public class WebServiceService {
 
 	public Map<String, Object> login(String phone, String openId, String headimgurl) {
 		WXUser wxUser = wxUserDao.findUserByPhone(phone);
+		logger.debug(openId);
 		if (wxUser == null) {
 			WXUser wxUserNew = new WXUser();
 			wxUserNew.setPhone(phone);

@@ -8,6 +8,7 @@ public interface LimitDao {
 	void save(Limit_Install limit_Install);
 	
 	void delete(String device_sn);
+	void deleteByDevice_snandWay(String device_sn,int way);
 
 	Limit_Install findLimitById(int limitId);
 	

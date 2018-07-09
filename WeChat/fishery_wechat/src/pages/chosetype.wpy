@@ -40,9 +40,7 @@
     <!--已添加-->
     <view class="chosen">
       已添加：
-      <repeat for="{{selected}}" key="index">
-        <text>{{item.fish_name}}，</text>
-      </repeat>
+      <text>{{fishNameListString}}</text>
     </view>
 
     <!--列表-->
@@ -153,13 +151,30 @@ export default class Chosetype extends wepy.page {
       {sureid: false},
       {sureid: false},
       {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
+      {sureid: false},
       {sureid: false}
     ],
     selected: [],
     lastdata: {},
     action: '',
     selectImage: '../images/_14_copy@2x.png',
-    noselectImage: ''
+    noselectImage: '',
+    fishNameList: [],
+    fishNameListString: ''
   }
   methods = {
     // 勾选列表
@@ -175,7 +190,17 @@ export default class Chosetype extends wepy.page {
       } else {
         arr.splice(num, 1)
       }
-      console.log(this.selectlist, index, arr)
+
+      let name = e.currentTarget.dataset.selecttype.fish_name
+      let nameList = this.fishNameList
+      if (nameList.indexOf(name) > -1) {
+        this.fishNameList = nameList.filter(item => item !== name)
+      } else {
+        this.fishNameList.push(name)
+      }
+      this.fishNameListString = this.fishNameList.join('，')
+      this.$apply()
+
       // 取到data里的selectIndex
       selectlist[index].sureid = !selectlist[index].sureid
       this.selectlist = selectlist
@@ -193,6 +218,7 @@ export default class Chosetype extends wepy.page {
         select.push(value['fish_name'])
       })
       select = JSON.stringify(select)
+      console.log('select', select)
       let data = JSON.stringify(this.lastdata)
       wepy.redirectTo({
         url: `addtangkou?type=${data}&select=${select}&action=${this.action}`

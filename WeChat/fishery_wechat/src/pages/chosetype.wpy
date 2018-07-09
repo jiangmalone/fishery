@@ -69,23 +69,83 @@ export default class Chosetype extends wepy.page {
     list: [
       {
         fish_name: '鲫鱼',
-        type: 0
-      },
-      {
-        fish_name: '青鱼',
-        type: 0
-      },
-      {
-        fish_name: '龙虾',
         type: 1
       },
       {
-        fish_name: '鲈鱼',
-        type: 0
+        fish_name: '鲢鱼',
+        type: 1
       },
       {
-        fish_name: '螃蟹',
+        fish_name: '鳙鱼',
+        type: 1
+      },
+      {
+        fish_name: '草鱼',
+        type: 1
+      },
+      {
+        fish_name: '青鱼',
+        type: 1
+      },
+      {
+        fish_name: '鳜鱼',
+        type: 1
+      },
+      {
+        fish_name: '团头鲂',
+        type: 1
+      },
+      {
+        fish_name: '鲤鱼',
+        type: 1
+      },
+      {
+        fish_name: '大口鲶',
+        type: 1
+      },
+      {
+        fish_name: '鲮鱼',
+        type: 1
+      },
+      {
+        fish_name: '罗非鱼',
+        type: 1
+      },
+      {
+        fish_name: '鲳鱼',
+        type: 1
+      },
+      {
+        fish_name: '日本鳗',
+        type: 1
+      },
+      {
+        fish_name: '梭鱼',
+        type: 1
+      },
+      {
+        fish_name: '中国对虾',
         type: 2
+      },
+      {
+        fish_name: '南美白虾',
+        type: 2
+      },
+      {
+        fish_name: '斑节对虾',
+        type: 2
+      },
+      {
+        fish_name: '罗氏沼虾',
+        type: 2
+      },
+      {
+        fish_name: '青虾',
+        type: 2
+      },
+      {
+        fish_name: '河蟹',
+        type: 3
       }
     ],
     selectlist: [

@@ -235,6 +235,7 @@ public class BindService {
 			} else {
 				logger.debug("传感器设备,设备编号:" + device_sn + "与塘口,Id:" + sensor.getPondId() + "有绑定");
 				sensor.setPondId(0);
+				sensor.setName("");
 				sensor.setPort_status("00");
 				List<Sensor_Controller> sensor_Controllers = sensor_ControllerDao.list(sensor.getId());
 				for(Sensor_Controller sensor_Controller : sensor_Controllers){
@@ -510,9 +511,11 @@ public class BindService {
 	return null;*/
 	public Map<String , Object> delControllerBind(String device_sn,int port){
 		List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(device_sn, port);
+		logger.debug("共有："+controllerList.size());
 		if(controllerList.size()>0) {
 			Controller controller = controllerList.get(0);
 			controller.setPondId(0);
+			controller.setName("");
 			controller.setPondIds(null);
 			controllerDao.updateController(controller);
 			for(int i=1;i<controllerList.size();i++) {

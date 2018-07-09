@@ -118,14 +118,19 @@ public class EquipmentService {
 		 * @param devid:设备名，String
 		 * @param key:masterkey 或者 设备apikey,String
 		 */
-		
+		String device_sn = divsn.substring(2, divsn.length());
 		logger.debug("获得编码"+divsn);
 		GetDeviceApi api = new GetDeviceApi(divsn.substring(2, divsn.length()), key);
 		BasicResponse<DeviceResponse> response = api.executeApi();
 		System.out.println("errno:"+response.errno+" error:"+response.error);
 		System.out.println(response.getJson());
 		if(response.errno == 0) {
-			return RESCODE.SUCCESS.getJSONRES();
+			Device device = deviceDao.findDevice(device_sn);
+			if(device == null) {
+				return RESCODE.SUCCESS.getJSONRES();
+			}else {
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
+			}			
 		}else {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}

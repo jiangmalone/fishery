@@ -38,6 +38,8 @@ public class EquipmentController {
 	@Autowired
 	private EquipmentService equipmentService;
 
+	@Autowired
+	private LimitDao limitDao;
 
 //	@RequestMapping(value = "/setlimit", method = RequestMethod.GET)
 //	public Map<String, Object> setLimit(String devicesn,int way,String lowlimit,String highlimit,String higherlimit) {
@@ -196,8 +198,14 @@ public class EquipmentController {
 	
 	
 	@RequestMapping(value = "/setLimit", method = RequestMethod.POST)
-	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){
-		equipmentService.setLimit(limit_Install);
+	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){		
+		Limit_Install limit_Install2 = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
+		if(limit_Install2 == null) {
+			equipmentService.setLimit(limit_Install);
+		}else {
+			limitDao.deleteByDevice_snandWay(limit_Install.getDevice_sn(), limit_Install.getWay());
+			equipmentService.setLimit(limit_Install);
+		}
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 	

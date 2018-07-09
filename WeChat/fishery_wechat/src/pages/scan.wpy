@@ -37,21 +37,21 @@ export default class Scan extends wepy.page {
     scancode() {
       console.log('扫码~~~')
       wepy.scanCode({
-        fail:(res) => {
-        console.log('扫码失败')
-      },
+        fail: () => {
+          console.log('扫码失败')
+        },
         success: (res) => {
-          console.log('扫码成功的res',res)
-          let resResult = res.result.toString();
-          let num = res.result.slice(0, 2);
+          console.log('扫码成功的res', res)
+          let resResult = res.result.toString()
+          let num = res.result.slice(0, 2)
           wepy.request({
             url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/VertifyDevicesn',
             data: {
-              divsn :  res.result.toString()
+              divsn: res.result.toString()
             },
             method: 'GET',
             success: res => {
-              console.log('扫码成功的res',res)
+              console.log('扫码成功的res', res)
               if (res.data.code === 0) {
                 console.log('num')
                 if (num === '01' || num === '02') {

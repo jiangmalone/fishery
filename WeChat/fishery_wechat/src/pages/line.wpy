@@ -356,7 +356,7 @@ export default class Line extends wepy.page {
               color: '#c4c4c4'
             }
           },
-          axisLabel: {//y轴的内容格式化,很有用的属性
+          axisLabel: {// y轴的内容格式化,很有用的属性
             formatter: '{value} xUnit'
           }
         }],
@@ -433,7 +433,7 @@ export default class Line extends wepy.page {
           wepy.request({
             url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
             data: {
-              device_sn: 34784122,
+              device_sn: deviceSn,
               way: 1
             },
             method: 'GET',

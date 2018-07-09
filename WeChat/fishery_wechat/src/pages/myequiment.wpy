@@ -130,8 +130,8 @@
         <view class="cot">
           <repeat for="{{item.content}}" key="index" index="index">
           <view class="cot-item">
-            <text>{{tangkoulist[item.pondId]}}>{{item.port}}路 ({{item.name}})</text>
-            <text class="{{item.pondId==='' ? 'unbind' : 'bind'}}">{{item.pondId==='' ? '未绑定' : '已绑定'}}</text>
+            <text>{{tangkoulist[item.pondId]}}{{item.pondIds.length>1?'...':''}}>{{item.port}}{{item.port?'路 ':''}}({{item.name}})</text>
+            <text class="{{item.pondIds?(item.pondIds[0]===0? 'unbind' : 'bind'):(item.pondId===0 ? 'unbind' : 'bind')}}">{{item.pondIds?(item.pondIds[0]===0? '未绑定' : '已绑定'):(item.pondId===0 ? '未绑定' : '已绑定')}}</text>
           </view>
           </repeat>
         </view>
@@ -266,6 +266,7 @@ export default class Myequiment extends wepy.page {
             this.equimentlist = res.data.controller.concat(res.data.aio, res.data.sensor)
             this.tangkoulist = tangkoulist
             this.$apply()
+            console.log(this.equimentlist)
           }
         })
       }

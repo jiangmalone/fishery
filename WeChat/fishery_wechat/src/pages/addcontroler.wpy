@@ -68,6 +68,9 @@
           float: right;
           margin-top: 26rpx;
           text-align: right;
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
         }
       }
     }
@@ -400,8 +403,8 @@ export default class Addcontroler extends wepy.page {
               icon: 'success',
               duration: 2000,
               success: res => {
-                wepy.navigateBack({
-                  delta: 1
+                wepy.navigateTo({
+                  url: `myequiment`
                 })
               }
             })

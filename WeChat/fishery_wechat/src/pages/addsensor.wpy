@@ -275,38 +275,43 @@ export default class Addsensor extends wepy.page {
       this.$apply()
     },
     confirmEqu() {
-      if (this.action === 'modify') {
-        wepy.request({
-          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifySensor',
-          data: this.equimentinfo,
-          method: 'POST',
-          success: res => {
-            console.log(res)
-            if (res.data.code === 0) {
-              wepy.redirectTo({
-                url: 'myequiment'
-              })
-            } else {
-              wepy.showToast({title: res.data.msg, icon: 'none'})
+      // debugger
+      if (this.equimentinfo[0].name && this.equimentinfo[0].pondId) {
+        if (this.action === 'modify') {
+          wepy.request({
+            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifySensor',
+            data: this.equimentinfo,
+            method: 'POST',
+            success: res => {
+              console.log(res)
+              if (res.data.code === 0) {
+                wepy.redirectTo({
+                  url: 'myequiment'
+                })
+              } else {
+                wepy.showToast({title: res.data.msg, icon: 'none'})
+              }
             }
-          }
-        })
+          })
+        } else {
+          wepy.request({
+            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/addSensor',
+            data: this.equimentinfo,
+            method: 'POST',
+            success: res => {
+              console.log(res)
+              if (res.data.code === 0) {
+                wepy.redirectTo({
+                  url: 'equimentsuccess'
+                })
+              } else {
+                wepy.showToast({title: res.data.msg, icon: 'none'})
+              }
+            }
+          })
+        }
       } else {
-        wepy.request({
-          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/addSensor',
-          data: this.equimentinfo,
-          method: 'POST',
-          success: res => {
-            console.log(res)
-            if (res.data.code === 0) {
-              wepy.redirectTo({
-                url: 'equimentsuccess'
-              })
-            } else {
-              wepy.showToast({title: res.data.msg, icon: 'none'})
-            }
-          }
-        })
+        wepy.showToast({title: '保存失败：请填写传感器名称，并绑定塘口', icon: 'none'})
       }
     },
     // 多选

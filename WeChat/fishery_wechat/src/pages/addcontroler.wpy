@@ -462,14 +462,12 @@ export default class Addcontroler extends wepy.page {
       // 是否存在id
       if (ids.indexOf(id) > -1) {
         this.pondIds[this.whichroad] = this.pondIds[this.whichroad].filter(item => item !== id)
-        ids.map(value => {
-          this.pondlist.map(v => {
-            if (v.id === value) {
-              v.status = 0
-            }
-          })
+        // 恢复
+        this.pondlist.map(v => {
+          if (v.id === id) {
+            v.status = 0
+          }
         })
-        this.$apply()
       } else {
         this.pondIds[this.whichroad].push(id)
         let newIds = new Set(this.pondIds[this.whichroad])

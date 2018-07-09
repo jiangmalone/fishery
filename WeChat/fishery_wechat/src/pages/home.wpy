@@ -554,9 +554,9 @@
       </view>
 
       <!--传感器列表不存在-->
-      <view class="sensor" wx:else>
-        <view class="stype">暂无传感器数据</view>
-      </view>
+      <!--<view class="sensor" wx:else>-->
+        <!--<view class="stype">暂无传感器数据</view>-->
+      <!--</view>-->
 
       <!--分隔栏-->
       <view class="cut"></view>
@@ -634,13 +634,6 @@ export default class Home extends wepy.page {
     jupLine() {
       wepy.navigateTo({
         url: `line?id=${this.currentId}`
-      })
-    },
-
-    // 跳转到更多塘口
-    jupMoreTangkou() {
-      wepy.navigateTo({
-        url: `mytangkou`
       })
     },
 

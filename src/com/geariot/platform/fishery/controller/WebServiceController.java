@@ -186,6 +186,19 @@ public class WebServiceController {
 	}
 	
 
+	@RequestMapping(value = "/getuserOpenId", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> getuserOpenId(String code) {
+		logger.debug("code:"+code);
+		Map<String, Object> map =  getWechatInfo(code);
+		if(map.get("openId")==null) {
+			logger.debug("未获得openId");
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else {
+			logger.debug("openId:"+map.get("openId"));
+			return map;
+		}
+	}
 
 	// 微信jsapi
 	@RequestMapping(value = "/wx/getJSSDKConfig", method = RequestMethod.GET)

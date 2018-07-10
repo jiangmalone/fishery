@@ -129,7 +129,7 @@ public class EquipmentService {
 			if(device == null) {
 				return RESCODE.SUCCESS.getJSONRES();
 			}else {
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
+				return RESCODE.DEVICESNS_REPEAT.getJSONRES();
 			}			
 		}else {
 			return RESCODE.NOT_FOUND.getJSONRES();
@@ -1465,9 +1465,10 @@ public class EquipmentService {
 		//修改时控制器至少存在一路
 		if(controller.length>0) {
 			String device_sn = controller[0].getDevice_sn();
+			logger.debug("修改设备编码为："+device_sn);
 			//查看设备是否存在
 			if(deviceDao.findDevice(device_sn)==null) {
-				return RESCODE.WRONG_PARAM.getJSONRES();
+				return RESCODE.NOT_FOUND.getJSONRES();
 			}else {			
 				for(Controller con : controller) {
 					List<Controller> conList = controllerDao.findControllerByDeviceSnAndWay(con.getDevice_sn(), con.getPort());

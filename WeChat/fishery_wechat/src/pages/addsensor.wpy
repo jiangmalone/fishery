@@ -221,6 +221,7 @@ export default class Addsensor extends wepy.page {
   }
   methods= {
     unBindBtn() {
+      wepy.showLoading()
       wepy.request({
         url: this.$parent.globalData.baseUrl + 'api/' + 'bind/delSensorOrAIOBind',
         data: {
@@ -248,6 +249,9 @@ export default class Addsensor extends wepy.page {
             })
           }
           console.log(res)
+        },
+        complete: () => {
+          wepy.hideLoading()
         }
       })
     },
@@ -275,8 +279,8 @@ export default class Addsensor extends wepy.page {
       this.$apply()
     },
     confirmEqu() {
-      // debugger
       if (this.equimentinfo[0].name && this.equimentinfo[0].pondId) {
+        wepy.showLoading()
         if (this.action === 'modify') {
           wepy.request({
             url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifySensor',
@@ -291,6 +295,9 @@ export default class Addsensor extends wepy.page {
               } else {
                 wepy.showToast({title: res.data.msg, icon: 'none'})
               }
+            },
+            complete: () => {
+              wepy.hideLoading()
             }
           })
         } else {
@@ -307,6 +314,9 @@ export default class Addsensor extends wepy.page {
               } else {
                 wepy.showToast({title: res.data.msg, icon: 'none'})
               }
+            },
+            complete: () => {
+              wepy.hideLoading()
             }
           })
         }
@@ -361,6 +371,7 @@ export default class Addsensor extends wepy.page {
         title: '修改设备'
       })
     }
+    wepy.showLoading()
     wepy.request({
       url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
       data: {
@@ -380,6 +391,9 @@ export default class Addsensor extends wepy.page {
         } else {
           wepy.showToast({title: res.data.msg, icon: 'none'})
         }
+      },
+      complete: () => {
+        wepy.hideLoading()
       }
     })
   }

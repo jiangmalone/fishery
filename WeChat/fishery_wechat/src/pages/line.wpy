@@ -341,7 +341,7 @@ export default class Line extends wepy.page {
       },
       time: '',
       ind: 0,
-      tangkoulist:[]
+      tangkoulist: []
     }
     methods = {
       // 跳转到更多塘口
@@ -349,20 +349,6 @@ export default class Line extends wepy.page {
         wepy.navigateTo({
           url: `myequiment`
         })
-      },
-      getRealTime () {
-        if (res.data.myHome[num].sensorlist.length > 0) {
-          wepy.request({
-            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
-            data: res.data.myHome[num].sensorlist[0].sensor,
-            method: 'GET',
-            success: res => {
-              console.log(res.data)
-              this.realTimeDataInfo = res.data
-              this.$apply()
-            }
-          })
-        }
       }
     }
     events = {}
@@ -557,6 +543,16 @@ export default class Line extends wepy.page {
           console.log(res.data.myHome)
           this.tangkoulist = res.data.myHome
           let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
+          wepy.request({
+            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
+            data: res.data.myHome[this.ind].sensorlist[0].sensor,
+            method: 'GET',
+            success: res => {
+              console.log(res.data)
+              this.realTimeDataInfo = res.data
+              this.$apply()
+            }
+          })
           // 获取当天数据
           wepy.request({
             url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',

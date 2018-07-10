@@ -1,6 +1,7 @@
 <style lang="less">
 .chosetype{
   font-size: 32rpx;
+  padding: 0 0 130rpx 0;
   .chosen{
     color:#FF4D26;
     padding:42rpx;
@@ -31,6 +32,16 @@
     border-radius: 146rpx;
     margin-top: 88rpx;
     margin-left: 50rpx;
+    position: fixed;
+    z-index: 55555;
+    bottom: 15rpx;
+  }
+  .bg{
+    height: 120rpx;
+    position: fixed;
+    width: 750rpx;
+    bottom: 0;
+    background: #ffffff;
   }
 }
 </style>
@@ -55,6 +66,7 @@
 
     <!--确定按钮-->
     <view class="confirmbut" @tap="typedone">确定</view>
+    <view class="bg"></view>
   </view>
 </template>
 <script>

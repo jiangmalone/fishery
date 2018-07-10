@@ -196,6 +196,7 @@ export default class Personal extends wepy.page {
 
     // 退出登录
     signOut() {
+      wepy.showLoading()
       wepy.request({
         url: this.$parent.globalData.baseUrl + 'api/' + 'admin/logout',
         data: this.$parent.globalData.phone,

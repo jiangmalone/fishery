@@ -308,6 +308,7 @@ export default class Addallinone extends wepy.page {
       this.$apply()
     },
     addAllinone() {
+      wepy.showLoading()
       if (this.action === 'modify') {
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifyAio',
@@ -322,7 +323,11 @@ export default class Addallinone extends wepy.page {
             } else {
               wepy.showToast({title: res.data.msg, icon: 'none'})
             }
+          },
+          complete: () => {
+            wepy.hideLoading()
           }
+
         })
       } else {
         wepy.request({
@@ -338,7 +343,11 @@ export default class Addallinone extends wepy.page {
             } else {
               wepy.showToast({title: res.data.msg, icon: 'none'})
             }
+          },
+          complete: () => {
+            wepy.hideLoading()
           }
+
         })
       }
     }
@@ -368,6 +377,7 @@ export default class Addallinone extends wepy.page {
         title: '修改设备'
       })
     }
+    wepy.showLoading()
     wepy.request({
       url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
       data: {
@@ -387,6 +397,9 @@ export default class Addallinone extends wepy.page {
         } else {
           wepy.showToast({title: res.data.msg, icon: 'none'})
         }
+      },
+      complete: () => {
+        wepy.hideLoading()
       }
     })
   }

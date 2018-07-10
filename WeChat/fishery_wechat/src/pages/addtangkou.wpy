@@ -222,6 +222,7 @@ export default class Addtangkou extends wepy.page {
         wepy.showToast({title: '塘口名称不能为空', icon: 'none'})
         return 0
       }
+      wepy.showLoading()
       if (this.action === 'modify') {
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'pond/modifyPond',
@@ -233,6 +234,9 @@ export default class Addtangkou extends wepy.page {
                 url: `mytangkou`
               })
             }
+          },
+          complete: () => {
+            wepy.hideLoading()
           }
         })
       } else {
@@ -248,6 +252,9 @@ export default class Addtangkou extends wepy.page {
             } else {
               wepy.showToast({title: res.data.msg, icon: 'none'})
             }
+          },
+          complete: () => {
+            wepy.hideLoading()
           }
         })
       }

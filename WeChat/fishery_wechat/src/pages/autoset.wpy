@@ -175,6 +175,7 @@ export default class Autoset extends wepy.page {
           device_sn: this.itemdata.device_sn,
           way: this.itemdata.port
         }
+        wepy.showLoading()
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setTimer',
           data: timeinfo,
@@ -191,6 +192,9 @@ export default class Autoset extends wepy.page {
                 }
               })
             }
+          },
+          complete: () => {
+            wepy.hideLoading()
           }
         })
       } else {
@@ -207,6 +211,9 @@ export default class Autoset extends wepy.page {
             if (res.data.code === 0) {
               wepy.showToast({title: '自动设置成功'})
             }
+          },
+          complete: () => {
+            wepy.hideLoading()
           }
         })
       }

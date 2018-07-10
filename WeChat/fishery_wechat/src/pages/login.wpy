@@ -233,6 +233,28 @@ export default class Login extends wepy.page {
         let code = res.code
         console.log(res)
         wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserinfo',
+          data: {
+            code: code
+          },
+          method: 'GET',
+          success: res => {
+            console.log('res.data', res.data)
+            if (res.data.data) {
+              this.$parent.globalData.id = res.data.data.id
+              this.$parent.globalData.name = res.data.data.name
+              this.$parent.globalData.sex = res.data.data.sex
+              this.$parent.globalData.phone = this.phoneNumber
+              this.$parent.globalData.life = res.data.data.life
+              this.$parent.globalData.headImg = res.data.data.headimgurl
+              this.$parent.globalData.relation = res.data.data.relation
+              wepy.switchTab({
+                url: `home`
+              })
+            }
+          }
+        })
+        wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserOpenId',
           data: {
             code: code
@@ -241,28 +263,6 @@ export default class Login extends wepy.page {
           success: res => {
             console.log('res.data', res.data)
             this.$parent.globalData.openId = res.data.openId
-            wepy.request({
-              url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserinfo',
-              data: {
-                code: code
-              },
-              method: 'GET',
-              success: res => {
-                console.log('res.data', res.data)
-                if (res.data.data) {
-                  this.$parent.globalData.id = res.data.data.id
-                  this.$parent.globalData.name = res.data.data.name
-                  this.$parent.globalData.sex = res.data.data.sex
-                  this.$parent.globalData.phone = this.phoneNumber
-                  this.$parent.globalData.life = res.data.data.life
-                  this.$parent.globalData.headImg = res.data.data.headimgurl
-                  this.$parent.globalData.relation = res.data.data.relation
-                  wepy.switchTab({
-                    url: `home`
-                  })
-                }
-              }
-            })
           }
         })
       }

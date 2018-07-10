@@ -664,7 +664,6 @@ export default class Home extends wepy.page {
                 },
                 method: 'GET',
                 success: (res) => {
-                  console.log(res.data)
                   if (res.data.ifnext === 1) {
                     // 获取结果第二次
                     setTimeout(() => {
@@ -677,7 +676,6 @@ export default class Home extends wepy.page {
                         },
                         method: 'GET',
                         success: (res) => {
-                          console.log(res.data)
                           if (res.data.ifnext === 1) {
                             // 获取结果第三次
                             setTimeout(() => {
@@ -690,7 +688,6 @@ export default class Home extends wepy.page {
                                 },
                                 method: 'GET',
                                 success: (res) => {
-                                  console.log(res.data)
                                   if (res.data.ifnext === 1) {
                                     wepy.hideLoading()
                                     wepy.showToast({
@@ -759,7 +756,6 @@ export default class Home extends wepy.page {
           data: e.target.dataset.tangkou.sensorlist[0].sensor,
           method: 'GET',
           success: res => {
-            console.log(res.data)
             this.realTimeDataInfo = res.data
           }
         })
@@ -781,7 +777,6 @@ export default class Home extends wepy.page {
               data: item,
               method: 'POST',
               success: res => {
-                console.log(typeof res.data)
                 if (res.data === 0) {
                   let data = JSON.stringify(item)
                   let timelist = JSON.stringify(time)
@@ -796,13 +791,16 @@ export default class Home extends wepy.page {
 
           // 取消自动
           if (res.tapIndex === 1) {
-            console.log(item)
             wepy.request({
               url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/delTimer',
               data: item,
               method: 'POST',
               success: res => {
-                console.log(res)
+                wepy.showToast({
+                  title: '取消成功',
+                  icon: 'success',
+                  duration: 2000
+                })
               }
             })
           }
@@ -818,7 +816,6 @@ export default class Home extends wepy.page {
           }
         },
         fail: function(res) {
-          console.log(res.errMsg)
         }
       })
     }
@@ -832,7 +829,6 @@ export default class Home extends wepy.page {
         },
         method: 'GET',
         success: res => {
-          console.log(res)
           if (res.data.code === 0) {
             this.tangkoulist = res.data.data
             this.$apply()
@@ -866,16 +862,15 @@ export default class Home extends wepy.page {
             success: res => {
               // 如果有塘口
               if (res.data.myHome.length > 0) {
-                console.log(res.data.myHome)
                 this.isHomeDetail = true
                 let num = this.$parent.globalData.currentId
                 this.tangkoulist = res.data.myHome
                 this.tangkoudetail = res.data.myHome[num]
                 this.$apply()
-                let location = res.data.myHome[num].address
-                if (!location) {
-                  return 0
-                }
+                // let location = res.data.myHome[num].address
+                // if (!location) {
+                //   return 0
+                // }
                 wepy.showLoading()
                 // 获取第一的塘口的天气信息
                 if (res.data.myHome[num].lon !== 0) {
@@ -906,7 +901,6 @@ export default class Home extends wepy.page {
                     data: res.data.myHome[num].sensorlist[0].sensor,
                     method: 'GET',
                     success: res => {
-                      console.log(res.data)
                       this.realTimeDataInfo = res.data
                       this.$apply()
                     }

@@ -112,9 +112,15 @@ export default class Saveuserinfo extends wepy.page {
         success: (res) => {
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
           let tempFilePaths = res.tempFilePaths
-          this.info.headImg = tempFilePaths[0]
-          this.$apply()
-          console.log(tempFilePaths)
+          wepy.saveFile({
+            tempFilePath: tempFilePaths[0],
+            success: (res) => {
+              var savedFilePath = res.savedFilePath
+              this.info.headImg = savedFilePath
+              this.$apply()
+              console.log(savedFilePath)
+            }
+          })
         }
       })
     },

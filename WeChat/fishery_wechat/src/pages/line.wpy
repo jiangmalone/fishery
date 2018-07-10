@@ -541,6 +541,7 @@ export default class Line extends wepy.page {
         success: res => {
           // 如果有塘口
           console.log(res.data.myHome)
+          console.log(res.data.myHome[0].sensorlist)
           this.tangkoulist = res.data.myHome
           let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
           wepy.request({

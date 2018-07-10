@@ -196,18 +196,35 @@ export default class Personal extends wepy.page {
 
     // 退出登录
     signOut() {
-      wepy.showLoading()
-      wepy.request({
-        url: this.$parent.globalData.baseUrl + 'api/' + 'admin/logout',
-        data: this.$parent.globalData.phone,
-        method: 'GET',
-        success: res => {
-          if (res.data.msg === '成功') {
-            wepy.navigateTo({
-              url: 'login'
+      wx.showModal({
+        title: '提示',
+        content: '您是否要退出登录？',
+        success: function(res) {
+          if (res.confirm) {
+            wepy.showLoading()
+            wepy.request({
+              url: this.$parent.globalData.baseUrl + 'api/' + 'webService/logout',
+              data: this.$parent.globalData.phone,
+              method: 'GET',
+              success: res => {
+                if (res.data.msg === '成功') {
+                  wepy.showToast({
+                    title: '成功',
+                    icon: 'success',
+                    duration: 2000,
+                    success: res => {
+                      wepy.navigateTo({
+                        url: 'login'
+                      })
+                    }
+                  })
+                } else {
+                  wepy.showToast({title: '登出失败', icon: 'none'})
+                }
+              }
             })
-          } else {
-            wepy.showToast({title: '登出失败', icon: 'none'})
+          } else if (res.cancel) {
+            console.log('用户点击取消')
           }
         }
       })

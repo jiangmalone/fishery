@@ -27,6 +27,9 @@
       float: right;
       margin-top: 26rpx;
       text-align: right;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
     }
     .num{
       margin-right: 20rpx;
@@ -197,7 +200,7 @@ export default class Addtangkou extends wepy.page {
       let data = JSON.stringify(this.tangkouinfo)
       console.log(this.action)
       wepy.redirectTo({
-        url: `chosetype?data=${data}&action=${this.action}`
+        url: `chosetype?data=${data}&action=${this.action}&fishlist=${this.fishlist}`
       })
     },
 

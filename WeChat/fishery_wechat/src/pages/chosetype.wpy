@@ -224,11 +224,7 @@ export default class Chosetype extends wepy.page {
 
     // 提交
     typedone() {
-      let select = []
-      this.selected.forEach((value) => {
-        console.log(value)
-        select.push(value['fish_name'])
-      })
+      let select = this.fishNameList
       select = JSON.stringify(select)
       console.log('select', select)
       let data = JSON.stringify(this.lastdata)
@@ -239,10 +235,23 @@ export default class Chosetype extends wepy.page {
 
   }
   onLoad(option) {
-    console.log(option)
+    console.log('option', option)
     let data = JSON.parse(option.data)
     this.lastdata = data
     this.action = option.action
+    if (this.fishNameList) {
+      this.fishNameList = option.fishlist.split(',')
+      this.fishNameListString = this.fishNameList.join('，')
+      this.fishNameList.map(value => {
+        let list = this.list
+        for (let i = 0; i < 20; i++) {
+          if (value === list[i].fish_name) {
+            console.log('index', i)
+            this.selectlist[i].sureid = !this.selectlist[i].sureid
+          }
+        }
+      })
+    }
     this.$apply()
   }
 }

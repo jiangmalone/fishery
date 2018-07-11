@@ -312,9 +312,11 @@ public class UserService {
 			        //获得传感器最新数据
 			        GetLatesDeviceData lddapi = new GetLatesDeviceData(sensor.getDevice_sn(), key);
 			        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
+			        System.out.println(response2.getJson());
 			        if(response2.errno == 0) {
 			        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response2.data.getDevices().get(0).getDatastreams();
 				        for(int i=0;i<DatastreamsList.size();i++) {
+				        	
 				        	sensorDataMap.put(DatastreamsList.get(i).getId(), DatastreamsList.get(i).getValue());
 				        }
 			        	sensorMap.put("data", sensorDataMap);

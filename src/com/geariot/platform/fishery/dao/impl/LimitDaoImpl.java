@@ -20,7 +20,7 @@ public class LimitDaoImpl implements LimitDao {
 	private SessionFactory sessionFactory;
 	
 	private Session getSession() {
-		return sessionFactory.getCurrentSession();
+		return sessionFactory.openSession();
 	}
 	
 	@Override

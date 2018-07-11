@@ -65,7 +65,7 @@
           margin-left:20rpx;
         }
         .rightinp{
-          width: 250rpx;
+          width: 270rpx;
           float: right;
           margin-top: 26rpx;
           text-align: right;
@@ -208,7 +208,7 @@
       <view class="einput">
         <text>绑定塘口</text>
         <view class="unbindport" @tap="unBindBtn(1)" wx:if="{{pond[0]}}">解绑</view>
-        <input class="rightinp" @tap="showmodal('tangkou', 0)" value="{{pond[0]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <input class="rightinp" @tap="showmodal('tangkou', 0)" value="{{pond[0]}}" placeholder="请绑定塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
 
@@ -225,7 +225,7 @@
       <view class="einput">
         <text>绑定塘口</text>
         <view class="unbindport" @tap="unBindBtn(2)" wx:if="{{pond[1]}}">解绑</view>
-        <input class="rightinp" @tap="showmodal('tangkou', 1)"  value="{{pond[1]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <input class="rightinp" @tap="showmodal('tangkou', 1)"  value="{{pond[1]}}" placeholder="请绑定塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
 
@@ -242,7 +242,7 @@
       <view class="einput">
         <text>绑定塘口</text>
         <view class="unbindport" @tap="unBindBtn(3)" wx:if="{{pond[2]}}">解绑</view>
-        <input class="rightinp" @tap="showmodal('tangkou', 2)" value="{{pond[2]}}" placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+        <input class="rightinp" @tap="showmodal('tangkou', 2)" value="{{pond[2]}}" placeholder="请绑定塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
 
@@ -270,7 +270,7 @@
               wx:if="{{pond[3]}}">解绑</view>
         <input class="rightinp" @tap="showmodal('tangkou', 3)"
                value="{{pond[3]}}"
-               placeholder="请选择需要绑定的塘口" placeholder-style="color:#4D7FB5" disabled/>
+               placeholder="请绑定塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
   </view>
@@ -540,7 +540,15 @@ export default class Addcontroler extends wepy.page {
 
     // 设备的确定按钮
     addCon() {
-      // wepy.showLoading()
+      // name: '',
+      //   pondIds: [],
+      //   port: 4,
+      //   type: ''
+      // if (this.equimentinfo[0].name === '' || this.equimentinfo[0].type === '' || this.equimentinfo[0].pondIds.length === 0 || this.equimentinfo[0].pondIds[0] !== 0) {
+      //   wepy.showToast({title: '1路控制器有信息未填写，请补全信息', icon: 'none', duration: 2000})
+      //   console.log(this.equimentinfo[0])
+      //   return 0
+      // }
       if (this.action === 'modify') {
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifyController',

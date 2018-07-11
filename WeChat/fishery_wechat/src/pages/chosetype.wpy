@@ -191,34 +191,40 @@ export default class Chosetype extends wepy.page {
   methods = {
     // 勾选列表
     selectRep(e) {
+      // 索引
       let index = e.currentTarget.dataset.selectindex
+      // 列表里被点击的那个对象的全部信息！！！！！
       let type = e.currentTarget.dataset.selecttype
       // 当前点击元素的自定义数据，这个很关键
       let arr = this.selected
       let selectlist = this.selectlist
-      let num = arr.indexOf(type)
-      if (num < 0) {
-        arr.push(type)
-      } else {
-        arr.splice(num, 1)
-      }
 
+      if (this.fishNameList[0] === '') {
+        this.fishNameList = []
+      }
       let name = e.currentTarget.dataset.selecttype.fish_name
       let nameList = this.fishNameList
       if (nameList.indexOf(name) > -1) {
+        // 如果存在。移除
         this.fishNameList = nameList.filter(item => item !== name)
+        let list = this.lastdata.pondFishs
+        for (let i = 0; i < list.length; i++) {
+          if (list[i].fish_name === name) {
+            list.splice(i, 1)
+            this.lastdata.pondFishs = list
+            console.log('list', list)
+          }
+        }
       } else {
+        // 如果不存在。添加
         this.fishNameList.push(name)
+        console.log('type', type)
+        this.lastdata.pondFishs.push(type)
       }
       this.fishNameListString = this.fishNameList.join('，')
       this.$apply()
-
-      // 取到data里的selectIndex
+      // 切换勾选样式
       selectlist[index].sureid = !selectlist[index].sureid
-      this.selectlist = selectlist
-      this.selected = arr
-      this.lastdata.pondFishs = arr
-      // 点击就赋相反的值
       this.$apply()
     },
 
@@ -228,6 +234,7 @@ export default class Chosetype extends wepy.page {
       select = JSON.stringify(select)
       console.log('select', select)
       let data = JSON.stringify(this.lastdata)
+      console.log('data???', data)
       wepy.redirectTo({
         url: `addtangkou?type=${data}&select=${select}&action=${this.action}`
       })
@@ -238,6 +245,7 @@ export default class Chosetype extends wepy.page {
     console.log('option', option)
     let data = JSON.parse(option.data)
     this.lastdata = data
+    console.log('lastdata', this.lastdata)
     this.action = option.action
     if (this.fishNameList) {
       this.fishNameList = option.fishlist.split(',')

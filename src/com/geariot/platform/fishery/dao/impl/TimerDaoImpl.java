@@ -82,6 +82,7 @@ public class TimerDaoImpl implements TimerDao {
 //	}
 	@Override
 	public List<Timer> findTimerByDeviceSnAndWay(String device_sn, int way) {
+
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Timer");
 		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
 		return  (List<Timer>)query.list();

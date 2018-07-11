@@ -255,13 +255,15 @@ public class WebServiceController {
 	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl) {
 		JSONObject json = this.verifySmscode(phone, smscode);
 		logger.debug("openId:"+openId);
-		if (json.getString("error") != null) {//验证失败
+		if (json.getString("error") != null) {
+			//验证失败
 			logger.debug(phone + ";code:" + smscode + " 验证失败。。。");
 			Map<String, Object> obj = new HashMap<>();
 			obj.put(Constants.RESPONSE_CODE_KEY, json.getInt("code"));
 			obj.put(Constants.RESPONSE_MSG_KEY, json.getString("error"));
 			return obj;
-		} else {//验证成功
+		} else {
+			//验证成功
 			return webServiceService.login(phone,openId,headimgurl);
 		}
 	}

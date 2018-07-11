@@ -275,6 +275,7 @@
       }
       .o2{
         display: inline-block;
+        width: 112rpx;
         font-size: 34rpx;
         color: #323B45;
         letter-spacing: 0;
@@ -284,6 +285,7 @@
       }
       .ph{
         display: inline-block;
+        width: 112rpx;
         font-size: 34rpx;
         color: #323B45;
         letter-spacing: 0;
@@ -312,6 +314,7 @@
         color: #3A95CF;
         margin-left: 80rpx;
         height: 112rpx;
+        width: 112rpx;
         .unit{
           font-size: 36rpx;
         }
@@ -322,6 +325,7 @@
       }
       .sresult{
         display: inline-block;
+        width: 112rpx;
         font-size: 40rpx;
         margin: 60rpx;
         position: relative;
@@ -375,6 +379,7 @@
       box-shadow: 0 2px 8px 0 rgba(225,225,225,0.50);
       border-radius: 8px;
       margin-top: 58rpx;
+      padding: 0 0 30rpx 0;
       margin-left: 32rpx;
       font-size: 32rpx;
       .device{

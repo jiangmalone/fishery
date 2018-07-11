@@ -79,8 +79,11 @@
       }
       .status{
         width: 400rpx;
-        text-align: right;
+        height: 40rpx;
+        white-space: nowrap;
         overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: right;
         float: right;
       }
     }
@@ -244,6 +247,11 @@ export default class Mytangkou extends wepy.page {
         this.list = res.data.data
         this.$apply()
       }
+    })
+  }
+  onUnload() {
+    wepy.navigateTo({
+      url: `personal`
     })
   }
 }

@@ -416,7 +416,7 @@ export default class Addcontroler extends wepy.page {
             })
           } else {
             wepy.showToast({
-              title: '解绑失败',
+              title: res.data.msg,
               icon: 'none',
               duration: 2000
             })

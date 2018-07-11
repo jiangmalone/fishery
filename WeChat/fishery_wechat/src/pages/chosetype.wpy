@@ -181,7 +181,9 @@ export default class Chosetype extends wepy.page {
       {sureid: false}
     ],
     selected: [],
-    lastdata: {},
+    lastdata: {
+      pondFishs: []
+    },
     action: '',
     selectImage: '../images/_14_copy@2x.png',
     noselectImage: '',
@@ -204,6 +206,7 @@ export default class Chosetype extends wepy.page {
       }
       let name = e.currentTarget.dataset.selecttype.fish_name
       let nameList = this.fishNameList
+      console.log('this.lastdata', this.lastdata)
       if (nameList.indexOf(name) > -1) {
         // 如果存在。移除
         this.fishNameList = nameList.filter(item => item !== name)
@@ -239,13 +242,13 @@ export default class Chosetype extends wepy.page {
         url: `addtangkou?type=${data}&select=${select}&action=${this.action}`
       })
     }
-
   }
   onLoad(option) {
-    console.log('option', option)
     let data = JSON.parse(option.data)
-    this.lastdata = data
-    console.log('lastdata', this.lastdata)
+    if (option.data !== '{}') {
+      this.lastdata = data
+    } else {
+    }
     this.action = option.action
     if (this.fishNameList) {
       this.fishNameList = option.fishlist.split(',')

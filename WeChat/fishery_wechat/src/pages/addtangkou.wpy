@@ -148,7 +148,7 @@
     </view>
     <view class="addcontroler-item">
       <image class="yu" src="../images/种关注@2x.png"></image>养殖品种
-      <input class="rightinp" @tap="choseType" placeholder="请选择" value="{{fishlist}}" placeholder-style="color:#B8B8B8" disabled/>
+      <input class="rightinp" @tap="choseType" placeholder="请选择" value="{{fishlist}}" placeholder-style="color:#FF4D26" disabled/>
     </view>
     <view class="addcontroler-item">
       <image class="num" src="../images/@2x.png"></image>池塘水源
@@ -223,6 +223,10 @@ export default class Addtangkou extends wepy.page {
     addtangkou() {
       if (!this.tangkouinfo.name) {
         wepy.showToast({title: '塘口名称不能为空', icon: 'none'})
+        return 0
+      }
+      if (!this.fishlist) {
+        wepy.showToast({title: '养殖品种不能为空', icon: 'none'})
         return 0
       }
       wepy.showLoading()

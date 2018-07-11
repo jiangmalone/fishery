@@ -257,6 +257,17 @@ export default class Login extends wepy.page {
         })
       }
     })
+    wepy.request({
+      url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserOpenId',
+      data: {
+        code: code
+      },
+      method: 'GET',
+      success: res => {
+        console.log('res.data', res.data)
+        this.$parent.globalData.openId = res.data.openId
+      }
+    })
   }
 }
 </script>

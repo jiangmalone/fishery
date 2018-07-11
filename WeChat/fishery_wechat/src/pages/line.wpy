@@ -1,5 +1,74 @@
 <style lang="less">
 .line{
+  .mask{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    z-index: 9000;
+    opacity: 0.7;
+  }
+  .modalDlg{
+    width: 670rpx;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 9999;
+    margin: -400rpx 40rpx;
+    background-color: #fff;
+    border-radius: 16rpx;
+    font-size: 32rpx;
+    .close{
+      width: 72rpx;
+      height: 72rpx;
+      border-radius: 36rpx;
+      position: absolute;
+      top: -92rpx;
+      right:18rpx;
+      .closeimg{
+        width: 72rpx;
+        height: 72rpx;
+      }
+      .closeline{
+        width: 4rpx;
+        height: 20rpx;
+        background-color: #fff;
+        position: absolute;
+        top:72rpx;
+        left: 36rpx;
+      }
+    }
+    .checkbox-item{
+      height: 100rpx;
+      line-height: 100rpx;
+      border-bottom: 2rpx solid #D4D5D8;
+      image{
+        width: 44rpx;
+        height: 44rpx;
+        margin-left: 226rpx;
+        margin-right: 20rpx;
+        margin-top: 28rpx;
+        position: relative;
+        top:8rpx;
+      }
+      .select{
+        color:#2F70B8;
+      }
+    }
+    .modal-but{
+      width: 480rpx;
+      height: 90rpx;
+      line-height: 90rpx;
+      background: #2F70B8;
+      color: #fff;
+      font-size: 32rpx;
+      border-radius: 120rpx;
+      margin-top: 40rpx;
+      margin-bottom: 40rpx;
+    }
+  }
   font-size: 30rpx;
   color: #4E4E4E;
   .header{
@@ -112,7 +181,7 @@
       }
     }
   }
-  #cha{
+  .cha{
     height: 518rpx;
     width: 698rpx;
     background: #f9f9f9;
@@ -128,7 +197,7 @@
 <template>
   <view class="line">
     <view class="header">
-      <view class="sensorname">小鱼塘-小A-进水啊实打实的</view><image class="header-img" src="../images/多_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
+      <view class="sensorname" @tap="showModal">小鱼塘-小A-进水啊实打实的</view><image class="header-img" src="../images/多_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
       <view class="status"><view class="status-dot"></view>异常</view>
     </view>
     <view class="content">
@@ -140,41 +209,74 @@
         <view class="cot-index">
           <view class="target">
             <image class="o2" src="../images/氧_3_copy 2@2x.png"></image>
-            <view class="data">溶氧 {{}}mg/L</view>
+            <view class="data">溶氧 {{realTimeDataInfo.oxygen}}mg/L</view>
           </view>
-          <view class="res">正常</view>
+          <view class="res">{{realTimeDataInfo.oxygen_status===0?'正常': (realTimeDataInfo.oxygen_status===1?'预警':'危险')}}</view>
         </view>
         <view class="cot-index">
           <view class="target">
             <image class="o2" src="../images/温@2x.png"></image>
-            <view class="data">水温 21℃</view>
+            <view class="data">水温 {{realTimeDataInfo.water_temperature}}℃</view>
           </view>
-          <view class="res">正常</view>
+          <view class="res">{{realTimeDataInfo.wt_status===0?'正常': (realTimeDataInfo.wt_status===1?'预警':'危险')}}</view>
         </view>
         <view class="cot-index">
           <view class="target">
             <image class="ph" src="../images/ph@2x.png"></image>
-            <view class="data1">PH 8.5</view>
+            <view class="data1">PH {{realTimeDataInfo.pH_value}}</view>
           </view>
-          <view class="res">正常</view>
+          <view class="res">{{realTimeDataInfo.pH_status===0?'正常': (realTimeDataInfo.pH_status===1?'预警':'危险')}}</view>
         </view>
         <view class="cut"></view>
       </view>
     </view>
     <view class="line">
       <view class="line-but">
-        <view class="but-index">今日</view>
-        <view class="but-index">三日</view>
+        <view class="but-index" @tap="switchToday">今日</view>
+        <view class="but-index" @tap="switchToday">三日</view>
       </view>
     </view>
-    <view id="cha">
-      <echarts :ec.sync="ec" />
+
+    <view wx:if="{{!switchToday}}">
+      <view class="cha">
+        <echarts :ec.sync="ec" />
+      </view>
+      <!--<view class="cha">-->
+        <!--<echarts :ec.sync="wt" />-->
+      <!--</view>-->
+      <!--<view class="cha">-->
+        <!--<echarts :ec.sync="ph" />-->
+      <!--</view>-->
     </view>
-    <view id="cha">
-      <echarts :ec.sync="wt" />
-    </view>
-    <view id="cha">
-      <echarts :ec.sync="ph" />
+
+    <!--<view wx:if="{{switchToday}}">-->
+      <!--<view class="cha">-->
+        <!--<echarts :ec.sync="ec" />-->
+      <!--</view>-->
+      <!--<view class="cha">-->
+        <!--<echarts :ec.sync="wt" />-->
+      <!--</view>-->
+      <!--<view class="cha">-->
+        <!--<echarts :ec.sync="ph" />-->
+      <!--</view>-->
+    <!--</view>-->
+
+    <!--模态框的遮罩层-->
+    <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
+    <!--模态框-->
+    <view class="modalDlg" wx:if="{{showModal}}">
+      <view class="close" @tap="closemodal">
+        <image class="closeimg" src="../images/叉_cross80@2x.png"></image>
+        <view class="closeline"></view>
+      </view>
+      <repeat for="{{tangkoulist}}" key="index" index="index">
+        <view class="checkbox-item" data-selectindex="{{index}}" data-pondid="{{item.id}}" data-pond="{{item.pondname}}" @tap="selectRep">
+          <view class="{{id === index ? 'select' : ''}}">
+            <image src="{{id === index ? selectImage : noselectImage}}"></image><text>{{item.pondname}}</text>
+          </view>
+        </view>
+      </repeat>
+      <button wx:if="{{tangkoulist.length !== 0}}" class="modal-but" @tap="go">确定</button>
     </view>
   </view>
 </template>
@@ -187,6 +289,8 @@ export default class Line extends wepy.page {
       echarts: Echarts
     }
     data = {
+      switchToday: false,
+      showModal: false,
       ec: {
         option: {
           textStyle: {
@@ -196,7 +300,7 @@ export default class Line extends wepy.page {
           xAxis: [{
             type: 'category',
             boundaryGap: false,
-            data: [1, 2, 3, 4, 5],
+            data: [],
             axisLine: {
               lineStyle: {
                 color: '#c4c4c4'
@@ -225,7 +329,7 @@ export default class Line extends wepy.page {
               color: '#2c90f7'
             },
             type: 'line',
-            data: [1, 2, 3, 4, 5],
+            data: [],
             markLine: {
               symbol: '',
               itemStyle: {
@@ -293,7 +397,33 @@ export default class Line extends wepy.page {
               color: '#2c90f7'
             },
             type: 'line',
-            data: [1, 2, 3, 4, 5]
+            data: [1, 2, 3, 4, 5],
+            markLine: {
+              symbol: '',
+              itemStyle: {
+                lineStyle: {type: 'solid'},
+                label: {show: true, position: 'left', formatter: 'aaa'}
+              },
+              data: [
+                { yAxis: 2,
+                  itemStyle: {
+                    color: '#beac00'
+                  }
+                },
+                { yAxis: 3,
+                  itemStyle: {
+                    width: 1.5,
+                    color: '#45795b'
+                  }
+                },
+                { yAxis: 5,
+                  itemStyle: {
+                    width: 1.5,
+                    color: '#b3675b'
+                  }
+                }
+              ]
+            }
           }]
         }
       },
@@ -341,9 +471,30 @@ export default class Line extends wepy.page {
       },
       time: '',
       ind: 0,
-      tangkoulist: []
+      tangkoulist: [],
+      realTimeDataInfo: [],
+      selectImage: '../images/_14_copy@2x.png',
+      noselectImage: '../images/_14_copy 2@2x.png'
     }
     methods = {
+      switchToday() {
+        this.switchToday = !this.switchToday
+      },
+      showModal() {
+        this.showModal = true
+      },
+      selectRep(e) {
+        let index = e.currentTarget.dataset.selectindex
+        this.id = index
+        this.tang = e.currentTarget.dataset.pond
+        this.equimentinfo[0].pondId = e.currentTarget.dataset.pondid
+        console.log(index)
+        this.$apply()
+      },
+      closemodal() {
+        this.showModal = false
+        this.$apply()
+      },
       // 跳转到更多塘口
       jupMoreEquiment() {
         wepy.navigateTo({
@@ -366,7 +517,7 @@ export default class Line extends wepy.page {
       this.$apply()
     }
     onLoad(options) {
-      var newOtion = {
+      var newWT = {
         textStyle: {
           color: '#c4c4c4'
         },
@@ -374,23 +525,15 @@ export default class Line extends wepy.page {
         xAxis: [{
           type: 'category',
           boundaryGap: false,
-          data: ['2018-07-05 09:03:04.687', '2018-07-05 09:39:27.329',
-            '2018-07-05 10:15:10.846', '2018-07-05 11:02:03.828',
-            '2018-07-05 11:37:45.406', '2018-07-05 12:14:07.787',
-            '2018-07-05 12:50:27.692', '2018-07-05 13:26:49.888',
-            '2018-07-05 14:03:12.771', '2018-07-05 14:39:33.913',
-            '2018-07-05 15:15:54.387', '2018-07-05 15:51:36.951',
-            '2018-07-05 16:27:57.529', '2018-07-05 17:04:18.973',
-            '2018-07-05 17:40:41.530', '2018-07-05 18:17:04.550',
-            '2018-07-05 19:02:42.225'],
+          data: [1, 2, 3, 4, 5],
           axisLine: {
             lineStyle: {
               color: '#c4c4c4'
             }
-          },
-          axisLabel: {// y轴的内容格式化,很有用的属性
-            formatter: '{value} xUnit'
           }
+          // axisLabel: {//y轴的内容格式化,很有用的属性
+          //   formatter: '{value} xUnit'
+          // }
         }],
         yAxis: [{
           type: 'value',
@@ -405,127 +548,54 @@ export default class Line extends wepy.page {
               type: 'dashed'
             }
           }
-          // axisLabel: {//y轴的内容格式化,很有用的属性
-          //   formatter: '{value} yUnit'
-          // }
         }],
         series: [{
           lineStyle: {
             color: '#2c90f7'
           },
           type: 'line',
-          data: [7.3, 7.1, 7, 6.9, 6.9, 6.9, 6.9, 6.8, 6.8, 6.8, 6.8, 6.7, 6.7, 6.7, 6.7, 6.8, 6.8, 6.7],
-          markLine: {
-            symbol: '',
-            itemStyle: {
-              lineStyle: {type: 'solid'},
-              label: {show: true, position: 'left', formatter: 'aaa'}
-            },
-            data: [
-              { yAxis: 2,
-                itemStyle: {
-                  color: '#beac00'
-                }
-              },
-              { yAxis: 3,
-                itemStyle: {
-                  width: 1.5,
-                  color: '#45795b'
-                }
-              },
-              { yAxis: 5,
-                itemStyle: {
-                  width: 1.5,
-                  color: '#b3675b'
-                }
-              }
-            ]
-          }
+          data: [1, 2, 3, 4, 5]
         }]
       }
-      var newWT = {
-        option: {
-          textStyle: {
-            color: '#c4c4c4'
-          },
-          color: ['#8dc1aa'],
-          xAxis: [{
-            type: 'category',
-            boundaryGap: false,
-            data: [1, 2, 3, 4, 5],
-            axisLine: {
-              lineStyle: {
-                color: '#c4c4c4'
-              }
-            }
-            // axisLabel: {//y轴的内容格式化,很有用的属性
-            //   formatter: '{value} xUnit'
-            // }
-          }],
-          yAxis: [{
-            type: 'value',
-            axisLine: {
-              lineStyle: {
-                color: '#c4c4c4'
-              }
-            },
-            splitLine: {
-              lineStyle: {
-                color: '#e9e7de',
-                type: 'dashed'
-              }
-            }
-          }],
-          series: [{
-            lineStyle: {
-              color: '#2c90f7'
-            },
-            type: 'line',
-            data: [1, 2, 3, 4, 5]
-          }]
-        }
-      }
       var newPH = {
-        option: {
-          textStyle: {
-            color: '#c4c4c4'
-          },
-          color: ['#8dc1aa'],
-          xAxis: [{
-            type: 'category',
-            boundaryGap: false,
-            data: [1, 2, 3, 4, 5],
-            axisLine: {
-              lineStyle: {
-                color: '#c4c4c4'
-              }
-            }
-            // axisLabel: {//y轴的内容格式化,很有用的属性
-            //   formatter: '{value} xUnit'
-            // }
-          }],
-          yAxis: [{
-            type: 'value',
-            axisLine: {
-              lineStyle: {
-                color: '#c4c4c4'
-              }
-            },
-            splitLine: {
-              lineStyle: {
-                color: '#e9e7de',
-                type: 'dashed'
-              }
-            }
-          }],
-          series: [{
+        textStyle: {
+          color: '#c4c4c4'
+        },
+        color: ['#8dc1aa'],
+        xAxis: [{
+          type: 'category',
+          boundaryGap: false,
+          data: [1, 2, 3, 4, 5],
+          axisLine: {
             lineStyle: {
-              color: '#2c90f7'
-            },
-            type: 'line',
-            data: [1, 2, 3, 4, 5]
-          }]
-        }
+              color: '#c4c4c4'
+            }
+          }
+          // axisLabel: {//y轴的内容格式化,很有用的属性
+          //   formatter: '{value} xUnit'
+          // }
+        }],
+        yAxis: [{
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#c4c4c4'
+            }
+          },
+          splitLine: {
+            lineStyle: {
+              color: '#e9e7de',
+              type: 'dashed'
+            }
+          }
+        }],
+        series: [{
+          lineStyle: {
+            color: '#2c90f7'
+          },
+          type: 'line',
+          data: [1, 2, 3, 4, 5]
+        }]
       }
       if (options.id) {
         this.ind = options.id
@@ -543,42 +613,134 @@ export default class Line extends wepy.page {
           console.log(res.data.myHome)
           console.log(res.data.myHome[0].sensorlist)
           this.tangkoulist = res.data.myHome
-          let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
-          wepy.request({
-            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
-            data: res.data.myHome[this.ind].sensorlist[0].sensor,
-            method: 'GET',
-            success: res => {
-              console.log(res.data)
-              this.realTimeDataInfo = res.data
-              this.$apply()
-            }
-          })
-          // 获取当天数据
-          wepy.request({
-            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
-            data: {
-              device_sn: deviceSn,
-              way: 1
-            },
-            method: 'GET',
-            success: res => {
-              newOtion.xAxis.data = res.data.DO.at
-              newOtion.series.data = res.data.DO.value
-              this.ec.option = newOtion
-              newWT.xAxis.data = res.data.WT.at
-              newWT.series.data = res.data.WT.value
-              this.wt.option = newWT
-              newPH.xAxis.data = res.data.PH.at
-              newPH.series.data = res.data.PH.value
-              this.ph.option = newPH
-              this.$apply()
-              console.log(this.ec.option)
-            },
-            complete: () => {
-              wepy.hideLoading()
-            }
-          })
+          if (res.data.myHome[this.ind].sensorlist.length > 0) {
+            // 获取实时数据
+            let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
+            // wepy.connectSocket({
+            //   url: 'wss://192.168.0.111:8080/fishery/api/equipment/realTimeData',
+            //   data: {
+            //     device_sn: deviceSn
+            //   },
+            //   method: 'GET'
+            // })
+            // wepy.onSocketOpen((res) => {
+            //   console.log('WebSocket连接已打开！')
+            // })
+            // wepy.onSocketMessage((res) => {
+            //   console.log('收到服务器内容：' + res.data)
+            // })
+
+            wepy.showLoading()
+            wepy.request({
+              url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
+              data: res.data.myHome[this.ind].sensorlist[0].sensor,
+              method: 'GET',
+              success: res => {
+                console.log(res.data)
+                this.realTimeDataInfo = res.data
+                this.$apply()
+              },
+              complete: () => {
+                wepy.hideLoading()
+              }
+            })
+            // 获取当天数据
+            wepy.showLoading()
+            wepy.request({
+              url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
+              data: {
+                device_sn: deviceSn,
+                way: 1
+              },
+              method: 'GET',
+              success: res => {
+                this.ec.option = {
+                  textStyle: {
+                    color: '#c4c4c4'
+                  },
+                  color: ['#8dc1aa'],
+                  xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    data: res.data.DO.at,
+                    axisLine: {
+                      lineStyle: {
+                        color: '#c4c4c4'
+                      }
+                    },
+                    axisLabel: {// y轴的内容格式化,很有用的属性
+                      formatter: '{value} xUnit'
+                    }
+                  }],
+                  yAxis: [{
+                    type: 'value',
+                    axisLine: {
+                      lineStyle: {
+                        color: '#c4c4c4'
+                      }
+                    },
+                    splitLine: {
+                      lineStyle: {
+                        color: '#e9e7de',
+                        type: 'dashed'
+                      }
+                    }
+                    // axisLabel: {//y轴的内容格式化,很有用的属性
+                    //   formatter: '{value} yUnit'
+                    // }
+                  }],
+                  series: [{
+                    lineStyle: {
+                      color: '#2c90f7'
+                    },
+                    type: 'line',
+                    data: res.data.DO.value,
+                    markLine: {
+                      symbol: '',
+                      itemStyle: {
+                        lineStyle: {type: 'solid'},
+                        label: {show: true, position: 'left', formatter: 'aaa'}
+                      },
+                      data: [
+                        { yAxis: 2,
+                          itemStyle: {
+                            color: '#beac00'
+                          }
+                        },
+                        { yAxis: 3,
+                          itemStyle: {
+                            width: 1.5,
+                            color: '#45795b'
+                          }
+                        },
+                        { yAxis: 5,
+                          itemStyle: {
+                            width: 1.5,
+                            color: '#b3675b'
+                          }
+                        }
+                      ]
+                    }
+                  }]
+                }
+                this.$apply()
+                // newWT.xAxis.data = res.data.WT.at
+                // newWT.series.data = res.data.WT.value
+                // this.wt.option = newWT
+                // newPH.xAxis.data = res.data.PH.at
+                // newPH.series.data = res.data.PH.value
+                // this.ph.option = newPH
+                // this.$apply()
+                // console.log(this.ec.option)
+              },
+              complete: () => {
+                wepy.hideLoading()
+              }
+            })
+          }
+        },
+        complete: () => {
+          wepy.hideLoading()
         }
       })
     }

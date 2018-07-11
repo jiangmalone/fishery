@@ -264,7 +264,6 @@ export default class Addtangkou extends wepy.page {
     }
   }
   onLoad(options) {
-    console.log(options.action)
     this.action = options.action ? options.action : 'add'
     this.fishlist = options.select ? JSON.parse(options.select) : []
     this.tangkouinfo = options.type ? JSON.parse(options.type) : {}

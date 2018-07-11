@@ -27,8 +27,12 @@
     }
     .rightinp{
       float: right;
+      width: 300rpx;
       margin-top: 26rpx;
       text-align: right;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
     }
     .num{
       margin-right: 20rpx;
@@ -171,11 +175,10 @@
 
     <view class="sensor-item">
       <image class="num" src="../images/感器@2x.png"></image>绑定塘口
+      <view class="unbindport" @tap="unBindBtn" wx:if="{{pondlist[equimentinfo[0].pondId]}}">解绑</view>
       <input class="rightinp" placeholder="请选择需绑定的塘口"
              placeholder-style="color:#6F6F6F;text-align:right;"
              @tap="con" value="{{pondlist[equimentinfo[0].pondId]}}" disabled/>
-      <view class="unbindport" @tap="unBindBtn" wx:if="{{pondlist[equimentinfo[0].pondId]}}">解绑</view>
-      <image src=""></image>
     </view>
 
     <!--模态框的遮罩层-->
@@ -284,7 +287,7 @@ export default class Addsensor extends wepy.page {
     },
     confirmEqu() {
       if (this.equimentinfo[0].name && this.equimentinfo[0].pondId) {
-        wepy.showLoading()
+        // wepy.showLoading()
         if (this.action === 'modify') {
           wepy.request({
             url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifySensor',

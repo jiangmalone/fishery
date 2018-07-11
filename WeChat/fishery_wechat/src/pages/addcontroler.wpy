@@ -65,6 +65,7 @@
           margin-left:20rpx;
         }
         .rightinp{
+          width: 250rpx;
           float: right;
           margin-top: 26rpx;
           text-align: right;
@@ -539,7 +540,7 @@ export default class Addcontroler extends wepy.page {
 
     // 设备的确定按钮
     addCon() {
-      wepy.showLoading()
+      // wepy.showLoading()
       if (this.action === 'modify') {
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifyController',

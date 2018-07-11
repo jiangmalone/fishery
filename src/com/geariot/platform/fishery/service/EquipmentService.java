@@ -161,6 +161,8 @@ public class EquipmentService {
 				case 3://控制器
 					controllerDao.delete(device_sn);
 					deviceDao.delete(device_sn);
+					limitDao.delete(device_sn);
+					timerDao.delete(device_sn);
 					break;
 			}
 			return RESCODE.SUCCESS.getJSONRES();
@@ -182,11 +184,11 @@ public class EquipmentService {
 			String  device_sn = sensor.getDevice_sn();
 			logger.debug(device_sn);
 			String api_device_sn = device_sn.substring(2, device_sn.length());
-			GetDeviceApi api = new GetDeviceApi(api_device_sn, key);
-			BasicResponse<DeviceResponse> response = api.executeApi();
+			/*GetDeviceApi api = new GetDeviceApi(api_device_sn, key);
+			BasicResponse<DeviceResponse> response = api.executeApi();*/
 			//判断onenet上是否有设备
-			if(response.errno == 0) {//onenet上存在设备
-				if(deviceDao.findDevice(api_device_sn)==null) {	
+		/*	if(response.errno == 0) {//onenet上存在设备
+*/				if(deviceDao.findDevice(api_device_sn)==null) {	
 					logger.debug("设备不存在，添加设备");
 					//设备号不存在，添加设备
 					Device device = new Device();
@@ -297,16 +299,10 @@ public class EquipmentService {
 					sensorDao.updateSensor(sensorOld);
 					return RESCODE.SUCCESS.getJSONRES();*/
 				}
-			}else {//onenet上没有设备，设备号无效
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
 			}
-			
-			
-			
-			
-
-	}
-
+			/*else {//onenet上没有设备，设备号无效
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
+			}*/
 
 	public Map<String, Object> addController(Controller[] controllers) {
 
@@ -314,9 +310,9 @@ public class EquipmentService {
 			String device_sn = controllers[0].getDevice_sn();
 			String api_device_sn = device_sn.substring(2, device_sn.length());
 			logger.debug(api_device_sn);
-			GetDeviceApi api = new GetDeviceApi(api_device_sn, key);
+			/*GetDeviceApi api = new GetDeviceApi(api_device_sn, key);
 			BasicResponse<DeviceResponse> response = api.executeApi();
-			if(response.errno == 0) {
+			if(response.errno == 0) {*/
 				for (Controller controller : controllers ){
 					//截掉扫码编码的前两位
 					controller.setDevice_sn(controller.getDevice_sn().substring(2, controller.getDevice_sn().length()));
@@ -327,6 +323,16 @@ public class EquipmentService {
 						device.setType(3);
 						deviceDao.save(device);
 						logger.debug("添加了一个新的控制器设备");
+					}
+					//添加增氧机，即添加其默认limit
+					if(controller.getType()==0) {
+						Limit_Install limit = new Limit_Install();
+						limit.setHigh_limit(20);
+						limit.setUp_limit(6);
+						limit.setLow_limit(4);
+						limit.setDevice_sn(controller.getDevice_sn());
+						limit.setWay(controller.getPort());
+						limitDao.save(limit);
 					}
 					//获取控制器绑定的塘口
 					int[] pondIds = controller.getPondIds();
@@ -396,13 +402,13 @@ public class EquipmentService {
 				return RESCODE.NOT_FOUND.getJSONRES();
 			}
 			
-		}else {
+		}/*else {
 			return RESCODE.NOT_FOUND.getJSONRES();
-		}
+		}*/
 		
 		
 
-	}
+	/*}*/
 	
 	public Map<String, Object> getControllersBydevice_sn(String device_sn){
 		List<Controller> controllerList = controllerDao.findControllerByDeviceSns(device_sn);
@@ -531,6 +537,21 @@ public class EquipmentService {
              	logger.debug("将数据存入到传感器中");
              	return sensor;
              }else {
+            	/* Sensor sensor = new Sensor();
+            	 for(int i=0;i<DatastreamsList.size();i++) {
+              		logger.debug("数据流："+DatastreamsList.get(i).getId());
+              		logger.debug("数据流数值："+DatastreamsList.get(i).getValue());
+                  	String id = DatastreamsList.get(i).getId();
+                  	float value = Float.parseFloat((String)DatastreamsList.get(i).getValue());
+                  	if(id.equals("pH")) {
+                  		sensor.setpH_value(value);
+                  	}else if(id.equals("DO")) {
+                  		sensor.setOxygen(value);
+                  	}else if(id.equals("WT")) {
+                  		sensor.setWater_temperature(value);
+                  	}  
+                  	
+                  }*/
             	 logger.debug("数据库中不存在该设备");
             	 return null;
              }
@@ -694,15 +715,8 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> setLimit(Limit_Install limit_Install){
-		/*String device_sn = limit_Install.getDevice_sn();
-		int way = limit_Install.getWay();
-		if(limitDao.findLimitByDeviceSnsAndWay(device_sn, way)==null) {
-			limitDao.save(limit_Install);
-			return RESCODE.SUCCESS.getJSONRES();
-		}else {*/
 			limitDao.updateLimit(limit_Install);
-			limit_Install.getUp_limit();
-			
+		/*	dev_triggerDao.*/
 			int result = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
 			if(result==1) {
 				return RESCODE.SUCCESS.getJSONRES();
@@ -1917,9 +1931,9 @@ public class EquipmentService {
 		 * @param key:masterkey 或者 设备apikey
 		 */
 		//微信小程序使用url
-		//String url = "https://www.fisherymanager.net/fishery/api/equipment/triggeractive";
+		String url = "https://www.fisherymanager.net/fishery/api/equipment/triggeractive";
 		//本机使用
-		String url = "http://fc1d40f2.ngrok.io/fishery/api/equipment/triggeractive";
+		//String url = " http://72a7e62c.ngrok.io/fishery/api/equipment/triggeractive";
 		List<String> devids=new ArrayList<String>();
 		devids.add(device_sn);
 		String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";

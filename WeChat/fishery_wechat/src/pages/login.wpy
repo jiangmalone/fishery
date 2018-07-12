@@ -107,6 +107,7 @@
       <view class="getcode1" wx:if="{{waitting}}">{{wait}}s后重试</view>
       <view class="{{phoneNumber!==''?'getcode':'getcode1'}}" @tap="getVerificationCode" wx:else>发送验证码</view>
     </view>
+    <!--<button open-type="getUserInfo" class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}" @tap="confirminfo">注册/登录</button>-->
     <button class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}" @tap="confirminfo">注册/登录</button>
   </view>
 </template>
@@ -228,6 +229,24 @@ export default class Login extends wepy.page {
     }, 1000)
   }
   onLoad() {
+//    wepy.getSetting({
+//      success(res) {
+//        if (!res.authSetting['scope.userInfo']) {
+//          wepy.authorize({
+//            scope: 'scope.userInfo',
+//            success() {
+//              // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
+//              wepy.getUserInfo({
+//                success: function(res) {
+//                  console.log(res.userInfo)
+//                }
+//              })
+//            }
+//          })
+//        }
+//      }
+//    })
+
     wepy.login({
       success: (res) => {
         let code = res.code

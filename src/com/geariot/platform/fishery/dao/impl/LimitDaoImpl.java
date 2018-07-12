@@ -7,6 +7,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.geariot.platform.fishery.dao.LimitDao;
 import com.geariot.platform.fishery.entities.Limit_Install;
@@ -20,7 +22,7 @@ public class LimitDaoImpl implements LimitDao {
 	private SessionFactory sessionFactory;
 	
 	private Session getSession() {
-		return sessionFactory.openSession();
+		return sessionFactory.getCurrentSession();
 	}
 	
 	@Override
@@ -76,6 +78,7 @@ public class LimitDaoImpl implements LimitDao {
 		this.getSession().merge(limit_Install);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED)
 	@Override
 	public Limit_Install findLimitByDeviceSnsAndWay(String device_sn, int way) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Limit_Install");

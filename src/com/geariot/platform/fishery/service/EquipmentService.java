@@ -20,6 +20,7 @@ import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.model.*;
 import com.geariot.platform.fishery.timer.CMDUtils;
 import com.geariot.platform.fishery.utils.DataExportExcel;
+import com.geariot.platform.fishery.utils.Diagnosing;
 import com.mysql.fabric.xmlrpc.base.Array;
 import com.sun.net.httpserver.Authenticator.Success;
 
@@ -184,11 +185,8 @@ public class EquipmentService {
 			String  device_sn = sensor.getDevice_sn();
 			logger.debug(device_sn);
 			String api_device_sn = device_sn.substring(2, device_sn.length());
-			/*GetDeviceApi api = new GetDeviceApi(api_device_sn, key);
-			BasicResponse<DeviceResponse> response = api.executeApi();*/
-			//判断onenet上是否有设备
-		/*	if(response.errno == 0) {//onenet上存在设备
-*/				if(deviceDao.findDevice(api_device_sn)==null) {	
+			
+			if(deviceDao.findDevice(api_device_sn)==null) {	
 					logger.debug("设备不存在，添加设备");
 					//设备号不存在，添加设备
 					Device device = new Device();
@@ -217,13 +215,8 @@ public class EquipmentService {
 			                PondFish senbinfs=pondFishList.get(0);
 			                pondfishtype=senbinfs.getType();
 			                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
-			                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
-			                if(triggeraddresult==1) {
-			                	//return RESCODE.SUCCESS.getJSONRES();
-			                }else {
-			                	//return RESCODE.TRIGGER_FAILED.getJSONRES();
-			                }
-			            }/*else return RESCODE.POND_NO_FISH.getJSONRES();*/		        	
+			                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);			            
+			            }	        	
 					}	
 					sensorDao.save(sensor);
 					logger.debug("在sensor中添加了一个传感器");	
@@ -263,46 +256,10 @@ public class EquipmentService {
 					}else {
 						return RESCODE.DEVICESNS_REPEAT.getJSONRES();
 					}
-					/*Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
-					sensorOld.setName(sensor.getName());
-					sensorOld.setRelation(sensor.getRelation());
-					logger.debug("非新设备，已在其他塘口使用过");
-					Sensor sensorOld = sensorDao.findSensorByDeviceSns(sensor.getDevice_sn());
-					sensorOld.setName(sensor.getName());
-					sensorOld.setPondId(sensor.getPondId());
-					sensorOld.setRelation(sensor.getRelation());
-					sensorOld.setStatus(sensor.getStatus());				
-					logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
-					Pond pond = pondDao.findPondByPondId(sensor.getPondId());
-					if (pond == null) {
-						//塘口不存在
-						sensorOld.setPondId(0);
-						logger.debug("塘口Id:" + sensorOld.getPondId()+ "在数据库中无记录!!!");
-						return RESCODE.POND_NOT_EXIST.getJSONRES();
-					}else {
-						sensorOld.setPondId(sensor.getPondId());
-						//塘口存在，添加触发器
-						//根据鱼的种类添加触发器1.鱼2.虾3.蟹
-						Pond sensorbindpond=pondDao.findPondByPondId(sensor.getPondId());
-						List<PondFish> pondFishList = pondFishDao.getFishbyPondId(sensorbindpond.getId());
-			            int pondfishtype;
-			            if (pondFishList.size()!=0){
-			            	//塘口中有鱼
-			            	logger.debug("塘口中有鱼");
-			            	logger.debug("塘口中共有"+pondFishList.size()+"种");
-			                PondFish senbinfs=pondFishList.get(0);
-			                pondfishtype=senbinfs.getType();
-			                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
-			                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
-			            }else return RESCODE.POND_NO_FISH.getJSONRES();		      
-					}
-					sensorDao.updateSensor(sensorOld);
-					return RESCODE.SUCCESS.getJSONRES();*/
+					
 				}
 			}
-			/*else {//onenet上没有设备，设备号无效
-				return RESCODE.DEVICESNS_INVALID.getJSONRES();
-			}*/
+
 
 	public Map<String, Object> addController(Controller[] controllers) {
 
@@ -1962,6 +1919,7 @@ public class EquipmentService {
 	}
 	
 	public String getControllerPortStatus(String devId,int port) {
+		System.out.println("123123123123123123123123123");
 		String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
 		String id = "KM"+port;
 		/**
@@ -1970,6 +1928,7 @@ public class EquipmentService {
 		 * @param datastreamid:数据流名称 ,String
 		 * @param key:masterkey 或者 设备apikey
 		 */
+		System.out.println("获取控制器端口状态");
 		GetDatastreamApi api = new GetDatastreamApi(devId, id, key);
 		BasicResponse<DatastreamsResponse> response = api.executeApi();
 		System.out.println("errno:"+response.errno+" error:"+response.error);
@@ -2028,16 +1987,35 @@ public class EquipmentService {
 		return null;
 	}
 	
-	public Map<String, Object> getDianosing(int pondId){
+	public String getDianosing(int pondId){
+		String returnString = null;
+		Diagnosing dia = new Diagnosing();
+		List<PondFish> pondFish = pondFishDao.getFishbyPondId(pondId);
+		int type=0;
+		if(pondFish.size()>0) {
+			type = pondFish.get(0).getType();
+		}		
 		Map<String, Object> dataResult = analysisData(pondId);
+		String peakAndValleyAnalysis = null;
+		String pH = null;
+		String DO = null;
+		String WT = null;
 		if(dataResult !=null) {
 			//分析pH，获得pH诊断
 			Map<String , Object> pHMap =   (Map<String, Object>) dataResult.get("pH");
 			if(pHMap != null) {
 				Float min = (Float) pHMap.get("min");
-				Float max = (Float) pHMap.get("max");
+				Float max = (Float) pHMap.get("max");				
 				Float average = (Float) pHMap.get("average");
 				
+				
+				
+				
+				Float dvalue =max-min;				
+				if(dvalue>2) {
+					peakAndValleyAnalysis = ";注意预防倒藻和氨氮浓度";
+				}	
+				pH = "PH最小值"+min+"，最大值"+max+"，均值为"+average+","+dia.getDiagnosing("pH", average, type)+peakAndValleyAnalysis==null?"":peakAndValleyAnalysis+"。";
 			}
 			//分析DO，获得DO诊断
 			Map<String , Object> DOMap =  (Map<String, Object>) dataResult.get("DO");
@@ -2045,16 +2023,26 @@ public class EquipmentService {
 				Float min = (Float) pHMap.get("min");
 				Float max = (Float) pHMap.get("max");
 				Float average = (Float) pHMap.get("average");
+				Float dvalue =max-min;
+				
+				if(dvalue>12) {
+					peakAndValleyAnalysis = "藻类太多，建议使用光和细菌或换水降低藻类浓度";
+				}else if(dvalue<2 && min<8){
+					peakAndValleyAnalysis ="水体太瘦，建议肥水";
+				}
+				DO = "水体溶氧最小值"+min+"，最大值"+max+"，均值为"+average+","+dia.getDiagnosing("pH", average, type)+peakAndValleyAnalysis+"。";
 			}
 			//分析WT，获得WT诊断
 			Map<String , Object> WTMap =  (Map<String, Object>) dataResult.get("WT");
-			if(pHMap != null) {
-				Float min = (Float) pHMap.get("min");
-				Float max = (Float) pHMap.get("max");
-				Float average = (Float) pHMap.get("average");
+			if(WTMap != null) {
+				Float min = (Float) WTMap.get("min");
+				Float max = (Float) WTMap.get("max");
+				Float average = (Float) WTMap.get("average");
+				WT = "水温最小值"+min+"，最大值"+max+"，均值为"+average+","+dia.getDiagnosing("pH", average, type)+"。";
 			}
 		}
-		return null;
+		returnString = DO + pH + WT ;
+		return returnString;
 	}
 	
 	
@@ -2069,6 +2057,8 @@ public class EquipmentService {
 		 * 目前，只分析一台设备的数据
 		 */
 		logger.debug("塘口"+pondId);
+
+		
 		List<Sensor> sensorList= sensorDao.findSensorsByPondId(pondId);
 		logger.debug("传感器"+sensorList.size());
 		List<AIO> aioList = aioDao.findAIOsByPondId(pondId);

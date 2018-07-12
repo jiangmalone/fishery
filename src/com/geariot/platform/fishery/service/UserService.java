@@ -350,12 +350,14 @@ public class UserService {
 					//获得设备离线/在线状态
 					GetDevicesStatus api = new GetDevicesStatus(controller.getDevice_sn(),key);
 			        BasicResponse<DevicesStatusList> response = api.executeApi();
+			        System.out.println(response.getJson());
 			        if(response.errno == 0) {
 			        	controllerMap.put("online", response.data.getDevices().get(0).getIsonline());			        	
 			        }
 			      //获得控制器最新数据
 			        GetLatesDeviceData lddapi = new GetLatesDeviceData(controller.getDevice_sn(), key);
 			        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
+			        System.out.println(response2.getJson());
 			        if(response2.errno == 0) {
 			        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response2.data.getDevices().get(0).getDatastreams();
 				        for(int i=0;i<DatastreamsList.size();i++) {
@@ -365,7 +367,7 @@ public class UserService {
 			        }else {
 			        	controllerMap.put("data", false);
 			        }
-			        
+
 			        List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(controller.getDevice_sn(), controller.getPort());
 			        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
 			       // List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(controller.getDevice_sn());
@@ -375,6 +377,7 @@ public class UserService {
 			        controllerMap.put("Limit", limit);
 			        controllerMap.put("controller", controller);
 			        controllerLM.add(controllerMap);
+	
 				}
 			}
 			
@@ -383,9 +386,11 @@ public class UserService {
 			map11.put("sensorlist", sensorLM);
 			map11.put("aioList", aioLM);
 			map11.put("controllerList", controllerLM);	
-			ol.add(map11);			
+			ol.add(map11);	
+
 		}
 		map.put("myHome", ol);
+	
 		return map;
 	}
 	

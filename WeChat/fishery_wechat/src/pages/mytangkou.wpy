@@ -250,12 +250,12 @@ export default class Mytangkou extends wepy.page {
     })
   }
   onUnload() {
-    // wepy.navigateTo({
-    //   url: `personal`
-    // })
-    wepy.navigateBack({
-      delta: 2
+    wepy.navigateTo({
+      url: `personal`
     })
+    // wepy.navigateBack({
+    //   delta: 2
+    // })
   }
 
 

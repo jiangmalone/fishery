@@ -232,10 +232,10 @@ export default class Login extends wepy.page {
     wepy.getUserInfo({
       success(res) {
         // that.globalData.userInfo = res.userInfo;
-        console.log(res)
+        console.log('成功了')
       },
       fail(error) {
-        console.log(error)
+        console.log('失败了')
       }
     })
     // wepy.getSetting({

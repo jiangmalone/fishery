@@ -102,7 +102,7 @@
   <view class="diagnosis">
     <!--列表-->
     <!--<repeat wx:for="{{dataInfo}}" wx:key="index" item="item" class="diaBox" @tap="openModal">-->
-    <view class="diaBox" wx:for="{{dataInfo}}" wx:key="index" id="{{index}}" @tap="openModal">
+    <view class="diaBox" wx:for="{{dataInfo}}" wx:key="index" id="{{index}}" wx:if="{{item.result!==''}}" @tap="openModal">
       <!--标题-->
       <view class="diaTitle">
         <text>{{index+1}}  {{item.pondName}}</text>

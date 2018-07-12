@@ -273,8 +273,11 @@ export default class Myequiment extends wepy.page {
     })
   }
   onUnload() {
-    wepy.navigateTo({
-      url: `personal`
+    // wepy.navigateTo({
+    //   url: `personal`
+    // })
+    wepy.navigateBack({
+      delta: 2
     })
   }
 }

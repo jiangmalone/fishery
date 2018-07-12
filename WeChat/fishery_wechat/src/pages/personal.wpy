@@ -201,11 +201,12 @@ export default class Personal extends wepy.page {
         content: '您是否要退出登录？',
         success: (res) => {
           if (res.confirm) {
-            console.log(this.$parent.globalData)
             wepy.showLoading()
             wepy.request({
               url: this.$parent.globalData.baseUrl + 'api/' + 'webService/logout',
-              data: this.$parent.globalData.phone,
+              data: {
+                phone: this.$parent.globalData.phone
+              },
               method: 'GET',
               success: res => {
                 if (res.data.msg === '成功') {

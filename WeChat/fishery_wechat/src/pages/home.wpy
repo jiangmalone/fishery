@@ -542,8 +542,8 @@
         <!--标题栏-->
         <view class="stype">{{tangkoudetail.sensorlist[0].sensor.name}}-数据指标
           <text class="{{tangkoudetail.sensorlist[0].online === false ? 'isoutline' : 'isonline'}}">
-            <text class="{{tangkoudetail.sensorlist[0].online === false ? 'outl' : 'inl'}}">
-            </text>{{tangkoudetail.sensorlist[0].online === true ? '在线' : '离线'}}
+            <text></text>
+            <text class="{{tangkoudetail.sensorlist[0].online === true ? 'green' : 'gray'}}">{{tangkoudetail.sensorlist[0].online === true ? ' ● 在线' : ' ● 离线'}}</text>
           </text>
         </view>
 
@@ -604,7 +604,7 @@
 
       <!--控制管理列表-->
       <view class="phensor" wx:if="{{tangkoudetail.controllerList.length > 0}}">
-        <view class="phtype">控制管理 <text class="{{tangkoudetail.controllerList.online ? 'blue' : 'gray'}}">{{tangkoudetail.controllerList.online ? ' ● 在线' : ' ● 离线'}}</text></view>
+        <view class="phtype">控制管理 <text class="{{tangkoudetail.controllerList.online ? 'green' : 'gray'}}">{{tangkoudetail.controllerList.online ? ' ● 在线' : ' ● 离线'}}</text></view>
 
         <repeat wx:for="{{tangkoudetail.controllerList}}" wx:key="index" item="item" wx:for-index="controllerIdx">
           <view class="phvalue">

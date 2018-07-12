@@ -139,7 +139,8 @@
       navigationBarTitleText: '诊断'
     }
     data = {
-      showModal: false
+      showModal: false,
+      dataInfo: []
     }
 
     methods = {
@@ -151,7 +152,17 @@
       }
     }
     events = {}
-    onShow() {}
-    onLoad() {}
+    onLoad() {
+      wepy.request({
+        url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/analysisData',
+        data: {
+          relation: this.$parent.globalData.relation
+        },
+        method: 'GET',
+        success: res => {
+          this.dataInfo = res.data
+        }
+      })
+    }
   }
 </script>

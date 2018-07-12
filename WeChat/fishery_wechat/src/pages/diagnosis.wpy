@@ -1,7 +1,7 @@
 <style lang="less">
   .diagnosis{
     background: #f2f2f2;
-    padding-top: 42rpx;
+    /*padding-top: 42rpx;*/
     padding-bottom: 50rpx;
     color: #323b45;
     min-height: 1334rpx;
@@ -46,6 +46,7 @@
       width: 686rpx;
       background-color: #ffffff;
       margin-left: 34rpx;
+      margin-top: 42rpx;
       box-shadow: 0 0 50rpx #dcdcdc;
       }
     .diaTitle{
@@ -71,7 +72,21 @@
     }
     .diaContent{
       color: #5c6979;
-      font-size: 30rpx;
+      font-size: 29rpx;
+      padding: 20rpx 50rpx 30rpx 50rpx;
+      line-height: 55rpx;
+      text{
+        display: block;
+      }
+      .mark{
+        color: #ff5a35;
+      }
+    }
+    .diaContentModal{
+      height: 500rpx;
+      overflow: scroll;
+      color: #5c6979;
+      font-size: 29rpx;
       padding: 20rpx 50rpx 30rpx 50rpx;
       line-height: 55rpx;
       text{
@@ -86,10 +101,11 @@
 <template>
   <view class="diagnosis">
     <!--列表-->
-    <view class="diaBox" @tap="openModal">
+    <!--<repeat wx:for="{{dataInfo}}" wx:key="index" item="item" class="diaBox" @tap="openModal">-->
+    <view class="diaBox" wx:for="{{dataInfo}}" wx:key="index" id="{{index}}" @tap="openModal">
       <!--标题-->
       <view class="diaTitle">
-        <text>1小鱼塘</text>
+        <text>{{index+1}}  {{item.pondName}}</text>
         <view class="diaMore">
           查看详情<image src="../images/更多_7_@2x.png"></image>
         </view>
@@ -97,14 +113,12 @@
 
       <!--内容-->
       <view class="diaContent">
-        <text class="mark">诊断结果：溶氧数据异常</text>
+        <text class="mark">诊断结果：{{item.result}}</text>
         <text>解决方案：</text>
-        <text>1、观察增氧机设备是否已自动开启
-          2、检查是否需要更换电解液
-          3、观察增氧机设备是否已自动开启
-        </text>
+        <text>{{item.solution}}</text>
       </view>
     </view>
+    <!--</repeat>-->
 
     <!--模态框的遮罩层-->
     <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
@@ -114,17 +128,14 @@
 
       <!--标题-->
       <view class="diaTitle">
-        <text>1小鱼塘</text>
+        <text>{{modalInfo.pondName}}</text>
       </view>
 
       <!--内容-->
-      <view class="diaContent">
-        <text class="mark">诊断结果：溶氧数据异常</text>
+      <view class="diaContentModal">
+        <text class="mark">诊断结果：{{modalInfo.result}}</text>
         <text>解决方案：</text>
-        <text>1、观察增氧机设备是否已自动开启
-          2、检查是否需要更换电解液
-          3、观察增氧机设备是否已自动开启
-        </text>
+        <text>{{modalInfo.solution}}</text>
       </view>
       <button class="modal-but" @tap="closeModal">确定</button>
     </view>
@@ -140,11 +151,16 @@
     }
     data = {
       showModal: false,
-      dataInfo: []
+      dataInfo: [],
+      ind: 0,
+      modalInfo: {}
     }
 
     methods = {
-      openModal() {
+      openModal(e) {
+        this.ind = e.currentTarget.id
+        this.modalInfo = this.dataInfo[this.ind]
+        this.$apply()
         this.showModal = true
       },
       closeModal() {
@@ -161,6 +177,11 @@
         method: 'GET',
         success: res => {
           this.dataInfo = res.data
+          this.$apply()
+          // Analysis:""
+          // pondName:"2222asggg"
+          // result:"水体溶氧最小值0.0，最大值0.0，均值为0.0。PH最小值0.0，最大值0.0，均值为0.0。水温最小值0.0，最大值0.0，均值为0.0。"
+          // solution:
         }
       })
     }

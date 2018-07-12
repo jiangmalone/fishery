@@ -460,31 +460,26 @@
   }
   .green{
     display: inline-block;
-    width: 80rpx;
     margin-left: 24rpx;
     color:  #00cf9b;
   }
   .red{
     display: inline-block;
-    width: 80rpx;
     margin-left: 24rpx;
     color:  #da330e;
   }
   .yellow{
     display: inline-block;
-    width: 80rpx;
     margin-left: 24rpx;
     color:  #edba00;
   }
   .blue{
     display: inline-block;
-    width: 80rpx;
     margin-left: 24rpx;
     color:  #207ddf;
   }
   .gray{
     display: inline-block;
-    width: 80rpx;
     margin-left: 24rpx;
     color:  #b1b1b1;
   }
@@ -609,7 +604,7 @@
 
       <!--控制管理列表-->
       <view class="phensor" wx:if="{{tangkoudetail.controllerList.length > 0}}">
-        <view class="phtype">控制管理 <view class="">{{tangkoudetail.controllerList.online ? '在线' : '离线'}}</view></view>
+        <view class="phtype">控制管理 <text class="{{tangkoudetail.controllerList.online ? 'blue' : 'gray'}}">{{tangkoudetail.controllerList.online ? ' ● 在线' : ' ● 离线'}}</text></view>
 
         <repeat wx:for="{{tangkoudetail.controllerList}}" wx:key="index" item="item" wx:for-index="controllerIdx">
           <view class="phvalue">

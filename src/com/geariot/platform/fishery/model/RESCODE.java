@@ -43,6 +43,7 @@ public enum RESCODE {
 	TRIGGER_FAILED(31,"触发器设置错误"),
 	NO_DEVICE(32,"无设备"),
 	DEVICESNS_REPEAT(33,"无法添加，系统已存在该设备"),
+	WX_LOGIN_REPEAT(34,"微信用户登录多个账号，请退出其中一个账号。"),
 	FOR_EXCEPTION
 	;
 	

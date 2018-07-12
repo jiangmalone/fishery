@@ -5,6 +5,7 @@ package com.geariot.platform.fishery.service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.transaction.Transactional;
@@ -34,12 +35,12 @@ public class WebServiceService {
 	@Autowired
 	private WXUserDao wxUserDao;
 
-	public Map<String, Object> bindUser(String phone, String openId){
+	/*public Map<String, Object> bindUser(String phone, String openId){
 		logger.debug("绑定用户的openId：" + openId);
 		if(openId == null){
 			return RESCODE.WECHAT_GET_PARAM_WRONG.getJSONRES();
 		}
-		WXUser userOpenId = wxUserDao.findUserByOpenId(openId);
+		List<WXUser> userOpenId = wxUserDao.findUsersByOpenId(openId);
 		WXUser userPhone = wxUserDao.findUserByPhone(phone);
 		//本地数据库没有openId的记录
 		if(userOpenId == null){
@@ -65,12 +66,12 @@ public class WebServiceService {
 		}
 		return RESCODE.SUCCESS.getJSONRES(userOpenId);
 	}
-
+*/
 	public boolean isExistUserOpenId(String openId) {
 		if(openId == null || openId.length() < 0){
 			return false;
 		}else{
-			WXUser wxUser = wxUserDao.findUserByOpenId(openId);
+			List<WXUser> wxUser = wxUserDao.findUsersByOpenId(openId);
 			return wxUser != null;
 		}
 	}
@@ -91,6 +92,7 @@ public class WebServiceService {
 		} else {
 			wxUser.setHeadimgurl(headimgurl);
 			wxUser.setOpenId(openId);
+			wxUser.setLogin(true);
 			return RESCODE.SUCCESS.getJSONRES(wxUser);
 		}
 	}

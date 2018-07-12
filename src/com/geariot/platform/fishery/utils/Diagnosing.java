@@ -1,15 +1,59 @@
 package com.geariot.platform.fishery.utils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
 import org.springframework.stereotype.Component;
 
 @Component
 public class Diagnosing {
-	public static  final String[] DOString = {"水体溶氧正常","水体溶氧偏低，及时增氧","水体溶氧极低，请测量氨氮、亚硝酸盐，及时调水"};
-	public static final String[] pHString = {"PH正常","PH过低，请使用石灰或换水，并适当追肥","PH过高，换水或添加微生物制剂进行调水","PH极端异常，检查PH传感器是否需要维护保养"};
-	public static final String[] WTString = {"水温适宜","水温偏高，控制饲料投喂量，提前调水","水温偏低，请控制饲料投喂量，提前调水"};	
-
-
+	public Map<String, Object> getDiagnosing() {
+		Properties prop = new Properties();
+		ResourceBundle resource = ResourceBundle.getBundle("diagnosing");
+		String[] DOString = new String[3];
+		String[] pHString = new String[4];
+		String[] WTString = new String[3];
+		String[] peakAndValleyAnalysis = new String[3];
+		try {
+			WTString[0] = new String(resource.getString("WTString0").getBytes("ISO-8859-1"),"utf-8");
+			WTString[1] = new String(resource.getString("WTString1").getBytes("ISO-8859-1"),"utf-8");
+			WTString[2] = new String(resource.getString("WTString2").getBytes("ISO-8859-1"),"utf-8");
+			DOString[0] = new String(resource.getString("DOString0").getBytes("ISO-8859-1"),"utf-8");
+			DOString[1] = new String(resource.getString("DOString1").getBytes("ISO-8859-1"),"utf-8");
+			DOString[2] = new String(resource.getString("DOString2").getBytes("ISO-8859-1"),"utf-8");
+			pHString[0] = new String(resource.getString("pHString0").getBytes("ISO-8859-1"),"utf-8");
+			pHString[1] = new String(resource.getString("pHString1").getBytes("ISO-8859-1"),"utf-8");
+			pHString[2] = new String(resource.getString("pHString2").getBytes("ISO-8859-1"),"utf-8");
+			pHString[3] = new String(resource.getString("pHString3").getBytes("ISO-8859-1"),"utf-8");
+			peakAndValleyAnalysis[0] = new String(resource.getString("peakAndValleyAnalysis0").getBytes("ISO-8859-1"),"utf-8");
+			peakAndValleyAnalysis[1] = new String(resource.getString("peakAndValleyAnalysis1").getBytes("ISO-8859-1"),"utf-8");
+			peakAndValleyAnalysis[2] = new String(resource.getString("peakAndValleyAnalysis2").getBytes("ISO-8859-1"),"utf-8");
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Map<String, Object> diagnosing = new HashMap<>();
+		diagnosing.put("DOString", DOString);
+		diagnosing.put("pHString",pHString);
+		diagnosing.put("WTString", WTString);
+		diagnosing.put("peakAndValleyAnalysis", peakAndValleyAnalysis);
+		return diagnosing;
+	}
+	
+	
 	public String getDiagnosing(String data,float value,int type) {
+		Map<String, Object> diagnosingMap = getDiagnosing();
+		String[] WTString = (String[]) diagnosingMap.get("WTString");
+		String[] pHString = (String[]) diagnosingMap.get("pHString");
+		String[] DOString = (String[]) diagnosingMap.get("DOString");
 		String diagnosing = null;
 		if(type == 0) {//鱼
 			if(data.equals("WT")) {

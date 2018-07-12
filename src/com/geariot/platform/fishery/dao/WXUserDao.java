@@ -6,7 +6,9 @@ import com.geariot.platform.fishery.entities.WXUser;
 
 public interface WXUserDao {
 	
-	WXUser findUserByOpenId(String openId);
+/*	WXUser findUserByOpenId(String openId);*/
+	
+	List<WXUser> findUsersByOpenId(String openId);
 	
 	WXUser findUserById(int Id);
 

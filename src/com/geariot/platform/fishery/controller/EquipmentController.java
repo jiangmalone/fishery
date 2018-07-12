@@ -239,8 +239,8 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/analysisData", method = RequestMethod.GET)
-	public String analysisData(int pondId){
-			return  equipmentService.getDianosing(pondId);
+	public List<Map<String, Object>> analysisData(String relation){
+		return  equipmentService.getPersonalDianosing(relation);
 	}
 	
 }

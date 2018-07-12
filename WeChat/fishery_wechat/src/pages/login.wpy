@@ -229,62 +229,62 @@ export default class Login extends wepy.page {
     }, 1000)
   }
   onLoad() {
-//    wepy.getSetting({
-//      success(res) {
-//        if (!res.authSetting['scope.userInfo']) {
-//          wepy.authorize({
-//            scope: 'scope.userInfo',
-//            success() {
-//              // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
-//              wepy.getUserInfo({
-//                success: function(res) {
-//                  console.log(res.userInfo)
-//                }
-//              })
-//            }
-//          })
-//        }
-//      }
-//    })
+    // wepy.getSetting({
+    //   success(res) {
+    //     if (!res.authSetting['scope.userInfo']) {
+    //       wepy.authorize({
+    //         scope: 'scope.userInfo',
+    //         success() {
+    //           // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
+    //           wepy.getUserInfo({
+    //             success: function(res) {
+    //               console.log(res.userInfo)
+    //             }
+    //           })
+    //         }
+    //       })
+    //     }
+    //   }
+    // })
 
     wepy.login({
       success: (res) => {
         let code = res.code
         console.log(res)
         wepy.request({
-          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserinfo',
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserOpenId',
           data: {
             code: code
           },
           method: 'GET',
           success: res => {
             console.log('res.data', res.data)
-            if (res.data.data) {
-              this.$parent.globalData.id = res.data.data.id
-              this.$parent.globalData.name = res.data.data.name
-              this.$parent.globalData.sex = res.data.data.sex
-              this.$parent.globalData.phone = this.phoneNumber
-              this.$parent.globalData.life = res.data.data.life
-              this.$parent.globalData.headImg = res.data.data.headimgurl
-              this.$parent.globalData.relation = res.data.data.relation
-              this.$parent.globalData.openId = res.data.data.openId
-              wepy.switchTab({
-                url: `home`
-              })
-            }
+            this.$parent.globalData.openId = res.data.openId
+            wepy.request({
+              url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserinfo',
+              data: {
+                code: code
+              },
+              method: 'GET',
+              success: res => {
+                console.log('res.data', res.data)
+                if (res.data.data) {
+                  this.$parent.globalData.id = res.data.data.id
+                  this.$parent.globalData.name = res.data.data.name
+                  this.$parent.globalData.sex = res.data.data.sex
+                  this.$parent.globalData.phone = this.phoneNumber
+                  this.$parent.globalData.life = res.data.data.life
+                  this.$parent.globalData.headImg = res.data.data.headimgurl
+                  this.$parent.globalData.relation = res.data.data.relation
+                  this.$parent.globalData.openId = res.data.data.openId
+                  wepy.switchTab({
+                    url: `home`
+                  })
+                }
+              }
+            })
           }
         })
-      }
-    })
-    wepy.request({
-      url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserOpenId',
-      data: {
-        code: code
-      },
-      method: 'GET',
-      success: res => {
-        console.log('res.data', res.data)
-        this.$parent.globalData.openId = res.data.openId
       }
     })
   }

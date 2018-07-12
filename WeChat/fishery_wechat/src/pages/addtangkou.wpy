@@ -270,7 +270,7 @@ export default class Addtangkou extends wepy.page {
   onLoad(options) {
     this.action = options.action ? options.action : 'add'
     this.fishlist = options.select ? JSON.parse(options.select) : []
-    this.tangkouinfo = options.type ? JSON.parse(options.type) : {}
+    this.tangkouinfo = options.type ? JSON.parse(options.type) : this.tangkouinfo
     if (this.action === 'modify') {
       wepy.setNavigationBarTitle({
         title: '修改塘口'

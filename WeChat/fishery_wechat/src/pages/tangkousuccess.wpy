@@ -64,7 +64,7 @@ export default class Tangkousuccess extends wepy.page {
     // 返回绑定设备
     toBindEquiment() {
       wepy.redirectTo({
-        url: 'scan'
+        url: this.$parent.globalData.device_sn
       })
     },
 

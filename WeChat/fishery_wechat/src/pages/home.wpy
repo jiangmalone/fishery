@@ -64,18 +64,21 @@
   }
   .tab1{
     width: 750rpx;
-    height: 156rpx;
+    height: 130rpx;
+    overflow-x: scroll;
+    white-space: nowrap;
     background-color:#f2f2f2;
     .tab-index1{
       display: inline-block;
-      width: 200rpx;
+      /*width: 200rpx;*/
       height: 80rpx;
       font-size: 30rpx;
       margin-left: 10rpx;
+      padding: 0 50rpx 0 50rpx;
       margin-right: 10rpx;
       background: #E6E8EB;
       text-align: center;
-      margin-top: 35rpx;
+      margin-top: 23rpx;
       line-height: 80rpx;
       border: 2rpx solid #FFFFFF;
       border-radius: 16rpx;
@@ -83,13 +86,14 @@
     .tab-index-active1{
       display: inline-block;
       height: 80rpx;
-      width: 200rpx;
+      /*width: 200rpx;*/
+      padding: 0 50rpx 0 50rpx;
       margin-right: 10rpx;
       margin-left: 10rpx;
       font-size: 30rpx;
       background: #FFFFFF;
       text-align: center;
-      margin-top: 35rpx;
+      margin-top: 23rpx;
       line-height: 80rpx;
       color: #3E8BD9;
       border: 4rpx solid #3E8BD9;
@@ -98,28 +102,34 @@
   }
   .tab{
     width: 750rpx;
-    height: 156rpx;
+    height: 130rpx;
     background-color:#f2f2f2;
     .tab-index{
       display: inline-block;
-      width: 200rpx;
+      /*width: 200rpx;*/
       height: 80rpx;
       font-size: 30rpx;
+      margin-right: 10rpx;
+      margin-left: 10rpx;
       background: #E6E8EB;
+      padding: 0 50rpx 0 50rpx;
       text-align: center;
-      margin-top: 35rpx;
+      margin-top: 23rpx;
       line-height: 80rpx;
       border: 2rpx solid #FFFFFF;
       border-radius: 16rpx;
     }
     .tab-index-active{
       display: inline-block;
-      width: 200rpx;
+      /*width: 200rpx;*/
       height: 80rpx;
+      padding: 0 50rpx 0 50rpx;
       font-size: 30rpx;
       background: #FFFFFF;
+      margin-right: 10rpx;
+      margin-left: 10rpx;
       text-align: center;
-      margin-top: 35rpx;
+      margin-top: 23rpx;
       line-height: 80rpx;
       color: #3E8BD9;
       border: 4rpx solid #3E8BD9;
@@ -128,9 +138,9 @@
   }
   .tab-eg{
       display: inline-block;
-      width: 80rpx;
-      height: 156rpx;
-      line-height: 156rpx;
+      width: 40rpx;
+      height: 130rpx;
+      line-height: 130rpx;
       color: #323B45;
       background-color: #f2f2f2;
       font-size: 28rpx;
@@ -146,6 +156,7 @@
       height: 44rpx;
       margin-left: 34rpx;
       padding-top: 36rpx;
+      padding-bottom: 30rpx;
       color:#140000;
       .isoutline{
         float: right;
@@ -201,27 +212,29 @@
       }
       .o2{
         display: inline-block;
-        font-size: 34rpx;
+        font-size: 30rpx;
         color: #323B45;
         letter-spacing: 0;
+        width: 112rpx;
         text-align: center;
         margin-left: 60rpx;
       }
       .ph{
         display: inline-block;
-        font-size: 34rpx;
+        font-size: 30rpx;
         color: #323B45;
         letter-spacing: 0;
+        width: 112rpx;
         text-align: center;
-        margin-left: 80rpx;
+        margin-left: 60rpx;
       }
       .phvalue{
         display: inline-block;
         font-size: 58rpx;
+        width: 100rpx;
         color: #3A95CF;
-        margin-left: 90rpx;
-        position: relative;
-        top: 16rpx;
+        margin-left: 80rpx;
+        text-align: center;
         .unit{
           font-size: 36rpx;
         }
@@ -233,6 +246,7 @@
       .ovalue {
         display: inline-block;
         font-size: 58rpx;
+        width: 70rpx;
         color: #3A95CF;
         margin-left: 80rpx;
         text-align: center;
@@ -245,7 +259,7 @@
       }
       .sresult{
         display: inline-block;
-        font-size: 40rpx;
+        font-size: 30rpx;
         margin: 60rpx;
         position: relative;
         top: -40rpx;
@@ -275,7 +289,6 @@
       }
       .o2{
         display: inline-block;
-        width: 112rpx;
         font-size: 34rpx;
         color: #323B45;
         letter-spacing: 0;
@@ -285,7 +298,6 @@
       }
       .ph{
         display: inline-block;
-        width: 112rpx;
         font-size: 34rpx;
         color: #323B45;
         letter-spacing: 0;
@@ -299,6 +311,7 @@
         color: #3A95CF;
         margin-left: 90rpx;
         position: relative;
+        width: 70rpx;
         top: -34rpx;
         .unit{
           font-size: 36rpx;
@@ -314,7 +327,6 @@
         color: #3A95CF;
         margin-left: 80rpx;
         height: 112rpx;
-        width: 112rpx;
         .unit{
           font-size: 36rpx;
         }
@@ -325,7 +337,6 @@
       }
       .sresult{
         display: inline-block;
-        width: 112rpx;
         font-size: 40rpx;
         margin: 60rpx;
         position: relative;
@@ -341,6 +352,7 @@
   .phensor {
     width:750rpx;
     font-size: 30rpx;
+    padding: 0 0 30rpx 0;
     .phtype{
       width: 404rpx;
       height: 44rpx;
@@ -378,7 +390,7 @@
       background: #FFFFFF;
       box-shadow: 0 2px 8px 0 rgba(225,225,225,0.50);
       border-radius: 8px;
-      margin-top: 58rpx;
+      margin-top: 30rpx;
       padding: 0 0 30rpx 0;
       margin-left: 32rpx;
       font-size: 32rpx;
@@ -446,6 +458,36 @@
       }
     }
   }
+  .green{
+    display: inline-block;
+    width: 64rpx;
+    margin-left: 24rpx;
+    color:  #00cf9b;
+  }
+  .red{
+    display: inline-block;
+    width: 64rpx;
+    margin-left: 24rpx;
+    color:  #da330e;
+  }
+  .yellow{
+    display: inline-block;
+    width: 64rpx;
+    margin-left: 24rpx;
+    color:  #edba00;
+  }
+  .blue{
+    display: inline-block;
+    width: 64rpx;
+    margin-left: 24rpx;
+    color:  #207ddf;
+  }
+  .gray{
+    display: inline-block;
+    width: 64rpx;
+    margin-left: 24rpx;
+    color:  #b1b1b1;
+  }
 }
 </style>
 <template>
@@ -479,25 +521,23 @@
       </view>
 
       <!--塘口列表滑块（大于3）-->
-      <swiper class="tab" display-multiple-items="{{3}}"
-              previous-margin="30rpx" next-margin="0rpx"
-              wx:if="{{tangkoulist.length > 3}}">
-        <repeat for="{{tangkoulist}}" key="index" item="item">
-          <swiper-item>
-            <text class="{{currentId === index ? 'tab-index-active' : 'tab-index'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{index+1}} {{item.pondname}}</text>
-          </swiper-item>
-        </repeat>
-      </swiper>
+      <!--<view class="tab" wx:if="{{tangkoulist.length > 3}}">-->
+        <!--<repeat for="{{tangkoulist}}" key="index" item="item">-->
+          <!--<swiper-item>-->
+            <!--<text class="{{currentId === index ? 'tab-index-active' : 'tab-index'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{index+1}} {{item.pondname}}</text>-->
+          <!--</swiper-item>-->
+        <!--</repeat>-->
+      <!--</view>-->
 
       <!--塘口列表滑块（小于3）-->
-      <view class="tab1" wx:else>
+      <view class="tab1" >
         <repeat for="{{tangkoulist}}" key="index" item="item">
           <text class="{{currentId === index ? 'tab-index-active1' : 'tab-index1'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{index+1}} {{item.pondname}}</text>
         </repeat>
       </view>
 
       <!--塘口列表的“更多”-->
-      <!--<view class="tab-eg" @tap="jupMoreTangkou">更多<image src="../images/group_16@2x.png" style="width:24rpx;height:25rpx;"></image></view>-->
+      <view class="tab-eg" wx:if="{{tangkoulist.length > 3}}" @tap="jupMoreTangkou"><image src="../images/group_16@2x.png" style="width:24rpx;height:25rpx;"></image></view>
 
       <!--传感器列表存在-->
       <view class="sensor"
@@ -524,7 +564,7 @@
             <view class="unit">mg/L</view>
           </view>
           <view class="sborder1"></view>
-          <view class="sresult">{{realTimeDataInfo.oxygen_status===0?'正常': (realTimeDataInfo.oxygen_status===1?'预警':'危险')}}</view>
+          <view class="{{realTimeDataInfo.oxygen_status===0?'sresult blue': (realTimeDataInfo.oxygen_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.oxygen_status===0?'正常': (realTimeDataInfo.oxygen_status===1?'预警':'危险')}}</view>
         </view>
 
         <!--温度-->
@@ -539,7 +579,7 @@
             <view class="unit1">℃</view>
           </view>
           <view class="sborder1"></view>
-          <view class="sresult">{{realTimeDataInfo.wt_status===0?'正常': (realTimeDataInfo.wt_status===1?'预警':'危险')}}</view>
+          <view class="{{realTimeDataInfo.wt_status===0?'sresult blue': (realTimeDataInfo.wt_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.wt_status===0?'正常': (realTimeDataInfo.wt_status===1?'预警':'危险')}}</view>
         </view>
 
         <!--ph-->
@@ -551,9 +591,10 @@
           <view class="sborder"></view>
           <view class="phvalue" style="color: #56acb8">
             <view>{{realTimeDataInfo.pH_value}}</view>
+            <!--<view class="unit1"> </view>-->
           </view>
           <view class="sborder1"></view>
-          <view class="sresult">{{realTimeDataInfo.pH_status===0?'正常': (realTimeDataInfo.pH_status===1?'预警':'危险')}}</view>
+          <view class="{{realTimeDataInfo.pH_status===0?'sresult blue': (realTimeDataInfo.pH_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.pH_status===0?'正常': (realTimeDataInfo.pH_status===1?'预警':'危险')}}</view>
         </view>
 
       </view>
@@ -581,7 +622,7 @@
               </text>
 
               <!--是否正常-->
-              <text class="{{item.controller.status === 0 ? 'normal' : (item.controller.type === 1 ? 'off' : (item.controller.type === 2 ? 'losepower' : (item.controller.type === 3 ? 'lost' : 'lost')))}}">
+              <text class="{{item.controller.status === 0 ? 'blue' : (item.controller.type === 1 ? 'gray' : (item.controller.type === 2 ? 'red' : (item.controller.type === 3 ? 'red' : 'red')))}}">
                 {{item.controller.status === 0 ? '正常' : (item.controller.type === 1 ? '离线' : (item.controller.type === 2 ? '断电' : (item.controller.type === 3 ? '缺相' : '数据异常')))}}
               </text>
 

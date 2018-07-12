@@ -221,11 +221,11 @@ export default class Addtangkou extends wepy.page {
 
     // 新增塘口
     addtangkou() {
+      console.log('fishlist', this.fishlist)
       if (!this.tangkouinfo.name) {
         wepy.showToast({title: '塘口名称不能为空', icon: 'none'})
         return 0
-      }
-      if (!this.fishlist) {
+      } else if (!this.fishlist || this.fishlist.length === 0) {
         wepy.showToast({title: '养殖品种不能为空', icon: 'none'})
         return 0
       }

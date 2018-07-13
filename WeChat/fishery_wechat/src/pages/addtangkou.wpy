@@ -155,7 +155,7 @@
       <input class="rightinp" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.water_source}}" bindinput="bindValue('water_source')"/>
     </view>
     <view class="addcontroler-item">
-      <image class="area" src="../images/gd－@2x.png"></image>泥底厚度(cm)
+      <image class="area" src="../images/houdu.png"></image>泥底厚度(cm)
       <input class="rightinp" type="number" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.sediment_thickness}}" bindinput="bindValue('sediment_thickness')"/>
     </view>
     <view class="addcontroler-item">

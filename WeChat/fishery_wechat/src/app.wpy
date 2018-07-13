@@ -54,18 +54,18 @@ export default class extends wepy.app {
       borderStyle: 'black',
       list: [{
         pagePath: 'pages/home',
-        selectedIconPath: './images/首页_9@2x.png',
-        iconPath: './images/首页@2x.png',
+        selectedIconPath: './images/home_9@2x.png',
+        iconPath: './images/home@2x.png',
         text: '首页'
       }, {
         pagePath: 'pages/diagnosis',
-        selectedIconPath: './images/诊断－@2x.png',
-        iconPath: './images/诊断@2x.png',
+        selectedIconPath: './images/d－@2x.png',
+        iconPath: './images/d@2x.png',
         text: '诊断'
       }, {
         pagePath: 'pages/personal',
-        selectedIconPath: './images/我的_12@2x.png',
-        iconPath: './images/我的@2x.png',
+        selectedIconPath: './images/my_12@2x.png',
+        iconPath: './images/my@2x.png',
         text: '我的'
       }]
     }
@@ -73,10 +73,10 @@ export default class extends wepy.app {
 
   globalData = {
     userInfo: null,
-//    baseUrl: 'http://192.168.0.111:8080/fishery/',
+    // baseUrl: 'http://192.168.0.111:8080/fishery/',
     baseUrl: 'https://www.fisherymanager.net/fishery/',
-    openId: 'owhQb0W9abua0btsWt6CMRfWz158',
-    phone: '13770648649',
+    openId: '',
+    phone: '13833131704',
     headImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1530514160078&di=29d017ded3cf8602332709ffff004d37&imgtype=0&src=http%3A%2F%2Fpic.qqtn.com%2Fup%2F2016-10%2F14770298895342588.jpg',
     id: '4',
     name: '张蕾西',
@@ -84,8 +84,10 @@ export default class extends wepy.app {
     life: '',
     location: '',
     weather: '',
-    relation: 'WX14',
-    currentId: 0
+    relation: 'WX10',
+    // relation: 'WX26',
+    currentId: 0,
+    device_sn: null
   }
 
   constructor () {
@@ -119,6 +121,7 @@ export default class extends wepy.app {
       success (res) {
         that.globalData.userInfo = res.userInfo
         cb && cb(res.userInfo)
+        console.log('行不行啊', that.globalData.userInfo)
       }
     })
   }

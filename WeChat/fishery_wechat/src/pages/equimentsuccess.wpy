@@ -59,10 +59,5 @@ export default class Equimentsuccess extends wepy.page {
       })
     }
   }
-  onUnload() {
-    wepy.navigateTo({
-      url: `myequiment`
-    })
-  }
 }
 </script>

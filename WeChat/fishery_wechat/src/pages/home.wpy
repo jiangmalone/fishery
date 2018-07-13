@@ -771,6 +771,16 @@ export default class Home extends wepy.page {
       this.tangkoudetail = e.target.dataset.tangkou
       this.currentId = e.target.dataset.id
       this.$parent.globalData.currentId = e.target.dataset.id
+      if (e.target.dataset.tangkou.sensorlist.length > 0) {
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
+          data: e.target.dataset.tangkou.sensorlist[0].sensor,
+          method: 'GET',
+          success: res => {
+            this.realTimeDataInfo = res.data
+          }
+        })
+      }
       if (!this.location) {
         return 0
       }
@@ -792,23 +802,10 @@ export default class Home extends wepy.page {
       } else {
         this.isWeather = false
       }
-      if (e.target.dataset.tangkou.sensorlist.length > 0) {
-        wepy.request({
-          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
-          data: e.target.dataset.tangkou.sensorlist[0].sensor,
-          method: 'GET',
-          success: res => {
-            this.realTimeDataInfo = res.data
-          }
-        })
-      }
     },
 
     // 自动设置按钮
     autoset(limit, time, item, name) {
-      console.log(item)
-      console.log(time)
-      console.log(limit)
       wepy.showActionSheet({
         itemList: ['确定自动', '取消自动', '设置自动参数'],
         success: (res) => {

@@ -61,11 +61,14 @@
 import wepy from 'wepy'
 export default class Tangkousuccess extends wepy.page {
   methods= {
-    // 返回绑定设备
+    // 添加设备
     toBindEquiment() {
       wepy.redirectTo({
-        url: this.$parent.globalData.device_sn
+        url: 'scan'
       })
+      // wepy.redirectTo({
+      //   url: this.$parent.globalData.device_sn
+      // })
     },
 
     // 跳转到新建塘口

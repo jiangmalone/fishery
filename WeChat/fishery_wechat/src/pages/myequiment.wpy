@@ -272,10 +272,5 @@ export default class Myequiment extends wepy.page {
       }
     })
   }
-  onUnload() {
-    wepy.switchTab({
-      url: `personal`
-    })
-  }
 }
 </script>

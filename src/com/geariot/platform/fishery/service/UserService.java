@@ -82,7 +82,7 @@ public class UserService {
     
     
 	public Map<String, Object> addWXUser(WXUser wxuser) {
-		WXUser exist = wxuserDao.findUserByOpenId(wxuser.getOpenId());
+		List<WXUser> exist = wxuserDao.findUsersByOpenId(wxuser.getOpenId());
 		if (exist != null) {
 			return RESCODE.ACCOUNT_EXIST.getJSONRES();
 		}
@@ -92,8 +92,8 @@ public class UserService {
 		return RESCODE.SUCCESS.getJSONRES(wxuser);
 	}
 	
-	public WXUser findWXUser(String openId) {
-		return wxuserDao.findUserByOpenId(openId);
+	public List<WXUser> findWXUser(String openId) {
+		return wxuserDao.findUsersByOpenId(openId);
 				
 	}
 

@@ -265,22 +265,19 @@ public class EquipmentService {
 
 		if(controllers.length>0) {
 			String device_sn = controllers[0].getDevice_sn();
+			logger.debug(device_sn);
 			String api_device_sn = device_sn.substring(2, device_sn.length());
 			logger.debug(api_device_sn);
-			/*GetDeviceApi api = new GetDeviceApi(api_device_sn, key);
-			BasicResponse<DeviceResponse> response = api.executeApi();
-			if(response.errno == 0) {*/
+			if(deviceDao.findDevice(api_device_sn)==null) {
+//				在设备表中，若没有改设备编号，在设备表中添加设备				
+				Device device = new Device();
+				device.setDevice_sn(api_device_sn);
+				device.setType(3);
+				deviceDao.save(device);
+				logger.debug("添加了一个新的控制器设备");
 				for (Controller controller : controllers ){
 					//截掉扫码编码的前两位
-					controller.setDevice_sn(controller.getDevice_sn().substring(2, controller.getDevice_sn().length()));
-					if(deviceDao.findDevice(controller.getDevice_sn())==null) {
-					//	在设备表中，若没有改设备编号，在设备表中添加设备				
-						Device device = new Device();
-						device.setDevice_sn(controller.getDevice_sn());
-						device.setType(3);
-						deviceDao.save(device);
-						logger.debug("添加了一个新的控制器设备");
-					}
+					controller.setDevice_sn(api_device_sn);					
 					//添加增氧机，即添加其默认limit
 					if(controller.getType()==0) {
 						Limit_Install limit = new Limit_Install();
@@ -306,67 +303,17 @@ public class EquipmentService {
 						logger.debug("添加塘口为"+con.getPondId());
 						controllerDao.save(con);
 						logger.debug("根据塘口添加控制器");
-					}
-					/*String pondIds = controller.getPondIds();
-					logger.debug(pondIds);
-					
-					if(pondIds.contains(",")) {
-						String[] pondIDList=pondIds.split(",");
-						for(int i=0;i<pondIDList.length;i++) {
-							Controller con = new Controller();
-							con.setDevice_sn(controller.getDevice_sn());
-							con.setType(controller.getType());
-							con.setPondId(Integer.parseInt(pondIDList[i]));
-							con.setRelation(controller.getRelation());
-							con.setName(controller.getName());
-							con.setPort(controller.getPort());
-							con.setPondIds(controller.getPondIds());
-							logger.debug("添加塘口为"+con.getPondId());
-							controllerDao.save(con);
-							logger.debug("根据塘口添加控制器");
-						}	
-					}else if(pondIds.trim().equals("")){
-						Controller con = new Controller();
-						con.setDevice_sn(controller.getDevice_sn());
-						con.setType(controller.getType());
-						con.setPondId(0);
-						con.setRelation(controller.getRelation());
-						con.setName(controller.getName());
-						con.setPort(controller.getPort());
-						con.setPondIds(controller.getPondIds());
-						logger.debug("添加塘口为"+con.getPondId());
-						controllerDao.save(con);
-						logger.debug("根据塘口添加控制器");
-					}else{
-						Controller con = new Controller();
-						con.setDevice_sn(controller.getDevice_sn());
-						con.setType(controller.getType());
-						con.setPondId(Integer.parseInt(pondIds));
-						con.setRelation(controller.getRelation());
-						con.setName(controller.getName());
-						con.setPort(controller.getPort());
-						con.setPondIds(controller.getPondIds());
-						logger.debug("添加塘口为"+con.getPondId());
-						controllerDao.save(con);
-						logger.debug("根据塘口添加控制器");
-					}*/
-					
-									
+					}				
 				}
-
 				return RESCODE.SUCCESS.getJSONRES();
 			}else {
+				return RESCODE.DEVICESNS_REPEAT.getJSONRES();
+			}														
+		}else {
 				return RESCODE.NOT_FOUND.getJSONRES();
-			}
+		}
 			
-		}/*else {
-			return RESCODE.NOT_FOUND.getJSONRES();
-		}*/
-		
-		
-
-	/*}*/
-	
+	}
 	public Map<String, Object> getControllersBydevice_sn(String device_sn){
 		List<Controller> controllerList = controllerDao.findControllerByDeviceSns(device_sn);
 		Map<String, Object> returnController = new HashMap<>();
@@ -378,13 +325,7 @@ public class EquipmentService {
 		for(int i:portSet) {
 			int j=0;
 			//根据设备路获得控制器
-			List<Controller> controller_port_List = controllerDao.findControllerByDeviceSnAndWay(device_sn, i);
-			/*Set<Integer> pondIdSet = new HashSet<>();*/
-			//获得塘口id
-			/*for(Controller controller:controller_port_List) {
-				pondIdSet.add(controller.getPondId());
-			}*/
-			
+			List<Controller> controller_port_List = controllerDao.findControllerByDeviceSnAndWay(device_sn, i);			
 			Map<String, Object> port_controller = new HashMap<>();
 			port_controller.put("port", i);
 			port_controller.put("controller", controller_port_List);
@@ -1441,12 +1382,12 @@ public class EquipmentService {
 			if(deviceDao.findDevice(device_sn)==null) {
 				return RESCODE.NOT_FOUND.getJSONRES();
 			}else {			
-				for(Controller con : controller) {
+				for(int i=0;i<controller.length;i++) {
+					Controller con = controller[i];
 					List<Controller> conList = controllerDao.findControllerByDeviceSnAndWay(con.getDevice_sn(), con.getPort());
 					for(Controller co:conList) {						
 						controllerDao.delete(co.getId());						
-					}
-					
+					}					
 					int[] s = con.getPondIds();
 					for(int j=0;j<s.length;j++) {
 						Controller cont = new Controller();
@@ -1460,8 +1401,8 @@ public class EquipmentService {
 						
 						controllerDao.save(cont);
 						
-					}				
-				}
+					}
+				}			
 				return RESCODE.SUCCESS.getJSONRES();
 				
 			}
@@ -1987,50 +1928,78 @@ public class EquipmentService {
 		return null;
 	}
 	
-	public String getDianosing(int pondId){
-		String returnString = null;
+	public List<Map<String, Object>> getPersonalDianosing(String relation){
+		List<Map<String, Object>> personalDai = new ArrayList<>(); 
+ 		List<Pond> pondList = pondDao.queryPondByRelation(relation);
+		for(Pond pond:pondList) {
+			Map<String, Object> pondData = getDianosing(pond.getId());
+			personalDai.add(pondData);
+		}		
+		return personalDai;
+	}
+	
+	
+	public Map<String, Object> getDianosing(int pondId){
+		//根据pondId获得池塘各个参数与分析结果和解决方案
+		Map<String, Object> diaResult = new HashMap<>();
+		String result = null;//参数分析结果
+		String solution = null;//解决方案
+		String Analysis = null;//曲线峰谷分析
+		String pondName = pondDao.findPondByPondId(pondId).getName();//池塘名称
+		
 		Diagnosing dia = new Diagnosing();
+		Map<String, Object> diaMap= dia.getDiagnosing();
+		String[] peakAndValleyAnalysis = (String[]) diaMap.get("peakAndValleyAnalysis");
+		
+		String returnString = null;
 		List<PondFish> pondFish = pondFishDao.getFishbyPondId(pondId);
 		int type=0;
 		if(pondFish.size()>0) {
 			type = pondFish.get(0).getType();
-		}		
+		}	
+		//获得塘口数值分析结果
 		Map<String, Object> dataResult = analysisData(pondId);
-		String peakAndValleyAnalysis = null;
-		String pH = null;
-		String DO = null;
-		String WT = null;
-		if(dataResult !=null) {
+		String Analysis1 = null;
+		String Analysis2 = null;
+		
+		String pHResult = null;
+		String DOResult = null;
+		String WTResult = null;
+		
+		String pHSolution = null;
+		String DOSolution = null;
+		String WTSolution = null;
+		//根据数值分析，得出文字结果
+		if(dataResult !=null) {//
 			//分析pH，获得pH诊断
 			Map<String , Object> pHMap =   (Map<String, Object>) dataResult.get("pH");
 			if(pHMap != null) {
 				Float min = (Float) pHMap.get("min");
 				Float max = (Float) pHMap.get("max");				
 				Float average = (Float) pHMap.get("average");
+				pHResult = "PH最小值"+min+"，最大值"+max+"，均值为"+average+"。";
+				pHSolution = dia.getDiagnosing("pH", average, type);
+				Float dvalue =max-min;	
 				
-				
-				
-				
-				Float dvalue =max-min;				
 				if(dvalue>2) {
-					peakAndValleyAnalysis = ";注意预防倒藻和氨氮浓度";
+					Analysis1 = peakAndValleyAnalysis[2];
 				}	
-				pH = "PH最小值"+min+"，最大值"+max+"，均值为"+average+","+dia.getDiagnosing("pH", average, type)+peakAndValleyAnalysis==null?"":peakAndValleyAnalysis+"。";
+				
 			}
 			//分析DO，获得DO诊断
 			Map<String , Object> DOMap =  (Map<String, Object>) dataResult.get("DO");
-			if(pHMap != null) {
-				Float min = (Float) pHMap.get("min");
-				Float max = (Float) pHMap.get("max");
-				Float average = (Float) pHMap.get("average");
+			if(DOMap != null) {
+				Float min = (Float) DOMap.get("min");
+				Float max = (Float) DOMap.get("max");
+				Float average = (Float) DOMap.get("average");
 				Float dvalue =max-min;
-				
+				DOResult = "水体溶氧最小值"+min+"，最大值"+max+"，均值为"+average+"。";
+				DOSolution = dia.getDiagnosing("DO", average, type);
 				if(dvalue>12) {
-					peakAndValleyAnalysis = "藻类太多，建议使用光和细菌或换水降低藻类浓度";
+					Analysis2 = peakAndValleyAnalysis[0];
 				}else if(dvalue<2 && min<8){
-					peakAndValleyAnalysis ="水体太瘦，建议肥水";
+					Analysis2 =peakAndValleyAnalysis[1];
 				}
-				DO = "水体溶氧最小值"+min+"，最大值"+max+"，均值为"+average+","+dia.getDiagnosing("pH", average, type)+peakAndValleyAnalysis+"。";
 			}
 			//分析WT，获得WT诊断
 			Map<String , Object> WTMap =  (Map<String, Object>) dataResult.get("WT");
@@ -2038,11 +2007,20 @@ public class EquipmentService {
 				Float min = (Float) WTMap.get("min");
 				Float max = (Float) WTMap.get("max");
 				Float average = (Float) WTMap.get("average");
-				WT = "水温最小值"+min+"，最大值"+max+"，均值为"+average+","+dia.getDiagnosing("pH", average, type)+"。";
+				WTResult = "水温最小值"+min+"，最大值"+max+"，均值为"+average+"。";
+				WTSolution = dia.getDiagnosing("WT", average, type);
 			}
 		}
-		returnString = DO + pH + WT ;
-		return returnString;
+		if(Analysis1!=null || Analysis2!=null) {
+			Analysis = Analysis1==null?"":(Analysis1 +";")+Analysis1==null?"":(Analysis1 +"。");
+		}
+		//solution = (DOSolution==null?"":(DOSolution +";"))+( pHSolution==null?"":(pHSolution +";"))+( WTSolution==null?"":(WTSolution +"。"));
+		result = (DOResult==null?"":DOResult) + (pHResult==null?"":pHResult)+ (WTResult==null?"":WTResult);
+		solution = (DOSolution==null?"":DOSolution) + (pHSolution==null?"":pHSolution)+ (WTSolution==null?"":WTSolution)+(Analysis==null?"":Analysis);
+		diaResult.put("result", result);
+		diaResult.put("solution", solution);
+		diaResult.put("pondName", pondName);
+		return diaResult;
 	}
 	
 	

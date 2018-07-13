@@ -3,10 +3,12 @@ package com.geariot.platform.fishery.controller;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -176,11 +178,43 @@ public class WebServiceController {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}else {
 			logger.debug("openId:"+(String)map.get("openId"));
-			WXUser wxUser =  userService.findWXUser((String)map.get("openId"));
-			if(wxUser == null) {
-				return RESCODE.NOT_FOUND.getJSONRES();
+			Map<String, String> openId = new HashMap<>();
+			openId.put("openId", (String)map.get("openId"));
+			//防止同一微信用户登录多个手机号
+			List<WXUser> wxUserList =  userService.findWXUser((String)map.get("openId"));
+			if(wxUserList.size() == 0) {
+				return RESCODE.NOT_FOUND.getJSONRES(openId);
+			}else if(wxUserList.size()>1){
+				int count =0;
+				for(WXUser wxUser:wxUserList) {
+					if(wxUser.isLogin() == true) {
+						count++;
+					}
+				}
+				if(count>1) {
+					return RESCODE.WX_LOGIN_REPEAT.getJSONRES(openId);
+				}else if(count==0){
+					return RESCODE.NOT_FOUND.getJSONRES(openId);
+				}else {
+					WXUser wx = new WXUser();
+					for(WXUser wxUser:wxUserList) {
+						if(wxUser.isLogin() == true) {
+							wx = wxUser;
+						}
+					}
+					wx.setOpenId((String)map.get("openId"));
+					return RESCODE.SUCCESS.getJSONRES(wx);
+				}
+				
 			}else {
-				return RESCODE.SUCCESS.getJSONRES(wxUser);
+				WXUser wx = wxUserList.get(0);
+				wx.setOpenId((String)map.get("openId"));
+				if(wx.isLogin() == true) {
+					return RESCODE.SUCCESS.getJSONRES(wx);
+				}else {
+					return RESCODE.NO_LOGIN.getJSONRES(openId);
+				}
+				
 			}
 		}
 	}
@@ -295,6 +329,7 @@ public class WebServiceController {
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> logout(String phone) {
+		logger.debug("手机号为"+phone+"的用户执行退出登录");
 		return webServiceService.deletWXUser(phone);
 	}
 

@@ -22,11 +22,11 @@ public class WXUserDaoImpl implements WXUserDao {
 		return sessionFactory.getCurrentSession();
 	}
 	
-	@Override
+/*	@Override
 	public WXUser findUserByOpenId(String openId) {
 		String hql = "from WXUser where openId= :openId ";
 		return (WXUser)getSession().createQuery(hql).setString("openId", openId).setCacheable(Constants.SELECT_CACHE).uniqueResult();
-	}
+	}*/
 
 	@Override
 	public WXUser findUserByPhone(String phone) {
@@ -96,6 +96,13 @@ public class WXUserDaoImpl implements WXUserDao {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from WXUser");
 		Query query = queryUtils.addStringLike("name", name).getQuery();
 		return query.list();
+	}
+
+	@Override
+	public List<WXUser> findUsersByOpenId(String openId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from WXUser");
+		Query query = queryUtils.addString("openId", openId).getQuery();
+		return  query.list();
 	}
 
 

@@ -197,7 +197,7 @@
 <template>
   <view class="line">
     <view class="header">
-      <view class="sensorname" @tap="showModal">小鱼塘-小A-进水啊实打实的</view><image class="header-img" src="../images/多_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
+      <view class="sensorname" @tap="showModal">小鱼塘-小A-进水啊实打实的</view><image class="header-img" src="../images/gd_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
       <view class="status"><view class="status-dot"></view>异常</view>
     </view>
     <view class="content">
@@ -267,7 +267,7 @@
     <!--模态框-->
     <view class="modalDlg" wx:if="{{showModal}}">
       <view class="close" @tap="closemodal">
-        <image class="closeimg" src="../images/叉_cross80@2x.png"></image>
+        <image class="closeimg" src="../images/n_cross80@2x.png"></image>
         <view class="closeline"></view>
       </view>
       <repeat for="{{tangkoulist}}" key="index" index="index">

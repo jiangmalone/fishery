@@ -494,7 +494,7 @@
       <view class="home-bg">
         <view class="home-flex" wx:if="{{isWeather}}">
           <view class="location">
-            <image class="bgimage" src="../images/点1@2x.png"></image>
+            <image class="bgimage" src="../images/pt1@2x.png"></image>
             <text>{{location}}</text>
           </view>
           <view class="weather">

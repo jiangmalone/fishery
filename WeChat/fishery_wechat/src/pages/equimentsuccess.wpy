@@ -41,7 +41,7 @@
     <text>添加设备成功</text>
   </view>
   <view class="but" @tap="continueAdd">继续添加设备</view>
-  <view class="returnlist" @tap="returnequiment">返回设备列表<image src="../images/更多_7_@2x.png"></image></view>
+  <view class="returnlist" @tap="returnequiment">返回设备列表<image src="../images/gd_7_@2x.png"></image></view>
 </view>
 </template>
 <script>

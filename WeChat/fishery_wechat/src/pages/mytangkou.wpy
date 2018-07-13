@@ -236,7 +236,6 @@ export default class Mytangkou extends wepy.page {
     }
   }
   onLoad() {
-    console.log('pagesssss',getCurrentPages())
     wepy.request({
       url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
       data: {

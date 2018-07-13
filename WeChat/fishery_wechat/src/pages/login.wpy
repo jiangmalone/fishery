@@ -192,7 +192,7 @@ export default class Login extends wepy.page {
       wepy.getUserInfo({
         success(res) {
           this.globalData.headImg = res.userInfo.avatarUrl
-          this.globalData.name = res.userInfo.nickName;
+          this.globalData.name = res.userInfo.nickName
           console.log('成功了', res.userInfo)
         },
         fail(error) {

@@ -173,12 +173,14 @@ public class EquipmentController {
 	@RequestMapping(value = "/setTimer", method = RequestMethod.POST)
 	public Map<String, Object> autoSet(@RequestBody Param param){
 		System.out.println("设备id："+param.getDevice_sn());
-		System.out.println("设备id："+param.getWay());
+		System.out.println("设备way："+param.getWay());
 		System.out.println("timer长度："+param.getTimers().length);
 		//先删除
 		equipmentService.delTimer(param.getDevice_sn(),  param.getWay());
 		//后添加
 		for(Timer timer:param.getTimers()) {
+			timer.setDevice_sn(param.getDevice_sn());
+			timer.setWay(param.getWay());
 			equipmentService.addTimer(timer);
 		}
 		return RESCODE.SUCCESS.getJSONRES();		
@@ -198,12 +200,14 @@ public class EquipmentController {
 	
 	
 	@RequestMapping(value = "/setLimit", method = RequestMethod.POST)
-	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){		
+	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){	
+		System.out.println("设备编号:"+limit_Install.getDevice_sn());
+		System.out.println("way:"+limit_Install.getWay());
 		Limit_Install limit_Install2 = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
 		if(limit_Install2 == null) {
-			equipmentService.setLimit(limit_Install);
+			System.out.println("增氧限制未设置");
+			limitDao.save(limit_Install);
 		}else {
-			limitDao.deleteByDevice_snandWay(limit_Install.getDevice_sn(), limit_Install.getWay());
 			equipmentService.setLimit(limit_Install);
 		}
 		return RESCODE.SUCCESS.getJSONRES();

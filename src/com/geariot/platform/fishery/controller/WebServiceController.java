@@ -286,7 +286,13 @@ public class WebServiceController {
 	// 注册验证结果请求
 	@RequestMapping(value = "/verifySmsCode", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl) {
+	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl,String wxUserName) {
+		/*try {
+			wxUserName = new String(wxUserName.getBytes("ISO-8859-1"), "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		JSONObject json = this.verifySmscode(phone, smscode);
 		logger.debug("openId:"+openId);
 		if (json.getString("error") != null) {
@@ -298,7 +304,7 @@ public class WebServiceController {
 			return obj;
 		} else {
 			//验证成功
-			return webServiceService.login(phone,openId,headimgurl);
+			return webServiceService.login(phone,openId,headimgurl,wxUserName);
 		}
 	}
 

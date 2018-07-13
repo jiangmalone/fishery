@@ -82,21 +82,21 @@ public class Sensor {
 	public void setPort_status(String port_status) {
 		this.port_status = port_status;
 	}
-	@Transient
+
 	public float getOxygen() {
 		return oxygen;
 	}
 	public void setOxygen(float oxygen) {
 		this.oxygen = oxygen;
 	}
-	@Transient
+
 	public float getWater_temperature() {
 		return water_temperature;
 	}
 	public void setWater_temperature(float water_temperature) {
 		this.water_temperature = water_temperature;
 	}
-	@Transient
+
 	public float getpH_value() {
 		return pH_value;
 	}
@@ -104,28 +104,28 @@ public class Sensor {
 		this.pH_value = pH_value;
 	}
 	
-	@Transient
+
 	public int getOxygen_status() {
 		return oxygen_status;
 	}
 	public void setOxygen_status(int oxygen_status) {
 		this.oxygen_status = oxygen_status;
 	}
-	@Transient
+
 	public int getWT_status() {
 		return WT_status;
 	}
 	public void setWT_status(int wT_status) {
 		WT_status = wT_status;
 	}
-	@Transient
+
 	public int getpH_status() {
 		return pH_status;
 	}
 	public void setpH_status(int pH_status) {
 		this.pH_status = pH_status;
 	}
-	@Transient
+	
 	public int getWayStatus() {
 		return wayStatus;
 	}

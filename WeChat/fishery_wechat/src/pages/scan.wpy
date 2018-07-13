@@ -55,14 +55,17 @@ export default class Scan extends wepy.page {
               if (res.data.code === 0) {
                 console.log('num')
                 if (num === '01' || num === '02') {
+                  this.$parent.globalData.device_sn = `addallinone?number=${resResult}`
                   wepy.redirectTo({
                     url: `addallinone?number=${resResult}`
                   })
                 } else if (num === '04') {
+                  this.$parent.globalData.device_sn = `addcontroler?number=${resResult}`
                   wepy.redirectTo({
                     url: `addcontroler?number=${resResult}`
                   })
                 } else if (num === '03') {
+                  this.$parent.globalData.device_sn = `addsensor?number=${resResult}`
                   wepy.redirectTo({
                     url: `addsensor?number=${resResult}`
                   })

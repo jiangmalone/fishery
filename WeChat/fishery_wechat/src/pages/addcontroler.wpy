@@ -538,17 +538,60 @@ export default class Addcontroler extends wepy.page {
       this.$apply()
     },
 
+    checkEmpty(var1, var2) {
+      if (var1 !== '') {
+        if (var2.length === 0) {
+          return false
+        }
+      } else {
+        if (var2.length !== 0) {
+          return false
+        }
+      }
+      return true
+    },
+
     // 设备的确定按钮
     addCon() {
-      // name: '',
-      //   pondIds: [],
-      //   port: 4,
-      //   type: ''
-      // if (this.equimentinfo[0].name === '' || this.equimentinfo[0].type === '' || this.equimentinfo[0].pondIds.length === 0 || this.equimentinfo[0].pondIds[0] !== 0) {
-      //   wepy.showToast({title: '1路控制器有信息未填写，请补全信息', icon: 'none', duration: 2000})
-      //   console.log(this.equimentinfo[0])
-      //   return 0
-      // }
+      let str1 = this.equimentinfo[0].name + this.equimentinfo[0].type
+      let arr1 = this.equimentinfo[0].pondIds
+      let res1 = true
+      res1 = this.methods.checkEmpty(str1, arr1)
+      if (!res1) {
+        wepy.showToast({title: '第1路控制器有信息未填写，请补全信息', icon: 'none', duration: 2000})
+        return
+      }
+      let str2 = this.equimentinfo[1].name + this.equimentinfo[1].type
+      let arr2 = this.equimentinfo[1].pondIds
+      let res2 = true
+      res2 = this.methods.checkEmpty(str2, arr2)
+      if (!res2) {
+        wepy.showToast({title: '第2路控制器有信息未填写，请补全信息', icon: 'none', duration: 2000})
+        return
+      }
+      let str3 = this.equimentinfo[2].name + this.equimentinfo[2].type
+      let arr3 = this.equimentinfo[2].pondIds
+      let res3 = true
+      res3 = this.methods.checkEmpty(str3, arr3)
+      if (!res3) {
+        wepy.showToast({title: '第3路控制器有信息未填写，请补全信息', icon: 'none', duration: 2000})
+        return
+      }
+      let str4 = this.equimentinfo[3].name + this.equimentinfo[3].type
+      let arr4 = this.equimentinfo[3].pondIds
+      let res4 = true
+      res4 = this.methods.checkEmpty(str4, arr4)
+      if (!res4) {
+        wepy.showToast({title: '第4路控制器有信息未填写，请补全信息', icon: 'none', duration: 2000})
+        return
+      }
+      let strRes = str1 + str2 + str3 + str4
+      let arrRes = arr1.length + arr2.length + arr3.length + arr4.length
+      if (strRes === '' && arrRes === 0) {
+        wepy.showToast({title: '请至少绑定一路控制器', icon: 'none', duration: 2000})
+        return
+      }
+
       if (this.action === 'modify') {
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifyController',

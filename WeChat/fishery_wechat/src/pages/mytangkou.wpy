@@ -253,6 +253,11 @@ export default class Mytangkou extends wepy.page {
     wepy.navigateTo({
       url: `personal`
     })
+    // wepy.navigateBack({
+    //   delta: 2
+    // })
   }
+
+
 }
 </script>

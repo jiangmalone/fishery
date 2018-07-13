@@ -107,6 +107,7 @@
       <view class="getcode1" wx:if="{{waitting}}">{{wait}}s后重试</view>
       <view class="{{phoneNumber!==''?'getcode':'getcode1'}}" @tap="getVerificationCode" wx:else>发送验证码</view>
     </view>
+    <!--<button open-type="getUserInfo" class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}" @tap="confirminfo">注册/登录</button>-->
     <button class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}" @tap="confirminfo">注册/登录</button>
   </view>
 </template>
@@ -185,8 +186,8 @@ export default class Login extends wepy.page {
         method: 'GET',
         success: res => {
           console.log(res)
-          if (res.code === 603) {
-            wepy.showToast({title: '验证码错误', icon: 'none'})
+          if (!res.data.data) {
+            wepy.showToast({title: res.data.msg, icon: 'none', duration: 2000})
             return 0
           } else {
             this.$parent.globalData.id = res.data.data.id
@@ -228,6 +229,33 @@ export default class Login extends wepy.page {
     }, 1000)
   }
   onLoad() {
+    wepy.getUserInfo({
+      success(res) {
+        // that.globalData.userInfo = res.userInfo;
+        console.log('成功了')
+      },
+      fail(error) {
+        console.log('失败了')
+      }
+    })
+    // wepy.getSetting({
+    //   success(res) {
+    //     if (!res.authSetting['scope.userInfo']) {
+    //       wepy.authorize({
+    //         scope: 'scope.userInfo',
+    //         success() {
+    //           // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
+    //           wepy.getUserInfo({
+    //             success: function(res) {
+    //               console.log(res.userInfo)
+    //             }
+    //           })
+    //         }
+    //       })
+    //     }
+    //   }
+    // })
+
     wepy.login({
       success: (res) => {
         let code = res.code
@@ -240,7 +268,7 @@ export default class Login extends wepy.page {
           method: 'GET',
           success: res => {
             console.log('res.data', res.data)
-            if (res.data.data) {
+            if (res.data.data.login) {
               this.$parent.globalData.id = res.data.data.id
               this.$parent.globalData.name = res.data.data.name
               this.$parent.globalData.sex = res.data.data.sex
@@ -248,24 +276,14 @@ export default class Login extends wepy.page {
               this.$parent.globalData.life = res.data.data.life
               this.$parent.globalData.headImg = res.data.data.headimgurl
               this.$parent.globalData.relation = res.data.data.relation
-              this.$parent.globalData.openId = res.data.data.openId
               wepy.switchTab({
                 url: `home`
               })
+            } else {
+              this.$parent.globalData.openId = res.data.data.openId
             }
           }
         })
-      }
-    })
-    wepy.request({
-      url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserOpenId',
-      data: {
-        code: code
-      },
-      method: 'GET',
-      success: res => {
-        console.log('res.data', res.data)
-        this.$parent.globalData.openId = res.data.openId
       }
     })
   }

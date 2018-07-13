@@ -156,7 +156,7 @@
   <view class="addsensor">
 
     <view class="sensor-item">
-      <image class="num" src="../images/lx@2x.png"></image>设备编号
+      <image class="num" src="../images/tkname.png"></image>设备编号
       <text class="fright">{{equimentNum}}</text>
     </view>
 
@@ -166,7 +166,7 @@
     </view>
 
     <view class="sensor-item">
-      <image class="name" src="../images/pmc(1)@2x.png"></image>传感器名称
+      <image class="name" src="../images/pmc@2x.png"></image>传感器名称
       <input class="rightinp" placeholder="请输入传感器名称"
              placeholder-style="color:#6F6F6F;text-align:right;"
              value="{{equimentinfo[0].name}}"

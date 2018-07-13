@@ -135,7 +135,7 @@
 <template>
   <view class="addcontroler">
     <view class="addcontroler-item">
-      <image class="num" src="../images/pmc(1)@2x.png"></image>塘口名称
+      <image class="num" src="../images/pmc@2x.png"></image>塘口名称
       <input class="rightinp"  placeholder="必填" placeholder-style="color:#FF4D26" value="{{tangkouinfo.name}}" bindinput="bindValue('name')"/>
     </view>
     <view class="addcontroler-item">

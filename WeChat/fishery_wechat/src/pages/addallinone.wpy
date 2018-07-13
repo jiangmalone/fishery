@@ -180,7 +180,7 @@
 
   <!--头部-->
     <view class="addallinone-item">
-    <image class="num" src="../images/lx@2x.png"></image>设备编号
+    <image class="num" src="../images/tkname.png"></image>设备编号
     <text class="fright">{{equimentNum}}</text>
   </view>
   <view class="addallinone-item">

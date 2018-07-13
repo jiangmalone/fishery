@@ -208,7 +208,7 @@
       <view class="cot">
         <view class="cot-index">
           <view class="target">
-            <image class="o2" src="../images/o_3_copy 2@2x.png"></image>
+            <image class="o2" src="../images/o_3_copy.png"></image>
             <view class="data">溶氧 {{realTimeDataInfo.oxygen}}mg/L</view>
           </view>
           <view class="res">{{realTimeDataInfo.oxygen_status===0?'正常': (realTimeDataInfo.oxygen_status===1?'预警':'危险')}}</view>

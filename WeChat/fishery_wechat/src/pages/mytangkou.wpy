@@ -236,6 +236,7 @@ export default class Mytangkou extends wepy.page {
     }
   }
   onLoad() {
+    console.log('pagesssss',getCurrentPages())
     wepy.request({
       url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',
       data: {
@@ -250,14 +251,9 @@ export default class Mytangkou extends wepy.page {
     })
   }
   onUnload() {
-    wepy.navigateTo({
+    wepy.switchTab({
       url: `personal`
     })
-    // wepy.navigateBack({
-    //   delta: 2
-    // })
   }
-
-
 }
 </script>

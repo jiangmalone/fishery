@@ -36,7 +36,7 @@
 </style>
 <template>
 <view class="equimentsuccess">
-  <image class="image1" src="../images/交成功@2x.png"></image>
+  <image class="image1" src="../images/suc@2x.png"></image>
   <view class="successmessage">
     <text>添加设备成功</text>
   </view>

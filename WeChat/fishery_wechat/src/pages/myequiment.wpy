@@ -273,12 +273,9 @@ export default class Myequiment extends wepy.page {
     })
   }
   onUnload() {
-    wepy.navigateTo({
+    wepy.switchTab({
       url: `personal`
     })
-    // wepy.navigateBack({
-    //   delta: 2
-    // })
   }
 }
 </script>

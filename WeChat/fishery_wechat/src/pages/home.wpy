@@ -550,7 +550,7 @@
         <!--溶氧-->
         <view class="svalue">
           <view class="o2">
-            <image src="../images/氧_3_copy 2@2x.png" style="width:56rpx;height:56rpx;"></image>
+            <image src="../images/o_3_copy 2@2x.png" style="width:56rpx;height:56rpx;"></image>
             <view>溶氧</view>
           </view>
           <view class="sborder"></view>
@@ -565,7 +565,7 @@
         <!--温度-->
         <view class="svalue">
           <view class="o2">
-            <image src="../images/温@2x.png" style="width:56rpx;height:56rpx;"></image>
+            <image src="../images/w@2x.png" style="width:56rpx;height:56rpx;"></image>
             <view>温度</view>
           </view>
           <view class="sborder"></view>

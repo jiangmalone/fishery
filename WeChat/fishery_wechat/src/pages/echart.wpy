@@ -5,7 +5,7 @@
   }
 </style>
 <template>
-  <canvas class="ec-canvas" canvas-id="ec-canvas"  bindtouchstart="touchStart" bindtouchmove="touchMove" bindtouchend="touchEnd">
+  <canvas class="ec-canvas" canvas-id="{{canvasId}}" bindtouchstart="touchStart" bindtouchmove="touchMove" bindtouchend="touchEnd">
   </canvas>
 </template>
 <script>
@@ -17,11 +17,16 @@
   var mychart
   export default class echart extends wepy.component {
     props = {
-      ec: {}
+      ec: {},
+      canId:String,
+      canvasId: {
+        type:String,
+        value:'ec-canvas'
+      }
     }
 
     data = {
-      canvasId: 'ec-canvas'
+
     }
 
     watch = {
@@ -31,7 +36,9 @@
       }
     }
 
+
     onLoad () {
+      //this.canId = this.props.canId
       if (!this.data.ec) {
         console.warn('组件需绑定 ec 变量，例：<ec-canvas id="mychart-dom-bar" ' +
           'canvas-id="mychart-bar" ec="{{ ec }}"></ec-canvas>')
@@ -63,7 +70,7 @@
       }
       ctx = wepy.createCanvasContext(this.data.canvasId, this)
 
-      const canvas = new WxCanvas(ctx, this.data.canvasId)
+      var canvas = new WxCanvas(ctx, this.data.canvasId)
 
       echarts.setCanvasCreator(() => {
         return canvas

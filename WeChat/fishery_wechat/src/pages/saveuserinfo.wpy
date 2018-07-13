@@ -55,9 +55,9 @@
 </style>
 <template>
 <view class="info">
-  <view class="picture" @tap="chosePhoto">
-    <image wx:if="{{info.headImg===''}}" src="../images/group_4@2x.png"></image>
-    <image wx:else src="{{info.headImg}}"></image>
+  <view class="picture">
+    <!--<image wx:if="{{info.headImg===''}}" src="../images/group_4@2x.png"></image>-->
+    <image src="{{info.headImg}}"></image>
   </view>
   <view class="row row-flex">
     <image src="../images/用户_4@2x.png" style="width:26rpx;height:28rpx;margin-left:44rpx;margin-top:42rpx"></image>

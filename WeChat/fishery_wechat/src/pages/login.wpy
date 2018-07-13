@@ -98,17 +98,18 @@
 <template>
   <view class="login">
     <image class="logo" src="../images/bitmap@2x.png"></image>
-    <image class="font" src="../images/管在线.png"></image>
+    <image class="font" src="../images/logo.png"></image>
     <view class="row">
       <image src="../images/fill_1@2x.png"></image><input type="number" placeholder="请输入手机号" placeholder-style="color:#6F6F6F" bindinput="bindPhoneNumber"/>
     </view>
     <view class="row1 row-flex">
-      <image src="../images/锁_3@2x.png"></image><input type="number" placeholder="请输入验证码" placeholder-style="color:#6F6F6F" bindinput="bindVerificationCode"/>
+      <image src="../images/suo_3@2x.png"></image><input type="number" placeholder="请输入验证码" placeholder-style="color:#6F6F6F" bindinput="bindVerificationCode"/>
       <view class="getcode1" wx:if="{{waitting}}">{{wait}}s后重试</view>
       <view class="{{phoneNumber!==''?'getcode':'getcode1'}}" @tap="getVerificationCode" wx:else>发送验证码</view>
     </view>
-    <!--<button open-type="getUserInfo" class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}" @tap="confirminfo">注册/登录</button>-->
-    <button class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}" @tap="confirminfo">注册/登录</button>
+    <button open-type="getUserInfo" class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}"
+            @tap="confirminfo">注册/登录</button>
+    <!--<button class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}" @tap="confirminfo">注册/登录</button>-->
   </view>
 </template>
 <script>
@@ -176,11 +177,37 @@ export default class Login extends wepy.page {
         return 0
       }
       console.log(this.$parent.globalData)
+      wepy.getSetting({
+        success(res) {
+          if (!res.authSetting['scope.userInfo']) {
+            wepy.authorize({
+              scope: 'scope.userInfo',
+              success() {
+                // 用户已经同意
+              }
+            })
+          }
+        }
+      })
+      wepy.getUserInfo({
+        success(res) {
+          this.globalData.headImg = res.userInfo.avatarUrl
+          this.globalData.name = res.userInfo.nickName;
+          console.log('成功了', res.userInfo)
+        },
+        fail(error) {
+          console.log('失败了', error)
+        }
+      })
+      // return
+      console.log('this.$parent.globalData', this.$parent.globalData)
       wepy.request({
         url: this.$parent.globalData.baseUrl + 'api/' + 'webService/verifySmsCode',
         data: {
           openId: this.$parent.globalData.openId,
+          headimgurl: this.$parent.globalData.headImg,
           phone: this.phoneNumber,
+          wxUserName: this.$parent.globalData.name,
           smscode: this.verificationCode
         },
         method: 'GET',
@@ -229,33 +256,6 @@ export default class Login extends wepy.page {
     }, 1000)
   }
   onLoad() {
-    wepy.getUserInfo({
-      success(res) {
-        // that.globalData.userInfo = res.userInfo;
-        console.log('成功了')
-      },
-      fail(error) {
-        console.log('失败了')
-      }
-    })
-    // wepy.getSetting({
-    //   success(res) {
-    //     if (!res.authSetting['scope.userInfo']) {
-    //       wepy.authorize({
-    //         scope: 'scope.userInfo',
-    //         success() {
-    //           // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
-    //           wepy.getUserInfo({
-    //             success: function(res) {
-    //               console.log(res.userInfo)
-    //             }
-    //           })
-    //         }
-    //       })
-    //     }
-    //   }
-    // })
-
     wepy.login({
       success: (res) => {
         let code = res.code

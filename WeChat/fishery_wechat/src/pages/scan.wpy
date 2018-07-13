@@ -23,7 +23,7 @@
 </style>
 <template>
 <view class="scan">
-  <image src="../images/码_3@2x.png" @tap="scancode"></image>
+  <image src="../images/m_3@2x.png" @tap="scancode"></image>
   <view class="clicks">点击屏幕</view>
   <view class="note">扫一扫设备编码，添加设备</view>
 </view>

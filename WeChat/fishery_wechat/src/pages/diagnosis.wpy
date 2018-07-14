@@ -107,7 +107,7 @@
       <view class="diaTitle">
         <text>{{index+1}}  {{item.pondName}}</text>
         <view class="diaMore">
-          查看详情<image src="../images/更多_7_@2x.png"></image>
+          查看详情<image src="../images/gd_7_@2x.png"></image>
         </view>
       </view>
 

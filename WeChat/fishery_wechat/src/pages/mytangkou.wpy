@@ -106,8 +106,8 @@
       <view class="tangkou-item">
       <view class="tangkou-header">
         <text class="tangkou-name">{{item.name}}</text><text>{{item.bh}}</text>
-        <view class="delete" @tap="deleteTangkou({{item}})"><image src="../images/除_3@2x.png"></image><text>删除</text></view>
-        <view class="modify" @tap="modifyTangkou({{item}})"><image src="../images/辑_7@2x.png"></image><text>编辑塘口</text></view>
+        <view class="delete" @tap="deleteTangkou({{item}})"><image src="../images/dlt_3@2x.png"></image><text>删除</text></view>
+        <view class="modify" @tap="modifyTangkou({{item}})"><image src="../images/bj_7@2x.png"></image><text>编辑塘口</text></view>
       </view>
       <view class="cot">
         <view class="cot-item">
@@ -250,14 +250,9 @@ export default class Mytangkou extends wepy.page {
     })
   }
   onUnload() {
-    wepy.navigateTo({
+    wepy.switchTab({
       url: `personal`
     })
-    // wepy.navigateBack({
-    //   delta: 2
-    // })
   }
-
-
 }
 </script>

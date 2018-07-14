@@ -135,19 +135,19 @@
 <template>
   <view class="addcontroler">
     <view class="addcontroler-item">
-      <image class="num" src="../images/品名称(1)@2x.png"></image>塘口名称
+      <image class="num" src="../images/pmc@2x.png"></image>塘口名称
       <input class="rightinp"  placeholder="必填" placeholder-style="color:#FF4D26" value="{{tangkouinfo.name}}" bindinput="bindValue('name')"/>
     </view>
     <view class="addcontroler-item">
-      <image class="area" src="../images/积_2@2x.png"></image>面积(亩)
+      <image class="area" src="../images/mj_2@2x.png"></image>面积(亩)
       <input class="rightinp" type="number" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.area}}" bindinput="bindValue('area')"/>
     </view>
     <view class="addcontroler-item">
-      <image class="area" src="../images/度6@2x.png"></image>深度(m)
+      <image class="area" src="../images/sd6@2x.png"></image>深度(m)
       <input class="rightinp" type="number" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.depth}}" bindinput="bindValue('depth')"/>
     </view>
     <view class="addcontroler-item">
-      <image class="yu" src="../images/种关注@2x.png"></image>养殖品种
+      <image class="yu" src="../images/tp@2x.png"></image>养殖品种
       <input class="rightinp" @tap="choseType" placeholder="请选择" value="{{fishlist}}" placeholder-style="color:#FF4D26" disabled/>
     </view>
     <view class="addcontroler-item">
@@ -155,15 +155,15 @@
       <input class="rightinp" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.water_source}}" bindinput="bindValue('water_source')"/>
     </view>
     <view class="addcontroler-item">
-      <image class="area" src="../images/度－@2x.png"></image>泥底厚度(cm)
+      <image class="area" src="../images/houdu.png"></image>泥底厚度(cm)
       <input class="rightinp" type="number" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.sediment_thickness}}" bindinput="bindValue('sediment_thickness')"/>
     </view>
     <view class="addcontroler-item">
-      <image class="area" src="../images/度@2x.png"></image>塘口密度(kg/亩)
+      <image class="area" src="../images/md@2x.png"></image>塘口密度(kg/亩)
       <input class="rightinp1" type="number" placeholder="选填" placeholder-style="color:#B8B8B8" value="{{tangkouinfo.density}}" bindinput="bindValue('density')"/>
     </view>
     <view class="addcontroler-item">
-      <image class="num" src="../images/置4@2x.png"></image>塘口位置
+      <image class="num" src="../images/map4@2x.png"></image>塘口位置
       <input class="rightinp" @tap="mapchose" value="{{tangkouinfo.address}}" placeholder="绑定传感设备后自动获取" placeholder-style="color:#B8B8B8" disabled/>
     </view>
       <!--确定按钮-->

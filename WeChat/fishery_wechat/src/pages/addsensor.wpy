@@ -156,17 +156,17 @@
   <view class="addsensor">
 
     <view class="sensor-item">
-      <image class="num" src="../images/型@2x.png"></image>设备编号
+      <image class="num" src="../images/tkname.png"></image>设备编号
       <text class="fright">{{equimentNum}}</text>
     </view>
 
     <view class="sensor-item">
-      <image class="num" src="../images/型@2x.png"></image>设备类型
+      <image class="num" src="../images/lx@2x.png"></image>设备类型
       <text class="fright">传感器</text>
     </view>
 
     <view class="sensor-item">
-      <image class="name" src="../images/品名称(1)@2x.png"></image>传感器名称
+      <image class="name" src="../images/pmc@2x.png"></image>传感器名称
       <input class="rightinp" placeholder="请输入传感器名称"
              placeholder-style="color:#6F6F6F;text-align:right;"
              value="{{equimentinfo[0].name}}"
@@ -174,7 +174,7 @@
     </view>
 
     <view class="sensor-item">
-      <image class="num" src="../images/感器@2x.png"></image>绑定塘口
+      <image class="num" src="../images/bd@2x.png"></image>绑定塘口
       <view class="unbindport" @tap="unBindBtn" wx:if="{{pondlist[equimentinfo[0].pondId]}}">解绑</view>
       <input class="rightinp" placeholder="请选择需绑定的塘口"
              placeholder-style="color:#6F6F6F;text-align:right;"
@@ -187,7 +187,7 @@
     <!--模态框-->
     <view class="modalDlg" wx:if="{{showModal}}">
       <view class="close" @tap="closemodal">
-        <image class="closeimg" src="../images/叉_cross80@2x.png"></image>
+        <image class="closeimg" src="../images/n_cross80@2x.png"></image>
         <view class="closeline"></view>
       </view>
       <repeat for="{{tangkoulist}}" key="index" index="index">

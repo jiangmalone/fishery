@@ -98,7 +98,7 @@
     <!--头部-->
     <view class="per-bg">
       <view class="modify" @tap="jupUserInfo">
-        <text>修改资料</text><image src="../images/多_7@2x.png" style="width:12rpx;height:20rpx;"></image>
+        <text>修改资料</text><image src="../images/gd_7@2x.png" style="width:12rpx;height:20rpx;"></image>
       </view>
       <view class="userimage">
         <image src="{{headImg}}" style="width:180rpx;height:180rpx;"></image>
@@ -113,22 +113,22 @@
       <view class="menu-item" @tap="jupTangkou">
         <image class="menu-pic" src="../images/group_12@2x.png"></image>
         <text class="menu-text">我的塘口</text>
-        <image class="menu-arrow" src="../images/更多_7_@2x.png" ></image>
+        <image class="menu-arrow" src="../images/gd_7_@2x.png" ></image>
       </view>
       <view class="menu-item" @tap="jupEquiment">
         <image class="menu-pic1" src="../images/group_11@2x.png"></image>
         <text class="menu-text">我的设备</text>
-        <image class="menu-arrow" src="../images/更多_7_@2x.png" ></image>
+        <image class="menu-arrow" src="../images/gd_7_@2x.png" ></image>
       </view>
       <view @tap="callUs" class="menu-item">
-        <image class="menu-pic1" src="../images/系电话@2x.png"></image>
+        <image class="menu-pic1" src="../images/pn@2x.png"></image>
         <text class="menu-text">联系我们</text>
-        <image class="menu-arrow" src="../images/更多_7_@2x.png" ></image>
+        <image class="menu-arrow" src="../images/gd_7_@2x.png" ></image>
       </view>
       <view @tap="aboutFish" class="menu-item">
         <image class="menu-pic2" src="../images/yu.jpg"></image>
         <text class="menu-text">关于渔管在线</text>
-        <image class="menu-arrow1" src="../images/更多_7_@2x.png" ></image>
+        <image class="menu-arrow1" src="../images/gd_7_@2x.png" ></image>
       </view>
     </view>
 

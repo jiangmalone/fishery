@@ -198,7 +198,7 @@ export default class Chosetype extends wepy.page {
       // 列表里被点击的那个对象的全部信息！！！！！
       let type = e.currentTarget.dataset.selecttype
       // 当前点击元素的自定义数据，这个很关键
-      let arr = this.selected
+      // let arr = this.selected
       let selectlist = this.selectlist
 
       if (this.fishNameList[0] === '') {

@@ -113,7 +113,7 @@
     <view class="result-item">
       <view class="result-top">
         <view class="name">1小鱼塘</view>
-        <view class="arrow" @tap="submit">查看详情<image src="../images/更多_7_@2x.png" style="width:14rpx;height:20rpx;"></image></view>
+        <view class="arrow" @tap="submit">查看详情<image src="../images/gd_7_@2x.png" style="width:14rpx;height:20rpx;"></image></view>
       </view>
       <view class="cut"></view>
       <view class="content">

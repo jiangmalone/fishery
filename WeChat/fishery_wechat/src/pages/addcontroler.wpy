@@ -185,11 +185,11 @@
 
   <!--头部-->
   <view class="addcontroler-item">
-    <image class="num" src="../images/型@2x.png"></image>设备编号
+    <image class="num" src="../images/tkname.png"></image>设备编号
     <text class="fright">{{equimentNum}}</text>
   </view>
   <view class="addcontroler-item">
-    <image class="num" src="../images/型@2x.png"></image>设备类型
+    <image class="num" src="../images/lx@2x.png"></image>设备类型
     <text class="fright">控制器</text>
   </view>
 
@@ -282,7 +282,7 @@
   <view class="mask" catchtouchmove="preventTouchMove" wx:if="{{showModal}}"></view>
     <view class="modalDlg" wx:if="{{showModal}}">
       <view class="close" @tap="closemodal">
-        <image class="closeimg" src="../images/叉_cross80@2x.png"></image>
+        <image class="closeimg" src="../images/n_cross80@2x.png"></image>
         <view class="closeline"></view>
       </view>
 

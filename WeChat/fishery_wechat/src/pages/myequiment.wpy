@@ -114,13 +114,13 @@
 
           <!--删除按钮-->
           <view class="delete" @tap="deleteEquiment({{item}}, {{index}})">
-            <image src="../images/除_3@2x.png"></image>
+            <image src="../images/dlt_3@2x.png"></image>
             <text>删除</text>
           </view>
 
           <!--管理设备按钮-->
           <view class="modify" @tap="modifyEquiment({{item}})">
-            <image src="../images/辑_7@2x.png"></image>
+            <image src="../images/bj_7@2x.png"></image>
             <text>设备管理</text>
           </view>
 
@@ -271,14 +271,6 @@ export default class Myequiment extends wepy.page {
         })
       }
     })
-  }
-  onUnload() {
-    wepy.navigateTo({
-      url: `personal`
-    })
-    // wepy.navigateBack({
-    //   delta: 2
-    // })
   }
 }
 </script>

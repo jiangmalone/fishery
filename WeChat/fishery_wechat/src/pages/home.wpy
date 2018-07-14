@@ -494,7 +494,7 @@
       <view class="home-bg">
         <view class="home-flex" wx:if="{{isWeather}}">
           <view class="location">
-            <image class="bgimage" src="../images/点1@2x.png"></image>
+            <image class="bgimage" src="../images/pt1@2x.png"></image>
             <text>{{location}}</text>
           </view>
           <view class="weather">
@@ -550,7 +550,7 @@
         <!--溶氧-->
         <view class="svalue">
           <view class="o2">
-            <image src="../images/氧_3_copy 2@2x.png" style="width:56rpx;height:56rpx;"></image>
+            <image src="../images/o_3_copy.png" style="width:56rpx;height:56rpx;"></image>
             <view>溶氧</view>
           </view>
           <view class="sborder"></view>
@@ -565,7 +565,7 @@
         <!--温度-->
         <view class="svalue">
           <view class="o2">
-            <image src="../images/温@2x.png" style="width:56rpx;height:56rpx;"></image>
+            <image src="../images/w@2x.png" style="width:56rpx;height:56rpx;"></image>
             <view>温度</view>
           </view>
           <view class="sborder"></view>
@@ -771,6 +771,16 @@ export default class Home extends wepy.page {
       this.tangkoudetail = e.target.dataset.tangkou
       this.currentId = e.target.dataset.id
       this.$parent.globalData.currentId = e.target.dataset.id
+      if (e.target.dataset.tangkou.sensorlist.length > 0) {
+        wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
+          data: e.target.dataset.tangkou.sensorlist[0].sensor,
+          method: 'GET',
+          success: res => {
+            this.realTimeDataInfo = res.data
+          }
+        })
+      }
       if (!this.location) {
         return 0
       }
@@ -792,23 +802,10 @@ export default class Home extends wepy.page {
       } else {
         this.isWeather = false
       }
-      if (e.target.dataset.tangkou.sensorlist.length > 0) {
-        wepy.request({
-          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
-          data: e.target.dataset.tangkou.sensorlist[0].sensor,
-          method: 'GET',
-          success: res => {
-            this.realTimeDataInfo = res.data
-          }
-        })
-      }
     },
 
     // 自动设置按钮
     autoset(limit, time, item, name) {
-      console.log(item)
-      console.log(time)
-      console.log(limit)
       wepy.showActionSheet({
         itemList: ['确定自动', '取消自动', '设置自动参数'],
         success: (res) => {

@@ -1973,6 +1973,7 @@ public class EquipmentService {
 				Float min = (Float) pHMap.get("min");
 				Float max = (Float) pHMap.get("max");				
 				Float average = (Float) pHMap.get("average");
+				average   =  (float)(Math.round(average*100))/100;
 				pHResult = "PH最小值"+min+"，最大值"+max+"，均值为"+average+"。";
 				pHSolution = dia.getDiagnosing("pH", average, type);
 				Float dvalue =max-min;	
@@ -1988,6 +1989,7 @@ public class EquipmentService {
 				Float min = (Float) DOMap.get("min");
 				Float max = (Float) DOMap.get("max");
 				Float average = (Float) DOMap.get("average");
+				average   =  (float)(Math.round(average*100))/100;
 				Float dvalue =max-min;
 				DOResult = "水体溶氧最小值"+min+"，最大值"+max+"，均值为"+average+"。";
 				DOSolution = dia.getDiagnosing("DO", average, type);
@@ -2003,6 +2005,7 @@ public class EquipmentService {
 				Float min = (Float) WTMap.get("min");
 				Float max = (Float) WTMap.get("max");
 				Float average = (Float) WTMap.get("average");
+				average   =  (float)(Math.round(average*100))/100;
 				WTResult = "水温最小值"+min+"，最大值"+max+"，均值为"+average+"。";
 				WTSolution = dia.getDiagnosing("WT", average, type);
 			}

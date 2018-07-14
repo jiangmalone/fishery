@@ -110,7 +110,7 @@ public class EquipmentService {
 	private Sensor sensor = null;
 	private Controller controller = null;
 	private WXUser wxUser = null;
-	private String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+	private String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 
 	public Map<String, Object> VertifyDevicesn(String divsn) {
 		/**
@@ -145,6 +145,8 @@ public class EquipmentService {
 			switch(type) {
 				case 1://传感器
 					sensorDao.delete(device_sn);
+					//删除触发器
+					deleteTriggerBySensorId(device_sn);
 					dev_triggerDao.delete(device_sn);
 					List<Dev_Trigger> devTriList = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
 					for(Dev_Trigger devTri:devTriList) {
@@ -618,7 +620,6 @@ public class EquipmentService {
 			limitDao.updateLimit(limit_Install);
 		/*	dev_triggerDao.*/
 			int result1 = addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
-			int result2 = addTrigger("DO",  limit_Install.getDevice_sn(), ">", limit_Install.getHigh_limit(), 2,limit_Install.getWay());
 			if(result1==1) {
 				return RESCODE.SUCCESS.getJSONRES();
 			}else {
@@ -1478,8 +1479,16 @@ public class EquipmentService {
 						}else if(ds_id.equals("pH")) {
 							sensor.setpH_status(2);
 						}
+					}else if(trigger.getTrigertype() == 4) {//正常
+						if(ds_id.equals("DO")) {
+							sensor.setOxygen_status(0);	
+						}else if(ds_id.equals("WT")) {
+							sensor.setWT_status(0);
+						}else if(ds_id.equals("pH")) {
+							sensor.setpH_status(0);
+						}
 					}
-				}else {//触发值离开触发范围
+				}else {//触发值离开触发范围，默认恢复正常
 					if(ds_id.equals("DO")) {
 						sensor.setOxygen_status(0);
 					}else if(ds_id.equals("WT")) {
@@ -1505,12 +1514,19 @@ public class EquipmentService {
 					}else if(ds_id.equals("pH")) {
 						sensor.setpH_status(2);
 					}
-				}else if(trigger.getTrigertype()==2) {
-					//低于溶氧下限，打开增氧机
+				}else if(trigger.getTrigertype()==2) {//低于溶氧下限，打开增氧机
 					int way = trigger.getWay();
 					String divsn=trigger.getDevice_sn();
 					String text = "KM"+way+":"+1;
 					CMDUtils.sendStrCmd(divsn,text);
+				}else if(trigger.getTrigertype()==4){//正常
+					if(ds_id.equals("DO")) {
+						sensor.setOxygen_status(0);	
+					}else if(ds_id.equals("WT")) {
+						sensor.setWT_status(0);
+					}else if(ds_id.equals("pH")) {
+						sensor.setpH_status(0);
+					}
 				}
 			}
 			sensorDao.updateSensor(sensor);
@@ -1534,7 +1550,7 @@ public class EquipmentService {
 	    	Map threshold12 = new HashMap<String, Float>();
 			threshold12.put("lolmt", 2);
 			threshold12.put("uplmt", 4);
-	    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,2,0);
+	    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,0,0);
 	    	int trigger13 = addTrigger("DO", device_sn, ">", 4, 4,0);
 	    	/*
 	    	 * 水温
@@ -1544,7 +1560,7 @@ public class EquipmentService {
              Map threshold23 = new HashMap<String, Float>();
              threshold23.put("lolmt", 10);
              threshold23.put("uplmt",30 );
- 	    	int trigger23 = addTrigger("DO",device_sn,"inout",threshold23,4,0);
+ 	    	int trigger23 = addTrigger("WT",device_sn,"inout",threshold23,4,0);
              /*
               * pH
               */
@@ -1565,7 +1581,7 @@ public class EquipmentService {
 		     		Map threshold35 = new HashMap<String, Float>();
 		     		threshold35.put("lolmt", 6.5);
 		     		threshold35.put("uplmt", 9);
-		     		 int trigger35 = addTrigger("pH", device_sn, "inout", threshold34, 4,0);
+		     		 int trigger35 = addTrigger("pH", device_sn, "inout", threshold35, 4,0);
 	     		 
 	     		 if(trigger11==1&&trigger12==1&&trigger13==1&&trigger21==1&&trigger22==1&&trigger23==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1&&trigger35==1) {
 	     			 return 1;
@@ -1583,7 +1599,7 @@ public class EquipmentService {
 	    	Map threshold12 = new HashMap<String, Float>();
 			threshold12.put("lolmt", 2);
 			threshold12.put("uplmt", 5);
-	    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,2,0);
+	    	int trigger12 = addTrigger("DO",device_sn,"inout",threshold12,0,0);
 	    	int trigger11 = addTrigger("DO", device_sn, "<", 2, 1,0);
 	    	int trigger13 = addTrigger("DO", device_sn, ">", 5, 4,0);
 	    	/*
@@ -1593,7 +1609,7 @@ public class EquipmentService {
 	    	 Map threshold23 = new HashMap<String, Float>();
              threshold23.put("lolmt", 18);
              threshold23.put("uplmt",30 );
- 	    	int trigger23 = addTrigger("DO",device_sn,"inout",threshold23,4,0);
+ 	    	int trigger23 = addTrigger("WT",device_sn,"inout",threshold23,4,0);
 	        /*
 	         * pH
 	         */
@@ -1640,7 +1656,7 @@ public class EquipmentService {
     	 Map threshold23 = new HashMap<String, Float>();
     	 threshold23.put("lolmt", 18);
          threshold23.put("uplmt",30 );
-	    	int trigger23 = addTrigger("DO",device_sn,"inout",threshold23,4,0);
+	    	int trigger23 = addTrigger("WT",device_sn,"inout",threshold23,4,0);
     	/*
          * pH
          */
@@ -1814,7 +1830,7 @@ public class EquipmentService {
 		//String url = "https://262101ef.ngrok.io/fishery/api/equipment/triggeractive";
 		List<String> devids=new ArrayList<String>();
 		devids.add(device_sn);
-		String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+		String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 		int triggerid;	
 		AddTriggersApi api = new AddTriggersApi(null, dsid, devids, null, url, type, threshold, key);
 		try{
@@ -1840,8 +1856,8 @@ public class EquipmentService {
 	}
 	
 	public String getControllerPortStatus(String devId,int port) {
-		System.out.println("123123123123123123123123123");
-		String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+		//System.out.println("123123123123123123123123123");
+		String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 		String id = "KM"+port;
 		/**
 		 * 查询单个数据流
@@ -2121,5 +2137,32 @@ public class EquipmentService {
 			return returnMap;			
 		}
 	}
+	
+	public void deleteTriggerBySensorId(String device_sn) {
+		List<Dev_Trigger> devTriggerList = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
+		for(Dev_Trigger devtrigger:devTriggerList) {		
+			/**
+			 * 触发器删除
+			 * @param tirggerid:触发器ID,String
+			 * @param key:masterkey 或者 设备apikey
+			 */
+			DeleteTriggersApi api = new DeleteTriggersApi(devtrigger.getTriger_id(), key);
+			BasicResponse<Void> response = api.executeApi();
+			System.out.println("errno:"+response.errno+" error:"+response.error);
+		}
+	}
 
+	public void deleteTriggerByDevice_snAndWay(String device_sn,int way) {
+		Dev_Trigger devTrigger = dev_triggerDao.findDev_TriggerByDevsnAndWay(device_sn, way);
+				
+			/**
+			 * 触发器删除
+			 * @param tirggerid:触发器ID,String
+			 * @param key:masterkey 或者 设备apikey
+			 */
+			DeleteTriggersApi api = new DeleteTriggersApi(devTrigger.getTriger_id(), key);
+			BasicResponse<Void> response = api.executeApi();
+			System.out.println("errno:"+response.errno+" error:"+response.error);
+		
+	}
 }

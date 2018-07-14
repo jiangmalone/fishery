@@ -207,7 +207,9 @@ public class EquipmentController {
 		if(limit_Install2 == null) {
 			System.out.println("增氧限制未设置");
 			limitDao.save(limit_Install);
+			equipmentService.addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
 		}else {
+			equipmentService.deleteTriggerByDevice_snAndWay(limit_Install2.getDevice_sn(), limit_Install2.getWay());
 			equipmentService.setLimit(limit_Install);
 		}
 		return RESCODE.SUCCESS.getJSONRES();
@@ -245,6 +247,11 @@ public class EquipmentController {
 	@RequestMapping(value ="/analysisData", method = RequestMethod.GET)
 	public List<Map<String, Object>> analysisData(String relation){
 		return  equipmentService.getPersonalDianosing(relation);
+	}
+	
+	@RequestMapping(value ="/deleteTrigger", method = RequestMethod.GET)
+	public void deleteTrigger(String device_sn){
+		  equipmentService.deleteTriggerBySensorId(device_sn);
 	}
 	
 }

@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private static String apikey="KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+	private static String apikey="7zMmzMWnY1jlegImd=m4p9EgZiI=";
 	public static int sendStrCmd(String devId,String contents){
 		/**
 		 * 发送命令

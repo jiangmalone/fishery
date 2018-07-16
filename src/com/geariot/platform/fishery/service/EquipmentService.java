@@ -178,7 +178,7 @@ public class EquipmentService {
 		String text = "KM"+way+":"+key;
 		int results = CMDUtils.sendStrCmd(divsn,text);
 	}
-
+	
 	public Map<String, Object> addSensor(Sensor...sensors) {
 		//为塘口添加传感器
 		//只可添加一个传感器，数组形式为便于前端渲染	
@@ -187,14 +187,16 @@ public class EquipmentService {
 			String  device_sn = sensor.getDevice_sn();
 			logger.debug(device_sn);
 			String api_device_sn = device_sn.substring(2, device_sn.length());
-			
-			if(deviceDao.findDevice(api_device_sn)==null) {	
+			synchronized(this) {
+				if(deviceDao.findDevice(api_device_sn)==null) {	
 					logger.debug("设备不存在，添加设备");
 					//设备号不存在，添加设备
 					Device device = new Device();
 					device.setDevice_sn(api_device_sn);
 					device.setType(1);
-					deviceDao.save(device);									
+					
+					deviceDao.save(device);	
+					
 					sensor.setDevice_sn(api_device_sn);
 					logger.debug("在device中添加了一个传感器");
 					logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
@@ -219,49 +221,19 @@ public class EquipmentService {
 			                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
 			                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);			            
 			            }	        	
-					}	
+					}
+					
 					sensorDao.save(sensor);
+					
 					logger.debug("在sensor中添加了一个传感器");	
 					return RESCODE.SUCCESS.getJSONRES();
 				}else {
 					//设备号存在，设备已使用
 					System.out.println("设备号存在，设备已使用");
-					/*Sensor sensorFind = sensorDao.findSensorByDeviceSns(api_device_sn);
-					//传感器不存在，用户已删除设备
-					if(sensorFind==null) {
-						logger.debug("塘口Id:" + sensor.getPondId() + "尝试与传感器设备,设备编号为:" + sensor.getDevice_sn() + "进行绑定...");
-						Pond pond = pondDao.findPondByPondId(sensor.getPondId());
-						if (pond == null) {
-							//塘口不存在
-							sensor.setPondId(0);
-							logger.debug("塘口Id:" + sensor.getPondId()+ "在数据库中无记录!!!");
-							return RESCODE.POND_NOT_EXIST.getJSONRES();
-						}else {
-							sensor.setPondId(sensor.getPondId());
-							//塘口存在，添加触发器
-							//根据鱼的种类添加触发器1.鱼2.虾3.蟹
-							Pond sensorbindpond=pondDao.findPondByPondId(sensor.getPondId());
-							List<PondFish> pondFishList = pondFishDao.getFishbyPondId(sensorbindpond.getId());
-				            int pondfishtype; 
-				            if (pondFishList.size()!=0){
-				            	//塘口中有鱼
-				            	logger.debug("塘口中有鱼");
-				            	logger.debug("塘口中共有"+pondFishList.size()+"种");
-				                PondFish senbinfs=pondFishList.get(0);
-				                pondfishtype=senbinfs.getType();
-				                logger.debug("鱼塘中鱼的种类为："+pondfishtype);
-				                int triggeraddresult=addTrigerbyFishtype(sensor.getDevice_sn(), pondfishtype);
-				            }else return RESCODE.POND_NO_FISH.getJSONRES();		      
-						}
-						sensorDao.updateSensor(sensor);
-						return RESCODE.SUCCESS.getJSONRES();
-					}else {
-						return RESCODE.DEVICESNS_REPEAT.getJSONRES();
-					}
-					*/
 					return RESCODE.DEVICESNS_REPEAT.getJSONRES();
 				}
-			}
+			}			
+	}
 
 
 	public Map<String, Object> addController(Controller[] controllers) {

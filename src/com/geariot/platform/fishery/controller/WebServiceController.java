@@ -287,12 +287,13 @@ public class WebServiceController {
 	@RequestMapping(value = "/verifySmsCode", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl,String wxUserName) {
-		/*try {
+		try {
 			wxUserName = new String(wxUserName.getBytes("ISO-8859-1"), "utf-8");
+			headimgurl = new String(headimgurl.getBytes("ISO-8859-1"), "utf-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 		JSONObject json = this.verifySmscode(phone, smscode);
 		logger.debug("openId:"+openId);
 		if (json.getString("error") != null) {

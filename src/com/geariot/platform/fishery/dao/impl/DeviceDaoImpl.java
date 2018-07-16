@@ -21,7 +21,6 @@ public class DeviceDaoImpl implements DeviceDao {
     @Override
     public void save(Device device) {
         getSession().save(device);
-
     }
 
     @Override

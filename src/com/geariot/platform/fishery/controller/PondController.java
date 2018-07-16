@@ -68,9 +68,10 @@ public class PondController {
 	}
 	
 	@RequestMapping(value = "/pondHasSensor" , method = RequestMethod.GET)
-	public int relationEquipment(int pondId){
+	public int relationEquipment(String pondId){
+		int pId = Integer.parseInt(pondId);
 		//返回1表示已使用，返回0表示未使用
-		return pondService.pondHasSensor(pondId);
+		return pondService.pondHasSensor(pId);
 	}
 	
 	

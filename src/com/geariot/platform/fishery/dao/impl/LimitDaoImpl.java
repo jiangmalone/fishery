@@ -15,6 +15,7 @@ import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.QueryUtils;
 @Repository
+@Transactional 
 public class LimitDaoImpl implements LimitDao {
 
 	
@@ -38,8 +39,11 @@ public class LimitDaoImpl implements LimitDao {
 	
 	@Override
 	public void deleteByDevice_snandWay(String device_sn,int way) {
-		String hql = "delete from Limit_Install where device_sn = :device_sn and way = :way";
+		/*String hql = "delete from Limit_Install where device_sn = :device_sn and way = :way";
 		this.getSession().createQuery(hql).setString("device_sn",device_sn).setInteger("way", way)										
+										.executeUpdate();*/
+		String hql = "delete from Limit_Install where device_sn = :device_sn";
+		this.getSession().createQuery(hql).setString("device_sn",device_sn)									
 										.executeUpdate();
 	}
 
@@ -68,17 +72,17 @@ public class LimitDaoImpl implements LimitDao {
 
 	@Override
 	public void updateLimit(Limit_Install limit_Install) {
-		/*String sql = "update limit_install set high_limit=:high_limit,low_limit=:low_limit,up_limit=:up_limit where device_sn = :device_sn and way = :way";
+		String sql = "update limit_install set high_limit=:high_limit,low_limit=:low_limit,up_limit=:up_limit where device_sn = :device_sn and way = :way";
 		getSession().createSQLQuery(sql)
 		.setFloat("high_limit", limit_Install.getHigh_limit())
 		.setFloat("low_limit", limit_Install.getLow_limit())
 		.setFloat("up_limit", limit_Install.getUp_limit())
 		.setString("device_sn", limit_Install.getDevice_sn())
-		.setInteger("way", limit_Install.getWay()).executeUpdate();*/
-		this.getSession().merge(limit_Install);
+		.setInteger("way", limit_Install.getWay()).executeUpdate();
+		/*this.getSession().merge(limit_Install);*/
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
+	
 	@Override
 	public Limit_Install findLimitByDeviceSnsAndWay(String device_sn, int way) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Limit_Install");

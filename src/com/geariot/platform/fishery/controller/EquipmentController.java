@@ -1,10 +1,12 @@
 package com.geariot.platform.fishery.controller;
 
 import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.entities.controllerParam;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.EquipmentService;
 import com.geariot.platform.fishery.timer.CMDUtils;
+import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsItem.DatapointsItem;
 import net.sf.json.JSONObject;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.geariot.platform.fishery.dao.LimitDao;
+import com.geariot.platform.fishery.dao.WXUserDao;
+import com.geariot.platform.fishery.dao.impl.WXUserDaoImpl;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Limit_Install;
@@ -40,6 +44,10 @@ public class EquipmentController {
 
 	@Autowired
 	private LimitDao limitDao;
+	
+	@Autowired
+	private WXUserDao wxUserDao;
+	
 
 //	@RequestMapping(value = "/setlimit", method = RequestMethod.GET)
 //	public Map<String, Object> setLimit(String devicesn,int way,String lowlimit,String highlimit,String higherlimit) {
@@ -112,7 +120,7 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value = "/data3days", method = RequestMethod.GET)
-	public Map<String,List<DatapointsItem>> data3days(String device_sn,int way) {
+	public Map<String,Object> data3days(String device_sn,int way) {
 		return equipmentService.data3days(device_sn,way);
 	}
 	
@@ -173,12 +181,14 @@ public class EquipmentController {
 	@RequestMapping(value = "/setTimer", method = RequestMethod.POST)
 	public Map<String, Object> autoSet(@RequestBody Param param){
 		System.out.println("设备id："+param.getDevice_sn());
-		System.out.println("设备id："+param.getWay());
+		System.out.println("设备way："+param.getWay());
 		System.out.println("timer长度："+param.getTimers().length);
 		//先删除
 		equipmentService.delTimer(param.getDevice_sn(),  param.getWay());
 		//后添加
 		for(Timer timer:param.getTimers()) {
+			timer.setDevice_sn(param.getDevice_sn());
+			timer.setWay(param.getWay());
 			equipmentService.addTimer(timer);
 		}
 		return RESCODE.SUCCESS.getJSONRES();		
@@ -198,12 +208,16 @@ public class EquipmentController {
 	
 	
 	@RequestMapping(value = "/setLimit", method = RequestMethod.POST)
-	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){		
+	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){	
+		System.out.println("设备编号:"+limit_Install.getDevice_sn());
+		System.out.println("way:"+limit_Install.getWay());
 		Limit_Install limit_Install2 = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
 		if(limit_Install2 == null) {
-			equipmentService.setLimit(limit_Install);
+			System.out.println("增氧限制未设置");
+			limitDao.save(limit_Install);
+			equipmentService.addTrigger("DO", limit_Install.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
 		}else {
-			limitDao.deleteByDevice_snandWay(limit_Install.getDevice_sn(), limit_Install.getWay());
+			equipmentService.deleteTriggerByDevice_snAndWay(limit_Install2.getDevice_sn(), limit_Install2.getWay());
 			equipmentService.setLimit(limit_Install);
 		}
 		return RESCODE.SUCCESS.getJSONRES();
@@ -221,13 +235,26 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/sendcmd", method = RequestMethod.POST)
-	public Map<String, Object> sendcmd(@RequestBody controllerParam param){
+	public int sendcmd(@RequestBody controllerParam param){
 		//
 		Controller controller = param.getController();
+		WXUser wxUser =  wxUserDao.findUserByRelation(controller.getRelation());
 		String contents = "KM"+controller.getPort()+":"+param.getKey();
-		CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);
-		
-		return RESCODE.SUCCESS.getJSONRES();
+		int result = CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);
+		if(result == 0) {//成功
+			if(param.getKey() == 0) {//关闭
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机成功", wxUser.getOpenId(), controller.getDevice_sn());
+			}else {//打开
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机成功", wxUser.getOpenId(), controller.getDevice_sn());
+			}
+		}else {
+			if(param.getKey() == 0) {
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机失败", wxUser.getOpenId(), controller.getDevice_sn());
+			}else {
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机失败", wxUser.getOpenId(), controller.getDevice_sn());
+			}
+		}		
+		return result;
 	}
 	
 	@RequestMapping(value ="/refeshcondition", method = RequestMethod.GET)
@@ -241,6 +268,11 @@ public class EquipmentController {
 	@RequestMapping(value ="/analysisData", method = RequestMethod.GET)
 	public List<Map<String, Object>> analysisData(String relation){
 		return  equipmentService.getPersonalDianosing(relation);
+	}
+	
+	@RequestMapping(value ="/deleteTrigger", method = RequestMethod.GET)
+	public void deleteTrigger(String device_sn){
+		  equipmentService.deleteTriggerBySensorId(device_sn);
 	}
 	
 }

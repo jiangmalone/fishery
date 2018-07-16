@@ -14,8 +14,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cmcc.iot.onenet.javasdk.api.cmds.QueryCmdsRespApi;
+import cmcc.iot.onenet.javasdk.api.cmds.QueryCmdsStatus;
 import cmcc.iot.onenet.javasdk.api.cmds.SendCmdsApi;
 import cmcc.iot.onenet.javasdk.response.BasicResponse;
+import cmcc.iot.onenet.javasdk.response.cmds.CmdsResponse;
 import cmcc.iot.onenet.javasdk.response.cmds.NewCmdsResponse;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -23,7 +25,7 @@ import org.apache.log4j.Logger;
 public class CMDUtils {
 	private static Logger logger = Logger.getLogger(CMDUtils.class);
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private static String apikey="KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+	private static String apikey="7zMmzMWnY1jlegImd=m4p9EgZiI=";
 	public static int sendStrCmd(String devId,String contents){
 		/**
 		 * 发送命令
@@ -58,25 +60,19 @@ public class CMDUtils {
 			 * @param cmduuid:命令id,String
 			 * @param key:masterkey或者设备apikey
 			 */
-			QueryCmdsRespApi api1=new QueryCmdsRespApi(cmdUuid,apikey);
-			try{
-				String response222 = api1.executeApi();
-				System.out.println("回复命令"+response222);
-
-				return 0;
-			}catch(Exception e){
-				System.out.println("失败了"+e.getMessage());
-				Thread.currentThread().sleep(2000);
-				try{
-				String response222 = api1.executeApi();
-				System.out.println("回复命令"+response222);
-				return 0;
-				}catch(Exception t){
-					System.out.println("失败了"+t.getMessage());
+			/*QueryCmdsRespApi api1=new QueryCmdsRespApi(cmdUuid,apikey);*/
+			QueryCmdsStatus api1=new QueryCmdsStatus(cmdUuid,apikey);
+			BasicResponse<CmdsResponse> response1 = api1.executeApi();
+			if(response.errno==0) {
+				if(response1.data.getStatus()==4) {
+					return 0;
+				}else {
 					return 1;
 				}
-
+			}else {
+				return 1;
 			}
+			
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			return 1;

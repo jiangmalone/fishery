@@ -4,6 +4,9 @@ import com.geariot.platform.fishery.entities.Dev_Trigger;
 import com.geariot.platform.fishery.dao.Dev_TriggerDao;
 import com.geariot.platform.fishery.entities.Sensor_Controller;
 import com.geariot.platform.fishery.utils.QueryUtils;
+
+import cmcc.iot.onenet.javasdk.api.bindata.AddBindataApi;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -57,6 +60,12 @@ public class Dev_TriggerDaoImpl implements Dev_TriggerDao {
         Query query = queryUtils.addString("device_sn", deviceSns).getQuery();
         return query.list();
     }
+	@Override
+	public Dev_Trigger findDev_TriggerByDevsnAndWay(String deviceSns, int way) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Dev_Trigger");
+        Query query = queryUtils.addString("device_sn", deviceSns).addInteger("way", way).getQuery();
+        return (Dev_Trigger) query.uniqueResult();
+	}
 
 
 }

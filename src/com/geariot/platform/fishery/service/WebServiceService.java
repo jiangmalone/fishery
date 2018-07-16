@@ -76,7 +76,7 @@ public class WebServiceService {
 		}
 	}
 
-	public Map<String, Object> login(String phone, String openId, String headimgurl) {
+	public Map<String, Object> login(String phone, String openId, String headimgurl,String wxUserName) {
 		WXUser wxUser = wxUserDao.findUserByPhone(phone);
 		logger.debug(openId);
 		if (wxUser == null) {
@@ -86,13 +86,16 @@ public class WebServiceService {
 			wxUserNew.setOpenId(openId);
 			wxUserNew.setLogin(true);
 			wxUserNew.setCreateDate(new Date());
+			wxUserNew.setName(wxUserName);
 			wxUserDao.save(wxUserNew);
 			wxUserNew.setRelation("WX"+wxUserNew.getId());
 			return RESCODE.SUCCESS.getJSONRES(wxUserNew);
 		} else {
 			wxUser.setHeadimgurl(headimgurl);
+			wxUser.setPhone(phone);
 			wxUser.setOpenId(openId);
 			wxUser.setLogin(true);
+			wxUser.setName(wxUserName);
 			return RESCODE.SUCCESS.getJSONRES(wxUser);
 		}
 	}

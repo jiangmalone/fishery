@@ -55,7 +55,7 @@ public class BindService {
 	@Autowired
 	private WebServiceService webService;
 	
-	String key = "KMDJ=U3QacwRmoCdcVXrTW8D0V8=";
+	String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 
 	public Map<String, Object> bindPondWithSensor(Sensor sensor) {
 		

@@ -1,10 +1,12 @@
 package com.geariot.platform.fishery.controller;
 
 import com.geariot.platform.fishery.entities.Timer;
+import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.entities.controllerParam;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.EquipmentService;
 import com.geariot.platform.fishery.timer.CMDUtils;
+import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsItem.DatapointsItem;
 import net.sf.json.JSONObject;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.geariot.platform.fishery.dao.LimitDao;
+import com.geariot.platform.fishery.dao.WXUserDao;
+import com.geariot.platform.fishery.dao.impl.WXUserDaoImpl;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Limit_Install;
@@ -40,6 +44,10 @@ public class EquipmentController {
 
 	@Autowired
 	private LimitDao limitDao;
+	
+	@Autowired
+	private WXUserDao wxUserDao;
+	
 
 //	@RequestMapping(value = "/setlimit", method = RequestMethod.GET)
 //	public Map<String, Object> setLimit(String devicesn,int way,String lowlimit,String highlimit,String higherlimit) {
@@ -112,7 +120,7 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value = "/data3days", method = RequestMethod.GET)
-	public Map<String,List<DatapointsItem>> data3days(String device_sn,int way) {
+	public Map<String,Object> data3days(String device_sn,int way) {
 		return equipmentService.data3days(device_sn,way);
 	}
 	
@@ -227,13 +235,26 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/sendcmd", method = RequestMethod.POST)
-	public Map<String, Object> sendcmd(@RequestBody controllerParam param){
+	public int sendcmd(@RequestBody controllerParam param){
 		//
 		Controller controller = param.getController();
+		WXUser wxUser =  wxUserDao.findUserByRelation(controller.getRelation());
 		String contents = "KM"+controller.getPort()+":"+param.getKey();
-		CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);
-		
-		return RESCODE.SUCCESS.getJSONRES();
+		int result = CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);
+		if(result == 0) {//成功
+			if(param.getKey() == 0) {//关闭
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机成功", wxUser.getOpenId(), controller.getDevice_sn());
+			}else {//打开
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机成功", wxUser.getOpenId(), controller.getDevice_sn());
+			}
+		}else {
+			if(param.getKey() == 0) {
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机失败", wxUser.getOpenId(), controller.getDevice_sn());
+			}else {
+				WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机失败", wxUser.getOpenId(), controller.getDevice_sn());
+			}
+		}		
+		return result;
 	}
 	
 	@RequestMapping(value ="/refeshcondition", method = RequestMethod.GET)

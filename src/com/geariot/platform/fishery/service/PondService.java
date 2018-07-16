@@ -330,5 +330,15 @@ public class PondService {
 		int size = (int) Math.ceil(count / (double) number);
 		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
 	}
+	
+	public int pondHasSensor(int pondId) {
+		List<Sensor> sensorList = sensorDao.findSensorsByPondId(pondId);
+		if(sensorList.size()>0) {
+			return 1;
+		}else {
+			return 0;
+		}
+		
+	}
 
 }

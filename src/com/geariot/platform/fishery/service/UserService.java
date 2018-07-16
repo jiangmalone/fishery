@@ -26,6 +26,9 @@ import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.dao.DiagDao;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
+import com.geariot.platform.fishery.wxutils.WechatAlarmMessage;
+import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
+import com.geariot.platform.fishery.wxutils.WechatTemplateMessage;
 import com.sun.media.jfxmedia.logging.Logger;
 
 import cmcc.iot.onenet.javasdk.api.device.GetDevicesStatus;
@@ -276,6 +279,7 @@ public class UserService {
 		}
 	}
 	public Map<String, Object> HomePageDetail(String relation) {
+		WXUser wxUser = wxuserDao.findUserByRelation(relation);
 		String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 		Map<String, Object> map = new HashMap<>();
 		List<Object> ol = new ArrayList<>();
@@ -364,6 +368,25 @@ public class UserService {
 				        	controllerDataMap.put(DatastreamsList.get(i).getId(), DatastreamsList.get(i).getValue());
 				        }
 				        controllerMap.put("data", controllerDataMap);
+				        if(controllerMap.get("PF") !=null) {
+				        	int PF = (int) controllerMap.get("PF");
+					        int DP = (int) controllerMap.get("DP"+controller.getPort());
+					        if(PF == 1) {
+					        	controller.setStatus(2);
+					        	WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", wxUser.getOpenId(), controller.getDevice_sn());
+					        	//WechatSendMessageUtils.sendWechatAlarmMessages(WechatTemplateMessage.alarmMSG("设备断电", wxUser.getOpenId(), controller.getDevice_sn());
+					        }else {
+					        	if(DP==1) {
+					        		controller.setStatus(3);
+					        		WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", wxUser.getOpenId(), controller.getDevice_sn());
+					        	}else {
+					        		controller.setStatus(0);
+					        	}
+					        }
+				        }
+				        
+				        
+				        
 			        }else {
 			        	controllerMap.put("data", false);
 			        }

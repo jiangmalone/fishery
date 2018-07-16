@@ -131,9 +131,11 @@ export default class Login extends wepy.page {
   methods = {
     bindPhoneNumber(e) {
       this.phoneNumber = e.detail.value
+      this.$parent.globalData.login.phone = e.detail.value
     },
     bindVerificationCode(e) {
       this.verificationCode = e.detail.value
+      this.$parent.globalData.login.vscode = e.detail.value
     },
     getVerificationCode() {
       let re = /^1\d{10}$/
@@ -194,49 +196,50 @@ export default class Login extends wepy.page {
           this.globalData.headImg = res.userInfo.avatarUrl
           this.globalData.name = res.userInfo.nickName
           console.log('成功了', res.userInfo)
+          console.log('this.globalData', this.globalData)
+          console.log('this', this.$pages)
+          wepy.request({
+            url: this.globalData.baseUrl + 'api/' + 'webService/verifySmsCode',
+            data: {
+              openId: this.globalData.openId,
+              headimgurl: this.globalData.headImg,
+              phone: this.globalData.login.phone,
+              wxUserName: this.globalData.name,
+              smscode: this.globalData.login.vscode
+            },
+            method: 'GET',
+            success: res => {
+              console.log(res)
+              if (!res.data.data) {
+                wepy.showToast({title: res.data.msg, icon: 'none', duration: 2000})
+                return 0
+              } else {
+                console.log('gd', this.globalData)
+                this.globalData.id = res.data.data.id
+                this.globalData.name = res.data.data.name
+                this.globalData.sex = res.data.data.sex
+                this.globalData.phone = this.globalData.login.phone
+                this.globalData.life = res.data.data.life
+                this.globalData.headImg = res.data.data.headimgurl
+                this.globalData.relation = res.data.data.relation
+                console.log(res.data)
+                let userdata = JSON.stringify(res.data)
+                console.log(userdata)
+                if (res.data.data.name === null) {
+                  wepy.navigateTo({
+                    url: `saveuserinfo?data=${userdata}`
+                  })
+                } else {
+                  wepy.switchTab({
+                    url: `home`
+                  })
+                }
+              }
+            }
+          })
         },
         fail(error) {
           console.log('失败了', error)
-        }
-      })
-      // return
-      console.log('this.$parent.globalData', this.$parent.globalData)
-      wepy.request({
-        url: this.$parent.globalData.baseUrl + 'api/' + 'webService/verifySmsCode',
-        data: {
-          openId: this.$parent.globalData.openId,
-          headimgurl: this.$parent.globalData.headImg,
-          phone: this.phoneNumber,
-          wxUserName: this.$parent.globalData.name,
-          smscode: this.verificationCode
-        },
-        method: 'GET',
-        success: res => {
-          console.log(res)
-          if (!res.data.data) {
-            wepy.showToast({title: res.data.msg, icon: 'none', duration: 2000})
-            return 0
-          } else {
-            this.$parent.globalData.id = res.data.data.id
-            this.$parent.globalData.name = res.data.data.name
-            this.$parent.globalData.sex = res.data.data.sex
-            this.$parent.globalData.phone = this.phoneNumber
-            this.$parent.globalData.life = res.data.data.life
-            this.$parent.globalData.headImg = res.data.data.headimgurl
-            this.$parent.globalData.relation = res.data.data.relation
-            console.log(res.data)
-            let userdata = JSON.stringify(res.data)
-            console.log(userdata)
-            if (res.data.data.name === null) {
-              wepy.navigateTo({
-                url: `saveuserinfo?data=${userdata}`
-              })
-            } else {
-              wepy.switchTab({
-                url: `home`
-              })
-            }
-          }
         }
       })
     }
@@ -272,7 +275,7 @@ export default class Login extends wepy.page {
               this.$parent.globalData.id = res.data.data.id
               this.$parent.globalData.name = res.data.data.name
               this.$parent.globalData.sex = res.data.data.sex
-              this.$parent.globalData.phone = this.phoneNumber
+              this.$parent.globalData.phone = res.data.data.phone
               this.$parent.globalData.life = res.data.data.life
               this.$parent.globalData.headImg = res.data.data.headimgurl
               this.$parent.globalData.relation = res.data.data.relation

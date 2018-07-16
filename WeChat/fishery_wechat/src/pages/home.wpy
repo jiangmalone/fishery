@@ -555,11 +555,11 @@
           </view>
           <view class="sborder"></view>
           <view class="ovalue">
-            <view>{{realTimeDataInfo.oxygen}}</view>
-            <view class="unit">mg/L</view>
+            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}">{{realTimeDataInfo.oxygen}}</view>
+            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="unit">mg/L</view>
           </view>
           <view class="sborder1"></view>
-          <view class="{{realTimeDataInfo.oxygen_status===0?'sresult blue': (realTimeDataInfo.oxygen_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.oxygen_status===0?'正常': (realTimeDataInfo.oxygen_status===1?'预警':'危险')}}</view>
+          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="{{realTimeDataInfo.oxygen_status===0?'sresult blue': (realTimeDataInfo.oxygen_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.oxygen_status===0?'正常': (realTimeDataInfo.oxygen_status===1?'预警':'危险')}}</view>
         </view>
 
         <!--温度-->
@@ -570,11 +570,11 @@
           </view>
           <view class="sborder"></view>
           <view class="ovalue" style="color: #f19649">
-            <view>{{realTimeDataInfo.water_temperature}}</view>
-            <view class="unit1">℃</view>
+            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}">{{realTimeDataInfo.water_temperature}}</view>
+            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="unit1">℃</view>
           </view>
           <view class="sborder1"></view>
-          <view class="{{realTimeDataInfo.wt_status===0?'sresult blue': (realTimeDataInfo.wt_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.wt_status===0?'正常': (realTimeDataInfo.wt_status===1?'预警':'危险')}}</view>
+          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="{{realTimeDataInfo.wt_status===0?'sresult blue': (realTimeDataInfo.wt_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.wt_status===0?'正常': (realTimeDataInfo.wt_status===1?'预警':'危险')}}</view>
         </view>
 
         <!--ph-->
@@ -585,11 +585,11 @@
           </view>
           <view class="sborder"></view>
           <view class="phvalue" style="color: #56acb8">
-            <view>{{realTimeDataInfo.pH_value}}</view>
+            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}">{{realTimeDataInfo.pH_value}}</view>
             <!--<view class="unit1"> </view>-->
           </view>
           <view class="sborder1"></view>
-          <view class="{{realTimeDataInfo.pH_status===0?'sresult blue': (realTimeDataInfo.pH_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.pH_status===0?'正常': (realTimeDataInfo.pH_status===1?'预警':'危险')}}</view>
+          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="{{realTimeDataInfo.pH_status===0?'sresult blue': (realTimeDataInfo.pH_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.pH_status===0?'正常': (realTimeDataInfo.pH_status===1?'预警':'危险')}}</view>
         </view>
 
       </view>
@@ -618,8 +618,8 @@
               </text>
 
               <!--是否正常-->
-              <text class="{{item.controller.status === 0 ? 'blue' : (item.controller.type === 1 ? 'gray' : (item.controller.type === 2 ? 'red' : (item.controller.type === 3 ? 'red' : 'red')))}}">
-                {{item.controller.status === 0 ? '正常' : (item.controller.type === 1 ? '离线' : (item.controller.type === 2 ? '断电' : (item.controller.type === 3 ? '缺相' : '数据异常')))}}
+              <text class="{{item.controller.status === 0 ? 'blue' : (item.controller.status === 1 ? 'gray' : (item.controller.status === 2 ? 'red' : (item.controller.status === 3 ? 'red' : 'red')))}}">
+                {{item.controller.status === 0 ? '正常' : (item.controller.status === 1 ? '离线' : (item.controller.status === 2 ? '断电' : (item.controller.status === 3 ? '缺相' : '数据异常')))}}
               </text>
 
               <!--右侧开关上方-->
@@ -692,75 +692,16 @@ export default class Home extends wepy.page {
           },
           method: 'POST',
           success: (res) => {
-            // wepy.hideLoading()
-            // this.tangkoudetail.controllerList[controllerIdx].switch = key
-            // this.$apply()
-            // 获取结果第一次
-            setTimeout(() => {
-              wepy.request({
-                url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/refeshcondition',
-                data: {
-                  device_sn: controller.device_sn,
-                  port: controller.port,
-                  status: '' + s
-                },
-                method: 'GET',
-                success: (res) => {
-                  if (res.data.ifnext === 1) {
-                    // 获取结果第二次
-                    setTimeout(() => {
-                      wepy.request({
-                        url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/refeshcondition',
-                        data: {
-                          device_sn: controller.device_sn,
-                          port: controller.port,
-                          status: '' + s
-                        },
-                        method: 'GET',
-                        success: (res) => {
-                          if (res.data.ifnext === 1) {
-                            // 获取结果第三次
-                            setTimeout(() => {
-                              wepy.request({
-                                url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/refeshcondition',
-                                data: {
-                                  device_sn: controller.device_sn,
-                                  port: controller.port,
-                                  status: '' + s
-                                },
-                                method: 'GET',
-                                success: (res) => {
-                                  if (res.data.ifnext === 1) {
-                                    wepy.hideLoading()
-                                    wepy.showToast({
-                                      title: '开关操作失败',
-                                      icon: 'none',
-                                      duration: 2000
-                                    })
-                                  } else {
-                                    wepy.hideLoading()
-                                    this.tangkoudetail.controllerList[controllerIdx].switch = s
-                                    this.$apply()
-                                  }
-                                }
-                              })
-                            }, 5000)
-                          } else {
-                            wepy.hideLoading()
-                            this.tangkoudetail.controllerList[controllerIdx].switch = s
-                            this.$apply()
-                          }
-                        }
-                      })
-                    }, 5000)
-                  } else {
-                    wepy.hideLoading()
-                    this.tangkoudetail.controllerList[controllerIdx].switch = s
-                    this.$apply()
-                  }
-                }
-              })
-            }, 10000)
+            if (res.data === 0) {
+              this.tangkoudetail.controllerList[controllerIdx].switch = key
+              this.$apply()
+            } else {
+              this.tangkoudetail.controllerList[controllerIdx].switch = s
+              this.$apply()
+            }
+          },
+          complete: () => {
+            wepy.hideLoading()
           }
         })
       }

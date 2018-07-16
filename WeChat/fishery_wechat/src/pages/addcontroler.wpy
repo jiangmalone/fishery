@@ -423,6 +423,17 @@ export default class Addcontroler extends wepy.page {
           }
         }
       })
+      // wepy.showModal({
+      //   title: '提示',
+      //   content: '是否要解绑塘口',
+      //   success: function(res) {
+      //     if (res.confirm) {
+      //
+      //     } else if (res.cancel) {
+      //       console.log('用户点击取消')
+      //     }
+      //   }
+      // })
     },
 
     // 新增塘口

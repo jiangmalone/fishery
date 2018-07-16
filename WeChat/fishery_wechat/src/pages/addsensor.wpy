@@ -123,7 +123,7 @@
     height: 100rpx;
     font-size: 32rpx;
     line-height: 100rpx;
-    background: #2F70B8;
+    /*background: #2F70B8;*/
     border-radius: 146rpx;
     text-align: center;
     margin-left: 50rpx;
@@ -149,6 +149,14 @@
       top:4rpx;
       left:-6rpx;
     }
+  }
+  .able{
+    background-color: #2F70B8;
+    box-shadow: 0 4rpx 16rpx 0 #D2EBFD;
+  }
+  .disable{
+    background-color: #dcdcdc;
+    box-shadow: 0 4rpx 16rpx 0 #dcdcdc;
   }
 }
 </style>
@@ -206,7 +214,7 @@
     </view>
 
     <!--确定按钮-->
-    <view class="confirmbut" @tap="confirmEqu">确定</view>
+    <view class="{{ableBtn?'confirmbut able':'confirmbut disable'}}" @tap="confirmEqu">确定</view>
   </view>
 </template>
 <script>
@@ -214,6 +222,7 @@ import wepy from 'wepy'
 
 export default class Addsensor extends wepy.page {
   data= {
+    ableBtn: true,
     tang: [],
     showModal: false,
     list: ['鱼塘1', '鱼塘2', '鱼塘3', '鱼塘4'],
@@ -228,37 +237,49 @@ export default class Addsensor extends wepy.page {
   }
   methods= {
     unBindBtn() {
-      wepy.showLoading()
-      wepy.request({
-        url: this.$parent.globalData.baseUrl + 'api/' + 'bind/delSensorOrAIOBind',
-        data: {
-          type: 1,
-          device_sn: this.equimentNum
-        },
-        method: 'GET',
-        success: res => {
-          if (res.data.msg === '成功') {
-            wepy.showToast({
-              title: '解绑成功',
-              icon: 'success',
-              duration: 2000,
+      wepy.showModal({
+        title: '提示',
+        content: '是否要解绑塘口',
+        success: function(res) {
+          if (res.confirm) {
+            wepy.showLoading()
+            wepy.request({
+              url: this.globalData.baseUrl + 'api/' + 'bind/delSensorOrAIOBind',
+              data: {
+                type: 1,
+                device_sn: this.equimentNum
+              },
+              method: 'GET',
               success: res => {
-                wepy.navigateTo({
-                  url: `myequiment`
-                })
+                if (res.data.msg === '成功') {
+                  wepy.hideLoading()
+                  wepy.showToast({
+                    title: '解绑成功',
+                    icon: 'success',
+                    duration: 2000,
+                    success: res => {
+                      wepy.navigateTo({
+                        url: `myequiment`
+                      })
+                    }
+                  })
+                } else {
+                  wepy.hideLoading()
+                  wepy.showToast({
+                    title: '解绑失败',
+                    icon: 'none',
+                    duration: 2000
+                  })
+                }
+                console.log(res)
+              },
+              complete: () => {
+                wepy.hideLoading()
               }
             })
-          } else {
-            wepy.showToast({
-              title: '解绑失败',
-              icon: 'none',
-              duration: 2000
-            })
+          } else if (res.cancel) {
+            console.log('用户点击取消')
           }
-          console.log(res)
-        },
-        complete: () => {
-          wepy.hideLoading()
         }
       })
     },
@@ -287,48 +308,70 @@ export default class Addsensor extends wepy.page {
     },
     confirmEqu() {
       if (this.equimentinfo[0].name && this.equimentinfo[0].pondId) {
-        // wepy.showLoading()
-        if (this.action === 'modify') {
+        wepy.showLoading()
+        if (this.ableBtn === true) {
+          console.log('typ', typeof this.equimentinfo[0].pondId.toString())
           wepy.request({
-            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifySensor',
-            data: this.equimentinfo,
-            method: 'POST',
+            url: this.$parent.globalData.baseUrl + 'api/' + 'pond/pondHasSensor',
+            data: {
+              pondId: this.equimentinfo[0].pondId.toString()
+            },
+            method: 'GET',
             success: res => {
               console.log(res)
-              if (res.data.code === 0) {
-                wepy.redirectTo({
-                  url: 'myequiment'
-                })
+              if (res.data === 0) {
+                if (this.action === 'modify') {
+                  wepy.showLoading()
+                  this.ableBtn = false
+                  wepy.request({
+                    url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifySensor',
+                    data: this.equimentinfo[0].pondId,
+                    method: 'POST',
+                    success: res => {
+                      console.log(res)
+                      if (res.data.code === 0) {
+                        wepy.redirectTo({
+                          url: 'myequiment'
+                        })
+                      } else {
+                        wepy.showToast({title: res.data.msg, icon: 'none'})
+                      }
+                    },
+                    complete: () => {
+                      wepy.hideLoading()
+                      this.ableBtn = true
+                    }
+                  })
+                } else {
+                  wepy.showLoading()
+                  wepy.request({
+                    url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/addSensor',
+                    data: this.equimentinfo,
+                    method: 'POST',
+                    success: res => {
+                      console.log(res)
+                      if (res.data.code === 0) {
+                        wepy.redirectTo({
+                          url: 'equimentsuccess'
+                        })
+                      } else {
+                        wepy.showToast({title: res.data.msg, icon: 'none', duration: 2000})
+                      }
+                    },
+                    complete: () => {
+                      wepy.hideLoading()
+                      this.ableBtn = true
+                    }
+                  })
+                }
               } else {
-                wepy.showToast({title: res.data.msg, icon: 'none'})
+                wepy.showToast({title: '当前塘口已绑定传感器，请更换其他塘口', icon: 'none', duration: 2000})
               }
-            },
-            complete: () => {
-              wepy.hideLoading()
-            }
-          })
-        } else {
-          wepy.request({
-            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/addSensor',
-            data: this.equimentinfo,
-            method: 'POST',
-            success: res => {
-              console.log(res)
-              if (res.data.code === 0) {
-                wepy.redirectTo({
-                  url: 'equimentsuccess'
-                })
-              } else {
-                wepy.showToast({title: res.data.msg, icon: 'none'})
-              }
-            },
-            complete: () => {
-              wepy.hideLoading()
             }
           })
         }
       } else {
-        wepy.showToast({title: '保存失败：请填写传感器名称，并绑定塘口', icon: 'none'})
+        wepy.showToast({title: '保存失败：请填写传感器名称，并绑定塘口', icon: 'none', duration: 2000})
       }
     },
     selectRep(e) {

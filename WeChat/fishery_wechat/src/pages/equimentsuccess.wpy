@@ -38,10 +38,10 @@
 <view class="equimentsuccess">
   <image class="image1" src="../images/suc@2x.png"></image>
   <view class="successmessage">
-    <text>添加设备成功</text>
+    <text>绑定塘口成功</text>
   </view>
   <view class="but" @tap="continueAdd">继续添加设备</view>
-  <view class="returnlist" @tap="returnequiment">返回设备列表<image src="../images/gd_7_@2x.png"></image></view>
+  <view class="returnlist" @tap="returnequiment">返回首页<image src="../images/gd_7_@2x.png"></image></view>
 </view>
 </template>
 <script>
@@ -54,8 +54,8 @@ export default class Equimentsuccess extends wepy.page {
       })
     },
     returnequiment() {
-      wepy.redirectTo({
-        url: 'myequiment'
+      wepy.switchTab({
+        url: 'home'
       })
     }
   }

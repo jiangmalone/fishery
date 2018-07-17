@@ -187,8 +187,14 @@ export default class Autoset extends wepy.page {
                 data: this.limit,
                 method: 'POST',
                 success: res => {
-                  wepy.showToast({title: '自动设置成功'})
-                  console.log(res)
+                  wepy.showToast({
+                    title: '自动设置成功',
+                    success: res => {
+                      wepy.switchTab({
+                        url: 'home'
+                      })
+                    }
+                  })
                 }
               })
             }

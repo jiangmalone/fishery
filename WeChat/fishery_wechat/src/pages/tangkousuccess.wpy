@@ -52,7 +52,7 @@
   <view class="successmessage">
     <text>添加塘口成功</text>
   </view>
-  <view class="but-equiment" @tap="toBindEquiment">添加设备</view>
+  <view class="but-equiment" @tap="toBindEquiment">{{title}}</view>
   <view class="but" @tap="toAddtangkou">继续新建塘口</view>
   <view class="returnlist" @tap="toTangkoulist">返回塘口列表<image src="../images/gd_7_@2x.png"></image></view>
 </view>
@@ -60,15 +60,21 @@
 <script>
 import wepy from 'wepy'
 export default class Tangkousuccess extends wepy.page {
+  data = {
+    title: '添加设备'
+  }
   methods= {
     // 添加设备
     toBindEquiment() {
-      wepy.redirectTo({
-        url: 'scan'
-      })
-      // wepy.redirectTo({
-      //   url: this.$parent.globalData.device_sn
-      // })
+      if (this.$parent.globalData.device_sn) {
+        wepy.redirectTo({
+          url: this.$parent.globalData.device_sn
+        })
+      } else {
+        wepy.redirectTo({
+          url: 'scan'
+        })
+      }
     },
 
     // 跳转到新建塘口
@@ -83,6 +89,13 @@ export default class Tangkousuccess extends wepy.page {
       wepy.redirectTo({
         url: 'mytangkou'
       })
+    }
+  }
+  onLoad () {
+    if (this.$parent.globalData.device_sn) {
+      this.title = '返回绑定'
+    } else {
+      this.title = '添加设备'
     }
   }
 }

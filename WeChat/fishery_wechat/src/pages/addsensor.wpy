@@ -237,51 +237,52 @@ export default class Addsensor extends wepy.page {
   }
   methods= {
     unBindBtn() {
-      wepy.showModal({
-        title: '提示',
-        content: '是否要解绑塘口',
-        success: function(res) {
-          if (res.confirm) {
-            wepy.showLoading()
-            wepy.request({
-              url: this.globalData.baseUrl + 'api/' + 'bind/delSensorOrAIOBind',
-              data: {
-                type: 1,
-                device_sn: this.equimentNum
-              },
-              method: 'GET',
+      wepy.showLoading()
+      wepy.request({
+        url: this.$parent.globalData.baseUrl + 'api/' + 'bind/delSensorOrAIOBind',
+        data: {
+          type: 1,
+          device_sn: this.equimentNum
+        },
+        method: 'GET',
+        success: res => {
+          if (res.data.msg === '成功') {
+            wepy.hideLoading()
+            wepy.showToast({
+              title: '解绑成功',
+              icon: 'success',
+              duration: 2000,
               success: res => {
-                if (res.data.msg === '成功') {
-                  wepy.hideLoading()
-                  wepy.showToast({
-                    title: '解绑成功',
-                    icon: 'success',
-                    duration: 2000,
-                    success: res => {
-                      wepy.navigateTo({
-                        url: `myequiment`
-                      })
-                    }
-                  })
-                } else {
-                  wepy.hideLoading()
-                  wepy.showToast({
-                    title: '解绑失败',
-                    icon: 'none',
-                    duration: 2000
-                  })
-                }
-                console.log(res)
-              },
-              complete: () => {
-                wepy.hideLoading()
+                wepy.navigateTo({
+                  url: `myequiment`
+                })
               }
             })
-          } else if (res.cancel) {
-            console.log('用户点击取消')
+          } else {
+            wepy.hideLoading()
+            wepy.showToast({
+              title: '解绑失败',
+              icon: 'none',
+              duration: 2000
+            })
           }
+          console.log(res)
+        },
+        complete: () => {
+          wepy.hideLoading()
         }
       })
+      // wepy.showModal({
+      //   title: '提示',
+      //   content: '是否要解绑塘口',
+      //   success: function(res) {
+      //     if (res.confirm) {
+      //
+      //     } else if (res.cancel) {
+      //       console.log('用户点击取消')
+      //     }
+      //   }
+      // })
     },
     jumAddTangkou() {
       wepy.navigateTo({
@@ -325,7 +326,7 @@ export default class Addsensor extends wepy.page {
                   this.ableBtn = false
                   wepy.request({
                     url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/modifySensor',
-                    data: this.equimentinfo[0].pondId,
+                    data: this.equimentinfo,
                     method: 'POST',
                     success: res => {
                       console.log(res)

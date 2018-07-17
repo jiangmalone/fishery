@@ -76,18 +76,22 @@ export default class extends wepy.app {
     // baseUrl: 'http://192.168.0.111:8080/fishery/',
     baseUrl: 'https://www.fisherymanager.net/fishery/',
     openId: '',
-    phone: '13833131704',
-    headImg: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1530514160078&di=29d017ded3cf8602332709ffff004d37&imgtype=0&src=http%3A%2F%2Fpic.qqtn.com%2Fup%2F2016-10%2F14770298895342588.jpg',
-    id: '4',
-    name: '张蕾西',
-    sex: '女',
+    phone: '',
+    headImg: '',
+    id: '',
+    name: '',
+    sex: '',
     life: '',
     location: '',
     weather: '',
-    relation: 'WX10',
-    // relation: 'WX26',
+    // relation: 'WX10',
+    relation: 'WX19',
     currentId: 0,
-    device_sn: null
+    device_sn: null,
+    login: {
+      phone: null,
+      vscode: null
+    }
   }
 
   constructor () {
@@ -121,7 +125,6 @@ export default class extends wepy.app {
       success (res) {
         that.globalData.userInfo = res.userInfo
         cb && cb(res.userInfo)
-        console.log('行不行啊', that.globalData.userInfo)
       }
     })
   }

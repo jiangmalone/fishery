@@ -12,6 +12,8 @@ public interface SensorDao {
 	
 	void updateSensor(Sensor sensor);
 	
+	void updateSensorByDevicesn(Sensor sensor);
+	
 	int delete(String deviceSns);
 
 	Sensor findSensorById(int sensorId);

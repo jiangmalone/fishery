@@ -363,10 +363,12 @@ public class UserService {
 			        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
 			        System.out.println(response2.getJson());
 			        if(response2.errno == 0) {
-			        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response2.data.getDevices().get(0).getDatastreams();
-				        for(int i=0;i<DatastreamsList.size();i++) {
-				        	controllerDataMap.put(DatastreamsList.get(i).getId(), DatastreamsList.get(i).getValue());
-				        }
+			        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> datastreamsList = response2.data.getDevices().get(0).getDatastreams();
+			        	//if(datastreamsList.size()) {
+			        		for(int i=0;i<datastreamsList.size();i++) {
+					        	controllerDataMap.put(datastreamsList.get(i).getId(), datastreamsList.get(i).getValue());
+					        }
+			        	//}			        	
 				        controllerMap.put("data", controllerDataMap);
 				        if(controllerMap.get("PF") !=null) {
 				        	int PF = (int) controllerMap.get("PF");

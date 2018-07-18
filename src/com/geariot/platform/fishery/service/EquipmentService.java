@@ -123,6 +123,7 @@ public class EquipmentService {
 		 * @param key:masterkey 或者 设备apikey,String
 		 */
 		String device_sn = divsn.substring(2, divsn.length());
+		logger.debug("检查设备在onenet上是否存在");
 		logger.debug("获得编码"+divsn);
 		GetDeviceApi api = new GetDeviceApi(divsn.substring(2, divsn.length()), key);
 		BasicResponse<DeviceResponse> response = api.executeApi();
@@ -142,11 +143,13 @@ public class EquipmentService {
 
 	//删除设备
 	public Map<String, Object> delEquipment(String device_sn){
+		logger.debug("进入删除设备，设备编号为："+device_sn);
 		Device  d = deviceDao.findDevice(device_sn);
 		if(d!=null) {
 			int type = d.getType();
 			switch(type) {
 				case 1://传感器
+					logger.debug("删除设备类型为传感器");
 					sensorDao.delete(device_sn);
 					deviceDao.delete(device_sn);
 					//删除触发器
@@ -162,10 +165,12 @@ public class EquipmentService {
 					break;
 				case 2://一体机
 					//一体机完善后，需加入一体机的传感器的触发器的删除部分
+					logger.debug("删除设备类型为一体机");
 					aioDao.delete(device_sn);
 					deviceDao.delete(device_sn);
 					break;
 				case 3://控制器
+					logger.debug("删除设备类型为控制器");
 					controllerDao.delete(device_sn);
 					deviceDao.delete(device_sn);
 					limitDao.delete(device_sn);
@@ -174,6 +179,7 @@ public class EquipmentService {
 			}
 			return RESCODE.SUCCESS.getJSONRES();
 		}else {
+			logger.debug("设备表中未找到需要删除的设备");
 			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
 		}		
 	}
@@ -219,20 +225,29 @@ public class EquipmentService {
 				        BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
 				        System.out.println("errno:"+response.errno+" error:"+response.error);
 				        System.out.println(response.getJson());
-				        List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
-				        for(int i=0;i<DatastreamsList.size();i++) {
-				        	if(DatastreamsList.get(i).getId().equals("location")) {
-				        		System.out.println(DatastreamsList.get(i).getId());
-					        	System.out.println(DatastreamsList.get(i).getValue());
-					        	String location = DatastreamsList.get(i).getValue().toString();
-					        	lat = Float.parseFloat(location.substring(5, location.indexOf(",")));
-					        	System.out.println(lat);
-					        	lon = Float.parseFloat(location.substring(location.indexOf(",")+6,location.length()-1));
-					        	System.out.println(lon);
-				        	}
+				        if(response.errno == 0) {
 				        	
+				           List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> datastreamsList = response.data.getDevices().get(0).getDatastreams();
+				 	       if(datastreamsList == null) {
+				 	    	   System.out.println("无数据流");
+				 	       }else {
+				 	    	  if(datastreamsList != null) {
+						    	   for(int i=0;i<datastreamsList.size();i++) {	
+							        	if(datastreamsList.get(i).getId().equals("location")) {
+							        		System.out.println(datastreamsList.get(i).getId());
+								        	System.out.println(datastreamsList.get(i).getValue());
+								        	String location = datastreamsList.get(i).getValue().toString();
+								        	lat = Float.parseFloat(location.substring(5, location.indexOf(",")));
+								        	System.out.println(lat);
+								        	lon = Float.parseFloat(location.substring(location.indexOf(",")+6,location.length()-1));
+								        	System.out.println(lon);
+							        	}
+						    	   }
+					        } 
+				 	       }
+						       
 				        }
-						
+				       
 						pondExsit.setLatitude(lat);
 						pondExsit.setLongitude(lon);
 						String address = webServiceService.getLocation(lon, lat);
@@ -1344,6 +1359,31 @@ public class EquipmentService {
 				flag = false;
 			}else {
 				sensorDao.updateSensorByDevicesn(sensor);
+				Pond pondExsit=pondDao.findPondByPondId(sensor.getPondId());
+				float lat = 0;
+				float lon  = 0;
+				GetLatesDeviceData api = new GetLatesDeviceData(sensor.getDevice_sn(),key);
+		        BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
+		        System.out.println("errno:"+response.errno+" error:"+response.error);
+		        System.out.println(response.getJson());
+		        List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
+		        for(int i=0;i<DatastreamsList.size();i++) {
+		        	if(DatastreamsList.get(i).getId().equals("location")) {
+		        		System.out.println(DatastreamsList.get(i).getId());
+			        	System.out.println(DatastreamsList.get(i).getValue());
+			        	String location = DatastreamsList.get(i).getValue().toString();
+			        	lat = Float.parseFloat(location.substring(5, location.indexOf(",")));
+			        	System.out.println(lat);
+			        	lon = Float.parseFloat(location.substring(location.indexOf(",")+6,location.length()-1));
+			        	System.out.println(lon);
+		        	}
+		        	
+		        }				
+				pondExsit.setLatitude(lat);
+				pondExsit.setLongitude(lon);
+				String address = webServiceService.getLocation(lon, lat);
+				pondExsit.setAddress(address);						
+				pondDao.update(pondExsit);					
 				flag = true;
 			}
 		}

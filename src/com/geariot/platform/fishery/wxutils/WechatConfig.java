@@ -19,12 +19,15 @@ public class WechatConfig {
 	// 自定义的token
 	public static final String TOKEN = "fishery2018";
 
-	public static final String APP_ID = "wx2e6fb6e0e3c10ca3";    //wx9871d8699143d59e   公众号
-
+	public static final String APP_ID = "wx2e6fb6e0e3c10ca3";//小程序   
+	
+	public static final String APP_ID2 = "wx9871d8699143d59e";//wx9871d8699143d59e   公众号
 	//public static final String MCH_ID = "1493352962";
 
-	public static final String APP_SECRET = "6d20c888c3ba425521a5a42205dfb048";// "0872554cedfb5082b359e32c655a7039"  公众号
+	public static final String APP_SECRET = "6d20c888c3ba425521a5a42205dfb048";//小程序 
 
+	public static final String APP_SECRET2 = "0872554cedfb5082b359e32c655a7039";  //公众号
+			
 	public static final String APP_DOMAIN = "www.fisherymanager.net";// url域名
 
 	//public static final String KEY = "3E0JZPZTEZQHKC96GMQZJ0EVBT92JBIF"; // 签名秘钥，在微信商户平台里面设置z`z`
@@ -34,7 +37,9 @@ public class WechatConfig {
 	// 设置token 和 jsapi_ticket的过期时间 为一个半小时
 	private final static int TIME_OUT = 5400 * 1000;
 
-	private final static String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";
+	private final static String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";//小程序
+	
+/*	private String getAccess_token="https://api.weixin.qq.com/cgi-bin/token";*/
 
 	private final static String WECHAT_USER_INFO = "https://api.weixin.qq.com/sns/userinfo";
 
@@ -61,6 +66,7 @@ public class WechatConfig {
 	 * @return { "access_token":"ACCESS_TOKEN", "expires_in":7200,
 	 *         "refresh_token":"REFRESH_TOKEN", "openid":"OPENID",
 	 *         "scope":"SCOPE" }
+	 *         小程序
 	 */
 	public static JSONObject getAccessToken(String code) {
 		// 每次code不一样，即使是同一个用户，因此没必须缓存这个access_token
@@ -131,8 +137,8 @@ public class WechatConfig {
 		if (tokenJSON != null && (System.currentTimeMillis() - tokenJSON.getLong("get_time")) < TIME_OUT) {
 			return tokenJSON;
 		}
-		String tokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + APP_ID
-				+ "&secret=" + APP_SECRET;
+		String tokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + APP_ID2
+				+ "&secret=" + APP_SECRET2;
 		String call = HttpRequest.getCall(tokenUrl, null, null);
 		JSONObject obj = null;
 		try {

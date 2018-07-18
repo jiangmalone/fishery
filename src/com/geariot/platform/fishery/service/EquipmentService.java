@@ -1337,18 +1337,21 @@ public class EquipmentService {
 	}
 	
 	public Map<String, Object> modifySensor(Sensor...sensors){
+		System.out.println("进入修改");
 		boolean flag = false;
 		for(Sensor sensor:sensors) {
 			if(deviceDao.findDevice(sensor.getDevice_sn())==null) {
 				flag = false;
 			}else {
-				sensorDao.updateSensor(sensor);
+				sensorDao.updateSensorByDevicesn(sensor);
 				flag = true;
 			}
 		}
 		if(flag) {
+			System.out.println("修改成功");
 			return RESCODE.SUCCESS.getJSONRES();
 		}else {
+			System.out.println("修改失败");
 			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
 		}
 		

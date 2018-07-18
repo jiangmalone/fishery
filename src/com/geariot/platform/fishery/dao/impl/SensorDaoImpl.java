@@ -100,6 +100,15 @@ public class SensorDaoImpl implements SensorDao {
 	public void updateSensor(Sensor sensor) {
 		this.getSession().merge(sensor);
 	}
+	
+	@Override
+	public void updateSensorByDevicesn(Sensor sensor) {
+		String sql = "update sensor set pondId = :pondId , name = :name where device_sn = :device_sn";
+		getSession().createSQLQuery(sql).setString("device_sn", sensor.getDevice_sn())
+										.setInteger("pondId", sensor.getPondId())
+										.setString("name", sensor.getName())
+										.executeUpdate();
+	}
 
 	@Override
 	public void updateByPondId(int pondId) {

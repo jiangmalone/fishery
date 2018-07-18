@@ -193,12 +193,8 @@ export default class Chosetype extends wepy.page {
   methods = {
     // 勾选列表
     selectRep(e) {
-      // 索引
       let index = e.currentTarget.dataset.selectindex
-      // 列表里被点击的那个对象的全部信息！！！！！
       let type = e.currentTarget.dataset.selecttype
-      // 当前点击元素的自定义数据，这个很关键
-      // let arr = this.selected
       let selectlist = this.selectlist
 
       if (this.fishNameList[0] === '') {
@@ -225,8 +221,6 @@ export default class Chosetype extends wepy.page {
         this.lastdata.pondFishs.push(type)
       }
       this.fishNameListString = this.fishNameList.join('，')
-      this.$apply()
-      // 切换勾选样式
       selectlist[index].sureid = !selectlist[index].sureid
       this.$apply()
     },

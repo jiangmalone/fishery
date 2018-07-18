@@ -390,50 +390,51 @@ export default class Addcontroler extends wepy.page {
   methods= {
     // 解绑
     unBindBtn(port) {
-      wepy.showLoading()
-      wepy.request({
-        url: this.$parent.globalData.baseUrl + 'api/' + 'bind/delControllerBind',
-        data: {
-          port: port,
-          device_sn: this.equimentinfo[port].device_sn
-        },
-        method: 'GET',
-        success: res => {
-          if (res.data.msg === '成功') {
-            wepy.showToast({
-              title: '解绑成功',
-              icon: 'success',
-              duration: 2000,
-              success: res => {
-                wepy.navigateTo({
-                  url: `myequiment`
-                })
+      let url = this.$parent.globalData.baseUrl
+      let ds = this.equimentinfo[port].device_sn
+      wepy.showModal({
+        title: '提示',
+        content: '是否要解绑塘口',
+        success: function(res) {
+          if (res.confirm) {
+            wepy.showLoading()
+            wepy.request({
+              url: url + 'api/' + 'bind/delControllerBind',
+              data: {
+                port: port,
+                device_sn: ds
               },
-              complete: () => {
-                wepy.hideLoading()
-              }
+              method: 'GET',
+              success: res => {
+                if (res.data.msg === '成功') {
+                  wepy.showToast({
+                    title: '解绑成功',
+                    icon: 'success',
+                    duration: 2000,
+                    success: res => {
+                      wepy.navigateTo({
+                        url: `myequiment`
+                      })
+                    },
+                    complete: () => {
+                      wepy.hideLoading()
+                    }
 
+                  })
+                } else {
+                  wepy.showToast({
+                    title: res.data.msg,
+                    icon: 'none',
+                    duration: 2000
+                  })
+                }
+              }
             })
-          } else {
-            wepy.showToast({
-              title: res.data.msg,
-              icon: 'none',
-              duration: 2000
-            })
+          } else if (res.cancel) {
+            console.log('用户点击取消')
           }
         }
       })
-      // wepy.showModal({
-      //   title: '提示',
-      //   content: '是否要解绑塘口',
-      //   success: function(res) {
-      //     if (res.confirm) {
-      //
-      //     } else if (res.cancel) {
-      //       console.log('用户点击取消')
-      //     }
-      //   }
-      // })
     },
 
     // 新增塘口

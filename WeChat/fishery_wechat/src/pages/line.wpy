@@ -73,12 +73,14 @@
   color: #4E4E4E;
   .header{
     border: 2rpx solid #E6E6E6;
+    position: relative;
     .sensorname{
       width: 348rpx;
       height: 60rpx;
       font-size: 28rpx;
       display: inline-block;
       background-color: #F2F2F2;
+      position: relative;
       text-align: center;
       border-radius: 124rpx;
       line-height: 60rpx;
@@ -91,14 +93,22 @@
     .header-img{
       width:30rpx;
       height:20rpx;
-      position: relative;
-      top: -45rpx;
-      left: -40rpx;
+      display: inline-block;
+      position: absolute;
+      float: right;
+      margin-top: 20rpx;
+      margin-bottom: 50rpx;
+      right: 20rpx;
+      /*position: relative;*/
+      /*top: -45rpx;*/
+      /*left: -40rpx;*/
     }
     .status{
-      display: inline-block;
-      position: relative;
-      top: -46rpx;
+      line-height: 60rpx;
+      margin-right: 30rpx;
+      margin-top: 32rpx;
+      margin-bottom: 26rpx;
+      float: right;
       .status-dot{
         display: inline-block;
         width: 16rpx;
@@ -218,7 +228,7 @@
 <template>
   <view class="line">
     <view class="header">
-      <view class="sensorname" @tap="showModal">{{tangkoulist[ind].pondname}}</view><image class="header-img" src="../images/gd_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image>
+      <view class="sensorname" @tap="showModal">{{tangkoulist[ind].pondname}}<image class="header-img" src="../images/gd_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image></view>
       <view class="{{realTimeDataInfo.oxygen_status!==0?'status orange':(realTimeDataInfo.wt_status!==0?'status orange':(realTimeDataInfo.pH_status!==0?'status orange':'status green'))}}">{{realTimeDataInfo.oxygen_status!==0?' ● 异常':(realTimeDataInfo.wt_status!==0?' ● 异常':(realTimeDataInfo.pH_status!==0?' ● 异常':' ● 正常'))}}</view>
     </view>
     <view class="content">
@@ -486,6 +496,12 @@ export default class Line extends wepy.page {
                 color: '#c4c4c4'
               },
               color: ['#8dc1aa'],
+              tooltip: {
+                trigger: 'none',
+                axisPointer: {
+                  type: 'cross'
+                }
+              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -495,8 +511,22 @@ export default class Line extends wepy.page {
                     color: '#c4c4c4'
                   }
                 },
-                axisLabel: {// y轴的内容格式化,很有用的属性
-                  formatter: '{value} xUnit'
+                splitNumber: 3,
+                axisLabel: {
+                  formatter: function (value) {
+                    return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                  }
+                },
+                axisPointer: {
+                  label: {
+                    show: true,
+                    formatter: function (params) {
+                      return echarts.format.formatTime('hh:mm', params.value)
+                    }
+                  }
+                },
+                splitLine: {
+                  show: false
                 }
               }],
               yAxis: [{
@@ -512,16 +542,22 @@ export default class Line extends wepy.page {
                     color: '#e9e7de',
                     type: 'dashed'
                   }
-                }
-                // axisLabel: {//y轴的内容格式化,很有用的属性
-                //   formatter: '{value} yUnit'
-                // }
+                },
+                axisPointer: {
+                  label: {
+                    formatter: function (params) {
+                      return params.value.toFixed(2)
+                    }
+                  }
+                },
               }],
               series: [{
                 lineStyle: {
-                  color: '#2c90f7'
+                  color: '#2c90f7',
+                  type: 'solid'
                 },
                 type: 'line',
+                smooth: true,
                 data: res.data.DO.value,
                 markLine: {
                   symbol: '',
@@ -569,6 +605,12 @@ export default class Line extends wepy.page {
                 color: '#c4c4c4'
               },
               color: ['#8dc1aa'],
+              tooltip: {
+                trigger: 'none',
+                axisPointer: {
+                  type: 'cross'
+                }
+              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -577,10 +619,24 @@ export default class Line extends wepy.page {
                   lineStyle: {
                     color: '#c4c4c4'
                   }
+                },
+                splitNumber: 3,
+                axisLabel: {
+                  formatter: function (value) {
+                    return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                  }
+                },
+                axisPointer: {
+                  label: {
+                    show: true,
+                    formatter: function (params) {
+                      return echarts.format.formatTime('hh:mm', params.value)
+                    }
+                  }
+                },
+                splitLine: {
+                  show: false
                 }
-                // axisLabel: {//y轴的内容格式化,很有用的属性
-                //   formatter: '{value} xUnit'
-                // }
               }],
               yAxis: [{
                 type: 'value',
@@ -594,13 +650,22 @@ export default class Line extends wepy.page {
                     color: '#e9e7de',
                     type: 'dashed'
                   }
-                }
+                },
+                axisPointer: {
+                  label: {
+                    formatter: function (params) {
+                      return params.value.toFixed(2)
+                    }
+                  }
+                },
               }],
               series: [{
                 lineStyle: {
-                  color: '#ff8e2d'
+                  color: '#ff8e2d',
+                  type: 'solid'
                 },
                 type: 'line',
+                smooth: true,
                 data: res.data.WT.value
               }]
             }
@@ -609,6 +674,12 @@ export default class Line extends wepy.page {
                 color: '#c4c4c4'
               },
               color: ['#8dc1aa'],
+              tooltip: {
+                trigger: 'none',
+                axisPointer: {
+                  type: 'cross'
+                }
+              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -617,10 +688,24 @@ export default class Line extends wepy.page {
                   lineStyle: {
                     color: '#c4c4c4'
                   }
+                },
+                splitNumber: 3,
+                axisLabel: {
+                  formatter: function (value) {
+                    return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                  }
+                },
+                axisPointer: {
+                  label: {
+                    show: true,
+                    formatter: function (params) {
+                      return echarts.format.formatTime('hh:mm', params.value)
+                    }
+                  }
+                },
+                splitLine: {
+                  show: false
                 }
-                // axisLabel: {//y轴的内容格式化,很有用的属性
-                //   formatter: '{value} xUnit'
-                // }
               }],
               yAxis: [{
                 type: 'value',
@@ -634,13 +719,22 @@ export default class Line extends wepy.page {
                     color: '#e9e7de',
                     type: 'dashed'
                   }
-                }
+                },
+                axisPointer: {
+                  label: {
+                    formatter: function (params) {
+                      return params.value.toFixed(2)
+                    }
+                  }
+                },
               }],
               series: [{
                 lineStyle: {
-                  color: '#18b0c5'
+                  color: '#18b0c5',
+                  type: 'solid'
                 },
                 type: 'line',
+                smooth: true,
                 data: res.data.pH.value
               }]
             }
@@ -669,6 +763,12 @@ export default class Line extends wepy.page {
                 color: '#c4c4c4'
               },
               color: ['#8dc1aa'],
+              tooltip: {
+                trigger: 'none',
+                axisPointer: {
+                  type: 'cross'
+                }
+              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -678,8 +778,22 @@ export default class Line extends wepy.page {
                     color: '#c4c4c4'
                   }
                 },
-                axisLabel: {// y轴的内容格式化,很有用的属性
-                  formatter: '{value} xUnit'
+                splitNumber: 3,
+                axisLabel: {
+                  formatter: function (value) {
+                    return echarts.format.formatTime('MM-dd\nyyyy', value)
+                  }
+                },
+                axisPointer: {
+                  label: {
+                    show: true,
+                    formatter: function (params) {
+                      return echarts.format.formatTime('hh:mm\nMM-dd', params.value)
+                    }
+                  }
+                },
+                splitLine: {
+                  show: false
                 }
               }],
               yAxis: [{
@@ -695,16 +809,22 @@ export default class Line extends wepy.page {
                     color: '#e9e7de',
                     type: 'dashed'
                   }
-                }
-                // axisLabel: {//y轴的内容格式化,很有用的属性
-                //   formatter: '{value} yUnit'
-                // }
+                },
+                axisPointer: {
+                  label: {
+                    formatter: function (params) {
+                      return params.value.toFixed(2)
+                    }
+                  }
+                },
               }],
               series: [{
                 lineStyle: {
-                  color: '#2c90f7'
+                  color: '#2c90f7',
+                  type: 'solid'
                 },
                 type: 'line',
+                smooth: true,
                 data: res.data.DO.value,
                 markLine: {
                   symbol: '',
@@ -752,6 +872,12 @@ export default class Line extends wepy.page {
                 color: '#c4c4c4'
               },
               color: ['#8dc1aa'],
+              tooltip: {
+                trigger: 'none',
+                axisPointer: {
+                  type: 'cross'
+                }
+              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -760,10 +886,24 @@ export default class Line extends wepy.page {
                   lineStyle: {
                     color: '#c4c4c4'
                   }
+                },
+                splitNumber: 3,
+                axisLabel: {
+                  formatter: function (value) {
+                    return echarts.format.formatTime('MM-dd\nyyyy', value)
+                  }
+                },
+                axisPointer: {
+                  label: {
+                    show: true,
+                    formatter: function (params) {
+                      return echarts.format.formatTime('hh:mm\nMM-dd', params.value)
+                    }
+                  }
+                },
+                splitLine: {
+                  show: false
                 }
-                // axisLabel: {//y轴的内容格式化,很有用的属性
-                //   formatter: '{value} xUnit'
-                // }
               }],
               yAxis: [{
                 type: 'value',
@@ -777,13 +917,22 @@ export default class Line extends wepy.page {
                     color: '#e9e7de',
                     type: 'dashed'
                   }
-                }
+                },
+                axisPointer: {
+                  label: {
+                    formatter: function (params) {
+                      return params.value.toFixed(2)
+                    }
+                  }
+                },
               }],
               series: [{
                 lineStyle: {
-                  color: '#ff8e2d'
+                  color: '#ff8e2d',
+                  type: 'solid'
                 },
                 type: 'line',
+                smooth: true,
                 data: res.data.WT.value
               }]
             }
@@ -792,6 +941,12 @@ export default class Line extends wepy.page {
                 color: '#c4c4c4'
               },
               color: ['#8dc1aa'],
+              tooltip: {
+                trigger: 'none',
+                axisPointer: {
+                  type: 'cross'
+                }
+              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -800,10 +955,24 @@ export default class Line extends wepy.page {
                   lineStyle: {
                     color: '#c4c4c4'
                   }
+                },
+                splitNumber: 3,
+                axisLabel: {
+                  formatter: function (value) {
+                    return echarts.format.formatTime('MM-dd\nyyyy', value)
+                  }
+                },
+                axisPointer: {
+                  label: {
+                    show: true,
+                    formatter: function (params) {
+                      return echarts.format.formatTime('hh:mm\nMM-dd', params.value)
+                    }
+                  }
+                },
+                splitLine: {
+                  show: false
                 }
-                // axisLabel: {//y轴的内容格式化,很有用的属性
-                //   formatter: '{value} xUnit'
-                // }
               }],
               yAxis: [{
                 type: 'value',
@@ -817,13 +986,22 @@ export default class Line extends wepy.page {
                     color: '#e9e7de',
                     type: 'dashed'
                   }
-                }
+                },
+                axisPointer: {
+                  label: {
+                    formatter: function (params) {
+                      return params.value.toFixed(2)
+                    }
+                  }
+                },
               }],
               series: [{
                 lineStyle: {
-                  color: '#18b0c5'
+                  color: '#18b0c5',
+                  type: 'solid'
                 },
                 type: 'line',
+                smooth: true,
                 data: res.data.pH.value
               }]
             }
@@ -860,6 +1038,12 @@ export default class Line extends wepy.page {
                   color: '#c4c4c4'
                 },
                 color: ['#8dc1aa'],
+                tooltip: {
+                  trigger: 'none',
+                  axisPointer: {
+                    type: 'cross'
+                  }
+                },
                 xAxis: [{
                   type: 'category',
                   boundaryGap: false,
@@ -869,8 +1053,22 @@ export default class Line extends wepy.page {
                       color: '#c4c4c4'
                     }
                   },
-                  axisLabel: {// y轴的内容格式化,很有用的属性
-                    formatter: '{value} xUnit'
+                  splitNumber: 3,
+                  axisLabel: {
+                    formatter: function (value) {
+                      return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                    }
+                  },
+                  axisPointer: {
+                    label: {
+                      show: true,
+                      formatter: function (params) {
+                        return echarts.format.formatTime('hh:mm', params.value)
+                      }
+                    }
+                  },
+                  splitLine: {
+                    show: false
                   }
                 }],
                 yAxis: [{
@@ -880,22 +1078,28 @@ export default class Line extends wepy.page {
                       color: '#c4c4c4'
                     }
                   },
-                  max: res.data.Limit.up_limit,
+                  // max: res.data.Limit?res.data.Limit.up_limit:,
                   splitLine: {
                     lineStyle: {
                       color: '#e9e7de',
                       type: 'dashed'
                     }
-                  }
-                  // axisLabel: {//y轴的内容格式化,很有用的属性
-                  //   formatter: '{value} yUnit'
-                  // }
+                  },
+                  axisPointer: {
+                    label: {
+                      formatter: function (params) {
+                        return params.value.toFixed(2)
+                      }
+                    }
+                  },
                 }],
                 series: [{
                   lineStyle: {
-                    color: '#2c90f7'
+                    color: '#2c90f7',
+                    type: 'solid'
                   },
                   type: 'line',
+                  smooth: true,
                   data: res.data.DO.value,
                   markLine: {
                     symbol: '',
@@ -904,7 +1108,7 @@ export default class Line extends wepy.page {
                       label: {show: true, position: 'left', formatter: 'aaa'}
                     },
                     data: [
-                      { yAxis: res.data.Limit?res.data.Limit.low_limit:0,
+                      { yAxis: res.data.Limit?res.data.Limit.low_limit:4,
                         label: {
                           show: true,
                           formatter: '下限',
@@ -914,7 +1118,7 @@ export default class Line extends wepy.page {
                           color: '#beac00'
                         }
                       },
-                      { yAxis: res.data.Limit?res.data.Limit.up_limit:0,
+                      { yAxis: res.data.Limit?res.data.Limit.up_limit:6,
                         label: {
                           show: true,
                           formatter: '上限',
@@ -924,7 +1128,7 @@ export default class Line extends wepy.page {
                           color: '#45795b'
                         }
                       },
-                      { yAxis: res.data.Limit?res.data.Limit.high_limit:0,
+                      { yAxis: res.data.Limit?res.data.Limit.high_limit:20,
                         label: {
                           show: true,
                           formatter: '高限',
@@ -943,6 +1147,12 @@ export default class Line extends wepy.page {
                   color: '#c4c4c4'
                 },
                 color: ['#8dc1aa'],
+                tooltip: {
+                  trigger: 'none',
+                  axisPointer: {
+                    type: 'cross'
+                  }
+                },
                 xAxis: [{
                   type: 'category',
                   boundaryGap: false,
@@ -951,10 +1161,24 @@ export default class Line extends wepy.page {
                     lineStyle: {
                       color: '#c4c4c4'
                     }
+                  },
+                  splitNumber: 3,
+                  axisLabel: {
+                    formatter: function (value) {
+                      return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                    }
+                  },
+                  axisPointer: {
+                    label: {
+                      show: true,
+                      formatter: function (params) {
+                        return echarts.format.formatTime('hh:mm', params.value)
+                      }
+                    }
+                  },
+                  splitLine: {
+                    show: false
                   }
-                  // axisLabel: {//y轴的内容格式化,很有用的属性
-                  //   formatter: '{value} xUnit'
-                  // }
                 }],
                 yAxis: [{
                   type: 'value',
@@ -968,13 +1192,22 @@ export default class Line extends wepy.page {
                       color: '#e9e7de',
                       type: 'dashed'
                     }
-                  }
+                  },
+                  axisPointer: {
+                    label: {
+                      formatter: function (params) {
+                        return params.value.toFixed(2)
+                      }
+                    }
+                  },
                 }],
                 series: [{
                   lineStyle: {
-                    color: '#ff8e2d'
+                    color: '#ff8e2d',
+                    type: 'solid'
                   },
                   type: 'line',
+                  smooth: true,
                   data: res.data.WT.value
                 }]
               }
@@ -983,6 +1216,12 @@ export default class Line extends wepy.page {
                   color: '#c4c4c4'
                 },
                 color: ['#8dc1aa'],
+                tooltip: {
+                  trigger: 'none',
+                  axisPointer: {
+                    type: 'cross'
+                  }
+                },
                 xAxis: [{
                   type: 'category',
                   boundaryGap: false,
@@ -991,10 +1230,24 @@ export default class Line extends wepy.page {
                     lineStyle: {
                       color: '#c4c4c4'
                     }
+                  },
+                  splitNumber: 3,
+                  axisLabel: {
+                    formatter: function (value) {
+                      return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                    }
+                  },
+                  axisPointer: {
+                    label: {
+                      show: true,
+                      formatter: function (params) {
+                        return echarts.format.formatTime('hh:mm', params.value)
+                      }
+                    }
+                  },
+                  splitLine: {
+                    show: false
                   }
-                  // axisLabel: {//y轴的内容格式化,很有用的属性
-                  //   formatter: '{value} xUnit'
-                  // }
                 }],
                 yAxis: [{
                   type: 'value',
@@ -1008,13 +1261,22 @@ export default class Line extends wepy.page {
                       color: '#e9e7de',
                       type: 'dashed'
                     }
-                  }
+                  },
+                  axisPointer: {
+                    label: {
+                      formatter: function (params) {
+                        return params.value.toFixed(2)
+                      }
+                    }
+                  },
                 }],
                 series: [{
                   lineStyle: {
-                    color: '#18b0c5'
+                    color: '#18b0c5',
+                    type: 'solid'
                   },
                   type: 'line',
+                  smooth: true,
                   data: res.data.pH.value
                 }]
               }
@@ -1125,6 +1387,12 @@ export default class Line extends wepy.page {
                     color: '#c4c4c4'
                   },
                   color: ['#8dc1aa'],
+                  tooltip: {
+                    trigger: 'none',
+                    axisPointer: {
+                      type: 'cross'
+                    }
+                  },
                   xAxis: [{
                     type: 'category',
                     boundaryGap: false,
@@ -1134,8 +1402,22 @@ export default class Line extends wepy.page {
                         color: '#c4c4c4'
                       }
                     },
-                    axisLabel: {// y轴的内容格式化,很有用的属性
-                      formatter: '{value} xUnit'
+                    splitNumber: 3,
+                    axisLabel: {
+                      formatter: function (value) {
+                        return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                      }
+                    },
+                    axisPointer: {
+                      label: {
+                        show: true,
+                        formatter: function (params) {
+                          return echarts.format.formatTime('hh:mm', params.value)
+                        }
+                      }
+                    },
+                    splitLine: {
+                      show: false
                     }
                   }],
                   yAxis: [{
@@ -1151,16 +1433,22 @@ export default class Line extends wepy.page {
                         color: '#e9e7de',
                         type: 'dashed'
                       }
-                    }
-                    // axisLabel: {//y轴的内容格式化,很有用的属性
-                    //   formatter: '{value} yUnit'
-                    // }
+                    },
+                    axisPointer: {
+                      label: {
+                        formatter: function (params) {
+                          return params.value.toFixed(2)
+                        }
+                      }
+                    },
                   }],
                   series: [{
                     lineStyle: {
-                      color: '#2c90f7'
+                      color: '#2c90f7',
+                      type: 'solid'
                     },
                     type: 'line',
+                    smooth: true,
                     data: res.data.DO.value,
                     markLine: {
                       symbol: '',
@@ -1208,6 +1496,12 @@ export default class Line extends wepy.page {
                     color: '#c4c4c4'
                   },
                   color: ['#8dc1aa'],
+                  tooltip: {
+                    trigger: 'none',
+                    axisPointer: {
+                      type: 'cross'
+                    }
+                  },
                   xAxis: [{
                     type: 'category',
                     boundaryGap: false,
@@ -1216,10 +1510,24 @@ export default class Line extends wepy.page {
                       lineStyle: {
                         color: '#c4c4c4'
                       }
+                    },
+                    splitNumber: 3,
+                    axisLabel: {
+                      formatter: function (value) {
+                        return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                      }
+                    },
+                    axisPointer: {
+                      label: {
+                        show: true,
+                        formatter: function (params) {
+                          return echarts.format.formatTime('hh:mm', params.value)
+                        }
+                      }
+                    },
+                    splitLine: {
+                      show: false
                     }
-                    // axisLabel: {//y轴的内容格式化,很有用的属性
-                    //   formatter: '{value} xUnit'
-                    // }
                   }],
                   yAxis: [{
                     type: 'value',
@@ -1233,13 +1541,22 @@ export default class Line extends wepy.page {
                         color: '#e9e7de',
                         type: 'dashed'
                       }
-                    }
+                    },
+                    axisPointer: {
+                      label: {
+                        formatter: function (params) {
+                          return params.value.toFixed(2)
+                        }
+                      }
+                    },
                   }],
                   series: [{
                     lineStyle: {
-                      color: '#ff8e2d'
+                      color: '#ff8e2d',
+                      type: 'solid'
                     },
                     type: 'line',
+                    smooth: true,
                     data: res.data.WT.value
                   }]
                 }
@@ -1248,6 +1565,12 @@ export default class Line extends wepy.page {
                     color: '#c4c4c4'
                   },
                   color: ['#8dc1aa'],
+                  tooltip: {
+                    trigger: 'none',
+                    axisPointer: {
+                      type: 'cross'
+                    }
+                  },
                   xAxis: [{
                     type: 'category',
                     boundaryGap: false,
@@ -1256,10 +1579,24 @@ export default class Line extends wepy.page {
                       lineStyle: {
                         color: '#c4c4c4'
                       }
+                    },
+                    splitNumber: 3,
+                    axisLabel: {
+                      formatter: function (value) {
+                        return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                      }
+                    },
+                    axisPointer: {
+                      label: {
+                        show: true,
+                        formatter: function (params) {
+                          return echarts.format.formatTime('hh:mm', params.value)
+                        }
+                      }
+                    },
+                    splitLine: {
+                      show: false
                     }
-                    // axisLabel: {//y轴的内容格式化,很有用的属性
-                    //   formatter: '{value} xUnit'
-                    // }
                   }],
                   yAxis: [{
                     type: 'value',
@@ -1273,13 +1610,22 @@ export default class Line extends wepy.page {
                         color: '#e9e7de',
                         type: 'dashed'
                       }
-                    }
+                    },
+                    axisPointer: {
+                      label: {
+                        formatter: function (params) {
+                          return params.value.toFixed(2)
+                        }
+                      }
+                    },
                   }],
                   series: [{
                     lineStyle: {
-                      color: '#18b0c5'
+                      color: '#18b0c5',
+                      type: 'solid'
                     },
                     type: 'line',
+                    smooth: true,
                     data: res.data.pH.value
                   }]
                 }

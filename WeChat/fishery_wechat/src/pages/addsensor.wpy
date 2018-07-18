@@ -237,52 +237,53 @@ export default class Addsensor extends wepy.page {
   }
   methods= {
     unBindBtn() {
-      wepy.showLoading()
-      wepy.request({
-        url: this.$parent.globalData.baseUrl + 'api/' + 'bind/delSensorOrAIOBind',
-        data: {
-          type: 1,
-          device_sn: this.equimentNum
-        },
-        method: 'GET',
-        success: res => {
-          if (res.data.msg === '成功') {
-            wepy.hideLoading()
-            wepy.showToast({
-              title: '解绑成功',
-              icon: 'success',
-              duration: 2000,
+      let url = this.$parent.globalData.baseUrl
+      let num = this.equimentNum
+      wepy.showModal({
+        title: '提示',
+        content: '是否要解绑塘口',
+        success: function(res) {
+          if (res.confirm) {
+            wepy.showLoading()
+            wepy.request({
+              url: url + 'api/' + 'bind/delSensorOrAIOBind',
+              data: {
+                type: 1,
+                device_sn: num
+              },
+              method: 'GET',
               success: res => {
-                wepy.navigateTo({
-                  url: `myequiment`
-                })
+                if (res.data.msg === '成功') {
+                  wepy.hideLoading()
+                  wepy.showToast({
+                    title: '解绑成功',
+                    icon: 'success',
+                    duration: 2000,
+                    success: res => {
+                      wepy.navigateTo({
+                        url: `myequiment`
+                      })
+                    }
+                  })
+                } else {
+                  wepy.hideLoading()
+                  wepy.showToast({
+                    title: '解绑失败',
+                    icon: 'none',
+                    duration: 2000
+                  })
+                }
+                console.log(res)
+              },
+              complete: () => {
+                wepy.hideLoading()
               }
             })
-          } else {
-            wepy.hideLoading()
-            wepy.showToast({
-              title: '解绑失败',
-              icon: 'none',
-              duration: 2000
-            })
+          } else if (res.cancel) {
+            console.log('用户点击取消')
           }
-          console.log(res)
-        },
-        complete: () => {
-          wepy.hideLoading()
         }
       })
-      // wepy.showModal({
-      //   title: '提示',
-      //   content: '是否要解绑塘口',
-      //   success: function(res) {
-      //     if (res.confirm) {
-      //
-      //     } else if (res.cancel) {
-      //       console.log('用户点击取消')
-      //     }
-      //   }
-      // })
     },
     jumAddTangkou() {
       wepy.navigateTo({

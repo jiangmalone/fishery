@@ -122,7 +122,7 @@
           <text>养殖品种</text>
           <text class="status">
             <repeat for="{{item.pondFishs}}" key="index" index="index" item="item">
-            <text>{{item.fish_name}},</text>
+            <text>{{item.fish_name}}</text>
           </repeat>
           </text>
         </view>

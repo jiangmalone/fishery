@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
@@ -287,11 +289,20 @@ public class WebServiceController {
 	@RequestMapping(value = "/verifySmsCode", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl,String wxUserName) {
+		logger.debug("++++++++++++++用户头像以及姓名++++++++++++++++");
 		logger.debug("headimgurl"+headimgurl+".");
 		logger.debug("wxUserName"+wxUserName+".");
+		String newwxUserName = "";
+		newwxUserName = filterEmoji(wxUserName);	
+		logger.debug("newwxUserName"+newwxUserName+".");
 		/*try {
 			wxUserName = new String(wxUserName.getBytes("ISO-8859-1"), "utf-8");
-			headimgurl = new String(headimgurl.getBytes("ISO-8859-1"), "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		/*try {
+			wxUserName = new String(wxUserName.getBytes("utf-8"), "utf8mb4");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -307,9 +318,11 @@ public class WebServiceController {
 			return obj;
 		} else {
 			//验证成功
-			return webServiceService.login(phone,openId,headimgurl,wxUserName);
+			return webServiceService.login(phone,openId,headimgurl,newwxUserName);
 		}
 	}
+	
+
 
 	@RequestMapping(value = "/checkLogin", method = RequestMethod.GET)
 	@ResponseBody
@@ -357,5 +370,21 @@ public class WebServiceController {
 		Map<String, Object> head = new HashMap<String, Object>();
 		head.put("Content-Type", ContentType);
 		return head;
+	}
+	
+	public static String filterEmoji(String nick_name) {
+	    //nick_name 所获取的用户昵称 
+	    if (nick_name == null) {
+	        return nick_name;
+	    }
+	    Pattern emoji = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",
+	            Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
+	    Matcher emojiMatcher = emoji.matcher(nick_name);
+	    if (emojiMatcher.find()) {
+	        //将所获取的表情转换为*
+	        nick_name = emojiMatcher.replaceAll("*");
+	        return nick_name;
+	    }
+	    return nick_name;
 	}
 }

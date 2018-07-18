@@ -243,6 +243,8 @@ public class EquipmentController {
 		int result = CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);
 		if(result == 0) {//成功
 			if(param.getKey() == 0) {//关闭
+				/*WechatSendMessageUtils.sendWechatOxygenOnOffMessages(msg, openId, deviceSn, onOff);
+				*/
 				WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机成功", wxUser.getOpenId(), controller.getDevice_sn());
 			}else {//打开
 				WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机成功", wxUser.getOpenId(), controller.getDevice_sn());
@@ -273,6 +275,11 @@ public class EquipmentController {
 	@RequestMapping(value ="/deleteTrigger", method = RequestMethod.GET)
 	public void deleteTrigger(String device_sn){
 		  equipmentService.deleteTriggerBySensorId(device_sn);
+	}
+	
+	@RequestMapping(value ="/sendWechatmessage", method = RequestMethod.GET)
+	public void sendWechatmessage(String device_sn){
+		WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机成功", "owhQb0VMYu9F8ABxq4RQ38yx_mHc", device_sn);
 	}
 	
 }

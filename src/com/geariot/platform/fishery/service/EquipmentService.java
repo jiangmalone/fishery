@@ -2228,4 +2228,8 @@ public class EquipmentService {
 			System.out.println("errno:"+response.errno+" error:"+response.error);
 		
 	}
+	
+	public List<Controller> getAllControllers(){
+		return controllerDao.getAllControllers();
+	}
 }

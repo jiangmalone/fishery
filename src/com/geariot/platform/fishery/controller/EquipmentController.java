@@ -6,6 +6,7 @@ import com.geariot.platform.fishery.entities.controllerParam;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.EquipmentService;
 import com.geariot.platform.fishery.timer.CMDUtils;
+import com.geariot.platform.fishery.timer.TimerTask;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsItem.DatapointsItem;
@@ -47,6 +48,8 @@ public class EquipmentController {
 	
 	@Autowired
 	private WXUserDao wxUserDao;
+	
+
 	
 
 //	@RequestMapping(value = "/setlimit", method = RequestMethod.GET)
@@ -285,6 +288,12 @@ public class EquipmentController {
 	@RequestMapping(value ="/sendWechatmessage", method = RequestMethod.GET)
 	public void sendWechatmessage(String device_sn){
 		WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机成功", "owhQb0VMYu9F8ABxq4RQ38yx_mHc", device_sn);
+	}
+	
+	@RequestMapping(value ="/getAllController", method = RequestMethod.GET)
+	public List<Controller> getAllController(){
+		System.out.println(equipmentService.getAllControllers().size());
+		return equipmentService.getAllControllers();
 	}
 	
 }

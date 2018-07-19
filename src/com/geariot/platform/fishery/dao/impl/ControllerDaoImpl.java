@@ -129,4 +129,10 @@ public class ControllerDaoImpl implements ControllerDao {
 		return query.list();
 	}
 
+	@Override
+	public List<Controller> getAllControllers() {
+		String sql = "select * from Controller";
+		return getSession().createSQLQuery(sql).list();
+	}
+
 } 

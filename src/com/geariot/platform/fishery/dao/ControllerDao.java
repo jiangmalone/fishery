@@ -22,7 +22,7 @@ public interface ControllerDao {
 
 	List<Controller> queryControllerByNameAndRelation(String relation, String name, int from, int pageSize);
 	
-	List<Controller> queryControllerByNameAndRelation(String relation, String name);
+	List<Controller> queryControllerByNameAndRelation(String relation, String name); 
 
 	long queryControllerByNameAndRelationCount(String relation, String name);
 
@@ -35,4 +35,9 @@ public interface ControllerDao {
 	void deleteByRelation(String relation);
 	
 	List<Controller> findControllerByPondId(int PondId);
+	
+	//获得全部Controller
+	List<Controller> getAllControllers();
+
+	
 }

@@ -119,6 +119,11 @@ public class EquipmentController {
 		return equipmentService.dataToday(device_sn,way);
 	}
 	
+	@RequestMapping(value = "/dataYesterday", method = RequestMethod.GET)
+	public Map dataYesterday(String device_sn) {
+		return equipmentService.dataYesterday(device_sn);
+	}
+	
 	@RequestMapping(value = "/data3days", method = RequestMethod.GET)
 	public Map<String,Object> data3days(String device_sn,int way) {
 		return equipmentService.data3days(device_sn,way);

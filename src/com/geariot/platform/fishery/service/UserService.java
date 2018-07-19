@@ -8,6 +8,8 @@ import java.util.Map;
 
 
 import com.geariot.platform.fishery.entities.*;
+
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,7 @@ import cmcc.iot.onenet.javasdk.response.device.DevicesStatusList;
 @Transactional
 public class UserService {
 	
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger(UserService.class);
 	
     @Autowired
     private CompanyDao companyDao;
@@ -451,6 +454,7 @@ public class UserService {
 	}
 
 	public Map<String, Object> diagnosing(String relation) {
+		logger.debug("进入用户"+relation+"的诊断");
 		Map<String, Object> map = new HashMap<>();
 		List<Pond> pondList = pondDao.queryPondByRelation(relation);
 		List<Object> allbrokenpond = new ArrayList<>();
@@ -478,7 +482,7 @@ public class UserService {
 							onepondbroken.add(onesensormap);
 						}
 					}
-					}
+				}
 			}
 			onemap.put("pondname",pondname);
 			onemap.put("brokenlist",onepondbroken);

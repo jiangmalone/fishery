@@ -30,7 +30,7 @@ public class WechatConfig {
 			
 	public static final String APP_DOMAIN = "www.fisherymanager.net";// url域名
 
-	//public static final String KEY = "3E0JZPZTEZQHKC96GMQZJ0EVBT92JBIF"; // 签名秘钥，在微信商户平台里面设置z`z`
+	public static final String KEY = "3E0JZPZTEZQHKC96GMQZJ0EVBT92JBIF"; // 签名秘钥，在微信商户平台里面设置z`z`
 
 	//public static final String ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 

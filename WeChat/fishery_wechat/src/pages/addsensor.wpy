@@ -239,6 +239,7 @@ export default class Addsensor extends wepy.page {
     unBindBtn() {
       let url = this.$parent.globalData.baseUrl
       let num = this.equimentNum
+      let that = this
       wepy.showModal({
         title: '提示',
         content: '是否要解绑塘口',
@@ -260,6 +261,7 @@ export default class Addsensor extends wepy.page {
                     icon: 'success',
                     duration: 2000,
                     success: res => {
+                      that.$parent.globalData.equimentinfoS = []
                       wepy.navigateTo({
                         url: `myequiment`
                       })
@@ -286,6 +288,7 @@ export default class Addsensor extends wepy.page {
       })
     },
     jumAddTangkou() {
+      this.$parent.globalData.equimentinfoS = this.equimentinfo
       wepy.navigateTo({
         url: 'addtangkou'
       })
@@ -332,6 +335,7 @@ export default class Addsensor extends wepy.page {
                     success: res => {
                       console.log(res)
                       if (res.data.code === 0) {
+                        this.$parent.globalData.equimentinfoS = []
                         wepy.redirectTo({
                           url: 'myequiment'
                         })
@@ -353,6 +357,7 @@ export default class Addsensor extends wepy.page {
                     success: res => {
                       console.log(res)
                       if (res.data.code === 0) {
+                        this.$parent.globalData.equimentinfoS = []
                         wepy.redirectTo({
                           url: 'equimentsuccess'
                         })
@@ -397,6 +402,9 @@ export default class Addsensor extends wepy.page {
       relation: '',
       pondId: ''
     }]
+    if (this.$parent.globalData.equimentinfoS.length > 0) {
+      this.equimentinfo = this.$parent.globalData.equimentinfoS
+    }
     if (this.action === 'modify') {
       wepy.setNavigationBarTitle({
         title: '修改设备'

@@ -121,9 +121,9 @@
         <view class="cot-item">
           <text>养殖品种</text>
           <text class="status">
-            <repeat for="{{item.pondFishs}}" key="index" index="index" item="item">
-            <text>{{item.fish_name}}</text>
-          </repeat>
+            <repeat for="{{item.pondFishs}}" key="index" index="index" item="fish">
+              <text>{{fish.fish_name}}</text><text wx:if="{{index !== item.pondFishs.length-1}}">,</text>
+            </repeat>
           </text>
         </view>
         <view class="cot-item">

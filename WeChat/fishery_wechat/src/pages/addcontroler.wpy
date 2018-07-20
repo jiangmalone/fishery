@@ -207,7 +207,7 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <view class="unbindport" @tap="unBindBtn(1)" wx:if="{{pond[0]}}">解绑</view>
+        <view class="unbindport" @tap="unBindBtn(0)" wx:if="{{pond[0]}}">解绑</view>
         <input class="rightinp" @tap="showmodal('tangkou', 0)" value="{{pond[0]}}" placeholder="请绑定塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
@@ -224,7 +224,7 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <view class="unbindport" @tap="unBindBtn(2)" wx:if="{{pond[1]}}">解绑</view>
+        <view class="unbindport" @tap="unBindBtn(1)" wx:if="{{pond[1]}}">解绑</view>
         <input class="rightinp" @tap="showmodal('tangkou', 1)"  value="{{pond[1]}}" placeholder="请绑定塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
@@ -241,7 +241,7 @@
       </view>
       <view class="einput">
         <text>绑定塘口</text>
-        <view class="unbindport" @tap="unBindBtn(3)" wx:if="{{pond[2]}}">解绑</view>
+        <view class="unbindport" @tap="unBindBtn(2)" wx:if="{{pond[2]}}">解绑</view>
         <input class="rightinp" @tap="showmodal('tangkou', 2)" value="{{pond[2]}}" placeholder="请绑定塘口" placeholder-style="color:#4D7FB5" disabled/>
       </view>
     </view>
@@ -266,7 +266,7 @@
       <!--绑定塘口-->
       <view class="einput">
         <text>绑定塘口</text>
-        <view class="unbindport" @tap="unBindBtn(4)"
+        <view class="unbindport" @tap="unBindBtn(3)"
               wx:if="{{pond[3]}}">解绑</view>
         <input class="rightinp" @tap="showmodal('tangkou', 3)"
                value="{{pond[3]}}"
@@ -357,6 +357,14 @@ export default class Addcontroler extends wepy.page {
         device_sn: '',
         name: '',
         pondIds: [],
+        port: 0,
+        relation: '',
+        type: ''
+      },
+      {
+        device_sn: '',
+        name: '',
+        pondIds: [],
         port: 1,
         relation: '',
         type: ''
@@ -376,22 +384,17 @@ export default class Addcontroler extends wepy.page {
         port: 3,
         relation: '',
         type: ''
-      },
-      {
-        device_sn: '',
-        name: '',
-        pondIds: [],
-        port: 4,
-        relation: '',
-        type: ''
       }
     ]    // 设备绑定信息列表
   }
   methods= {
     // 解绑
     unBindBtn(port) {
+      console.log(this.equimentinfo[port])
+      console.log(port)
       let url = this.$parent.globalData.baseUrl
       let ds = this.equimentinfo[port].device_sn
+      let that = this
       wepy.showModal({
         title: '提示',
         content: '是否要解绑塘口',
@@ -412,6 +415,7 @@ export default class Addcontroler extends wepy.page {
                     icon: 'success',
                     duration: 2000,
                     success: res => {
+                      that.$parent.globalData.equimentinfo = []
                       wepy.navigateTo({
                         url: `myequiment`
                       })
@@ -439,6 +443,7 @@ export default class Addcontroler extends wepy.page {
 
     // 新增塘口
     jumAddTangkou() {
+      this.$parent.globalData.equimentinfo = this.equimentinfo
       wepy.navigateTo({
         url: 'addtangkou'
       })
@@ -611,6 +616,7 @@ export default class Addcontroler extends wepy.page {
           method: 'POST',
           success: res => {
             if (res.data.code === 0) {
+              this.$parent.globalData.equimentinfo = []
               wepy.redirectTo({
                 url: 'myequiment'
               })
@@ -629,6 +635,7 @@ export default class Addcontroler extends wepy.page {
           method: 'POST',
           success: res => {
             if (res.data.code === 0) {
+              this.$parent.globalData.equimentinfo = []
               wepy.redirectTo({
                 url: 'equimentsuccess'
               })
@@ -673,6 +680,10 @@ export default class Addcontroler extends wepy.page {
           }
         })
       }
+      console.log('eqinfo', this.equimentinfo)
+    }
+    if (this.$parent.globalData.equimentinfo.length > 0) {
+      this.equimentinfo = this.$parent.globalData.equimentinfo
     }
     // 查询塘口
     wepy.showLoading()

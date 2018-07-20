@@ -130,7 +130,7 @@
         <view class="cot">
           <repeat for="{{item.content}}" key="index" index="index">
           <view class="cot-item">
-            <text>{{tangkoulist[item.pondId]}}{{item.pondIds.length>1?'...':''}}{{item.pondIds?(item.pondIds[0]===0? '' : '>'):(item.pondId===0 ? '' : '>')}}{{item.port}}{{item.port?'路 ':''}}{{item.pondIds?(item.pondIds[0]===0? '' : '('):(item.pondId===0 ? '' : '(')}}{{item.name}}{{item.pondIds?(item.pondIds[0]===0? '' : ')'):(item.pondId===0 ? '' : ')')}}</text>
+            <text>{{tangkoulist[item.pondId]}}{{item.pondIds.length>1?'...':''}}{{item.pondIds?(item.pondIds[0]===0? '' : '>'):(item.pondId===0 ? '' : '>')}}{{item.port+1?item.port+1:''}}{{item.port+1?'路 ':''}}{{item.pondIds?(item.pondIds[0]===0? '' : '('):(item.pondId===0 ? '' : '(')}}{{item.name}}{{item.pondIds?(item.pondIds[0]===0? '' : ')'):(item.pondId===0 ? '' : ')')}}</text>
             <text class="{{item.pondIds?(item.pondIds[0]===0? 'unbind' : 'bind'):(item.pondId===0 ? 'unbind' : 'bind')}}">{{item.pondIds?(item.pondIds[0]===0? '未绑定' : '已绑定'):(item.pondId===0 ? '未绑定' : '已绑定')}}</text>
           </view>
           </repeat>
@@ -238,7 +238,7 @@ export default class Myequiment extends wepy.page {
 
     // 跳转到扫码添加设备页面
     scan() {
-      wepy.redirectTo({
+      wepy.navigateTo({
         url: 'scan'
       })
     }

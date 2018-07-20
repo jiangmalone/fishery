@@ -1980,9 +1980,11 @@ public class EquipmentService {
 	}
 	
 	public List<Map<String, Object>> getPersonalDianosing(String relation){
+		logger.debug("进入用户"+relation+"的个人诊断");
 		List<Map<String, Object>> personalDai = new ArrayList<>(); 
  		List<Pond> pondList = pondDao.queryPondByRelation(relation);
 		for(Pond pond:pondList) {
+			logger.debug("进入塘口："+pond.getId());
 			Map<String, Object> pondData = getDianosing(pond.getId());
 			personalDai.add(pondData);
 		}		
@@ -2065,8 +2067,11 @@ public class EquipmentService {
 				WTSolution = dia.getDiagnosing("WT", average, type);
 			}
 		}
+		
 		if(Analysis1!=null || Analysis2!=null) {
-			Analysis = Analysis1==null?"":(Analysis1 +";")+Analysis1==null?"":(Analysis1 +"。");
+			logger.debug("Analysis1"+Analysis1);
+			logger.debug("Analysis2"+Analysis2);
+			Analysis = (Analysis1==null?"":(Analysis1))+(Analysis2==null?"":(Analysis2));
 		}
 		//solution = (DOSolution==null?"":(DOSolution +";"))+( pHSolution==null?"":(pHSolution +";"))+( WTSolution==null?"":(WTSolution +"。"));
 		result = (DOResult==null?"":DOResult) + (pHResult==null?"":pHResult)+ (WTResult==null?"":WTResult);
@@ -2170,8 +2175,8 @@ public class EquipmentService {
 			}
 			
 			//WT分析
-			if(DOMap!=null) {
-				valueList = (List<Float>) DOMap.get("value");
+			if(WTMap!=null) {
+				valueList = (List<Float>) WTMap.get("value");
 				max=valueList.get(0);
 				min = valueList.get(0);
 				sum = (float) 0.0;			
@@ -2222,5 +2227,9 @@ public class EquipmentService {
 			BasicResponse<Void> response = api.executeApi();
 			System.out.println("errno:"+response.errno+" error:"+response.error);
 		
+	}
+	
+	public List<Controller> getAllControllers(){
+		return controllerDao.getAllControllers();
 	}
 }

@@ -39,6 +39,9 @@ public class VmsUtils {
     //TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
     static final String accessKeyId = "LTAIn3g4DqQFIuVP";
     static final String accessKeySecret = "nt5XbfunKpwwv9M5U1Moy0v7JSl3DQ";
+/*    static final String accessKeyId = "LTAIOnROT0Zn3EL6";
+    static final String accessKeySecret = "AKVqINrsKfhJiQf1nBtBR76DQw9Jog";*/
+    
 
     /**
      * 文本转语音外呼

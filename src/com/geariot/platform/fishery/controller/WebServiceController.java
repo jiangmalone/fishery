@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
+import com.aliyuncs.exceptions.ClientException;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.RESCODE;
@@ -29,6 +31,7 @@ import com.geariot.platform.fishery.service.WebServiceService;
 import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.HttpRequest;
 import com.geariot.platform.fishery.utils.MD5;
+import com.geariot.platform.fishery.utils.VmsUtils;
 import com.geariot.platform.fishery.wxutils.WechatConfig;
 import com.geariot.platform.fishery.wxutils.WechatLoginUse;
 
@@ -357,6 +360,24 @@ public class WebServiceController {
 		}
 		
 	}
+	
+	@RequestMapping(value = "/singleCallByTts", method = RequestMethod.GET)
+	@ResponseBody
+	public void singleCallByTts(String phone) {
+		String json = "{\"deviceName\":\"" + "测试" + "\",\"way\":" + 1 + "}";
+		try {
+			System.out.println("准备启用阿里云语音服务");
+			SingleCallByTtsResponse scbtr = VmsUtils.singleCallByTts(phone, "TTS_126866281", json);
+			System.out.println(scbtr.getMessage());
+		} catch (ClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
 
 	private Map<String, Object> setLeancloudHead() {
 		Map<String, Object> head = new HashMap<String, Object>();

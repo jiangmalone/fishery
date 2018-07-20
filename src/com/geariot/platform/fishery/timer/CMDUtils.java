@@ -27,6 +27,7 @@ public class CMDUtils {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static String apikey="7zMmzMWnY1jlegImd=m4p9EgZiI=";
 	public static int sendStrCmd(String devId,String contents){
+		logger.debug("开始向编号为"+devId+"的设备发送命令");
 		/**
 		 * 发送命令
 		 * @param devId：接收该数据的设备ID（必选）,String

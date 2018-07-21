@@ -85,13 +85,15 @@ export default class extends wepy.app {
     location: '',
     weather: '',
     relation: 'WX10',
-    // relation: 'WX19',
+    // relation: 'WX17',
     currentId: 0,
     device_sn: null,
     login: {
       phone: null,
       vscode: null
-    }
+    },
+    equimentinfo: [],
+    equimentinfoS: []
   }
 
   constructor () {

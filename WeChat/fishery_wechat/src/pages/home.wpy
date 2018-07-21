@@ -437,10 +437,18 @@
           font-size: 28rpx;
           line-height: 54rpx;
           margin-left: 44rpx;
+          /*color: #377FCA;*/
+          /*border: 1px solid #7DACDC;*/
+          border-radius: 100px;
+        }
+        .blueBtn{
           color: #377FCA;
           border: 1px solid #7DACDC;
-          border-radius: 100px;
-      }
+        }
+        .grayBtn{
+          color: #dcdcdc;
+          border: 1px solid #dcdcdc;
+        }
       .but{
         display: inline-block;
         width: 220rpx;
@@ -629,7 +637,7 @@
             <view class="shezhi">
 
               <!--自动设置-->
-              <view class="choseAuto" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}})">自动设置</view>
+              <view class="{{item.online?(item.controller.status === 0 ? 'choseAuto blueBtn' : 'choseAuto grayBtn'):'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}})">自动设置</view>
 
               <!--开关-->
               <view class="but" @tap="controlSwitch({{item.controller}}, {{item.switch}}, {{controllerIdx}})">
@@ -714,6 +722,12 @@ export default class Home extends wepy.page {
             wepy.hideLoading()
           }
         })
+      } else {
+        wepy.showToast({
+          title: '当前功能离线状态下不可用',
+          icon: 'none',
+          duration: 2000
+        })
       }
     },
 
@@ -756,58 +770,66 @@ export default class Home extends wepy.page {
     },
 
     // 自动设置按钮
-    autoset(limit, time, item, name) {
-      wepy.showActionSheet({
-        itemList: ['确定自动', '取消自动', '设置自动参数'],
-        success: (res) => {
-          // 确定自动
-          if (res.tapIndex === 0) {
-            wepy.request({
-              url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/checkTimer',
-              data: item,
-              method: 'POST',
-              success: res => {
-                if (res.data === 0) {
-                  let data = JSON.stringify(item)
-                  let timelist = JSON.stringify(time)
-                  let limitlist = JSON.stringify(limit)
-                  wepy.navigateTo({
-                    url: `autoset?data=${data}&pond=${name}&time=${timelist}&limit=${limitlist}`
+    autoset(limit, time, item, name, allList) {
+      if (allList.online && item.status === 0) {
+        wepy.showActionSheet({
+          itemList: ['确定自动', '取消自动', '设置自动参数'],
+          success: (res) => {
+            // 确定自动
+            if (res.tapIndex === 0) {
+              wepy.request({
+                url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/checkTimer',
+                data: item,
+                method: 'POST',
+                success: res => {
+                  if (res.data === 0) {
+                    let data = JSON.stringify(item)
+                    let timelist = JSON.stringify(time)
+                    let limitlist = JSON.stringify(limit)
+                    wepy.navigateTo({
+                      url: `autoset?data=${data}&pond=${name}&time=${timelist}&limit=${limitlist}`
+                    })
+                  }
+                }
+              })
+            }
+
+            // 取消自动
+            if (res.tapIndex === 1) {
+              wepy.request({
+                url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/delTimer',
+                data: item,
+                method: 'POST',
+                success: res => {
+                  wepy.showToast({
+                    title: '取消成功',
+                    icon: 'success',
+                    duration: 2000
                   })
                 }
-              }
-            })
-          }
+              })
+            }
 
-          // 取消自动
-          if (res.tapIndex === 1) {
-            wepy.request({
-              url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/delTimer',
-              data: item,
-              method: 'POST',
-              success: res => {
-                wepy.showToast({
-                  title: '取消成功',
-                  icon: 'success',
-                  duration: 2000
-                })
-              }
-            })
+            // 设置自动参数
+            if (res.tapIndex === 2) {
+              let data = JSON.stringify(item)
+              let timelist = JSON.stringify(time)
+              let limitlist = JSON.stringify(limit)
+              wepy.navigateTo({
+                url: `autoset?data=${data}&pond=${name}&time=${timelist}&limit=${limitlist}`
+              })
+            }
+          },
+          fail: function(res) {
           }
-
-          // 设置自动参数
-          if (res.tapIndex === 2) {
-            let data = JSON.stringify(item)
-            let timelist = JSON.stringify(time)
-            let limitlist = JSON.stringify(limit)
-            wepy.navigateTo({
-              url: `autoset?data=${data}&pond=${name}&time=${timelist}&limit=${limitlist}`
-            })
-          }
-        },
-        fail: function(res) {
-        }
-      })
+        })
+      } else {
+        wepy.showToast({
+          title: '当前功能离线状态下不可用',
+          icon: 'none',
+          duration: 2000
+        })
+      }
     }
   }
   events = {

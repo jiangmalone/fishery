@@ -253,6 +253,9 @@ export default class Addtangkou extends wepy.page {
           method: 'POST',
           success: res => {
             if (res.data.code === 0) {
+              if (this.$parent.globalData.equimentinfoS.length > 0) {
+                this.$parent.globalData.equimentinfoS[0].pondId = res.data.data.id
+              }
               wepy.redirectTo({
                 url: `tangkousuccess`
               })

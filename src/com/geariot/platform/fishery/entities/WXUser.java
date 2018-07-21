@@ -14,6 +14,7 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="javaClassName")
@@ -30,7 +31,9 @@ public class WXUser {
 	private Date createDate;					//普通用户的创建时间
 	private String relation;					//普通用户的relation(格式  = "WX" + id)
 	private boolean isLogin;
-	
+	private String unionid;						//公众平台通用id
+
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {
@@ -99,5 +102,13 @@ public class WXUser {
 	public void setLogin(boolean isLogin) {
 		this.isLogin = isLogin;
 	}
+	public String getUnionid() {
+		return unionid;
+	}
+	public void setUnionid(String unionid) {
+		this.unionid = unionid;
+	}
+	
+
 	
 }

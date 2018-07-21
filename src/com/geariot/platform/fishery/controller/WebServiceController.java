@@ -68,6 +68,8 @@ public class WebServiceController {
 	private String appkey = "QlGVlWcxjennYwAafkOGBBPj";
 
 	private static String BASEURL = "http://www.fisherymanager.net/index.html#/";
+	
+
 
 	private Logger logger = LogManager.getLogger(WebServiceController.class);
 
@@ -176,6 +178,7 @@ public class WebServiceController {
 	@RequestMapping(value = "/getuserinfo", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> wechatLogin(String code) {
+		logger.debug("+++++++++++++++++++++++++++++++++++++++++");
 		logger.debug("code:"+code);
 		Map<String, Object> map =  getWechatInfo(code);
 		if(map.get("openId")==null) {
@@ -183,12 +186,16 @@ public class WebServiceController {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}else {
 			logger.debug("openId:"+(String)map.get("openId"));
-			Map<String, String> openId = new HashMap<>();
-			openId.put("openId", (String)map.get("openId"));
+			logger.debug("session_key:"+(String)map.get("session_key"));
+			logger.debug("unionid:"+(String)map.get("unionid"));
+			Map<String, String> entity = new HashMap<>();			
+			entity.put("openId", (String)map.get("openId"));
+			entity.put("session_key", (String)map.get("session_key"));
+			entity.put("unionid", (String)map.get("unionid"));
 			//防止同一微信用户登录多个手机号
 			List<WXUser> wxUserList =  userService.findWXUser((String)map.get("openId"));
 			if(wxUserList.size() == 0) {
-				return RESCODE.NOT_FOUND.getJSONRES(openId);
+				return RESCODE.NOT_FOUND.getJSONRES(entity);
 			}else if(wxUserList.size()>1){
 				int count =0;
 				for(WXUser wxUser:wxUserList) {
@@ -197,9 +204,9 @@ public class WebServiceController {
 					}
 				}
 				if(count>1) {
-					return RESCODE.WX_LOGIN_REPEAT.getJSONRES(openId);
+					return RESCODE.WX_LOGIN_REPEAT.getJSONRES(entity);
 				}else if(count==0){
-					return RESCODE.NOT_FOUND.getJSONRES(openId);
+					return RESCODE.NOT_FOUND.getJSONRES(entity);
 				}else {
 					WXUser wx = new WXUser();
 					for(WXUser wxUser:wxUserList) {
@@ -207,21 +214,30 @@ public class WebServiceController {
 							wx = wxUser;
 						}
 					}
+					/*
+					 * 获取session_key,unionid
+					 */
 					wx.setOpenId((String)map.get("openId"));
+					wx.setUnionid((String)map.get("unionid"));
+					logger.debug("getuserinfo:"+RESCODE.SUCCESS.getJSONRES(wx));
 					return RESCODE.SUCCESS.getJSONRES(wx);
 				}
 				
 			}else {
 				WXUser wx = wxUserList.get(0);
 				wx.setOpenId((String)map.get("openId"));
+				wx.setUnionid((String)map.get("unionid"));
 				if(wx.isLogin() == true) {
+					logger.debug("getuserinfo:"+RESCODE.SUCCESS.getJSONRES(wx));
 					return RESCODE.SUCCESS.getJSONRES(wx);
 				}else {
-					return RESCODE.NO_LOGIN.getJSONRES(openId);
+					return RESCODE.NO_LOGIN.getJSONRES(entity);
 				}
 				
 			}
 		}
+		
+		
 	}
 	
 
@@ -268,15 +284,21 @@ public class WebServiceController {
 	}
 
 	public Map<String, Object> getWechatInfo(String code) {
+		logger.debug("++++++++++++++++++++++++++++++++++++++++");
 		String wechatInfo = WechatLoginUse.wechatInfo(code);
 		JSONObject resultJson;
 		Map<String, Object> wxuserin = new HashMap<>();
 		try {
 			resultJson = new JSONObject(wechatInfo);
+			logger.debug("resultJson"+resultJson);
 			if (resultJson.get("message").equals("success")) {
 				String openId = resultJson.getString("openid");
+				String session_key = resultJson.getString("session_key");
+				String unionid = resultJson.getString("unionid");
 				//String headimgurl = resultJson.getString("headimgurl");
 				wxuserin.put("openId", openId);
+				wxuserin.put("session_key", session_key);
+				wxuserin.put("unionid", unionid);
 				//wxuserin.put("headimgurl", headimgurl);
 				System.out.println(wxuserin.toString());
 				return wxuserin;
@@ -291,10 +313,14 @@ public class WebServiceController {
 	// 注册验证结果请求
 	@RequestMapping(value = "/verifySmsCode", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl,String wxUserName) {
-		logger.debug("++++++++++++++用户头像以及姓名++++++++++++++++");
-		logger.debug("headimgurl"+headimgurl+".");
-		logger.debug("wxUserName"+wxUserName+".");
+	public Map<String, Object> verifySmsCode(String phone, String smscode, String openId, String headimgurl,String wxUserName,String encryptedData,String iv,String session_key,String unionid) {
+		logger.debug("++++++++++++++验证手机短信以及获取unionid++++++++++++++++");
+		logger.debug("headimgurl： "+headimgurl+".");
+		logger.debug("wxUserName： "+wxUserName+".");
+		logger.debug("unionid： "+unionid+".");
+		logger.debug("encryptedData： "+encryptedData+".");
+		logger.debug("iv： "+iv+".");
+		logger.debug("session_key： "+session_key+".");
 		String newwxUserName = "";
 		newwxUserName = filterEmoji(wxUserName);	
 		logger.debug("newwxUserName"+newwxUserName+".");
@@ -321,7 +347,11 @@ public class WebServiceController {
 			return obj;
 		} else {
 			//验证成功
-			return webServiceService.login(phone,openId,headimgurl,newwxUserName);
+			//
+			if(unionid == null || unionid.equals("")) {
+				
+			}			
+			return webServiceService.login(phone,openId,headimgurl,newwxUserName,unionid);
 		}
 	}
 	

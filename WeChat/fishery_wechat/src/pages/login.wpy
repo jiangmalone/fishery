@@ -195,9 +195,9 @@ export default class Login extends wepy.page {
         success(res) {
           this.globalData.headImg = res.userInfo.avatarUrl
           this.globalData.name = res.userInfo.nickName
-          console.log('成功了', res.userInfo)
-          console.log('this.globalData', this.globalData)
-          console.log('this', this.$pages)
+          this.globalData.encryptedData = res.encryptedData
+          this.globalData.iv = res.iv
+          console.log('获取res：',res)
           wepy.request({
             url: this.globalData.baseUrl + 'api/' + 'webService/verifySmsCode',
             data: {
@@ -205,7 +205,11 @@ export default class Login extends wepy.page {
               headimgurl: this.globalData.headImg,
               phone: this.globalData.login.phone,
               wxUserName: this.globalData.name,
-              smscode: this.globalData.login.vscode
+              smscode: this.globalData.login.vscode,
+              encryptedData: this.globalData.encryptedData,
+              iv: this.globalData.iv,
+              unionid: this.globalData.unionid,
+              session_key: this.globalData.session_key
             },
             method: 'GET',
             success: res => {
@@ -262,7 +266,7 @@ export default class Login extends wepy.page {
     wepy.login({
       success: (res) => {
         let code = res.code
-        console.log(res)
+        console.log('login', res)
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'webService/getuserinfo',
           data: {
@@ -279,11 +283,16 @@ export default class Login extends wepy.page {
               this.$parent.globalData.life = res.data.data.life
               this.$parent.globalData.headImg = res.data.data.headimgurl
               this.$parent.globalData.relation = res.data.data.relation
+              this.$parent.globalData.openId = res.data.data.openId
+              this.$parent.globalData.session_key = res.data.data.session_key
+              this.$parent.globalData.unionid = res.data.data.unionid
               wepy.switchTab({
                 url: `home`
               })
             } else {
               this.$parent.globalData.openId = res.data.data.openId
+              this.$parent.globalData.session_key = res.data.data.session_key
+              this.$parent.globalData.unionid = res.data.data.unionid
             }
           }
         })

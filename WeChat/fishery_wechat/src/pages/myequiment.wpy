@@ -188,15 +188,20 @@ export default class Myequiment extends wepy.page {
       let num = item.type
       let device = item.id
       let data = JSON.stringify(item.content)
+      // let ds = '00' + device
+      // console.log('ds',ds)
       if (num === 2) {
+        this.$parent.globalData.device_sn = `addallinone?number=${device}&action=modify`
         wepy.navigateTo({
           url: `addallinone?number=${device}&data=${data}&action=modify`
         })
       } else if (num === 3) {
+        this.$parent.globalData.device_sn = `addcontroler?number=${device}&action=modify`
         wepy.navigateTo({
           url: `addcontroler?number=${device}&data=${data}&action=modify`
         })
       } else if (num === 1) {
+        this.$parent.globalData.device_sn = `addsensor?number=${device}&action=modify`
         wepy.navigateTo({
           url: `addsensor?number=${device}&data=${data}&action=modify`
         })

@@ -59,5 +59,10 @@ export default class Equimentsuccess extends wepy.page {
       })
     }
   }
+  // onLoad () {
+  //   wepy.switchTab({
+  //     url: 'home'
+  //   })
+  // }
 }
 </script>

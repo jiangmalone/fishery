@@ -291,8 +291,7 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/getAllController", method = RequestMethod.GET)
-	public List<Controller> getAllController(){
-		System.out.println(equipmentService.getAllControllers().size());
+	public List<Controller> getAllController(){		
 		return equipmentService.getAllControllers();
 	}
 	

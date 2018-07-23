@@ -131,8 +131,9 @@ public class ControllerDaoImpl implements ControllerDao {
 
 	@Override
 	public List<Controller> getAllControllers() {
-		String sql = "select * from Controller";
-		return getSession().createSQLQuery(sql).list();
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Controller");
+		Query query = queryUtils.addStringLike("relation", "WX").getQuery();
+		return query.list();
 	}
 
 } 

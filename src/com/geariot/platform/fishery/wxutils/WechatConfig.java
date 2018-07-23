@@ -36,8 +36,11 @@ public class WechatConfig {
 
 	// 设置token 和 jsapi_ticket的过期时间 为一个半小时
 	private final static int TIME_OUT = 5400 * 1000;
-
-	private final static String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";//小程序
+	//https://api.weixin.qq.com/sns/oauth2/access_token
+	//https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code
+	private final static String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/jscode2session";//小程序
+	
+	
 	
 /*	private String getAccess_token="https://api.weixin.qq.com/cgi-bin/token";*/
 
@@ -56,7 +59,7 @@ public class WechatConfig {
 	public static Map<String, JSONObject> cacheVariable = new ConcurrentHashMap<String, JSONObject>();
 
 	private static String getAccessTokenUrl(String code) {
-		String ret = ACCESS_TOKEN_URL + "?appid=" + APP_ID + "&secret=" + APP_SECRET + "&code=" + code
+		String ret = ACCESS_TOKEN_URL + "?appid=" + APP_ID + "&secret=" + APP_SECRET + "&js_code=" + code
 				+ "&grant_type=authorization_code";
 		return ret;
 	}
@@ -71,10 +74,11 @@ public class WechatConfig {
 	public static JSONObject getAccessToken(String code) {
 		// 每次code不一样，即使是同一个用户，因此没必须缓存这个access_token
 		String tokenUrl = getAccessTokenUrl(code);
-		String call = HttpRequest.getCall(tokenUrl, null, null);
+		String call = HttpRequest.getCall(tokenUrl, null, null);		
 		JSONObject obj;
 		try {
 			obj = new JSONObject(call);
+			System.out.println("通过url获得全部obj"+obj);
 		} catch (JSONException e) {
 			e.printStackTrace();
 			throw new RuntimeException("WechatConfig#获取token的json字符串解析失败", e);

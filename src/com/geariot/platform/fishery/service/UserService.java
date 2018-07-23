@@ -374,37 +374,38 @@ public class UserService {
 				        		for(int i=0;i<datastreamsList.size();i++) {
 						        	controllerDataMap.put(datastreamsList.get(i).getId(), datastreamsList.get(i).getValue());
 						        }        	
-						        controllerMap.put("data", controllerDataMap);						      
+						        controllerMap.put("data", controllerDataMap);	
+						        String  PF = (String) controllerDataMap.get("PF");
+						        String DP = (String) controllerDataMap.get("DP"+controller.getPort());
 						        if(controllerDataMap.get("PF") !=null) {						      						        	
-						        	String  PF = (String) controllerDataMap.get("PF");
-							        String DP = (String) controllerDataMap.get("DP"+controller.getPort());
+						        	
 							        logger.debug("断电1或正常0："+PF);
 							        if(PF.equals("1")) {
 							        	controller.setStatus(2);
 							        	WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", wxUser.getOpenId(), controller.getDevice_sn());
 							        	
-							        	String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + controller.getPort() + "}";
+							        	/*String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + controller.getPort() + "}";
 										try {
 											System.out.println("准备启用阿里云语音服务");
 											VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
 										} catch (ClientException e) {
 											// TODO Auto-generated catch block
 											e.printStackTrace();
-										}
+										}*/
 							        	
 							        }else {
 							        	if(DP.equals("1")) {
 							        		logger.debug("缺相1或正常0："+DP);
 							        		controller.setStatus(3);
 							        		WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", wxUser.getOpenId(), controller.getDevice_sn());
-							        		String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + controller.getPort() + "}";
+							        		/*String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + controller.getPort() + "}";
 											try {
 												System.out.println("准备启用阿里云语音服务");
 												VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
 											} catch (ClientException e) {
 												// TODO Auto-generated catch block
 												e.printStackTrace();
-											}
+											}*/
 							        	}else {
 							        		controller.setStatus(0);
 							        	}

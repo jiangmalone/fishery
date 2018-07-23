@@ -1034,7 +1034,8 @@ public class EquipmentService {
 				List<Float> valueList = new ArrayList<Float>();
 				DatastreamsItem di = dl.get(i);
 				List<DatapointsItem> ld =di.getDatapoints();
-				System.out.println(di.getId()+"参数下数据量："+ld.size());
+				if(di.getId().equals("location")==false) {
+					System.out.println(di.getId()+"参数下数据量："+ld.size());
 					for(int j=0;j<ld.size();j++) {
 						atList.add(ld.get(j).getAt());
 						valueList.add(Float.parseFloat((String)ld.get(j).getValue()));
@@ -1044,6 +1045,7 @@ public class EquipmentService {
 				oneValueMap.put("at", atList);
 				oneValueMap.put("value",valueList);
 				oneMap.put(di.getId(), oneValueMap);
+				}				
 			}
 		}
 		return oneMap;

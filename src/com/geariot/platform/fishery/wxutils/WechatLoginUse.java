@@ -15,7 +15,10 @@ public class WechatLoginUse {
 
 		//access token
 		JSONObject resultJson = WechatConfig.getAccessToken(code);
+		log.debug(resultJson);
 		String openid = resultJson.getString("openid");
+		String session_key = resultJson.getString("session_key");
+		String unionid = resultJson.getString("unionid") == null?"":resultJson.getString("unionid");
 		//String accessToken = resultJson.getString("access_token");
 		log.debug("获取登陆时accesstoken: "+" ; openid: "+openid);
 		if(StringUtils.isNotEmpty(openid)){
@@ -37,6 +40,8 @@ public class WechatLoginUse {
 //		        wechatInfo.put("message", "fail");
 //		    }
 			wechatInfo.put("openid", openid);
+			wechatInfo.put("session_key", session_key);
+			wechatInfo.put("unionid", unionid);
 			wechatInfo.put("message", "success");
 		}else{
 			wechatInfo.put("message", "fail");

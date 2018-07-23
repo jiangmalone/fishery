@@ -76,7 +76,7 @@ public class WebServiceService {
 		}
 	}
 
-	public Map<String, Object> login(String phone, String openId, String headimgurl,String wxUserName) {
+	public Map<String, Object> login(String phone, String openId, String headimgurl,String wxUserName,String unionid) {
 		WXUser wxUser = wxUserDao.findUserByPhone(phone);
 		logger.debug(openId);
 		if (wxUser == null) {
@@ -87,6 +87,7 @@ public class WebServiceService {
 			wxUserNew.setLogin(true);
 			wxUserNew.setCreateDate(new Date());
 			wxUserNew.setName(wxUserName);
+			wxUserNew.setUnionid(unionid);
 			wxUserDao.save(wxUserNew);
 			wxUserNew.setRelation("WX"+wxUserNew.getId());
 			return RESCODE.SUCCESS.getJSONRES(wxUserNew);

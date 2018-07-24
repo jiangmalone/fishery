@@ -125,7 +125,8 @@ export default class Autoset extends wepy.page {
     limit: {},
     typelist: ['增氧机', '投饵机', '打水机', '其他'],
     itemdata: {},
-    pondname: ''
+    pondname: '',
+    submitTime: true
   }
   config= {
     navigationBarTitleText: '自动设置'
@@ -135,8 +136,46 @@ export default class Autoset extends wepy.page {
       console.log('picker发送选择改变，携带值为', e.detail.value)
       if (type === 'startTime') {
         this.timelist[index].startTime = e.detail.value
+        if (this.timelist[index].endTime !== '') {
+          let sh = this.timelist[index].startTime.split(':')[0]
+          let sm = this.timelist[index].startTime.split(':')[1]
+          let eh = this.timelist[index].endTime.split(':')[0]
+          let em = this.timelist[index].endTime.split(':')[1]
+          if (sh > eh) {
+            this.submitTime = false
+            wepy.showToast({title: '错误：开启时间不能早于关闭时间', icon: 'none', duration: 1500})
+          } else if (sh === eh) {
+            if (sm > em) {
+              this.submitTime = false
+              wepy.showToast({title: '错误：开启时间不能早于关闭时间', icon: 'none', duration: 1500})
+            } else {
+              this.submitTime = true
+            }
+          } else {
+            this.submitTime = true
+          }
+        }
       } else {
         this.timelist[index].endTime = e.detail.value
+        if (this.timelist[index].startTime !== '') {
+          let sh = this.timelist[index].startTime.split(':')[0]
+          let sm = this.timelist[index].startTime.split(':')[1]
+          let eh = this.timelist[index].endTime.split(':')[0]
+          let em = this.timelist[index].endTime.split(':')[1]
+          if (sh > eh) {
+            this.submitTime = false
+            wepy.showToast({title: '错误：开启时间不能早于关闭时间', icon: 'none', duration: 1500})
+          } else if (sh === eh) {
+            if (sm > em) {
+              this.submitTime = false
+              wepy.showToast({title: '错误：开启时间不能早于关闭时间', icon: 'none', duration: 1500})
+            } else {
+              this.submitTime = true
+            }
+          } else {
+            this.submitTime = true
+          }
+        }
       }
       this.$apply()
     },
@@ -159,69 +198,85 @@ export default class Autoset extends wepy.page {
       this.$apply()
     },
     confirmSet() {
-      if (this.itemdata.type === 0) {
-        if (!this.limit.low_limit) {
-          wepy.showToast({title: '填写下限', icon: 'none'})
-          return 0
-        } else if (!this.limit.up_limit) {
-          wepy.showToast({title: '填写上限', icon: 'none'})
-          return 0
-        } else if (!this.limit.high_limit) {
-          wepy.showToast({title: '填写高限', icon: 'none'})
-          return 0
-        }
-        let timeinfo = {
-          timers: this.timelist,
-          device_sn: this.itemdata.device_sn,
-          way: this.itemdata.port
-        }
-        wepy.showLoading()
-        wepy.request({
-          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setTimer',
-          data: timeinfo,
-          method: 'POST',
-          success: res => {
-            if (res.data.code === 0) {
-              wepy.request({
-                url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setLimit',
-                data: this.limit,
-                method: 'POST',
-                success: res => {
-                  wepy.showToast({
-                    title: '自动设置成功',
-                    success: res => {
-                      wepy.switchTab({
-                        url: 'home'
-                      })
-                    }
-                  })
-                }
-              })
-            }
-          },
-          complete: () => {
-            wepy.hideLoading()
+      if (this.submitTime === true) {
+        if (this.itemdata.type === 0) {
+          if (!this.limit.low_limit) {
+            wepy.showToast({title: '请填写下限', icon: 'none'})
+            return 0
+          } else if (!this.limit.up_limit) {
+            wepy.showToast({title: '请填写上限', icon: 'none'})
+            return 0
+          } else if (!this.limit.high_limit) {
+            wepy.showToast({title: '请填写高限', icon: 'none'})
+            return 0
           }
-        })
+          let timeinfo = {
+            timers: this.timelist,
+            device_sn: this.itemdata.device_sn,
+            way: this.itemdata.port
+          }
+          wepy.showLoading()
+          wepy.request({
+            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setTimer',
+            data: timeinfo,
+            method: 'POST',
+            success: res => {
+              if (res.data.code === 0) {
+                console.log(this.limit)
+                wepy.request({
+                  url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setLimit',
+                  data: this.limit,
+                  method: 'POST',
+                  success: res => {
+                    wepy.showToast({
+                      title: '自动设置成功',
+                      icon: 'success',
+                      duration: 2000,
+                      success: res => {
+                        setTimeout(()=>{
+                          wepy.switchTab({
+                            url: 'home'
+                          })
+                        },2000)
+                      }
+                    })
+                  }
+                })
+              }
+            },
+            complete: () => {
+              wepy.hideLoading()
+            }
+          })
+        } else {
+          let timeinfo = {
+            timers: this.timelist,
+            device_sn: this.itemdata.device_sn,
+            way: this.itemdata.port
+          }
+          wepy.request({
+            url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setTimer',
+            data: timeinfo,
+            method: 'POST',
+            success: res => {
+              if (res.data.code === 0) {
+                wepy.showToast({title: '自动设置成功',
+                  icon: 'success',
+                  duration: 2000,
+                  success: res => {
+                    // wepy.switchTab({
+                    //   url: 'home'
+                    // })
+                  }})
+              }
+            },
+            complete: () => {
+              wepy.hideLoading()
+            }
+          })
+        }
       } else {
-        let timeinfo = {
-          timers: this.timelist,
-          device_sn: this.itemdata.device_sn,
-          way: this.itemdata.port
-        }
-        wepy.request({
-          url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/setTimer',
-          data: timeinfo,
-          method: 'POST',
-          success: res => {
-            if (res.data.code === 0) {
-              wepy.showToast({title: '自动设置成功'})
-            }
-          },
-          complete: () => {
-            wepy.hideLoading()
-          }
-        })
+        wepy.showToast({title: '错误：开启时间不能早于关闭时间', icon: 'none', duration: 1500})
       }
     }
   }
@@ -243,6 +298,7 @@ export default class Autoset extends wepy.page {
       startTime: '',
       way: data.port
     }]
+    console.log('timelist', this.timelist)
     this.$apply()
   }
 }

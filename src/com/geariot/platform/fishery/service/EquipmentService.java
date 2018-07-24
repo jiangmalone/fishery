@@ -3,6 +3,7 @@ package com.geariot.platform.fishery.service;
 import cmcc.iot.onenet.javasdk.api.datapoints.GetDatapointsListApi;
 import cmcc.iot.onenet.javasdk.api.datastreams.GetDatastreamApi;
 import cmcc.iot.onenet.javasdk.api.device.GetDeviceApi;
+import cmcc.iot.onenet.javasdk.api.device.GetDevicesStatus;
 import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
 import cmcc.iot.onenet.javasdk.api.triggers.AddTriggersApi;
 import cmcc.iot.onenet.javasdk.api.triggers.DeleteTriggersApi;
@@ -13,7 +14,11 @@ import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsIte
 import cmcc.iot.onenet.javasdk.response.datastreams.DatastreamsResponse;
 import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
 import cmcc.iot.onenet.javasdk.response.device.DeviceResponse;
+import cmcc.iot.onenet.javasdk.response.device.DevicesStatusList;
 import cmcc.iot.onenet.javasdk.response.triggers.NewTriggersResponse;
+
+import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
+import com.aliyuncs.exceptions.ClientException;
 import com.geariot.platform.fishery.dao.*;
 import com.geariot.platform.fishery.entities.*;
 import com.geariot.platform.fishery.entities.Timer;
@@ -21,6 +26,8 @@ import com.geariot.platform.fishery.model.*;
 import com.geariot.platform.fishery.timer.CMDUtils;
 import com.geariot.platform.fishery.utils.DataExportExcel;
 import com.geariot.platform.fishery.utils.Diagnosing;
+import com.geariot.platform.fishery.utils.VmsUtils;
+import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 import com.mysql.fabric.xmlrpc.base.Array;
 import com.sun.net.httpserver.Authenticator.Success;
 
@@ -95,6 +102,9 @@ public class EquipmentService {
 	@Autowired
 	private SocketSerivce socketService;
 
+	@Autowired
+	private UserService userService;
+	
 	@Autowired
 	private WebServiceService webServiceService;
 	
@@ -173,6 +183,14 @@ public class EquipmentService {
 					logger.debug("删除设备类型为控制器");
 					controllerDao.delete(device_sn);
 					deviceDao.delete(device_sn);
+					deleteTriggerBySensorId(device_sn);
+					dev_triggerDao.delete(device_sn);
+					List<Dev_Trigger> devTriList2 = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
+					for(Dev_Trigger devTri:devTriList2) {
+						DeleteTriggersApi api = new DeleteTriggersApi(devTri.getTriger_id(), key);
+						BasicResponse<Void> response = api.executeApi();
+						System.out.println("errno:"+response.errno+" error:"+response.error);
+					}
 					limitDao.delete(device_sn);
 					timerDao.delete(device_sn);
 					break;
@@ -290,7 +308,13 @@ public class EquipmentService {
 			String api_device_sn = device_sn.substring(2, device_sn.length());
 			logger.debug(api_device_sn);
 			if(deviceDao.findDevice(api_device_sn)==null) {
-//				在设备表中，若没有改设备编号，在设备表中添加设备				
+//				在设备表中，若没有改设备编号，在设备表中添加设备
+				//dsid,device_sn,type,threshold,localtype,way
+				addTrigger("PF", api_device_sn, ">", 0, 3, 0);
+				addTrigger("DP1", api_device_sn, ">", 0, 3, 0);
+				addTrigger("DP2", api_device_sn, ">", 0, 3, 0);
+				addTrigger("DP3", api_device_sn, ">", 0, 3, 0);
+				addTrigger("DP4", api_device_sn, ">", 0, 3, 0);
 				Device device = new Device();
 				device.setDevice_sn(api_device_sn);
 				device.setType(3);
@@ -307,7 +331,7 @@ public class EquipmentService {
 						limit.setLow_limit(4);
 						limit.setDevice_sn(controller.getDevice_sn());
 						limit.setWay(controller.getPort());
-						addTrigger("DO", controller.getDevice_sn(), "<", 4, 3, controller.getPort());
+						addTrigger("DO", controller.getDevice_sn(), "<", 4, 2, controller.getPort());
 						limitDao.save(limit);
 					}
 					//获取控制器绑定的塘口
@@ -1485,7 +1509,7 @@ public class EquipmentService {
 	 * 触发器触发，改变传感器状态
 	 */	
 	public void triggeractive(JSONObject data) {
-		System.out.println("触发器"+data);
+		logger.debug("触发器"+data);
 		/*JSONObject tempjson = JSONObject.fromObject(data);*/
 		JSONObject tempjson = data;
 		JSONObject temp12 = tempjson.getJSONObject("trigger");
@@ -1498,10 +1522,9 @@ public class EquipmentService {
 		String ds_id= obj1.getString("ds_id");//数据流
 		String value = obj1.getString("value");//触发时的值，不能直接使用，分数值和map
 		double va = Double.parseDouble(value);
-		
-		System.out.println(dev_id);
-		System.out.println(ds_id);
-		System.out.println("触发器类型"+triggertype);
+		logger.debug("dev_id"+dev_id);
+		logger.debug("数据流"+ds_id);
+		logger.debug("触发器类型"+triggertype);
 		System.out.println(""+triggerid);
 		System.out.println("数值为："+value);
 		//根据触发器id获得触发器，根据设备编号获得传感器（传感器只有一路），为传感器设置状态
@@ -1510,25 +1533,62 @@ public class EquipmentService {
 		if(trigger!=null) {
 			System.out.println("触发器本地类型："+trigger.getTrigertype());
 			Sensor sensor = sensorDao.findSensorByDeviceSns(trigger.getDevice_sn());
-			Sensor sensorData = realTimeData(sensor.getDevice_sn());
-			sensor.setOxygen(sensorData.getOxygen());
-			sensor.setpH_value(sensorData.getpH_value());
-			sensor.setWater_temperature(sensorData.getWater_temperature());
-			
-			if(triggertype.equals("inout")) {//触发器为inout，
-				JSONObject threshold = temp12.getJSONObject("threshold");
-				double lolmt = threshold.getDouble("lolmt");
-				double uplmt = threshold.getDouble("uplmt");
-				if(va>=lolmt&&va<=uplmt) {//触发值在触发范围内
-					if(trigger.getTrigertype() == 0) {//预警
+			if(sensor != null) {
+				logger.debug("获取设备"+sensor.getDevice_sn()+"的实时数据");
+				Sensor sensorData = realTimeData(sensor.getDevice_sn());
+				sensor.setOxygen(sensorData.getOxygen());
+				sensor.setpH_value(sensorData.getpH_value());
+				sensor.setWater_temperature(sensorData.getWater_temperature());
+				
+				if(triggertype.equals("inout")) {//触发器为inout，
+					JSONObject threshold = temp12.getJSONObject("threshold");
+					double lolmt = threshold.getDouble("lolmt");
+					double uplmt = threshold.getDouble("uplmt");
+					if(va>=lolmt&&va<=uplmt) {//触发值在触发范围内
+						if(trigger.getTrigertype() == 0) {//预警
+							if(ds_id.equals("DO")) {
+								sensor.setOxygen_status(1);
+							}else if(ds_id.equals("WT")) {
+								sensor.setWT_status(1);
+							}else if(ds_id.equals("pH")) {
+								sensor.setpH_status(1);
+							}	
+						}else if(trigger.getTrigertype() == 1){//危险
+							if(ds_id.equals("DO")) {
+								sensor.setOxygen_status(2);	
+							}else if(ds_id.equals("WT")) {
+								sensor.setWT_status(2);
+							}else if(ds_id.equals("pH")) {
+								sensor.setpH_status(2);
+							}
+						}else if(trigger.getTrigertype() == 4) {//正常
+							if(ds_id.equals("DO")) {
+								sensor.setOxygen_status(0);	
+							}else if(ds_id.equals("WT")) {
+								sensor.setWT_status(0);
+							}else if(ds_id.equals("pH")) {
+								sensor.setpH_status(0);
+							}
+						}
+					}else {//触发值离开触发范围，默认恢复正常
 						if(ds_id.equals("DO")) {
-							sensor.setOxygen_status(1);
+							sensor.setOxygen_status(0);
+						}else if(ds_id.equals("WT")) {
+							sensor.setWT_status(0);
+						}else if(ds_id.equals("pH")) {
+							sensor.setpH_status(0);
+						}	
+					}
+				}else {//触发器类型不为inout				
+					if(trigger.getTrigertype()==0) {//预警
+						if(ds_id.equals("DO")) {
+							sensor.setOxygen_status(1);	
 						}else if(ds_id.equals("WT")) {
 							sensor.setWT_status(1);
 						}else if(ds_id.equals("pH")) {
 							sensor.setpH_status(1);
-						}	
-					}else if(trigger.getTrigertype() == 1){//危险
+						}					
+					}else if(trigger.getTrigertype()==1){//危险
 						if(ds_id.equals("DO")) {
 							sensor.setOxygen_status(2);	
 						}else if(ds_id.equals("WT")) {
@@ -1536,7 +1596,42 @@ public class EquipmentService {
 						}else if(ds_id.equals("pH")) {
 							sensor.setpH_status(2);
 						}
-					}else if(trigger.getTrigertype() == 4) {//正常
+					}else if(trigger.getTrigertype()==2) {//低于溶氧下限，打开增氧机
+						int way = trigger.getWay();
+						String divsn=trigger.getDevice_sn();
+						String text = "KM"+way+":"+1;
+						CMDUtils.sendStrCmd(divsn,text);
+					}else if(trigger.getTrigertype()==3) {//控制器的缺相断电触发
+						/*controllerDao*/
+						String device_sn = trigger.getDevice_sn();
+						List<Controller> controllerList = controllerDao.findControllerByDeviceSns(device_sn);
+						WXUser wxUser = wxUserDao.findUserByRelation(controllerList.get(0).getRelation());
+						String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
+						if(ds_id.equals("PF")) {
+							WechatSendMessageUtils.sendWechatAlarmMessages("控制器断电", publicOpenID, device_sn);
+							
+							String json = "{\"deviceName\":\"" +controllerList.get(0).getDevice_sn()+ "\",\"way\":" + 0 + "}";
+							try {
+								System.out.println("准备启用阿里云语音服务");
+								SingleCallByTtsResponse scbtr =VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
+							} catch (ClientException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}else {
+							String dp = ds_id.substring(2, 3);
+							int i = Integer.parseInt(dp);
+							WechatSendMessageUtils.sendWechatAlarmMessages("控制器第"+i+"路缺相", publicOpenID, device_sn);
+							String json = "{\"deviceName\":\"" + controllerList.get(i-1).getName() + "\",\"way\":" + i + "}";
+							try {
+								System.out.println("准备启用阿里云语音服务");
+								VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
+							} catch (ClientException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}																			
+					}else if(trigger.getTrigertype()==4){//正常
 						if(ds_id.equals("DO")) {
 							sensor.setOxygen_status(0);	
 						}else if(ds_id.equals("WT")) {
@@ -1545,48 +1640,10 @@ public class EquipmentService {
 							sensor.setpH_status(0);
 						}
 					}
-				}else {//触发值离开触发范围，默认恢复正常
-					if(ds_id.equals("DO")) {
-						sensor.setOxygen_status(0);
-					}else if(ds_id.equals("WT")) {
-						sensor.setWT_status(0);
-					}else if(ds_id.equals("pH")) {
-						sensor.setpH_status(0);
-					}	
 				}
-			}else {//触发器类型不为inout				
-				if(trigger.getTrigertype()==0) {//预警
-					if(ds_id.equals("DO")) {
-						sensor.setOxygen_status(1);	
-					}else if(ds_id.equals("WT")) {
-						sensor.setWT_status(1);
-					}else if(ds_id.equals("pH")) {
-						sensor.setpH_status(1);
-					}					
-				}else if(trigger.getTrigertype()==1){//危险
-					if(ds_id.equals("DO")) {
-						sensor.setOxygen_status(2);	
-					}else if(ds_id.equals("WT")) {
-						sensor.setWT_status(2);
-					}else if(ds_id.equals("pH")) {
-						sensor.setpH_status(2);
-					}
-				}else if(trigger.getTrigertype()==2) {//低于溶氧下限，打开增氧机
-					int way = trigger.getWay();
-					String divsn=trigger.getDevice_sn();
-					String text = "KM"+way+":"+1;
-					CMDUtils.sendStrCmd(divsn,text);
-				}else if(trigger.getTrigertype()==4){//正常
-					if(ds_id.equals("DO")) {
-						sensor.setOxygen_status(0);	
-					}else if(ds_id.equals("WT")) {
-						sensor.setWT_status(0);
-					}else if(ds_id.equals("pH")) {
-						sensor.setpH_status(0);
-					}
-				}
+				sensorDao.updateSensor(sensor);
 			}
-			sensorDao.updateSensor(sensor);
+			
 		}
 	}
 
@@ -1913,25 +1970,80 @@ public class EquipmentService {
 	}
 	
 	public String getControllerPortStatus(String devId,int port) {
-		//System.out.println("123123123123123123123123123");
-		String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
-		String id = "KM"+port;
-		/**
-		 * 查询单个数据流
-		 * @param devid:设备ID,String
-		 * @param datastreamid:数据流名称 ,String
-		 * @param key:masterkey 或者 设备apikey
-		 */
-		System.out.println("获取控制器端口状态");
-		GetDatastreamApi api = new GetDatastreamApi(devId, id, key);
-		BasicResponse<DatastreamsResponse> response = api.executeApi();
-		System.out.println("errno:"+response.errno+" error:"+response.error);
-		System.out.println(response.getJson());
-		if(response.errno == 0) {
-			return (String)response.data.getCurrentValue();
-		}else {
-			return "2";
-		}
+		logger.debug("获取设备"+devId+"第"+(port+1)+"路的状态");
+		 String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
+		 String id = "KM"+port;
+	        /**
+	    	 * 批量查询设备状态
+	         * 参数顺序与构造函数顺序一致
+	    	 * @param devIds:设备id用逗号隔开, 限制1000个设备
+	    	 * @param key :masterkey 或者 设备apikey,String
+	    	 */
+	     GetDevicesStatus api1 = new GetDevicesStatus(devId,key);
+	     BasicResponse<DevicesStatusList> response1 = api1.executeApi();
+	     System.out.println("errno:"+response1.errno+" error:"+response1.error);
+	     System.out.println(response1.data.getDevices().get(0).getIsonline());
+	     if(response1.errno == 0) {//获取设备状态
+	    	 System.out.println("获取设备状态");
+	    	 if(response1.data.getDevices().get(0).getIsonline() != null) {
+	    		 boolean online = response1.data.getDevices().get(0).getIsonline();
+	    		 if(online == true) {//设备在线
+	    			 System.out.println("设备在线");
+	    			 Map<String, Object> controllerDataMap=new HashMap<>();
+	    			 GetLatesDeviceData lddapi = new GetLatesDeviceData(devId, key);
+				     BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
+				     System.out.println(response2.getJson()); 
+				     if(response2.errno == 0) {
+				        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> datastreamsList = response2.data.getDevices().get(0).getDatastreams();
+				        	if(datastreamsList!=null) {
+				        		for(int i=0;i<datastreamsList.size();i++) {
+						        	controllerDataMap.put(datastreamsList.get(i).getId(), datastreamsList.get(i).getValue());
+						        }
+				        	}
+				     }
+				     String  PF = (String) controllerDataMap.get("PF");
+				     String DP = (String) controllerDataMap.get("DP"+(port+1));
+				     String KM = (String) controllerDataMap.get("KM"+(port+1));
+				     System.out.println("PF"+PF+",DP"+DP+",KM"+KM);
+	    			 if(controllerDataMap.get("PF") !=null) {
+	    				 if(PF.equals("1")) {//断电
+	    					 System.out.println("断电");
+	    					 return "2";
+	    				 }else {
+	    					 if(controllerDataMap.get("DP"+(port+1))!=null) {
+	    						 if(DP.equals("1")) {//缺相
+	    							 System.out.println("缺相");
+	    							 return "2";
+	    						 }else {
+	    							 System.out.println("设备正常在线，获取其状态");
+	    							 if(controllerDataMap.get("KM"+(port+1))!=null) {
+	    								 return KM;
+	    							 }else {
+	    								 return "2";
+	    							 }
+	    							
+	    						 }
+	    					 }else {
+	    						 if(controllerDataMap.get("KM"+(port+1))!=null) {
+	    							 return KM;
+	    						 }else {
+	    							 return "2";
+	    						 }
+	    					 }
+	    				 }
+	    				 
+	    			 }else {
+	    				 if(controllerDataMap.get("KM"+(port+1))!=null) {
+							 return KM;
+						 }else {
+							 return "2";
+						 }
+	    			 }	    			 
+	    		 }return "2"; 
+	    	 }return "2"; 	    	 
+	     }return "2"; 
+
+		
 	}
 	
 	public int checkTimer(String dev_sn,int way) {
@@ -2218,8 +2330,7 @@ public class EquipmentService {
 	}
 
 	public void deleteTriggerByDevice_snAndWay(String device_sn,int way) {
-		Dev_Trigger devTrigger = dev_triggerDao.findDev_TriggerByDevsnAndWay(device_sn, way);
-				
+		Dev_Trigger devTrigger = dev_triggerDao.findDev_TriggerByDevsnAndWay(device_sn, way);				
 			/**
 			 * 触发器删除
 			 * @param tirggerid:触发器ID,String

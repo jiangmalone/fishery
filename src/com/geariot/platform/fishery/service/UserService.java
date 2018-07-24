@@ -10,6 +10,8 @@ import java.util.Map;
 import com.geariot.platform.fishery.entities.*;
 
 import org.apache.logging.log4j.LogManager;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +28,14 @@ import com.geariot.platform.fishery.dao.SensorDao;
 import com.geariot.platform.fishery.dao.Sensor_ControllerDao;
 import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
+import com.geariot.platform.fishery.dao.WXUser_unionDao;
 import com.geariot.platform.fishery.dao.DiagDao;
 import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.utils.VmsUtils;
+import com.geariot.platform.fishery.wxutils.WeChatOpenIdExchange;
 import com.geariot.platform.fishery.wxutils.WechatAlarmMessage;
+import com.geariot.platform.fishery.wxutils.WechatConfig;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 import com.geariot.platform.fishery.wxutils.WechatTemplateMessage;
 import com.sun.media.jfxmedia.logging.Logger;
@@ -53,6 +58,9 @@ public class UserService {
     
     @Autowired
     private WXUserDao wxuserDao;
+    
+    @Autowired
+    private WXUser_unionDao wxUser_unionDao;
     
     @Autowired
     private PondDao pondDao;
@@ -376,13 +384,14 @@ public class UserService {
 						        }        	
 						        controllerMap.put("data", controllerDataMap);	
 						        String  PF = (String) controllerDataMap.get("PF");
-						        String DP = (String) controllerDataMap.get("DP"+controller.getPort());
-						        if(controllerDataMap.get("PF") !=null) {						      						        	
-						        	
+						        String DP = (String) controllerDataMap.get("DP"+(controller.getPort()+1));
+						        if(controllerDataMap.get("PF") !=null) {	
+						        
+						        	//String publicOpenID = getPublicOpenId(wxUser.getOpenId());
 							        logger.debug("断电1或正常0："+PF);
 							        if(PF.equals("1")) {
-							        	controller.setStatus(2);
-							        	WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", wxUser.getOpenId(), controller.getDevice_sn());
+							        	controller.setStatus(2);							        								        								        	
+							        	//WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", publicOpenID, controller.getDevice_sn());
 							        	
 							        	/*String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + controller.getPort() + "}";
 										try {
@@ -394,20 +403,22 @@ public class UserService {
 										}*/
 							        	
 							        }else {
-							        	if(DP.equals("1")) {
-							        		logger.debug("缺相1或正常0："+DP);
-							        		controller.setStatus(3);
-							        		WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", wxUser.getOpenId(), controller.getDevice_sn());
-							        		/*String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + controller.getPort() + "}";
-											try {
-												System.out.println("准备启用阿里云语音服务");
-												VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
-											} catch (ClientException e) {
-												// TODO Auto-generated catch block
-												e.printStackTrace();
-											}*/
-							        	}else {
-							        		controller.setStatus(0);
+							        	if(controllerDataMap.get("DP"+(controller.getPort()+1))!=null) {
+								        	if(DP.equals("1")) {
+								        		logger.debug("缺相1或正常0："+DP);
+								        		controller.setStatus(3);
+								        		//WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", publicOpenID, controller.getDevice_sn());
+								        		/*String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + controller.getPort() + "}";
+												try {
+													System.out.println("准备启用阿里云语音服务");
+													VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
+												} catch (ClientException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}*/
+								        	}else {
+								        		controller.setStatus(0);
+								        	}
 							        	}
 							        }
 						        }
@@ -492,6 +503,81 @@ public class UserService {
 		}
 		map.put("brokenpondlist",allbrokenpond);
 		return map;
+	}
+	
+	public String getPublicOpenId(String openId) {
+		logger.debug("进入获取公众号openId");
+		String unionId ="";
+		System.out.println(openId);
+		if(wxuserDao.findUsersByOpenId(openId) != null) {
+			List<WXUser> wxuser =wxuserDao.findUsersByOpenId(openId);
+			unionId = wxuser.get(0).getUnionid();
+		}		
+		//openId相同，其unionId必然相同
+		
+		if(unionId !=null) {//在小程序用户表中unionId不为空
+			WXUser_union wxuser_union = wxUser_unionDao.getByUnionId(unionId);
+			if(wxuser_union == null) {//公众号中unionId为空
+				//未查询到unionId，进入
+				logger.debug("未获取unionId，开始更新公众号库");				
+				Map<String, Object>	publicOpenIds =  getAllPublicUser();	
+				List<String> openIdList = (List<String>) publicOpenIds.get("openid");
+				for(String publicOpenId:openIdList) {
+					String uId =  getPublicUserUnionId(publicOpenId);
+					WXUser_union wxu = new WXUser_union();
+					wxu.setOpenId(publicOpenId);
+					wxu.setUnionId(uId);
+					
+					if(wxUser_unionDao.getByUnionId(uId) == null) {
+						logger.debug("公众号库中数据不存在，数据不更新");
+						wxUser_unionDao.save(wxu);
+					}else {
+						logger.debug("公众号库中已有数据不更新");
+					}					
+				}
+				WXUser_union wu = wxUser_unionDao.getByUnionId(unionId);
+				return wu==null?"":wu.getOpenId();
+			} else {
+				return wxuser_union.getOpenId();
+			}	
+		}		
+		return null;
+	}
+	
+	public static Map<String, Object> getAllPublicUser() {
+		logger.debug("开始获取全部公众号用户 ");
+		Map<String, Object> returnmap = new HashMap<>();
+		JSONObject obj = WechatConfig.getAccessTokenForInteface();
+		String access_token = (String) obj.get("access_token");
+		JSONObject AllUserOpenId = WechatConfig.returnAllUserOpenId(access_token, null);
+		System.out.println("获得全部用户数据"+AllUserOpenId);
+		int total = (int) AllUserOpenId.get("total");
+		int count = (int) AllUserOpenId.get("count");
+		logger.debug("total"+total);
+		logger.debug("count"+count);
+		JSONObject data =  (JSONObject) AllUserOpenId.get("data");
+		JSONArray openIds = data.getJSONArray("openid") ;
+		List<String> openIdList = new ArrayList<>();
+		for(int i=0;i<openIds.length();i++) {
+			openIdList.add(openIds.getString(i));
+		}
+		System.out.println(AllUserOpenId.get("data"));
+		System.out.println(data.get("openid"));
+		System.out.println(AllUserOpenId.get("count"));
+
+		returnmap.put("total", total);
+		returnmap.put("count", count);
+		returnmap.put("openid", openIdList);
+		return returnmap;
+	}
+	
+	public static String getPublicUserUnionId(String openId) {
+		logger.debug("根据公众号openid："+openId+"获取用户unionid");
+		JSONObject obj = WechatConfig.getAccessTokenForInteface();
+		String access_token = (String) obj.get("access_token");
+		JSONObject info = WechatConfig.getWXUserInfo(access_token, openId);
+		String unionid = (String) info.get("unionid");		
+		return unionid;
 	}
 
 }

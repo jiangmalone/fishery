@@ -40,7 +40,21 @@ public class WechatConfig {
 	//https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code
 	private final static String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/jscode2session";//小程序
 	
+	private final static String ACCESS_TOKEN_URL2 = "https://api.weixin.qq.com/cgi-bin/token";//公众号
 	
+	//公众号获取全部用户
+		/*
+		 * https://api.weixin.qq.com/cgi-bin/user/get?
+		 * access_token=11_xZ9QO0YSoFek3S_eh9QCTVI_ig1ThZil_x8ePzJRlQ_En6Fyt1mxehJze9Ave9Fn5Zsmba2Ng5qh9psHUfEvPW-3pneMHE3PmMLryCWoZBvgIVaQ3AfGXsLbbB0Dmg9uX9_6K0oF3M6IjlcfINPcAFAEJL
+		 * &next_openid=
+		 */
+	private final static String WECHAT_USER = "https://api.weixin.qq.com/cgi-bin/user/get";
+	
+	//公众号获取用户具体信息
+	/*
+	 * https://api.weixin.qq.com/cgi-bin/user/info?access_token=11_CKXEQzVsJui0qn5txvNF70-5_3weYQecNwHnaevtUaUnqU_JSWeY7v36HPGAqlsHmc3kVQYCZtn5SwADeZ1xhI-d3M_AWwRd88-tT2Pg33YarZUWEDVOl_hz4uZyThguAfGsj8-IEH03XBX_BIGfAIAIPN&openid=orEjLv5S6uXJ1s8NS2P-PqWBF9jg&lang=zh_CN
+	 */
+	private final static String WECHAT_USER_INFO2 = "https://api.weixin.qq.com/cgi-bin/user/info";
 	
 /*	private String getAccess_token="https://api.weixin.qq.com/cgi-bin/token";*/
 
@@ -88,12 +102,22 @@ public class WechatConfig {
 	}
 
 	/**
+	 * 
 	 * 获得userInfo的方法
 	 * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842&token=&lang=zh_CN
 	 */
 
 	private static String getWehatUserInfoUrl(String accessToken, String openId) {
 		return WECHAT_USER_INFO + "?access_token=" + accessToken + "&openid=" + openId + "&lang=zh_CN";
+	}
+	/**
+	 * 公众号
+	 * 获得userInfo的方法
+	 * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842&token=&lang=zh_CN
+	 */
+
+	private static String getWehatUserInfoUrl2(String accessToken, String openId) {
+		return WECHAT_USER_INFO2 + "?access_token=" + accessToken + "&openid=" + openId + "&lang=zh_CN";
 	}
 
 	/**
@@ -109,10 +133,40 @@ public class WechatConfig {
 	 *         4eMsv84eavHiaiceqxibJxCfHe/46", "privilege":[ "PRIVILEGE1"
 	 *         "PRIVILEGE2" ], "unionid": "o6_bmasdasdsad6_2sgVt7hMZOPfL" }
 	 */
+	//获得公众号所有用户openId
+		private static String getAllUserOpenId(String access_token,String next_openid) {
+			String ret = WECHAT_USER + "?access_token=" + access_token +(next_openid==null?"":("&next_openid = "+next_openid));
+			return ret;
+		}
+		
+	/**
+	 * @param access_token
+	 * @return { "total":"total", 
+	 * 			"count":2,
+				"data":{"openid":["OPENID1","OPENID2"]},
+				"next_openid":"NEXT_OPENID"
+	 * }
+	 *         公众号
+	 */
+	public static JSONObject returnAllUserOpenId(String access_token,String next_openid) {
+		// 每次code不一样，即使是同一个用户，因此没必须缓存这个access_token
+		String tokenUrl = getAllUserOpenId(access_token, next_openid);
+		String call = HttpRequest.getCall(tokenUrl, null, null);		
+		JSONObject obj;
+		try {
+			obj = new JSONObject(call);
+			System.out.println("通过url获得全部obj"+obj);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			throw new RuntimeException("WechatConfig#获取token的json字符串解析失败", e);
+		}
+		return obj;
 
-	// 获取用户信息
+	}
+
+	// 获取用户信息,公众号
 	public static JSONObject getWXUserInfo(String accessToken, String openId) {
-		String wxUserInfoUrl = getWehatUserInfoUrl(accessToken, openId);
+		String wxUserInfoUrl = getWehatUserInfoUrl2(accessToken, openId);
 		String userInfo = HttpRequest.getCall(wxUserInfoUrl, null, null);
 
 		JSONObject obj;

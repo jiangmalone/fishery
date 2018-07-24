@@ -95,6 +95,7 @@ public class WebServiceService {
 			wxUser.setHeadimgurl(headimgurl);
 			wxUser.setPhone(phone);
 			wxUser.setOpenId(openId);
+			wxUser.setUnionid(unionid);
 			wxUser.setLogin(true);
 			wxUser.setName(wxUserName);
 			return RESCODE.SUCCESS.getJSONRES(wxUser);

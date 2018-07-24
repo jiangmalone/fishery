@@ -107,8 +107,5 @@ public class WXUser {
 	}
 	public void setUnionid(String unionid) {
 		this.unionid = unionid;
-	}
-	
-
-	
+	}	
 }

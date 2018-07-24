@@ -32,6 +32,7 @@ import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.HttpRequest;
 import com.geariot.platform.fishery.utils.MD5;
 import com.geariot.platform.fishery.utils.VmsUtils;
+import com.geariot.platform.fishery.wxutils.WeChatOpenIdExchange;
 import com.geariot.platform.fishery.wxutils.WechatConfig;
 import com.geariot.platform.fishery.wxutils.WechatLoginUse;
 
@@ -323,7 +324,7 @@ public class WebServiceController {
 		logger.debug("session_key： "+session_key+".");
 		String newwxUserName = "";
 		newwxUserName = filterEmoji(wxUserName);	
-		logger.debug("newwxUserName"+newwxUserName+".");
+		logger.debug("newwxUserName："+newwxUserName+".");
 		/*try {
 			wxUserName = new String(wxUserName.getBytes("ISO-8859-1"), "utf-8");
 		} catch (UnsupportedEncodingException e) {
@@ -349,13 +350,35 @@ public class WebServiceController {
 			//验证成功
 			//
 			if(unionid == null || unionid.equals("")) {
-				
+				//使用String encryptedData,String iv,String session_key解码获取unionid
 			}			
 			return webServiceService.login(phone,openId,headimgurl,newwxUserName,unionid);
 		}
 	}
 	
-
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> Login(String phone, String openId, String headimgurl,String wxUserName,String unionid){
+		return webServiceService.login(phone, openId, headimgurl, wxUserName, unionid);
+	}
+	
+	/*@RequestMapping(value = "/getAllPublicUser", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> getAllPublicUser(){
+		return WeChatOpenIdExchange.getAllPublicUser();
+	}
+	
+	@RequestMapping(value = "/getPublicUserUnionId", method = RequestMethod.GET)
+	@ResponseBody
+	public String getPublicUserUnionId(){
+		return WeChatOpenIdExchange.getPublicUserUnionId("orEjLv5S6uXJ1s8NS2P-PqWBF9jg");
+	}
+	*/
+	@RequestMapping(value = "/getPublicOpenId", method = RequestMethod.GET)
+	@ResponseBody
+	public String getPublicOpenId(){
+		return userService.getPublicOpenId("owhQb0RHEVr82BOl6YbHRAjhgJeo");
+	}
 
 	@RequestMapping(value = "/checkLogin", method = RequestMethod.GET)
 	@ResponseBody

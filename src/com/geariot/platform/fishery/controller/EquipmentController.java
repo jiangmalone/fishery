@@ -5,8 +5,10 @@ import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.entities.controllerParam;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.EquipmentService;
+import com.geariot.platform.fishery.service.UserService;
 import com.geariot.platform.fishery.timer.CMDUtils;
 import com.geariot.platform.fishery.timer.TimerTask;
+import com.geariot.platform.fishery.wxutils.WeChatOpenIdExchange;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsItem.DatapointsItem;
@@ -14,6 +16,7 @@ import net.sf.json.JSONObject;
 import sun.invoke.empty.Empty;
 import sun.util.logging.resources.logging;
 
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,9 +42,12 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/equipment")
 public class EquipmentController {
- 
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger(EquipmentController.class);
 	@Autowired
 	private EquipmentService equipmentService;
+	
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private LimitDao limitDao;
@@ -246,22 +252,29 @@ public class EquipmentController {
 	public int sendcmd(@RequestBody controllerParam param){
 		//
 		Controller controller = param.getController();
-		WXUser wxUser =  wxUserDao.findUserByRelation(controller.getRelation());
-		String contents = "KM"+controller.getPort()+":"+param.getKey();
+		WXUser wxUser =  wxUserDao.findUserByRelation(controller.getRelation());		
+		String contents = "KM"+(controller.getPort()+1)+":"+param.getKey();
+		long start = System.currentTimeMillis();
 		int result = CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);
+		long stop = System.currentTimeMillis();
+		System.out.println("程序执行时间："+(stop-start));
+		logger.debug("程序执行时间："+(stop-start));
+		String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
+		System.out.println("openId:"+wxUser.getOpenId());
+		System.out.println("向设备"+controller.getDevice_sn()+"发送命令，将结果推送至微信用户"+publicOpenID);
 		if(result == 0) {//成功
 			if(param.getKey() == 0) {//关闭
 				/*WechatSendMessageUtils.sendWechatOxygenOnOffMessages(msg, openId, deviceSn, onOff);
-				*/
-				WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机成功", wxUser.getOpenId(), controller.getDevice_sn());
+				*/				
+				WechatSendMessageUtils.sendWechatOnOffMessages("关闭增氧机成功", publicOpenID, controller.getDevice_sn());
 			}else {//打开
-				WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机成功", wxUser.getOpenId(), controller.getDevice_sn());
+				WechatSendMessageUtils.sendWechatOnOffMessages("打开增氧机成功", publicOpenID, controller.getDevice_sn());
 			}
 		}else {
 			if(param.getKey() == 0) {
-				WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机失败", wxUser.getOpenId(), controller.getDevice_sn());
+				WechatSendMessageUtils.sendWechatOnOffMessages("关闭增氧机失败", publicOpenID, controller.getDevice_sn());
 			}else {
-				WechatSendMessageUtils.sendWechatOxyAlarmMessages("打开增氧机失败", wxUser.getOpenId(), controller.getDevice_sn());
+				WechatSendMessageUtils.sendWechatOnOffMessages("打开增氧机失败", publicOpenID, controller.getDevice_sn());
 			}
 		}		
 		return result;
@@ -287,7 +300,7 @@ public class EquipmentController {
 	
 	@RequestMapping(value ="/sendWechatmessage", method = RequestMethod.GET)
 	public void sendWechatmessage(String device_sn){
-		WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机成功", "owhQb0VMYu9F8ABxq4RQ38yx_mHc", device_sn);
+		WechatSendMessageUtils.sendWechatOxyAlarmMessages("关闭增氧机成功", "orEjLv8vQBk6QpWuk327Qt7kUk8I", device_sn);
 	}
 	
 	@RequestMapping(value ="/getAllController", method = RequestMethod.GET)

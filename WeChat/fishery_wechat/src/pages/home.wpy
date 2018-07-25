@@ -789,6 +789,12 @@ export default class Home extends wepy.page {
                     wepy.navigateTo({
                       url: `autoset?data=${data}&pond=${name}&time=${timelist}&limit=${limitlist}`
                     })
+                  } else {
+                    wepy.showToast({
+                      title: '设置自动成功',
+                      icon: 'success',
+                      duration: 2000
+                    })
                   }
                 }
               })

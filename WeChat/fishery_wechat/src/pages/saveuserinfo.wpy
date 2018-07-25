@@ -129,10 +129,7 @@ export default class Saveuserinfo extends wepy.page {
     // 判空、loading、提交、
     confirminfo() {
       let info = this.info
-      if (info.headImg === '') {
-        wepy.showToast({title: '头像不能为空', icon: 'none'})
-        return 0
-      } else if (info.name === '') {
+      if (info.name === '') {
         wepy.showToast({title: '姓名不能为空', icon: 'none'})
         return 0
       } else if (info.sex === '') {
@@ -165,7 +162,7 @@ export default class Saveuserinfo extends wepy.page {
           this.$parent.globalData.headImg = res.data.headImg
           let userdata = JSON.stringify(res.data)
           wepy.switchTab({
-            url: `home?data=${userdata}`
+            url: `personal`
           })
         },
         complete: () => {

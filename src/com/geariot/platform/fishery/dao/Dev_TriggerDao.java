@@ -7,7 +7,7 @@ import java.util.List;
 public interface Dev_TriggerDao {
     void save(Dev_Trigger trigger);
 
-    int delete(int triggerid);
+    int deleteByTriggerId(String triggerid);
 
     int delete(String deviceSns);
 
@@ -15,5 +15,5 @@ public interface Dev_TriggerDao {
 
     List<Dev_Trigger> findDev_TriggerBydevsn(String deviceSns);
     
-    Dev_Trigger findDev_TriggerByDevsnAndWay(String deviceSns,int way);
+    List<Dev_Trigger> findDev_TriggerByDevsnAndWay(String deviceSns,int way);
 }

@@ -383,39 +383,17 @@ public class UserService {
 						        	controllerDataMap.put(datastreamsList.get(i).getId(), datastreamsList.get(i).getValue());
 						        }        	
 						        controllerMap.put("data", controllerDataMap);	
-						        String  PF = (String) controllerDataMap.get("PF");
-						        String DP = (String) controllerDataMap.get("DP"+(controller.getPort()+1));
+						        String  PF =  (String) controllerDataMap.get("PF");						       
 						        if(controllerDataMap.get("PF") !=null) {	
-						        
-						        	//String publicOpenID = getPublicOpenId(wxUser.getOpenId());
 							        logger.debug("断电1或正常0："+PF);
 							        if(PF.equals("1")) {
-							        	controller.setStatus(2);							        								        								        	
-							        	//WechatSendMessageUtils.sendWechatVoltageMessages("断电报警", publicOpenID, controller.getDevice_sn());
-							        	
-							        	/*String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + controller.getPort() + "}";
-										try {
-											System.out.println("准备启用阿里云语音服务");
-											VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
-										} catch (ClientException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}*/
-							        	
+							        	controller.setStatus(2);							        								        								        		
 							        }else {
 							        	if(controllerDataMap.get("DP"+(controller.getPort()+1))!=null) {
+							        		 String DP = (String) controllerDataMap.get("DP"+(controller.getPort()+1));
 								        	if(DP.equals("1")) {
 								        		logger.debug("缺相1或正常0："+DP);
-								        		controller.setStatus(3);
-								        		//WechatSendMessageUtils.sendWechatOxyAlarmMessages("缺相报警", publicOpenID, controller.getDevice_sn());
-								        		/*String json = "{\"deviceName\":\"" + controller.getName() + "\",\"way\":" + controller.getPort() + "}";
-												try {
-													System.out.println("准备启用阿里云语音服务");
-													VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
-												} catch (ClientException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												}*/
+								        		controller.setStatus(3);								        		
 								        	}else {
 								        		controller.setStatus(0);
 								        	}
@@ -431,7 +409,6 @@ public class UserService {
 			        }			      
 			        List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(controller.getDevice_sn(), controller.getPort());
 			        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
-			       // List<Limit_Install> limitList = limitDao.queryLimitByDeviceSn(controller.getDevice_sn());
 			        String controllerKey = equipmentService.getControllerPortStatus(controller.getDevice_sn(), controller.getPort());
 			        controllerMap.put("switch", controllerKey);
 			        controllerMap.put("TimerList", timerList);
@@ -509,7 +486,7 @@ public class UserService {
 		logger.debug("进入获取公众号openId");
 		String unionId ="";
 		System.out.println(openId);
-		if(wxuserDao.findUsersByOpenId(openId) != null) {
+		if(wxuserDao.findUsersByOpenId(openId) != null && wxuserDao.findUsersByOpenId(openId).size()>0) {
 			List<WXUser> wxuser =wxuserDao.findUsersByOpenId(openId);
 			unionId = wxuser.get(0).getUnionid();
 		}		

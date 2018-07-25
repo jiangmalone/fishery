@@ -21,7 +21,7 @@ public class Limit_Install {
 	private float low_limit;			//溶氧下限
 	private float up_limit;				//溶氧上限
 	private float high_limit;			//溶氧高限
-	private String device_sn;			//设备编号
+	private String device_sn;			//控制器设备编号
 	private int way;                    //第几路
 	public int getWay() {
 		return way;

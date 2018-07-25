@@ -377,7 +377,7 @@ public class WebServiceController {
 	@RequestMapping(value = "/getPublicOpenId", method = RequestMethod.GET)
 	@ResponseBody
 	public String getPublicOpenId(){
-		return userService.getPublicOpenId("owhQb0RHEVr82BOl6YbHRAjhgJeo");
+		return userService.getPublicOpenId("owhQb0frO0ALfKcfu81JWJv7k_zI");
 	}
 
 	@RequestMapping(value = "/checkLogin", method = RequestMethod.GET)

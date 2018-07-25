@@ -18,28 +18,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="javaClassName")
 public class Sensor_Data {
-
 	private int id;								//数据记录Id,自增
-	private float oxygen;						//溶氧量
-	private float water_temperature;			//水温
-	private float pH_value;	                    //ph值
-	private float saturation;                     //溶氧饱和值
-	private Date receiveTime;					//上位机该条数据发送到服务器时间
 	private String device_sn;					//上位机设备编号
-	private int way;
-	
-	public float getSaturation() {
-		return saturation;
-	}
-	public void setSaturation(float saturation) {
-		this.saturation = saturation;
-	}
-	public int getWay() {
-		return way;
-	}
-	public void setWay(int way) {
-		this.way = way;
-	}
+	private float DO;						//溶氧量
+	private float WT;			//水温
+	private float pH;	                    //ph值
+	private float DOS;                     //溶氧饱和值
+	private Date receiveTime;
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {
@@ -48,35 +33,40 @@ public class Sensor_Data {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public float getOxygen() {
-		return oxygen;
-	}
-	public void setOxygen(float oxygen) {
-		this.oxygen = oxygen;
-	}
-	public float getWater_temperature() {
-		return water_temperature;
-	}
-	public void setWater_temperature(float water_temperature) {
-		this.water_temperature = water_temperature;
-	}
-	public float getpH_value() {
-		return pH_value;
-	}
-	public void setpH_value(float pH_value) {
-		this.pH_value = pH_value;
-	}
-	public Date getReceiveTime() {
-		return receiveTime;
-	}
-	public void setReceiveTime(Date receiveTime) {
-		this.receiveTime = receiveTime;
-	}
 	public String getDevice_sn() {
 		return device_sn;
 	}
 	public void setDevice_sn(String device_sn) {
 		this.device_sn = device_sn;
 	}
-	
+	public float getDO() {
+		return DO;
+	}
+	public void setDO(float dO) {
+		DO = dO;
+	}
+	public float getWT() {
+		return WT;
+	}
+	public void setWT(float wT) {
+		WT = wT;
+	}
+	public float getpH() {
+		return pH;
+	}
+	public void setpH(float pH) {
+		this.pH = pH;
+	}
+	public float getDOS() {
+		return DOS;
+	}
+	public void setDOS(float dOS) {
+		DOS = dOS;
+	}
+	public Date getReceiveTime() {
+		return receiveTime;
+	}
+	public void setReceiveTime(Date receiveTime) {
+		this.receiveTime = receiveTime;
+	}						
 }

@@ -1224,7 +1224,7 @@ public class EquipmentService {
 	
 	
 	
-	public Map<String, Object> dataAll(String device_sn, int way,int day) {
+	/*public Map<String, Object> dataAll(String device_sn, int way,int day) {
 		List<Sensor_Data> list = new ArrayList<>();
 		if (way > 0) {
 			list = sensor_DataDao.sevenData(device_sn, way,day);
@@ -1254,7 +1254,7 @@ public class EquipmentService {
 		if (!list.isEmpty()) {
 		//	addVirtualData(splitlist);
 			for (Sensor_Data sensor_Data : splitlist) {
-				/*if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
+				if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 					temp = isSameDay.format(sensor_Data.getReceiveTime());
 					ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
 					oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
@@ -1263,7 +1263,7 @@ public class EquipmentService {
 					phs.add(ph);
 					oxygens.add(oxygen);
 					temperatures.add(temperature);
-				} else {*/
+				} else {
 				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 				temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -1280,9 +1280,9 @@ public class EquipmentService {
 		map.put("oxygens", oxygens);
 		map.put("temperatures", temperatures);
 		return map;//
-	}
+	}*/
 
-	public Map<String, Object> pcDataToday(String device_sn, int way) {
+/*	public Map<String, Object> pcDataToday(String device_sn, int way) {
 		List<Sensor_Data> list = new ArrayList<>();
 		if (way > 0) {
 			list = sensor_DataDao.today(device_sn, way);
@@ -1317,9 +1317,9 @@ public class EquipmentService {
 		map.put("oxygens", oxygens);
 		map.put("temperatures", temperatures);
 		return map;//
-	}
+	}*/
 
-	public Map<String, Object> pcDataAll(String device_sn, int way,int day) {
+/*	public Map<String, Object> pcDataAll(String device_sn, int way,int day) {
 		List<Sensor_Data> list = new ArrayList<>();
 		if (way > 0) {
 			list = sensor_DataDao.sevenData(device_sn, way,day);
@@ -1348,7 +1348,7 @@ public class EquipmentService {
 		}
 		//addVirtualData(splitlist);
 		for (Sensor_Data sensor_Data : splitlist) {
-			/*if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
+			if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
 				temp = isSameDay.format(sensor_Data.getReceiveTime());
 				ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
 				oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
@@ -1357,7 +1357,7 @@ public class EquipmentService {
 				phs.add(ph);
 				oxygens.add(oxygen);
 				temperatures.add(temperature);
-			} else {*/
+			} else {
 			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
 			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
 			temperature = new Temperature(sensor_Data.getWater_temperature(),
@@ -1365,7 +1365,7 @@ public class EquipmentService {
 			phs.add(ph);
 			oxygens.add(oxygen);
 			temperatures.add(temperature);
-			/*}*/
+			}
 		}
 
 		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
@@ -1373,7 +1373,7 @@ public class EquipmentService {
 		map.put("oxygens", oxygens);
 		map.put("temperatures", temperatures);
 		return map;//
-	}
+	}*/
 
 	public Map<String, Object> addTimer(Timer timer) {
 		timerDao.save(timer);

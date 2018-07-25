@@ -12,7 +12,7 @@ public interface Sensor_DataDao {
 	
 	Sensor_Data findDataByDeviceSnAndWay(String deviceSns,int way);
 	
-	List<ExcelData> getExcelData(String device_sn, Date startTime, Date endTime);
+/*	List<ExcelData> getExcelData(String device_sn, Date startTime, Date endTime);*/
 	
 	void updateData(Sensor_Data sensor_Data);
 	

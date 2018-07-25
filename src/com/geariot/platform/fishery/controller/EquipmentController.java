@@ -139,7 +139,7 @@ public class EquipmentController {
 		return equipmentService.data3days(device_sn,way);
 	}
 	
-	@RequestMapping(value = "/dataAll", method = RequestMethod.GET)
+/*	@RequestMapping(value = "/dataAll", method = RequestMethod.GET)
 	public Map<String, Object> dataAll(String device_sn, int way) {
 		return equipmentService.dataAll(device_sn,way,3);
 	}
@@ -153,7 +153,7 @@ public class EquipmentController {
 	public Map<String, Object> pcDataAll(String device_sn, int way) {
 		return equipmentService.pcDataAll(device_sn, way,7);
 	}
-	
+	*/
 	@RequestMapping(value = "/myEquipment", method = RequestMethod.GET)
 	public Map<String, Object> myEquipment(String relation){
 		return equipmentService.myEquipment(relation);

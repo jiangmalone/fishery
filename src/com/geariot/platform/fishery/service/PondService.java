@@ -206,7 +206,7 @@ public class PondService {
 		return RESCODE.SUCCESS.getJSONRES(list);
 	}
 
-	public Map<String, Object> appHomepage(String relation) {
+	/*public Map<String, Object> appHomepage(String relation) {
 		if(! relation.contains("WX")){
 			return RESCODE.WRONG_PARAM.getJSONRES();
 		}
@@ -295,7 +295,7 @@ public class PondService {
 			pond.setAios(aios);
 		}
 		return RESCODE.SUCCESS.getJSONRES(ponds);
-	}
+	}*/
 
 	public Map<String, Object> pondDetail(int pondId) {
 		Pond pond = pondDao.findPondByPondId(pondId);

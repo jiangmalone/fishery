@@ -1,5 +1,7 @@
 package com.geariot.platform.fishery.dao;
 
-public interface WTDao {
+import com.geariot.platform.fishery.entities.WT;
 
+public interface WTDao {
+	void save(WT wt);
 }

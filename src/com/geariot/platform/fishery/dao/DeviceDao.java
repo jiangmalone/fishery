@@ -18,4 +18,5 @@ public interface DeviceDao {
     void save(Device device);
     int delete(String devicesn);
     Device findDevice(String deviceSns);
+    List<Device> getAllDevices(); 
 }

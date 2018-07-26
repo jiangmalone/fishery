@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -113,16 +114,43 @@ public class EquipmentService {
 	
 	@Autowired
 	private PondFishDao pondFishDao;
+	@Autowired
+	private pHDao phDao;
+	@Autowired
+	private DODao doDao;
+	@Autowired
+	private DOSDao dosDao;
+	@Autowired
+	private WTDao wtDao;
+	@Autowired
+	private KM1Dao km1Dao;
+	@Autowired
+	private KM2Dao km2Dao;
+	@Autowired
+	private KM3Dao km3Dao;
+	@Autowired
+	private KM4Dao km4Dao;
+	@Autowired
+	private PFDao pfDao;
+	@Autowired
+	private DP1Dao dp1Dao;
+	@Autowired
+	private DP2Dao dp2Dao;
+	@Autowired
+	private DP3Dao dp3Dao;
+	@Autowired
+	private DP4Dao dp4Dao;
 	
 	
 	
+	/*
 	private String type = "";
 	private String relation = "";
 	private Company company = null;
 	private AIO aio = null;
 	private Sensor sensor = null;
 	private Controller controller = null;
-	private WXUser wxUser = null;
+	private WXUser wxUser = null;*/
 	private String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 
 	public Map<String, Object> VertifyDevicesn(String divsn) {
@@ -1124,6 +1152,176 @@ public class EquipmentService {
 			}
 		}
 		return oneMap;
+	}
+	public void saveALLDataYesterday() {
+		List<Device> deviceList = deviceDao.getAllDevices();
+		for(Device device:deviceList) {
+			String datastreamids="";
+			switch(device.getType()) {
+			case 1://传感器
+				datastreamids = "WT,DO,pH,DOS";
+				break;
+			case 2://一体机
+				break;
+			case 3://控制器
+				datastreamids = "KM1,KM2,KM3,KM4,PF,DP1,DP2,DP3,DP4";
+				break;
+			}
+			
+			Date dateToday = new Date();
+			Date dateYesterday = new Date();
+			dateYesterday.setDate(dateYesterday.getDate()-1);
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+			String dataFormat1 = sdf1.format(dateYesterday);
+			String dataFormatStart = dataFormat1+"T00:00:00";
+			dataFormat1 = sdf1.format(dateToday);
+			String dataFormatEnd =  dataFormat1+"T00:00:00";
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
+			GetDatapointsListApi api = new GetDatapointsListApi(datastreamids, dataFormatStart, dataFormatEnd, device.getDevice_sn(), null, 6000, null, null,
+					null, null, null, key);
+			BasicResponse<DatapointsList> response = api.executeApi();
+			if(response.errno==0) {
+				int count = Integer.parseInt(response.data.getCount().toString()) ;
+				if(response.errno == 0 && count!=0) {
+					List<DatastreamsItem> datastreamsItemList = response.data.getDevices();
+					List<DatastreamsItem> dl= response.getData().getDevices();
+					logger.debug("参数个数："+dl.size());
+					logger.debug("总共获得数据量为："+response.getData().getCount());				
+					for(int i=0;i<dl.size();i++) {
+						List<String> atList = new ArrayList<String>();
+						List<Float> valueList = new ArrayList<Float>();
+						DatastreamsItem di = dl.get(i);
+						List<DatapointsItem> ld =di.getDatapoints();
+						if(di.getId().equals("location")==false) {
+							logger.debug(di.getId()+"参数下数据量："+ld.size());
+							for(int j=0;j<ld.size();j++) {
+								Date date = new Date();
+								try {
+									date = sdf.parse(ld.get(j).getAt().toString());
+								} catch (ParseException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								Float value = (float) 0;
+								int value3 = 0;
+								switch(device.getType()) {
+								case 1://传感器
+									value  = Float.parseFloat((ld.get(j).getValue().toString()));
+									switch(di.getId()) {
+									case "pH":
+										pH ph = new pH();
+										ph.setDate(date);
+										ph.setDevice_sn(device.getDevice_sn());
+										ph.setValue(value);
+										phDao.save(ph);
+										break;
+									case "DO":
+										DO Do = new DO();
+										Do.setDate(date);
+										Do.setDevice_sn(device.getDevice_sn());
+										Do.setValue(value);
+										doDao.save(Do);
+										break;
+									case "DOS":
+										DOS dos = new DOS();
+										dos.setDate(date);
+										dos.setDevice_sn(device.getDevice_sn());
+										dos.setValue(value);
+										dosDao.save(dos);
+										break;
+									case "WT":
+										WT wt = new WT();
+										wt.setDate(date);
+										wt.setDevice_sn(device.getDevice_sn());
+										wt.setValue(value);
+										wtDao.save(wt);
+										break;			
+										
+									}
+									break;
+								case 2://一体机
+									break;
+								case 3://控制器
+									value3 = Integer.parseInt((ld.get(j).getValue().toString()));
+									switch(di.getId()) {
+									case "KM1":
+										KM1 km1 = new KM1();
+										km1.setDate(date);
+										km1.setDevice_sn(device.getDevice_sn());
+										km1.setValue(value3);
+										km1Dao.save(km1);
+										break;
+									case "KM2":
+										KM2 km2 = new KM2();
+										km2.setDate(date);
+										km2.setDevice_sn(device.getDevice_sn());
+										km2.setValue(value3);
+										km2Dao.save(km2);
+										break;
+									case "KM3":
+										KM3 km3 = new KM3();
+										km3.setDate(date);
+										km3.setDevice_sn(device.getDevice_sn());
+										km3.setValue(value3);
+										km3Dao.save(km3);
+										break;
+									case "KM4":
+										KM4 km4 = new KM4();
+										km4.setDate(date);
+										km4.setDevice_sn(device.getDevice_sn());
+										km4.setValue(value3);
+										km4Dao.save(km4);
+										break;
+									case "PF":
+										PF pf  =  new PF();
+										pf.setDate(date);
+										pf.setDevice_sn(device.getDevice_sn());
+										pf.setValue(value3);
+										pfDao.save(pf);
+										break;
+									case "DP1":
+										DP1 dp1 = new DP1();
+										dp1.setDate(date);
+										dp1.setDevice_sn(device.getDevice_sn());
+										dp1.setValue(value3);
+										dp1Dao.save(dp1);
+										break;
+									case "DP2":
+										DP2 dp2 = new DP2();
+										dp2.setDate(date);
+										dp2.setDevice_sn(device.getDevice_sn());
+										dp2.setValue(value3);
+										dp2Dao.save(dp2);
+										break;
+									case "DP3":
+										DP3 dp3 = new DP3();
+										dp3.setDate(date);
+										dp3.setDevice_sn(device.getDevice_sn());
+										dp3.setValue(value3);
+										dp3Dao.save(dp3);
+										break;
+									case "DP4":
+										DP4 dp4 = new DP4();
+										dp4.setDate(date);
+										dp4.setDevice_sn(device.getDevice_sn());
+										dp4.setValue(value3);
+										dp4Dao.save(dp4);
+										break;
+									}
+									break;
+								}
+								
+								
+							}
+						
+						}				
+					}
+				}
+			}
+	
+						
+		}
 	}
 
 	public Map<String, Object> data3days(String device_sn, int way) {

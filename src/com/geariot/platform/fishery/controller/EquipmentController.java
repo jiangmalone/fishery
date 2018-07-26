@@ -314,4 +314,9 @@ public class EquipmentController {
 		return equipmentService.getAllControllers();
 	}
 	
+	@RequestMapping(value ="/ALLDataYesterday", method = RequestMethod.GET)
+	public void ALLDataYesterday(){		
+		 equipmentService.saveALLDataYesterday();
+	}
+	
 }

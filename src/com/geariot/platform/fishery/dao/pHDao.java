@@ -1,5 +1,7 @@
 package com.geariot.platform.fishery.dao;
 
-public interface pHDao {
+import com.geariot.platform.fishery.entities.pH;
 
+public interface pHDao {
+	void save(pH ph);
 }

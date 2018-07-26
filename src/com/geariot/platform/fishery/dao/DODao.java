@@ -1,5 +1,7 @@
 package com.geariot.platform.fishery.dao;
 
-public interface DODao {
+import com.geariot.platform.fishery.entities.DO;
 
+public interface DODao {
+	 void save(DO Do);
 }

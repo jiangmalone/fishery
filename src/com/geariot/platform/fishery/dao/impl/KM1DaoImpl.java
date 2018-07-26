@@ -5,10 +5,10 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.geariot.platform.fishery.dao.pHDao;
-import com.geariot.platform.fishery.entities.pH;
+import com.geariot.platform.fishery.dao.KM1Dao;
+import com.geariot.platform.fishery.entities.KM1;
 @Repository
-public class pHDaoImpl implements pHDao {
+public class KM1DaoImpl implements KM1Dao {
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -16,8 +16,9 @@ public class pHDaoImpl implements pHDao {
 		return sessionFactory.getCurrentSession();
 	}
 	@Override
-	public void save(pH ph) {
-		this.getSession().save(ph);
+	public void save(KM1 km1) {
+		// TODO Auto-generated method stub
+		this.getSession().save(km1);
 	}
 
 }

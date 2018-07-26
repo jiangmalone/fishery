@@ -111,5 +111,14 @@ public class TimerTask {
 		logger.debug("定时任务结束");
 	}
 	
+	@Scheduled(cron = "0 0 1 1/1 * ?")//每天凌晨一点执行一次
+	public void dosaveData() {
+		logger.debug("凌晨一点，开始存储昨日所有数据");
+		long start = System.currentTimeMillis();	
+		equipmentService.saveALLDataYesterday();
+		long end = System.currentTimeMillis();
+		logger.debug("共耗时："+(end-start)+",存储结束！");
+	}
+	
 	
 }

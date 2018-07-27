@@ -1599,9 +1599,26 @@ public class EquipmentService {
 	
 
 	public Map<String, Object> delLimit(String device_sn,int way) {
+		List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(device_sn, way);
+		List<Integer> pondIds =new ArrayList<>();
+		for(Controller con:controllerList) {
+			pondIds.add(con.getPondId());
+		}
+		for(int pondId:pondIds) {
+			List<Sensor> sensorList = sensorDao.findSensorsByPondId(pondId);
+			for(Sensor sensor:sensorList) {
+				List<Dev_Trigger> triggerList = dev_triggerDao.findDev_TriggerBydevsn(sensor.getDevice_sn());
+				for(Dev_Trigger trigger:triggerList) {
+					if(trigger.getTrigertype()==2) {
+						DeleteTriggersApi api = new DeleteTriggersApi(trigger.getTriger_id(), key);
+						BasicResponse<Void> response = api.executeApi();
+						System.out.println("errno:"+response.errno+" error:"+response.error);
+					}
+				}
+			}
+		}		
 		limitDao.deleteByDevice_snandWay(device_sn, way);
 		return RESCODE.SUCCESS.getJSONRES();
-
 	}
 	
 	public Map<String, Object> modifyEquipment(String device_sn, Object newEquipment) {

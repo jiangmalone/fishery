@@ -86,9 +86,9 @@ public class TimerTask {
 						String text = "KM"+(way+1)+":"+1;
 						int results = CMDUtils.sendStrCmd(divsn,text);					
 						if(results == 0) {
-							WechatSendMessageUtils.sendWechatOnOffMessages("打开"+controllertype[controllerList.get(0).getType()]+"成功", publicOpenID, controllerList.get(0).getDevice_sn());
+							WechatSendMessageUtils.sendWechatOnOffMessages("自动打开"+controllertype[controllerList.get(0).getType()]+"成功", publicOpenID, controllerList.get(0).getDevice_sn());
 						}else {//打开
-							WechatSendMessageUtils.sendWechatOnOffMessages("打开"+controllertype[controllerList.get(0).getType()]+"失败", publicOpenID, controllerList.get(0).getDevice_sn());
+							WechatSendMessageUtils.sendWechatOnOffMessages("自动打开"+controllertype[controllerList.get(0).getType()]+"失败", publicOpenID, controllerList.get(0).getDevice_sn());
 						}
 					}
 					if (now-sdf.parse(timer.getEndTime()).getTime() <= 60000 && now-sdf.parse(timer.getEndTime()).getTime() >= 0) {
@@ -99,9 +99,9 @@ public class TimerTask {
 						String text = "KM"+(way+1)+":"+0;
 						int results = CMDUtils.sendStrCmd(divsn,text);
 						if(results==0) {
-							WechatSendMessageUtils.sendWechatOnOffMessages("关闭"+controllertype[controllerList.get(0).getType()]+"成功", publicOpenID, controllerList.get(0).getDevice_sn());
+							WechatSendMessageUtils.sendWechatOnOffMessages("自动关闭"+controllertype[controllerList.get(0).getType()]+"成功", publicOpenID, controllerList.get(0).getDevice_sn());
 						}else {//打开
-							WechatSendMessageUtils.sendWechatOnOffMessages("关闭"+controllertype[controllerList.get(0).getType()]+"失败", publicOpenID, controllerList.get(0).getDevice_sn());
+							WechatSendMessageUtils.sendWechatOnOffMessages("自动关闭"+controllertype[controllerList.get(0).getType()]+"失败", publicOpenID, controllerList.get(0).getDevice_sn());
 						}
 						
 					}

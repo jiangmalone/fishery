@@ -1049,12 +1049,12 @@ public class EquipmentService {
 					}*/
 				}else if("WT".equals(di.getId())) {
 					List<DatapointsItem> ldNew =new ArrayList<>();
-					for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
+					for(int j=0;j<ld.size();j+=5) {//数据5min*6=半小时发一次
 						ldNew.add(ld.get(j));
 					}
 					List<Float> value = new ArrayList<>();
 					List<String> at = new ArrayList<>();
-					for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
+					for(int j=0;j<ldNew.size();j+=5) {//数据5min*6=半小时发一次
 						value.add(Float.parseFloat((String)ldNew.get(j).getValue()) );	
 						at.add(ldNew.get(j).getAt());
 					}
@@ -1064,12 +1064,12 @@ public class EquipmentService {
 					mapReturn.put("WT", singlemap);
 				}else if("pH".equals(di.getId())) {
 					List<DatapointsItem> ldNew =new ArrayList<>();
-					for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
+					for(int j=0;j<ld.size();j+=5) {//数据5min*6=半小时发一次
 						ldNew.add(ld.get(j));					
 					}
 					List<Float> value = new ArrayList<>();
 					List<String> at = new ArrayList<>();
-					for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
+					for(int j=0;j<ldNew.size();j+=5) {//数据5min*6=半小时发一次
 						value.add(Float.parseFloat((String)ldNew.get(j).getValue()));	
 						at.add(ldNew.get(j).getAt());
 					}
@@ -1090,14 +1090,16 @@ public class EquipmentService {
 				logger.debug(sensor.getPondId());
 			    List<Controller> controllerList= controllerDao.findByPondId(sensor.getPondId());
 			    Controller conOxygen = new Controller();
+			    Limit_Install limit = null;
 				for(Controller controller:controllerList) {
 					if(controller.getType()==0) {
 						conOxygen = controller;
+						limit = limitDao.findLimitByDeviceSnsAndWay(conOxygen.getDevice_sn(), conOxygen.getPort());						
 						break;
 					}
 				}
-				Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(conOxygen.getDevice_sn(), conOxygen.getPort());
 				mapReturn.put("Limit", limit);
+				
 			}
 			return mapReturn;
 		}else {
@@ -1842,13 +1844,13 @@ public class EquipmentService {
 						 */
 						String divsn= controllerList.get(0).getDevice_sn();
 						int way = trigger.getWay();
-						String id = "KM"+way;
+						String id = "KM"+(way+1);
 						GetDatastreamApi api = new GetDatastreamApi(divsn, id, key);
 						BasicResponse<DatastreamsResponse> response = api.executeApi();
 						int currentvalue =  Integer.parseInt(response.data.getCurrentValue().toString()) ;	
 						if(currentvalue != 1) {
-							WechatSendMessageUtils.sendWechatOnOffMessages("打开增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
-							String text = "KM"+way+":"+1;
+							WechatSendMessageUtils.sendWechatOnOffMessages("低于溶氧下限，打开增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
+							String text = "KM"+(way+1)+":"+1;
 							CMDUtils.sendStrCmd(divsn,text);
 						}						
 					}else if(triggertype.equals(">")) {//高于溶氧上限，关闭增氧机
@@ -1857,13 +1859,13 @@ public class EquipmentService {
 						 */
 						String divsn= controllerList.get(0).getDevice_sn();
 						int way = trigger.getWay();
-						String id = "KM"+way;
+						String id = "KM"+(way+1);
 						GetDatastreamApi api = new GetDatastreamApi(divsn, id, key);
 						BasicResponse<DatastreamsResponse> response = api.executeApi();
 						int currentvalue =  Integer.parseInt(response.data.getCurrentValue().toString()) ;	
 						if(currentvalue != 0) {
-							WechatSendMessageUtils.sendWechatOnOffMessages("关闭增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
-							String text = "KM"+way+":"+0;
+							WechatSendMessageUtils.sendWechatOnOffMessages("高于溶氧上限，关闭增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
+							String text = "KM"+(way+1)+":"+0;
 							CMDUtils.sendStrCmd(divsn,text);
 						}
 						

@@ -3,6 +3,9 @@ package com.geariot.platform.fishery.dao.impl;
 import com.geariot.platform.fishery.dao.DeviceDao;
 import com.geariot.platform.fishery.entities.Device;
 import com.geariot.platform.fishery.utils.QueryUtils;
+
+import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -36,4 +39,10 @@ public class DeviceDaoImpl implements DeviceDao {
         Query query = queryUtils.addString("device_sn", deviceSns).getQuery();
         return (Device) query.uniqueResult();
     }
+	@Override
+	public List<Device> getAllDevices() {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from Device");
+        Query query = queryUtils.addStringLike("device_sn", "%").getQuery();
+        return  query.list();
+	}
 }

@@ -52,11 +52,11 @@ public class PondController {
 		return pondService.fishCateList();
 	}
 	
-	@RequestMapping(value = "/apphomepage" , method = RequestMethod.GET)
+/*	@RequestMapping(value = "/apphomepage" , method = RequestMethod.GET)
 	public Map<String,Object> appHomepage(String relation){
 		return pondService.appHomepage(relation);
 	}
-	
+	*/
 	@RequestMapping(value = "/pondDetail" , method = RequestMethod.GET)
 	public Map<String, Object> pondDetail(int pondId){
 		return pondService.pondDetail(pondId);

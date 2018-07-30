@@ -7,7 +7,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.service.SocketSerivce;
@@ -16,6 +18,8 @@ import com.geariot.platform.fishery.utils.HttpRequest;
 
 public class WechatTemplateMessage {
 	
+	@Autowired
+	private ControllerDao controllerDao;
 	
 	private static final String MSG_TEMPLATE_ID="P9tXcCFGquvWFcqPyDD5OK7BZ6rFFfwZcGu54wrBBa8";
 //	private static final Logger log = Logger.getLogger(WechatTemplateMessage.class);
@@ -234,6 +238,7 @@ public static void sendDataAlarmMSG(String msg,String openId,String deviceSn) {
 	
 	public static void alarmMSG(String msg,String openId,String deviceSn) {
 		log.debug("向微信用户发送报警信息");
+		
 		AIO aio=service.findAIOByDeviceSn(deviceSn);
 		Pond pond=null;
 		if(aio!=null) {

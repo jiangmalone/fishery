@@ -44,9 +44,12 @@ public class CMDUtils {
 		 * @param contents:用户自定义数据：json、string、二进制数据（小于64K）
 		 * @param key:masterkey或者设备apikey
 		 */
+		
 		SendCmdsApi api = new SendCmdsApi(devId, null, null, null,contents, apikey);
 		String cmdUuid="";
 		try{
+			
+			
 			BasicResponse<NewCmdsResponse> response = api.executeApi();
 			System.out.println(response.getJson());
 			JSONObject tempjson = JSONObject.fromObject(response.getJson());
@@ -55,7 +58,6 @@ public class CMDUtils {
 			String temp13 = temp12.getString("cmd_uuid");
 			cmdUuid=temp13;
 			Thread.currentThread().sleep(3500);
-
 			/**
 			 * 查询命令响应
 			 * @param cmduuid:命令id,String
@@ -70,15 +72,16 @@ public class CMDUtils {
 				}else {
 					return 1;
 				}
+				
 			}else {
 				return 1;
-			}
+			}	
 			
 		}catch(Exception e){
 			System.out.println(e.getMessage());
 			return 1;
 		}
-
+		
 
 	}
 

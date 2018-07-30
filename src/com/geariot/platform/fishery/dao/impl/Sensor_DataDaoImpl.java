@@ -35,7 +35,7 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 		
 	}
 
-	@Override
+	/*@Override
 	public List<ExcelData> getExcelData(String device_sn, Date startTime, Date endTime) {
 		List<ExcelData> dataList = new ArrayList<>();
 		String hql = "from Sensor_Data ";
@@ -59,7 +59,7 @@ public class Sensor_DataDaoImpl implements Sensor_DataDao {
 				}
 			}   
 		return dataList;
-	}
+	}*/
 
 	@Override
 	public void updateData(Sensor_Data sensor_Data) {

@@ -100,7 +100,8 @@ public class WXUserDaoImpl implements WXUserDao {
 		Query query = queryUtils.addStringLike("name", name).getQuery();
 		return query.list();
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<WXUser> findUsersByOpenId(String openId) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from WXUser");

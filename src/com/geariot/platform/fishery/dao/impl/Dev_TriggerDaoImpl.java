@@ -30,9 +30,10 @@ public class Dev_TriggerDaoImpl implements Dev_TriggerDao {
 
     }
     @Override
-    public int delete(int triggerid){
+    public int deleteByTriggerId(String triggerid){
+    	System.out.println("删除触发器");
         QueryUtils queryUtils = new QueryUtils(getSession(), "delete from Dev_Trigger");
-        Query query = queryUtils.addInteger("triger_id", triggerid).getQuery();
+        Query query = queryUtils.addString("triger_id", triggerid).getQuery();
         return query.executeUpdate();
 
     }
@@ -61,10 +62,10 @@ public class Dev_TriggerDaoImpl implements Dev_TriggerDao {
         return query.list();
     }
 	@Override
-	public Dev_Trigger findDev_TriggerByDevsnAndWay(String deviceSns, int way) {
+	public List<Dev_Trigger> findDev_TriggerByDevsnAndWay(String deviceSns, int way) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Dev_Trigger");
         Query query = queryUtils.addString("device_sn", deviceSns).addInteger("way", way).getQuery();
-        return (Dev_Trigger) query.uniqueResult();
+        return (List<Dev_Trigger>) query.list();
 	}
 
 

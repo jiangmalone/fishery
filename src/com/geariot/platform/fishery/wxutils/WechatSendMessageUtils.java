@@ -3,8 +3,12 @@ package com.geariot.platform.fishery.wxutils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class WechatSendMessageUtils {
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.geariot.platform.fishery.dao.WXUserDao;
+
+public class WechatSendMessageUtils {
+	
 	//private static final Logger log = LogManager.getLogger(WechatSendMessageUtils.class);
     private static ExecutorService  executorService  = Executors.newFixedThreadPool(10);
 	
@@ -100,7 +104,7 @@ public class WechatSendMessageUtils {
 		});
 	}
 	
-	public static void sendWechatOxyAlarmMessages(final String msg,final String openId,final String deviceSn) {
+	public static void sendWechatOxyAlarmMessages(final String msg,final String openId,final String deviceSn) {		
 		executorService.execute(new Runnable() {
 
 			@Override

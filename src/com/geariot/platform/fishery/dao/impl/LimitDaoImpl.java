@@ -42,8 +42,8 @@ public class LimitDaoImpl implements LimitDao {
 		/*String hql = "delete from Limit_Install where device_sn = :device_sn and way = :way";
 		this.getSession().createQuery(hql).setString("device_sn",device_sn).setInteger("way", way)										
 										.executeUpdate();*/
-		String hql = "delete from Limit_Install where device_sn = :device_sn";
-		this.getSession().createQuery(hql).setString("device_sn",device_sn)									
+		String hql = "delete from Limit_Install where device_sn = :device_sn and way = :way";
+		this.getSession().createQuery(hql).setString("device_sn",device_sn).setInteger("way", way)									
 										.executeUpdate();
 	}
 
@@ -87,7 +87,7 @@ public class LimitDaoImpl implements LimitDao {
 	public Limit_Install findLimitByDeviceSnsAndWay(String device_sn, int way) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from Limit_Install");
 		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
-		return (Limit_Install) query.uniqueResult();
+		return  (Limit_Install) query.uniqueResult();
 	}
 
 }

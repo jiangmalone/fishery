@@ -7,12 +7,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.geariot.platform.fishery.dao.SensorDao;
 import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.utils.QueryUtils;
-
+@Transactional
 @Repository
 public class SensorDaoImpl implements SensorDao {
 

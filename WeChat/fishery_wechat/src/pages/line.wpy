@@ -515,6 +515,20 @@ export default class Line extends wepy.page {
                 axisLabel: {
                   formatter: function (value) {
                     return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                  },
+                  interval: function(index, value) {
+                    let time = echarts.format.formatTime('hh:mm', value)
+                    switch (time) {
+                      case '00:00' : return true
+                      case '03:00' : return true
+                      case '06:00' : return true
+                      case '09:00' : return true
+                      case '12:00' : return true
+                      case '15:00' : return true
+                      case '18:00' : return true
+                      case '24:00' : return true
+                      default : return false
+                    }
                   }
                 },
                 axisPointer: {
@@ -624,6 +638,20 @@ export default class Line extends wepy.page {
                 axisLabel: {
                   formatter: function (value) {
                     return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                  },
+                  interval: function(index, value) {
+                    let time = echarts.format.formatTime('hh:mm', value)
+                    switch (time) {
+                      case '00:00' : return true
+                      case '03:00' : return true
+                      case '06:00' : return true
+                      case '09:00' : return true
+                      case '12:00' : return true
+                      case '15:00' : return true
+                      case '18:00' : return true
+                      case '24:00' : return true
+                      default : return false
+                    }
                   }
                 },
                 axisPointer: {
@@ -693,6 +721,20 @@ export default class Line extends wepy.page {
                 axisLabel: {
                   formatter: function (value) {
                     return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                  },
+                  interval: function(index, value) {
+                    let time = echarts.format.formatTime('hh:mm', value)
+                    switch (time) {
+                      case '00:00' : return true
+                      case '03:00' : return true
+                      case '06:00' : return true
+                      case '09:00' : return true
+                      case '12:00' : return true
+                      case '15:00' : return true
+                      case '18:00' : return true
+                      case '24:00' : return true
+                      default : return false
+                    }
                   }
                 },
                 axisPointer: {
@@ -782,6 +824,14 @@ export default class Line extends wepy.page {
                 axisLabel: {
                   formatter: function (value) {
                     return echarts.format.formatTime('MM-dd\nyyyy', value)
+                  },
+                  interval: function(index, value) {
+                    let time = echarts.format.formatTime('hh:mm', value)
+                    switch (time) {
+                      case '00:00' : return true
+                      case '12:00' : return true
+                      default : return false
+                    }
                   }
                 },
                 axisPointer: {
@@ -891,6 +941,14 @@ export default class Line extends wepy.page {
                 axisLabel: {
                   formatter: function (value) {
                     return echarts.format.formatTime('MM-dd\nyyyy', value)
+                  },
+                  interval: function(index, value) {
+                    let time = echarts.format.formatTime('hh:mm', value)
+                    switch (time) {
+                      case '00:00' : return true
+                      case '12:00' : return true
+                      default : return false
+                    }
                   }
                 },
                 axisPointer: {
@@ -960,6 +1018,14 @@ export default class Line extends wepy.page {
                 axisLabel: {
                   formatter: function (value) {
                     return echarts.format.formatTime('MM-dd\nyyyy', value)
+                  },
+                  interval: function(index, value) {
+                    let time = echarts.format.formatTime('hh:mm', value)
+                    switch (time) {
+                      case '00:00' : return true
+                      case '12:00' : return true
+                      default : return false
+                    }
                   }
                 },
                 axisPointer: {
@@ -1057,6 +1123,20 @@ export default class Line extends wepy.page {
                   axisLabel: {
                     formatter: function (value) {
                       return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                    },
+                    interval: function(index, value) {
+                      let time = echarts.format.formatTime('hh:mm', value)
+                      switch (time) {
+                        case '00:00' : return true
+                        case '03:00' : return true
+                        case '06:00' : return true
+                        case '09:00' : return true
+                        case '12:00' : return true
+                        case '15:00' : return true
+                        case '18:00' : return true
+                        case '24:00' : return true
+                        default : return false
+                      }
                     }
                   },
                   axisPointer: {
@@ -1166,6 +1246,20 @@ export default class Line extends wepy.page {
                   axisLabel: {
                     formatter: function (value) {
                       return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                    },
+                    interval: function(index, value) {
+                      let time = echarts.format.formatTime('hh:mm', value)
+                      switch (time) {
+                        case '00:00' : return true
+                        case '03:00' : return true
+                        case '06:00' : return true
+                        case '09:00' : return true
+                        case '12:00' : return true
+                        case '15:00' : return true
+                        case '18:00' : return true
+                        case '24:00' : return true
+                        default : return false
+                      }
                     }
                   },
                   axisPointer: {
@@ -1235,6 +1329,20 @@ export default class Line extends wepy.page {
                   axisLabel: {
                     formatter: function (value) {
                       return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                    },
+                    interval: function(index, value) {
+                      let time = echarts.format.formatTime('hh:mm', value)
+                      switch (time) {
+                        case '00:00' : return true
+                        case '03:00' : return true
+                        case '06:00' : return true
+                        case '09:00' : return true
+                        case '12:00' : return true
+                        case '15:00' : return true
+                        case '18:00' : return true
+                        case '24:00' : return true
+                        default : return false
+                      }
                     }
                   },
                   axisPointer: {
@@ -1345,7 +1453,7 @@ export default class Line extends wepy.page {
             // 获取实时数据
             let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
             // wepy.connectSocket({
-            //   url: 'wss://192.168.0.111:8080/fishery/api/equipment/realTimeData',
+            //   url: 'wss://192.168.0.111/ScoketTest/websocket',
             //   data: {
             //     device_sn: deviceSn
             //   },
@@ -1402,10 +1510,23 @@ export default class Line extends wepy.page {
                         color: '#c4c4c4'
                       }
                     },
-                    splitNumber: 3,
                     axisLabel: {
                       formatter: function (value) {
                         return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                      },
+                      interval: function(index, value) {
+                        let time = echarts.format.formatTime('hh:mm', value)
+                        switch (time) {
+                          case '00:00' : return true
+                          case '03:00' : return true
+                          case '06:00' : return true
+                          case '09:00' : return true
+                          case '12:00' : return true
+                          case '15:00' : return true
+                          case '18:00' : return true
+                          case '24:00' : return true
+                          default : return false
+                        }
                       }
                     },
                     axisPointer: {
@@ -1515,6 +1636,20 @@ export default class Line extends wepy.page {
                     axisLabel: {
                       formatter: function (value) {
                         return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                      },
+                      interval: function(index, value) {
+                        let time = echarts.format.formatTime('hh:mm', value)
+                        switch (time) {
+                          case '00:00' : return true
+                          case '03:00' : return true
+                          case '06:00' : return true
+                          case '09:00' : return true
+                          case '12:00' : return true
+                          case '15:00' : return true
+                          case '18:00' : return true
+                          case '24:00' : return true
+                          default : return false
+                        }
                       }
                     },
                     axisPointer: {
@@ -1584,6 +1719,20 @@ export default class Line extends wepy.page {
                     axisLabel: {
                       formatter: function (value) {
                         return echarts.format.formatTime('hh:mm\nMM-dd', value)
+                      },
+                      interval: function(index, value) {
+                        let time = echarts.format.formatTime('hh:mm', value)
+                        switch (time) {
+                          case '00:00' : return true
+                          case '03:00' : return true
+                          case '06:00' : return true
+                          case '09:00' : return true
+                          case '12:00' : return true
+                          case '15:00' : return true
+                          case '18:00' : return true
+                          case '24:00' : return true
+                          default : return false
+                        }
                       }
                     },
                     axisPointer: {

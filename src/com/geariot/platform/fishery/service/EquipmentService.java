@@ -994,118 +994,143 @@ public class EquipmentService {
 	public Map<String, Object> dataToday(String device_sn, int way) {
 		logger.debug(device_sn);
 		Map<String, Object> mapReturn = new HashMap();
+		List<Map<String, Object>> DOList = new ArrayList<>();
+		List<Map<String, Object>> WTList = new ArrayList<>();
+		List<Map<String, Object>> pHList = new ArrayList<>();
 		//数据的获取针对传感器，传感器不需要way，way为一体机留用
 		//获得当天数据，从零点开始00:00:00
-		Date date = new Date();
+		Date dateEnd = new Date();//当前时间
+		Date dateStart = new Date();//今日零点
+		dateStart.setHours(0);
+		dateStart.setMinutes(0);
+		dateStart.setSeconds(0);
+		int min = dateEnd.getHours()*60 + dateEnd.getMinutes();
+		logger.debug("开始时间："+dateStart);
+		logger.debug("结束时间："+dateEnd);
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
-		String dataFormat1 = sdf1.format(date);
-		String dataFormat2  = sdf2.format(date);
-		String dataFormatEnd = dataFormat1+"T"+dataFormat2;
-		String dataFormatStart = dataFormat1+"T00:00:00";
-		logger.debug(dataFormatStart);
-		logger.debug(dataFormatEnd);
-		GetDatapointsListApi api = new GetDatapointsListApi(null, dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, 137,
-				null, null, null, key);
-		BasicResponse<DatapointsList> response = api.executeApi();		
-		if(response.errno==0) {
-			List<DatastreamsItem> dl= response.getData().getDevices();
-			logger.debug("获取当天数据");
-			logger.debug("参数个数："+dl.size());
-			logger.debug("总共获得数据量为："+response.getData().getCount());
+		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for(int i = 0 ; i<(min/20+1) ; i++) {
+			Date dateStart1 = new Date();
+			dateStart1.setTime(dateStart.getTime());
+			dateStart1.setMinutes(dateStart1.getMinutes()-3);
+			Date dateEnd1 = new Date();
+			dateEnd1.setTime(dateStart.getTime());
+			dateEnd1.setMinutes(dateEnd1.getMinutes()+3);
+			System.out.println("+++++++++++++++");
+			String start = sdf1.format(dateStart1) + "T" + sdf2.format(dateStart1);
+			String end = sdf1.format(dateEnd1) + "T" + sdf2.format(dateEnd1);	
+			System.out.println("开始时间："+start);
+			System.out.println("结束时间："+end);
 			
-			for(int i=0;i<dl.size();i++) {				
-				DatastreamsItem di = dl.get(i);
-				List<DatapointsItem> ld =di.getDatapoints();
-				
-				logger.debug(di.getId()+"参数下数据量："+ld.size());
-				
-				if("DO".equals(di.getId())) {
-					List<DatapointsItem> ldNew =new ArrayList<>();
+			GetDatapointsListApi api = new GetDatapointsListApi(null, start, end, device_sn, null, 6000, null, 137,
+					null, null, null, key);
+			BasicResponse<DatapointsList> response = api.executeApi();
 			
-					for(int j=0;j<ld.size();j+=6) {//数据5min*6=半小时发一次
-						ldNew.add(ld.get(j));					
+			if(response.errno==0) {
+				List<DatastreamsItem> dl= response.getData().getDevices();
+				logger.debug("获取当天数据");
+				logger.debug("参数个数："+dl.size());
+				logger.debug("总共获得数据量为："+response.getData().getCount());
+				
+				for(int k=0;k<dl.size();k++) {				
+					DatastreamsItem di = dl.get(k);
+					List<DatapointsItem> ld =di.getDatapoints();					
+					logger.debug(di.getId()+"参数下数据量："+ld.size());					
+					if("DO".equals(di.getId())) {
+						float sum = 0;						
+						for(int j=0;j<ld.size();j++) {
+							sum += Float.parseFloat((String)ld.get(j).getValue());					
+						}
+						Map<String, Object>	 singlemap = new HashMap<>();
+						singlemap.put("value",(float)(Math.round(sum/ld.size()*100))/100);
+						singlemap.put("at", sdf3.format(dateStart));
+						DOList.add(singlemap);
+					}else if("WT".equals(di.getId())) {
+						
+						float sum = 0;						
+						for(int j=0;j<ld.size();j++) {
+							sum += Float.parseFloat((String)ld.get(j).getValue());					
+						}
+						Map<String, Object>	 singlemap = new HashMap<>();
+						singlemap.put("value",(float)(Math.round(sum/ld.size()*100))/100);
+						singlemap.put("at", sdf3.format(dateStart));
+						WTList.add(singlemap);
+						
+					}else if("pH".equals(di.getId())) {
+						
+						float sum = 0;						
+						for(int j=0;j<ld.size();j++) {
+							sum += Float.parseFloat((String)ld.get(j).getValue());					
+						}
+						Map<String, Object>	 singlemap = new HashMap<>();
+						singlemap.put("value", (float)(Math.round(sum/ld.size()*100))/100);
+						singlemap.put("at", sdf3.format(dateStart));
+						pHList.add(singlemap);
+					
 					}
-					List<Float> value = new ArrayList<>();
-					List<String> at = new ArrayList<>();
-					for(int j=0;j<ldNew.size();j+=6) {//数据5min*6=半小时发一次
-						value.add(Float.parseFloat((String) ldNew.get(j).getValue()) );	
-						at.add(ldNew.get(j).getAt());
-					}
-					Map<String, Object> singlemap = new HashMap<>();
-					singlemap.put("value", value);
-					singlemap.put("at", at);
-					mapReturn.put("DO", singlemap);
-					/*以时间划分
-					 * String id = (String) ld.get(0).getValue();
-					String at = (String) ld.get(0).getAt();
-					String time = at.substring(at.indexOf(" "), at.length());
-					logger.debug(time);
-					for(int j=1;j<ld.size();j++) {
-						id = (String) ld.get(j).getValue();
-						 at = (String) ld.get(j).getAt();
-						time = at.substring(at.indexOf(" "), at.length());
-						logger.debug(time);
-					}*/
-				}else if("WT".equals(di.getId())) {
-					List<DatapointsItem> ldNew =new ArrayList<>();
-					for(int j=0;j<ld.size();j+=5) {//数据5min*6=半小时发一次
-						ldNew.add(ld.get(j));
-					}
-					List<Float> value = new ArrayList<>();
-					List<String> at = new ArrayList<>();
-					for(int j=0;j<ldNew.size();j+=5) {//数据5min*6=半小时发一次
-						value.add(Float.parseFloat((String)ldNew.get(j).getValue()) );	
-						at.add(ldNew.get(j).getAt());
-					}
-					Map<String, Object> singlemap = new HashMap<>();
-					singlemap.put("value", value);
-					singlemap.put("at", at);
-					mapReturn.put("WT", singlemap);
-				}else if("pH".equals(di.getId())) {
-					List<DatapointsItem> ldNew =new ArrayList<>();
-					for(int j=0;j<ld.size();j+=5) {//数据5min*6=半小时发一次
-						ldNew.add(ld.get(j));					
-					}
-					List<Float> value = new ArrayList<>();
-					List<String> at = new ArrayList<>();
-					for(int j=0;j<ldNew.size();j+=5) {//数据5min*6=半小时发一次
-						value.add(Float.parseFloat((String)ldNew.get(j).getValue()));	
-						at.add(ldNew.get(j).getAt());
-					}
-					Map<String, Object> singlemap = new HashMap<>();
-					singlemap.put("value", value);
-					singlemap.put("at", at);
-					mapReturn.put("pH", singlemap);
-				}
-								
+									
+				}				
 			}
-			//System.out.println(response.getJson());
-			
-			/*if(sensorDao.findSensorByDeviceSns(device_sn) != null) {
-				controllerDao  sensor.getPondId();
-			}*/
-			Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
-			if(sensor!=null) {
-				logger.debug(sensor.getPondId());
-			    List<Controller> controllerList= controllerDao.findByPondId(sensor.getPondId());
-			    Controller conOxygen = new Controller();
-			    Limit_Install limit = null;
-				for(Controller controller:controllerList) {
-					if(controller.getType()==0) {
-						conOxygen = controller;
-						limit = limitDao.findLimitByDeviceSnsAndWay(conOxygen.getDevice_sn(), conOxygen.getPort());						
-						break;
-					}
-				}
-				mapReturn.put("Limit", limit);
-				
-			}
-			return mapReturn;
-		}else {
-			return null;
+			dateStart.setMinutes(dateStart.getMinutes()+20);
 		}
+
 		
+		/*
+		 * 转换成前端需要的格式
+		 */
+		List<String> doatList = new ArrayList<>();
+		List<Float> dovalueList = new ArrayList<>();
+		Map<String, Object> DOMap = new HashMap<>();
+		for(int t = 0;t<DOList.size();t++) {
+			doatList.add((String) DOList.get(t).get("at"));
+			dovalueList.add((Float) DOList.get(t).get("value"));
+		}
+		DOMap.put("value", dovalueList);
+		DOMap.put("at", doatList);
+		
+		List<String> wtatList = new ArrayList<>();
+		List<Float> wtvalueList = new ArrayList<>();
+		Map<String, Object> WTMap = new HashMap<>();
+		for(int t = 0;t<WTList.size();t++) {
+			wtatList.add((String) WTList.get(t).get("at"));
+			wtvalueList.add((Float) WTList.get(t).get("value"));
+		}
+		WTMap.put("value", wtvalueList);
+		WTMap.put("at", wtatList);
+		
+		List<String> phatList = new ArrayList<>();
+		List<Float> phvalueList = new ArrayList<>();
+		Map<String, Object> pHMap = new HashMap<>();
+		for(int t = 0;t<pHList.size();t++) {
+			phatList.add((String) pHList.get(t).get("at"));
+			phvalueList.add((Float) pHList.get(t).get("value"));
+		}
+		pHMap.put("value", phvalueList);
+		pHMap.put("at", phatList);
+		
+		mapReturn.put("pH", pHMap);
+		mapReturn.put("DO", DOMap);
+		mapReturn.put("WT", WTMap);
+		
+		
+		Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+		if(sensor!=null) {
+			logger.debug(sensor.getPondId());
+		    List<Controller> controllerList= controllerDao.findByPondId(sensor.getPondId());
+		    Controller conOxygen = new Controller();
+		    Limit_Install limit = null;
+			for(Controller controller:controllerList) {
+				if(controller.getType()==0) {
+					conOxygen = controller;
+					limit = limitDao.findLimitByDeviceSnsAndWay(conOxygen.getDevice_sn(), conOxygen.getPort());						
+					break;
+				}
+			}
+			mapReturn.put("Limit", limit);
+			
+		}
+		return mapReturn;
 	}
 	
 	public Map<String, Object> dataYesterday(String device_sn) {
@@ -1327,99 +1352,140 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> data3days(String device_sn, int way) {
-		Date date = new Date();
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
-		SimpleDateFormat sdf3 = new SimpleDateFormat("dd");
-		String dataFormat1 = sdf1.format(date);
-		String dataFormat2  = sdf2.format(date);
-		String dates = sdf3.format(date);
-		String dataFormatEnd = dataFormat1+"-"+dates+"T"+dataFormat2;
-		date.setDate(date.getDate()-2);
-		dates = sdf3.format(date);
-		String dataFormatStart = dataFormat1+"-"+dates+"T00:00:00";
-		
-		Map<String, Object> data3days = new HashMap<>();
-		
-		GetDatapointsListApi api1 = new GetDatapointsListApi("pH", dataFormatStart, dataFormatEnd, device_sn,null,6000, null,null,
-				null, null, null, key);
-		BasicResponse<DatapointsList> response1 = api1.executeApi();
-		
-		logger.debug(response1.getJson());
-		int count = Integer.parseInt(response1.data.getCount()) ;
-		if(response1.errno == 0 && count!=0) {
-			DatastreamsItem di1  = response1.data.getDevices().get(0);
-			String id1 =  di1.getId();
-			List<DatapointsItem> dpil1 = di1.getDatapoints();
-			List<Float> value = new ArrayList<>();
-			List<String> at = new ArrayList<>();
-			for(int j=0;j<dpil1.size();j+=18) {//数据5min*18=一个半小时发一次
-				value.add(Float.parseFloat((String)dpil1.get(j).getValue()));	
-				at.add(dpil1.get(j).getAt());			
+		Map<String, Object> mapReturn = new HashMap();
+		List<Map<String, Object>> DOList = new ArrayList<>();
+		List<Map<String, Object>> WTList = new ArrayList<>();
+		List<Map<String, Object>> pHList = new ArrayList<>();
+		//数据的获取针对传感器，传感器不需要way，way为一体机留用
+		//获得当天数据，从零点开始00:00:00
+		Date dateEnd = new Date();//当前时间
+		Date dateStart = new Date();//今日零点
+		dateStart.setDate(dateStart.getDate()-2);
+		dateStart.setHours(0);
+		dateStart.setMinutes(0);
+		dateStart.setSeconds(0);
+		long mm = dateEnd.getTime()  - dateStart.getTime();
+		logger.debug("开始时间："+dateStart);
+		logger.debug("结束时间："+dateEnd);
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for(int i = 0 ; i<(mm/1000/60/60+1) ; i++) {
+			Date dateStart1 = new Date();
+			dateStart1.setTime(dateStart.getTime());
+			dateStart1.setMinutes(dateStart1.getMinutes()-10);
+			Date dateEnd1 = new Date();
+			dateEnd1.setTime(dateStart.getTime());
+			dateEnd1.setMinutes(dateEnd1.getMinutes()+10);
+			System.out.println("+++++++++++++++");
+			String start = sdf1.format(dateStart1) + "T" + sdf2.format(dateStart1);
+			String end = sdf1.format(dateEnd1) + "T" + sdf2.format(dateEnd1);	
+			System.out.println("开始时间："+start);
+			System.out.println("结束时间："+end);
+			
+			GetDatapointsListApi api = new GetDatapointsListApi(null, start, end, device_sn, null, 6000, null, 137,
+					null, null, null, key);
+			BasicResponse<DatapointsList> response = api.executeApi();
+			System.out.println(response.getJson());
+			if(response.errno==0) {
+				List<DatastreamsItem> dl= response.getData().getDevices();
+				logger.debug("获取三日数据");
+				logger.debug("参数个数："+dl.size());
+				logger.debug("总共获得数据量为："+response.getData().getCount());
+				
+				for(int k=0;k<dl.size();k++) {				
+					DatastreamsItem di = dl.get(k);
+					List<DatapointsItem> ld =di.getDatapoints();					
+					/*logger.debug(di.getId()+"参数下数据量："+ld.size());		*/			
+					if("DO".equals(di.getId())) {
+						float sum = 0;						
+						for(int j=0;j<ld.size();j++) {
+							sum += Float.parseFloat((String)ld.get(j).getValue());					
+						}
+						Map<String, Object>	 singlemap = new HashMap<>();
+						singlemap.put("value", (float)(Math.round(sum/ld.size()*100))/100);
+						/*singlemap.put("value", sum/ld.size());*/
+						singlemap.put("at", sdf3.format(dateStart));
+						DOList.add(singlemap);
+					}else if("WT".equals(di.getId())) {					
+						float sum = 0;						
+						for(int j=0;j<ld.size();j++) {
+							sum += Float.parseFloat((String)ld.get(j).getValue());					
+						}
+						Map<String, Object>	 singlemap = new HashMap<>();
+						singlemap.put("value",(float)(Math.round(sum/ld.size()*100))/100);
+						/*singlemap.put("value",sum/ld.size());*/
+						singlemap.put("at", sdf3.format(dateStart));
+						WTList.add(singlemap);
+						
+					}else if("pH".equals(di.getId())) {					
+						float sum = 0;						
+						for(int j=0;j<ld.size();j++) {
+							sum += Float.parseFloat((String)ld.get(j).getValue());					
+						}
+						Map<String, Object>	 singlemap = new HashMap<>();
+						singlemap.put("value", (float)(Math.round(sum/ld.size()*100))/100);
+						/*singlemap.put("value", sum/ld.size());*/
+						singlemap.put("at", sdf3.format(dateStart));
+						pHList.add(singlemap);
+					
+					}
+									
+				}				
 			}
-			Map<String, Object> singlemap = new HashMap<>();
-			singlemap.put("value", value);
-			singlemap.put("at", at);
-			data3days.put(id1, singlemap);
+			dateStart.setMinutes(dateStart.getMinutes()+60);
 		}
-		
-		
-		GetDatapointsListApi api2 = new GetDatapointsListApi("DO", dataFormatStart, dataFormatEnd, device_sn,null,6000, null,null,
-				null, null, null, key);
-		BasicResponse<DatapointsList> response2 = api2.executeApi();
-		count = Integer.parseInt(response2.data.getCount()) ;
-		if(response2.errno == 0 && count!=0) {
-			DatastreamsItem di2  = response2.data.getDevices().get(0);
-			String id2 =  di2.getId();
-			List<DatapointsItem> dpil2 = di2.getDatapoints();
-			List<Float> value = new ArrayList<>();
-			List<String> at = new ArrayList<>();
-			for(int j=0;j<dpil2.size();j+=18) {//数据5min*18=一个半小时发一次
-				value.add(Float.parseFloat((String)dpil2.get(j).getValue()));	
-				at.add(dpil2.get(j).getAt());			
-			}
-			Map<String, Object> singlemap = new HashMap<>();
-			singlemap.put("value", value);
-			singlemap.put("at", at);
-			data3days.put(id2, singlemap);
+		List<String> doatList = new ArrayList<>();
+		List<Float> dovalueList = new ArrayList<>();
+		Map<String, Object> DOMap = new HashMap<>();
+		for(int t = 0;t<DOList.size();t++) {
+			doatList.add((String) DOList.get(t).get("at"));
+			dovalueList.add((Float) DOList.get(t).get("value"));
 		}
+		DOMap.put("value", dovalueList);
+		DOMap.put("at", doatList);
 		
-		
-		GetDatapointsListApi api3 = new GetDatapointsListApi("WT", dataFormatStart, dataFormatEnd, device_sn,null,6000, null,null,
-				null, null, null, key);
-		BasicResponse<DatapointsList> response3 = api3.executeApi();
-		count = Integer.parseInt(response3.data.getCount()) ;
-		if(response3.errno == 0 && count!=0) {
-			DatastreamsItem di3  = response3.data.getDevices().get(0);
-			String id3 =  di3.getId();
-			List<DatapointsItem> dpil3 = di3.getDatapoints();
-			List<Float> value = new ArrayList<>();
-			List<String> at = new ArrayList<>();
-			for(int j=0;j<dpil3.size();j+=18) {//数据5min*18=一个半小时发一次
-				value.add(Float.parseFloat((String)dpil3.get(j).getValue()));	
-				at.add(dpil3.get(j).getAt());			
-			}
-			Map<String, Object> singlemap = new HashMap<>();
-			singlemap.put("value", value);
-			singlemap.put("at", at);
-			data3days.put(id3, singlemap);
+		List<String> wtatList = new ArrayList<>();
+		List<Float> wtvalueList = new ArrayList<>();
+		Map<String, Object> WTMap = new HashMap<>();
+		for(int t = 0;t<WTList.size();t++) {
+			wtatList.add((String) WTList.get(t).get("at"));
+			wtvalueList.add((Float) WTList.get(t).get("value"));
 		}
+		WTMap.put("value", wtvalueList);
+		WTMap.put("at", wtatList);
+		
+		List<String> phatList = new ArrayList<>();
+		List<Float> phvalueList = new ArrayList<>();
+		Map<String, Object> pHMap = new HashMap<>();
+		for(int t = 0;t<pHList.size();t++) {
+			phatList.add((String) pHList.get(t).get("at"));
+			phvalueList.add((Float) pHList.get(t).get("value"));
+		}
+		pHMap.put("value", phvalueList);
+		pHMap.put("at", phatList);
 		
 		Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
 		if(sensor!=null) {
 			logger.debug(sensor.getPondId());
 		    List<Controller> controllerList= controllerDao.findByPondId(sensor.getPondId());
 		    Controller conOxygen = new Controller();
+		    Limit_Install limit = null;
 			for(Controller controller:controllerList) {
 				if(controller.getType()==0) {
 					conOxygen = controller;
+					limit = limitDao.findLimitByDeviceSnsAndWay(conOxygen.getDevice_sn(), conOxygen.getPort());						
 					break;
 				}
 			}
-			Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(conOxygen.getDevice_sn(), conOxygen.getPort());
-			data3days.put("Limit", limit);
+			mapReturn.put("Limit", limit);
+			
 		}
-		return data3days;
+		
+		mapReturn.put("pH", pHMap);
+		mapReturn.put("DO", DOMap);
+		mapReturn.put("WT", WTMap);
+		return mapReturn;
 	}
 	
 	

@@ -54,8 +54,13 @@ export default class Equimentsuccess extends wepy.page {
       })
     },
     returnequiment() {
-      wx.switchTab({
-        url: 'home'
+      wepy.switchTab({
+        url: 'home',
+        success: res=> {
+          wepy.switchTab({
+            url: 'home'
+          })
+        }
       })
     }
   }

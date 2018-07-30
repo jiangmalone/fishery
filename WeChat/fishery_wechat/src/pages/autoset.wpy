@@ -126,7 +126,8 @@ export default class Autoset extends wepy.page {
     typelist: ['增氧机', '投饵机', '打水机', '其他'],
     itemdata: {},
     pondname: '',
-    submitTime: true
+    submitTime: true,
+    submit15M: true
   }
   config= {
     navigationBarTitleText: '自动设置'
@@ -136,9 +137,15 @@ export default class Autoset extends wepy.page {
       console.log('picker发送选择改变，携带值为', e.detail.value)
       if (type === 'startTime') {
         this.timelist[index].startTime = e.detail.value
+        let sh = this.timelist[index].startTime.split(':')[0]
+        let sm = this.timelist[index].startTime.split(':')[1]
+        if (sm === '00' || sm === '15' || sm === '30' || sm === '45') {
+          this.submit15M = true
+        } else {
+          this.submit15M = false
+          wepy.showToast({title: '分钟数值仅允许设置为0、15、30、45', icon: 'none', duration: 3000})
+        }
         if (this.timelist[index].endTime !== '') {
-          let sh = this.timelist[index].startTime.split(':')[0]
-          let sm = this.timelist[index].startTime.split(':')[1]
           let eh = this.timelist[index].endTime.split(':')[0]
           let em = this.timelist[index].endTime.split(':')[1]
           if (sh > eh) {
@@ -157,11 +164,17 @@ export default class Autoset extends wepy.page {
         }
       } else {
         this.timelist[index].endTime = e.detail.value
+        let eh = this.timelist[index].endTime.split(':')[0]
+        let em = this.timelist[index].endTime.split(':')[1]
+        if (em === '00' || em === '15' || em === '30' || em === '45') {
+          this.submit15M = true
+        } else {
+          this.submit15M = false
+          wepy.showToast({title: '分钟数值仅允许设置为0、15、30、45', icon: 'none', duration: 3000})
+        }
         if (this.timelist[index].startTime !== '') {
           let sh = this.timelist[index].startTime.split(':')[0]
           let sm = this.timelist[index].startTime.split(':')[1]
-          let eh = this.timelist[index].endTime.split(':')[0]
-          let em = this.timelist[index].endTime.split(':')[1]
           if (sh > eh) {
             this.submitTime = false
             wepy.showToast({title: '错误：开启时间不能早于关闭时间', icon: 'none', duration: 1500})
@@ -198,16 +211,23 @@ export default class Autoset extends wepy.page {
       this.$apply()
     },
     confirmSet() {
-      if (this.submitTime === true) {
+      if (this.submitTime === true && this.submit15M === true) {
         if (this.itemdata.type === 0) {
           if (!this.limit.low_limit) {
-            wepy.showToast({title: '请填写下限', icon: 'none'})
+            wepy.showToast({title: '请填写下限', duration: 1500, icon: 'none'})
             return 0
           } else if (!this.limit.up_limit) {
-            wepy.showToast({title: '请填写上限', icon: 'none'})
+            wepy.showToast({title: '请填写上限', duration: 1500, icon: 'none'})
             return 0
           } else if (!this.limit.high_limit) {
-            wepy.showToast({title: '请填写高限', icon: 'none'})
+            wepy.showToast({title: '请填写高限', duration: 1500, icon: 'none'})
+            return 0
+          }
+          if (this.limit.low_limit >= this.limit.up_limit) {
+            wepy.showToast({title: '错误：上限必须高于下限', duration: 1500, icon: 'none'})
+            return 0
+          } else if (this.limit.up_limit >= this.limit.high_limit) {
+            wepy.showToast({title: '错误：上限必须高于下限', duration: 1500, icon: 'none'})
             return 0
           }
           let timeinfo = {
@@ -264,9 +284,9 @@ export default class Autoset extends wepy.page {
                   icon: 'success',
                   duration: 2000,
                   success: res => {
-                    // wepy.switchTab({
-                    //   url: 'home'
-                    // })
+                    wepy.switchTab({
+                      url: 'home'
+                    })
                   }})
               }
             },
@@ -275,8 +295,10 @@ export default class Autoset extends wepy.page {
             }
           })
         }
-      } else {
+      } else if (this.submitTime !== true) {
         wepy.showToast({title: '错误：开启时间不能早于关闭时间', icon: 'none', duration: 1500})
+      } else if (this.submit15M !== true) {
+        wepy.showToast({title: '分钟数值仅允许设置为0、15、30、45', icon: 'none', duration: 3000})
       }
     }
   }

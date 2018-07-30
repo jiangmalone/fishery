@@ -1318,7 +1318,7 @@ export default class Line extends wepy.page {
       let day = nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate
         .getDate()
       let hour = nowDate.getHours()
-      let min = nowDate.getMinutes()
+      let min = nowDate.getMinutes() < 10 ? '0' + nowDate.getMinutes() : nowDate.getMinutes()
       let dateStr = year + '/' + month + '/' + day + ' ' + hour + ':' + min
       this.time = dateStr
       console.log(this.time)

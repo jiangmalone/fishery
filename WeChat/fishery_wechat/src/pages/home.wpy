@@ -637,7 +637,7 @@
             <view class="shezhi">
 
               <!--自动设置-->
-              <view class="{{item.online?(item.controller.status === 0 ? 'choseAuto blueBtn' : 'choseAuto grayBtn'):'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}})">自动设置</view>
+              <view class="{{item.online?(item.controller.status === 0 ? 'choseAuto blueBtn' : 'choseAuto grayBtn'):'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}}, {{controllerIdx}}))">自动设置</view>
 
               <!--开关-->
               <view class="but" @tap="controlSwitch({{item.controller}}, {{item.switch}}, {{controllerIdx}})">
@@ -770,7 +770,7 @@ export default class Home extends wepy.page {
     },
 
     // 自动设置按钮
-    autoset(limit, time, item, name, allList) {
+    autoset(limit, time, item, name, allList, index) {
       if (allList.online && item.status === 0) {
         wepy.showActionSheet({
           itemList: ['确定自动', '取消自动', '设置自动参数'],
@@ -802,11 +802,15 @@ export default class Home extends wepy.page {
 
             // 取消自动
             if (res.tapIndex === 1) {
+              console.log('index', index)
+              console.log('item', item)
               wepy.request({
                 url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/delTimer',
                 data: item,
                 method: 'POST',
                 success: res => {
+                  this.tangkoulist[this.currentId].controllerList[index].TimerList = []
+                  this.tangkoudetail = this.tangkoulist[this.currentId]
                   wepy.showToast({
                     title: '取消成功',
                     icon: 'success',
@@ -814,6 +818,22 @@ export default class Home extends wepy.page {
                   })
                 }
               })
+              if (item.type === 0) {
+                wepy.request({
+                  url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/delLimit',
+                  data: item,
+                  method: 'POST',
+                  success: res => {
+                    this.tangkoulist[this.currentId].controllerList[index].Limit = null
+                    this.tangkoudetail = this.tangkoulist[this.currentId]
+                    wepy.showToast({
+                      title: '取消成功',
+                      icon: 'success',
+                      duration: 2000
+                    })
+                  }
+                })
+              }
             }
 
             // 设置自动参数

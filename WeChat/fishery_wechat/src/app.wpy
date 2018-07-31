@@ -89,7 +89,7 @@ export default class extends wepy.app {
     location: '',
     weather: '',
     // relation: 'WX10',
-    relation: 'WX17',
+    relation: 'WX44',
     currentId: 0,
     device_sn: null,
     login: {

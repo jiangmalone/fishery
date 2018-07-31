@@ -745,6 +745,27 @@ export default class Home extends wepy.page {
             this.realTimeDataInfo = res.data
           }
         })
+        let deviceSn = e.target.dataset.tangkou.sensorlist[0].sensor.device_sn
+        wepy.closeSocket()
+        wepy.onSocketClose((res)=> {
+          console.log('WebSocket 已关闭！', res)
+        })
+        wepy.connectSocket({
+          url: 'wss://www.fisherymanager.net/fishery/websocket'
+        })
+
+        wepy.onSocketOpen((res) => {
+          console.log('WebSocket连接已打开！' + res.data)
+          wepy.sendSocketMessage({
+            data: deviceSn
+          })
+        })
+
+        wepy.onSocketMessage((res) => {
+          console.log('收到服务器内容：' + res.data)
+          this.realTimeDataInfo = JSON.parse(res.data)
+          console.log(this.realTimeDataInfo)
+        })
       }
       if (!this.location) {
         return 0
@@ -905,6 +926,7 @@ export default class Home extends wepy.page {
                 this.tangkoulist = res.data.myHome
                 this.tangkoudetail = res.data.myHome[num]
                 this.$apply()
+                let deviceSn = res.data.myHome[num].sensorlist[0].sensor.device_sn
                 // let location = res.data.myHome[num].address
                 // if (!location) {
                 //   return 0
@@ -943,6 +965,21 @@ export default class Home extends wepy.page {
                       this.$apply()
                     }
                   })
+                  wepy.connectSocket({
+                    url: 'wss://www.fisherymanager.net/fishery/websocket'
+                  })
+                  console.log('ws.myhome',res.data.myHome[num])
+                  wepy.onSocketOpen((res) => {
+                    console.log('WebSocket连接已打开！' + res.data)
+                    wepy.sendSocketMessage({
+                      data: deviceSn
+                    })
+                  })
+                  wepy.onSocketMessage((res) => {
+                    console.log('收到服务器内容：' + res.data)
+                    this.realTimeDataInfo = JSON.parse(res.data)
+                    console.log(this.realTimeDataInfo)
+                  })
                 }
               } else {
                 // 如果没塘口，暂无数据
@@ -977,6 +1014,12 @@ export default class Home extends wepy.page {
     this.week = week
     this.time = dateStr
     this.$apply()
+  }
+  onUnload() {
+    wepy.closeSocket()
+    wepy.onSocketClose((res)=> {
+      console.log('WebSocket 已关闭！', res)
+    })
   }
 }
 </script>

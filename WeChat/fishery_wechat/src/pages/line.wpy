@@ -483,6 +483,7 @@ export default class Line extends wepy.page {
       switchToday() {
         this.chooseToday = true
         let deviceSn = this.tangkoulist[this.ind].sensorlist[0].sensor.device_sn
+        wepy.showLoading()
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
           data: {
@@ -495,6 +496,7 @@ export default class Line extends wepy.page {
               textStyle: {
                 color: '#c4c4c4'
               },
+              animation: false,
               color: ['#8dc1aa'],
               tooltip: {
                 trigger: 'none',
@@ -525,6 +527,7 @@ export default class Line extends wepy.page {
                       case '09:00' : return true
                       case '12:00' : return true
                       case '15:00' : return true
+                      case '21:00' : return true
                       case '18:00' : return true
                       case '24:00' : return true
                       default : return false
@@ -618,6 +621,7 @@ export default class Line extends wepy.page {
               textStyle: {
                 color: '#c4c4c4'
               },
+              animation: false,
               color: ['#8dc1aa'],
               tooltip: {
                 trigger: 'none',
@@ -645,6 +649,7 @@ export default class Line extends wepy.page {
                       case '00:00' : return true
                       case '03:00' : return true
                       case '06:00' : return true
+                      case '21:00' : return true
                       case '09:00' : return true
                       case '12:00' : return true
                       case '15:00' : return true
@@ -701,6 +706,7 @@ export default class Line extends wepy.page {
               textStyle: {
                 color: '#c4c4c4'
               },
+              animation: false,
               color: ['#8dc1aa'],
               tooltip: {
                 trigger: 'none',
@@ -731,6 +737,7 @@ export default class Line extends wepy.page {
                       case '09:00' : return true
                       case '12:00' : return true
                       case '15:00' : return true
+                      case '21:00' : return true
                       case '18:00' : return true
                       case '24:00' : return true
                       default : return false
@@ -792,6 +799,7 @@ export default class Line extends wepy.page {
       switch3day() {
         this.chooseToday = false
         let deviceSn = this.tangkoulist[this.ind].sensorlist[0].sensor.device_sn
+        wepy.showLoading()
         wepy.request({
           url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/data3days',
           data: {
@@ -804,6 +812,7 @@ export default class Line extends wepy.page {
               textStyle: {
                 color: '#c4c4c4'
               },
+              animation: false,
               color: ['#8dc1aa'],
               tooltip: {
                 trigger: 'none',
@@ -921,6 +930,7 @@ export default class Line extends wepy.page {
               textStyle: {
                 color: '#c4c4c4'
               },
+              animation: false,
               color: ['#8dc1aa'],
               tooltip: {
                 trigger: 'none',
@@ -998,6 +1008,7 @@ export default class Line extends wepy.page {
               textStyle: {
                 color: '#c4c4c4'
               },
+              animation: false,
               color: ['#8dc1aa'],
               tooltip: {
                 trigger: 'none',
@@ -1091,6 +1102,39 @@ export default class Line extends wepy.page {
           this.chooseToday = true
           this.showModal = false
           let deviceSn = this.tangkoulist[this.ind].sensorlist[0].sensor.device_sn
+          wepy.closeSocket()
+          wepy.onSocketClose((res)=> {
+            console.log('WebSocket 已关闭！', res)
+          })
+          wepy.connectSocket({
+            url: 'wss://www.fisherymanager.net/fishery/websocket'
+          })
+
+          wepy.onSocketOpen((res) => {
+            console.log('WebSocket连接已打开！' + res.data)
+            wepy.sendSocketMessage({
+              data: deviceSn
+            })
+          })
+
+          wepy.onSocketMessage((res) => {
+            console.log('收到服务器内容：' + res.data)
+            this.realTimeDataInfo = JSON.parse(res.data)
+            // yyyy/mm/dd
+            let nowDate = new Date()
+            let year = nowDate.getFullYear()
+            let month = nowDate.getMonth() + 1 < 10 ? '0' + (nowDate.getMonth() + 1)
+              : nowDate.getMonth() + 1
+            let day = nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate
+              .getDate()
+            let hour = nowDate.getHours()
+            let min = nowDate.getMinutes() < 10 ? '0' + nowDate.getMinutes() : nowDate.getMinutes()
+            let dateStr = year + '/' + month + '/' + day + ' ' + hour + ':' + min
+            this.time = dateStr
+            console.log(this.time)
+            this.$apply()
+          })
+          wepy.showLoading()
           wepy.request({
             url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
             data: {
@@ -1103,6 +1147,7 @@ export default class Line extends wepy.page {
                 textStyle: {
                   color: '#c4c4c4'
                 },
+                animation: false,
                 color: ['#8dc1aa'],
                 tooltip: {
                   trigger: 'none',
@@ -1133,6 +1178,7 @@ export default class Line extends wepy.page {
                         case '09:00' : return true
                         case '12:00' : return true
                         case '15:00' : return true
+                        case '21:00' : return true
                         case '18:00' : return true
                         case '24:00' : return true
                         default : return false
@@ -1226,6 +1272,7 @@ export default class Line extends wepy.page {
                 textStyle: {
                   color: '#c4c4c4'
                 },
+                animation: false,
                 color: ['#8dc1aa'],
                 tooltip: {
                   trigger: 'none',
@@ -1257,6 +1304,7 @@ export default class Line extends wepy.page {
                         case '12:00' : return true
                         case '15:00' : return true
                         case '18:00' : return true
+                        case '21:00' : return true
                         case '24:00' : return true
                         default : return false
                       }
@@ -1309,6 +1357,7 @@ export default class Line extends wepy.page {
                 textStyle: {
                   color: '#c4c4c4'
                 },
+                animation: false,
                 color: ['#8dc1aa'],
                 tooltip: {
                   trigger: 'none',
@@ -1339,6 +1388,7 @@ export default class Line extends wepy.page {
                         case '09:00' : return true
                         case '12:00' : return true
                         case '15:00' : return true
+                        case '21:00' : return true
                         case '18:00' : return true
                         case '24:00' : return true
                         default : return false
@@ -1446,42 +1496,55 @@ export default class Line extends wepy.page {
         method: 'GET',
         success: res => {
           // 如果有塘口
-          console.log(res.data.myHome)
-          console.log(res.data.myHome[0].sensorlist)
           this.tangkoulist = res.data.myHome
           if (res.data.myHome[this.ind].sensorlist.length > 0) {
             // 获取实时数据
             let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
-            // wepy.connectSocket({
-            //   url: 'wss://192.168.0.111/ScoketTest/websocket',
-            //   data: {
-            //     device_sn: deviceSn
-            //   },
-            //   method: 'GET'
-            // })
-            // wepy.onSocketOpen((res) => {
-            //   console.log('WebSocket连接已打开！')
-            // })
-            // wepy.onSocketMessage((res) => {
-            //   console.log('收到服务器内容：' + res.data)
-            // })
 
-            wepy.showLoading()
+            wepy.connectSocket({
+              url: 'wss://www.fisherymanager.net/fishery/websocket'
+            })
+
+            wepy.onSocketOpen((res) => {
+              console.log('WebSocket连接已打开！' + res.data)
+              wepy.sendSocketMessage({
+                data: deviceSn
+              })
+            })
+
+            wepy.onSocketMessage((res) => {
+              console.log('收到服务器内容：' + res.data)
+              this.realTimeDataInfo = JSON.parse(res.data)
+              // yyyy/mm/dd
+              let nowDate = new Date()
+              let year = nowDate.getFullYear()
+              let month = nowDate.getMonth() + 1 < 10 ? '0' + (nowDate.getMonth() + 1)
+                : nowDate.getMonth() + 1
+              let day = nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate
+                .getDate()
+              let hour = nowDate.getHours()
+              let min = nowDate.getMinutes() < 10 ? '0' + nowDate.getMinutes() : nowDate.getMinutes()
+              let dateStr = year + '/' + month + '/' + day + ' ' + hour + ':' + min
+              this.time = dateStr
+              console.log(this.time)
+              this.$apply()
+            })
+
+            // wepy.showLoading()
             wepy.request({
               url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/realTimeData',
               data: res.data.myHome[this.ind].sensorlist[0].sensor,
               method: 'GET',
               success: res => {
-                console.log(res.data)
                 this.realTimeDataInfo = res.data
                 this.$apply()
               },
               complete: () => {
-                wepy.hideLoading()
+                // wepy.hideLoading()
               }
             })
             // 获取当天数据
-            wepy.showLoading()
+            // wepy.showLoading()
             wepy.request({
               url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
               data: {
@@ -1494,6 +1557,7 @@ export default class Line extends wepy.page {
                   textStyle: {
                     color: '#c4c4c4'
                   },
+                  animation: false,
                   color: ['#8dc1aa'],
                   tooltip: {
                     trigger: 'none',
@@ -1524,6 +1588,7 @@ export default class Line extends wepy.page {
                           case '12:00' : return true
                           case '15:00' : return true
                           case '18:00' : return true
+                          case '21:00' : return true
                           case '24:00' : return true
                           default : return false
                         }
@@ -1616,6 +1681,7 @@ export default class Line extends wepy.page {
                   textStyle: {
                     color: '#c4c4c4'
                   },
+                  animation: false,
                   color: ['#8dc1aa'],
                   tooltip: {
                     trigger: 'none',
@@ -1647,6 +1713,7 @@ export default class Line extends wepy.page {
                           case '12:00' : return true
                           case '15:00' : return true
                           case '18:00' : return true
+                          case '21:00' : return true
                           case '24:00' : return true
                           default : return false
                         }
@@ -1699,6 +1766,7 @@ export default class Line extends wepy.page {
                   textStyle: {
                     color: '#c4c4c4'
                   },
+                  animation: false,
                   color: ['#8dc1aa'],
                   tooltip: {
                     trigger: 'none',
@@ -1730,6 +1798,7 @@ export default class Line extends wepy.page {
                           case '12:00' : return true
                           case '15:00' : return true
                           case '18:00' : return true
+                          case '21:00' : return true
                           case '24:00' : return true
                           default : return false
                         }
@@ -1789,8 +1858,14 @@ export default class Line extends wepy.page {
           }
         },
         complete: () => {
-          wepy.hideLoading()
+          // wepy.hideLoading()
         }
+      })
+    }
+    onUnload() {
+      wepy.closeSocket()
+      wepy.onSocketClose((res)=> {
+        console.log('WebSocket 已关闭！', res)
       })
     }
 }

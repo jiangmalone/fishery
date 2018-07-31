@@ -4,42 +4,65 @@ import java.io.IOException;
 
 import javax.websocket.Session;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.service.EquipmentService;
 
-public class RealTimeThread implements Runnable {
+import net.sf.json.JSONObject;
+
+public class RealTimeThread extends Thread {
 	
-	@Autowired
-	private EquipmentService equipmentService;
-	
+	private static Logger logger = LogManager.getLogger(EquipmentService.class);
 	private Session session;
     
-    private static int i;
+	private String device_sn;
+	
+	private EquipmentService equipmentService;
+	
 
-    public RealTimeThread(Session session) {
+    public RealTimeThread() {
+		super();
+	}
+
+	public RealTimeThread(Session session,String device_sn) {
+	
         this.session = session;
+        this.device_sn = device_sn;
     }
 
     @Override
     public void run() {
-        while (true) {
-        	
-        	
-            try {
-                session.getBasicRemote().sendText("消息"+i);
-//                            session.getBasicRemote().sendObject(list.get(i)); //No encoder specified for object of class [class AlarmMessage]
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                //一秒刷新一次
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            i++;
-        }
+
+    	
+    		this.equipmentService= BeanContext.getApplicationContext().getBean(EquipmentService.class);  
+    		Sensor sensor = equipmentService.realTimeData(device_sn); 
+    		
+    		if(sensor!=null) {    	
+    			while (true) {        			
+        			sensor = equipmentService.realTimeData(device_sn); 
+       
+                	logger.debug("sensor:"+sensor.toString());
+                	session.getAsyncRemote().sendObject(sensor);
+/*                	JSONObject obj = JSONObject.fromObject(sensor);
+                    session.getAsyncRemote().sendText(obj.toString());*/
+//                  session.getBasicRemote().sendObject(list.get(i)); //No encoder specified for object of class [class AlarmMessage]
+        			/* session.getAsyncRemote().sendObject(i);*/
+                    try {
+                        //一分钟刷新一次
+                        Thread.sleep(60000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                 
+                }
+    		}
     }
+    		
+
+        
+
 
 }

@@ -3,6 +3,8 @@ package com.geariot.platform.fishery.controller;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.Style;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -10,7 +12,10 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-@ServerEndpoint("/websocket")
+import com.geariot.platform.fishery.Thread.RealTimeThread;
+import com.geariot.platform.fishery.Thread.ServerEncoder;
+
+@ServerEndpoint(value ="/websocket",encoders= {ServerEncoder.class})
 public class WebScoketController {
 	//静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
 		private static int onlineCount = 0;
@@ -20,6 +25,8 @@ public class WebScoketController {
 
 		//与某个客户端的连接会话，需要通过它来给客户端发送数据
 		private Session session;
+		
+		RealTimeThread rtthread;
 
 		/**
 		 * 连接建立成功调用的方法
@@ -38,8 +45,12 @@ public class WebScoketController {
 		 */
 		@OnClose
 		public void onClose(){
+			
 			webSocketSet.remove(this);  //从set中删除
 			subOnlineCount();           //在线数减1
+			if(rtthread!=null) {
+				rtthread.stop();
+			}			
 			System.out.println("有一连接关闭！当前在线人数为" + getOnlineCount());
 		}
 
@@ -51,15 +62,9 @@ public class WebScoketController {
 		@OnMessage
 		public void onMessage(String message, Session session) {
 			System.out.println("来自客户端的消息:" + message);
-			//群发消息
-			for(WebScoketController item: webSocketSet){
-				try {
-					item.sendMessage(message);
-				} catch (IOException e) {
-					e.printStackTrace();
-					continue;
-				}
-			}
+			rtthread = new RealTimeThread(session, message);
+			rtthread.start();
+	  /*      session.getAsyncRemote().*/
 		}
 
 		/**
@@ -79,7 +84,7 @@ public class WebScoketController {
 		 * @throws IOException
 		 */
 		public void sendMessage(String message) throws IOException{
-			this.session.getBasicRemote().sendText(message);
+			//this.session.getBasicRemote().sendText(message);
 			//this.session.getAsyncRemote().sendText(message);
 		}
 

@@ -1000,11 +1000,14 @@ public class EquipmentService {
 		//数据的获取针对传感器，传感器不需要way，way为一体机留用
 		//获得当天数据，从零点开始00:00:00
 		Date dateEnd = new Date();//当前时间
+		dateEnd.setHours(24);
+		dateEnd.setMinutes(0);
+		dateEnd.setSeconds(0);
 		Date dateStart = new Date();//今日零点
 		dateStart.setHours(0);
 		dateStart.setMinutes(0);
 		dateStart.setSeconds(0);
-		int min = dateEnd.getHours()*60 + dateEnd.getMinutes();
+		int min = 24*60;
 		logger.debug("开始时间："+dateStart);
 		logger.debug("结束时间："+dateEnd);
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -1019,9 +1022,7 @@ public class EquipmentService {
 			dateEnd1.setMinutes(dateEnd1.getMinutes()+3);
 			System.out.println("+++++++++++++++");
 			String start = sdf1.format(dateStart1) + "T" + sdf2.format(dateStart1);
-			String end = sdf1.format(dateEnd1) + "T" + sdf2.format(dateEnd1);	
-			System.out.println("开始时间："+start);
-			System.out.println("结束时间："+end);
+			String end = sdf1.format(dateEnd1) + "T" + sdf2.format(dateEnd1);			
 			
 			GetDatapointsListApi api = new GetDatapointsListApi(null, start, end, device_sn, null, 6000, null, 137,
 					null, null, null, key);
@@ -1032,6 +1033,15 @@ public class EquipmentService {
 				logger.debug("获取当天数据");
 				logger.debug("参数个数："+dl.size());
 				logger.debug("总共获得数据量为："+response.getData().getCount());
+				
+				if(dl.size()==0) {
+					Map<String, Object>	 singlemap = new HashMap<>();
+					singlemap.put("value", null);
+					singlemap.put("at", sdf3.format(dateStart));
+					DOList.add(singlemap);
+					WTList.add(singlemap);
+					pHList.add(singlemap);
+				}
 				
 				for(int k=0;k<dl.size();k++) {				
 					DatastreamsItem di = dl.get(k);
@@ -1046,8 +1056,7 @@ public class EquipmentService {
 						singlemap.put("value",(float)(Math.round(sum/ld.size()*100))/100);
 						singlemap.put("at", sdf3.format(dateStart));
 						DOList.add(singlemap);
-					}else if("WT".equals(di.getId())) {
-						
+					}else if("WT".equals(di.getId())) {						
 						float sum = 0;						
 						for(int j=0;j<ld.size();j++) {
 							sum += Float.parseFloat((String)ld.get(j).getValue());					
@@ -1066,11 +1075,16 @@ public class EquipmentService {
 						Map<String, Object>	 singlemap = new HashMap<>();
 						singlemap.put("value", (float)(Math.round(sum/ld.size()*100))/100);
 						singlemap.put("at", sdf3.format(dateStart));
-						pHList.add(singlemap);
-					
-					}
-									
+						pHList.add(singlemap);					
+					}									
 				}				
+			}else {
+				Map<String, Object>	 singlemap = new HashMap<>();
+				singlemap.put("value", null);
+				singlemap.put("at", sdf3.format(dateStart));
+				DOList.add(singlemap);
+				WTList.add(singlemap);
+				pHList.add(singlemap);
 			}
 			dateStart.setMinutes(dateStart.getMinutes()+20);
 		}
@@ -1214,7 +1228,8 @@ public class EquipmentService {
 					List<DatastreamsItem> datastreamsItemList = response.data.getDevices();
 					List<DatastreamsItem> dl= response.getData().getDevices();
 					logger.debug("参数个数："+dl.size());
-					logger.debug("总共获得数据量为："+response.getData().getCount());				
+					logger.debug("总共获得数据量为："+response.getData().getCount());	
+			
 					for(int i=0;i<dl.size();i++) {
 						List<String> atList = new ArrayList<String>();
 						List<Float> valueList = new ArrayList<Float>();
@@ -1359,18 +1374,21 @@ public class EquipmentService {
 		//数据的获取针对传感器，传感器不需要way，way为一体机留用
 		//获得当天数据，从零点开始00:00:00
 		Date dateEnd = new Date();//当前时间
+		dateEnd.setHours(24);
+		dateEnd.setMinutes(0);
+		dateEnd.setSeconds(0);
 		Date dateStart = new Date();//今日零点
 		dateStart.setDate(dateStart.getDate()-2);
 		dateStart.setHours(0);
 		dateStart.setMinutes(0);
 		dateStart.setSeconds(0);
-		long mm = dateEnd.getTime()  - dateStart.getTime();
+		
 		logger.debug("开始时间："+dateStart);
 		logger.debug("结束时间："+dateEnd);
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
 		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		for(int i = 0 ; i<(mm/1000/60/60+1) ; i++) {
+		for(int i = 0 ; i<(3*24+1) ; i++) {
 			Date dateStart1 = new Date();
 			dateStart1.setTime(dateStart.getTime());
 			dateStart1.setMinutes(dateStart1.getMinutes()-10);
@@ -1392,6 +1410,16 @@ public class EquipmentService {
 				logger.debug("获取三日数据");
 				logger.debug("参数个数："+dl.size());
 				logger.debug("总共获得数据量为："+response.getData().getCount());
+				
+				if(dl.size()==0) {
+					Map<String, Object>	 singlemap = new HashMap<>();
+					singlemap.put("value", null);
+					singlemap.put("at", sdf3.format(dateStart));
+					DOList.add(singlemap);
+					WTList.add(singlemap);
+					pHList.add(singlemap);
+				}
+				
 				
 				for(int k=0;k<dl.size();k++) {				
 					DatastreamsItem di = dl.get(k);
@@ -1432,6 +1460,13 @@ public class EquipmentService {
 					}
 									
 				}				
+			}else {
+				Map<String, Object>	 singlemap = new HashMap<>();
+				singlemap.put("value", null);
+				singlemap.put("at", sdf3.format(dateStart));
+				DOList.add(singlemap);
+				WTList.add(singlemap);
+				pHList.add(singlemap);
 			}
 			dateStart.setMinutes(dateStart.getMinutes()+60);
 		}
@@ -2099,7 +2134,7 @@ public class EquipmentService {
         	/*
 	    	 *溶解氧
 	    	 */
-        	
+       	
 	    	Map threshold12 = new HashMap<String, Float>();
 			threshold12.put("lolmt", 2);
 			threshold12.put("uplmt", 5);
@@ -2110,6 +2145,7 @@ public class EquipmentService {
 	    	 * 水温
 	    	 */
 	    	 int trigger21 = addTrigger("WT", device_sn, "<", 18, 0,0);
+	    	 int trigger22 = addTrigger("WT", device_sn, ">", 30, 0,0);
 	    	 Map threshold23 = new HashMap<String, Float>();
              threshold23.put("lolmt", 18);
              threshold23.put("uplmt",30 );
@@ -2135,7 +2171,7 @@ public class EquipmentService {
      		threshold35.put("lolmt", 7.8);
      		threshold35.put("uplmt", 8.5);
      		 int trigger35 = addTrigger("pH", device_sn, "inout", threshold34, 4,0);
-    		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
+    		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger22==1&&trigger23==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
      			 return 1;
      		 }else {
      			 return 0;
@@ -2157,6 +2193,7 @@ public class EquipmentService {
     	 * 水温
     	 */
     	 int trigger21 = addTrigger("WT", device_sn, "<", 18, 0,0);
+    	 int trigger22 = addTrigger("WT", device_sn, ">", 30, 0,0);
     	 Map threshold23 = new HashMap<String, Float>();
     	 threshold23.put("lolmt", 18);
          threshold23.put("uplmt",30 );
@@ -2182,7 +2219,7 @@ public class EquipmentService {
   		threshold35.put("lolmt", 7.8);
   		threshold35.put("uplmt", 8.5);
   		 int trigger35 = addTrigger("pH", device_sn, "inout", threshold34, 4,0);
- 		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
+ 		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger22==1&&trigger23==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
  			 return 1;
  		 }else {
  			 return 0;

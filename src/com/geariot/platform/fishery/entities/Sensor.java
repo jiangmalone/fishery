@@ -132,4 +132,13 @@ public class Sensor {
 	public void setWayStatus(int wayStatus) {
 		this.wayStatus = wayStatus;
 	}
+	@Override
+	public String toString() {
+		return "Sensor [id=" + id + ", device_sn=" + device_sn + ", pondId=" + pondId + ", status=" + status + ", name="
+				+ name + ", relation=" + relation + ", port_status=" + port_status + ", oxygen=" + oxygen
+				+ ", oxygen_status=" + oxygen_status + ", water_temperature=" + water_temperature + ", WT_status="
+				+ WT_status + ", pH_value=" + pH_value + ", pH_status=" + pH_status + ", wayStatus=" + wayStatus + "]";
+	}
+	
+	
 }

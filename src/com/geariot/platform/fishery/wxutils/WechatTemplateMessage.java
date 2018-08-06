@@ -28,7 +28,7 @@ public class WechatTemplateMessage {
 //	private static final Logger log = Logger.getLogger(WechatTemplateMessage.class);
 	private static final Logger log = LogManager.getLogger(WechatTemplateMessage.class);
 	private static final String ALARM_TEMPLATE_ID="rWbgpqTb6alKSu4Wusf7ItFq2FQRQrzk1CNQV0uyJ_4";
-	private static EquipmentService service = (EquipmentService) ApplicationUtil.getBean("EquipmentService");
+	/*private static EquipmentService service = (EquipmentService) ApplicationUtil.getBean("EquipmentService");*/
 	//private static final String ALARM_TEMPLATE_ID=null;
    private static SimpleDateFormat sdf=new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 	private static String invokeTemplateMessage(JSONObject params){
@@ -241,7 +241,7 @@ public static void sendDataAlarmMSG(String msg,String openId,String deviceSn) {
 	
 	public static void alarmMSG(String msg,String openId,String deviceSn) {
 		log.debug("向微信用户发送报警信息");
-		
+		EquipmentService service = new EquipmentService();
 		/*AIO aio=service.findAIOByDeviceSn(deviceSn);
 		Pond pond=null;
 		if(aio!=null) {

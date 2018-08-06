@@ -151,7 +151,7 @@ public class WebServiceController {
 	@RequestMapping(value = "/verification", method = RequestMethod.GET)
 	@ResponseBody
 	public String getVerification(String phone) {
-		logger.debug("获得手机号"+phone);
+		logger.debug("用户首次登陆/退出再登陆，获得手机号"+phone);
 		JSONObject param = new JSONObject();
 		param.put("mobilePhoneNumber", phone);
 		HttpEntity entity = HttpRequest.getEntity(param);
@@ -179,11 +179,10 @@ public class WebServiceController {
 	@RequestMapping(value = "/getuserinfo", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> wechatLogin(String code) {
-		logger.debug("+++++++++++++++++++++++++++++++++++++++++");
-		logger.debug("code:"+code);
+		logger.debug("微信登陆，获得用户code:"+code);
 		Map<String, Object> map =  getWechatInfo(code);
 		if(map.get("openId")==null) {
-			logger.debug("未获得openId");
+			logger.debug("根据用户code，未获得openId");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}else {
 			logger.debug("openId:"+(String)map.get("openId"));
@@ -198,6 +197,7 @@ public class WebServiceController {
 			if(wxUserList.size() == 0) {
 				return RESCODE.NOT_FOUND.getJSONRES(entity);
 			}else if(wxUserList.size()>1){
+				logger.debug("该openId下有多个用户");
 				int count =0;
 				for(WXUser wxUser:wxUserList) {
 					if(wxUser.isLogin() == true) {
@@ -215,9 +215,6 @@ public class WebServiceController {
 							wx = wxUser;
 						}
 					}
-					/*
-					 * 获取session_key,unionid
-					 */
 					wx.setOpenId((String)map.get("openId"));
 					wx.setUnionid((String)map.get("unionid"));
 					logger.debug("getuserinfo:"+RESCODE.SUCCESS.getJSONRES(wx));
@@ -229,7 +226,7 @@ public class WebServiceController {
 				wx.setOpenId((String)map.get("openId"));
 				wx.setUnionid((String)map.get("unionid"));
 				if(wx.isLogin() == true) {
-					logger.debug("getuserinfo:"+RESCODE.SUCCESS.getJSONRES(wx));
+					logger.debug("用户已登陆，getuserinfo:"+RESCODE.SUCCESS.getJSONRES(wx));
 					return RESCODE.SUCCESS.getJSONRES(wx);
 				}else {
 					return RESCODE.NO_LOGIN.getJSONRES(entity);
@@ -285,7 +282,6 @@ public class WebServiceController {
 	}
 
 	public Map<String, Object> getWechatInfo(String code) {
-		logger.debug("++++++++++++++++++++++++++++++++++++++++");
 		String wechatInfo = WechatLoginUse.wechatInfo(code);
 		JSONObject resultJson;
 		Map<String, Object> wxuserin = new HashMap<>();
@@ -295,15 +291,11 @@ public class WebServiceController {
 			if (resultJson.get("message").equals("success")) {
 				String openId = resultJson.getString("openid");
 				String session_key = resultJson.getString("session_key");
-				String unionid = resultJson.getString("unionid");
-				//String headimgurl = resultJson.getString("headimgurl");
+				String unionid = resultJson.getString("unionid");				
 				wxuserin.put("openId", openId);
 				wxuserin.put("session_key", session_key);
-				wxuserin.put("unionid", unionid);
-				//wxuserin.put("headimgurl", headimgurl);
-				System.out.println(wxuserin.toString());
+				wxuserin.put("unionid", unionid);				
 				return wxuserin;
-
 			}return RESCODE.NOT_FOUND.getJSONRES();
 		}catch (Exception e){
 			return RESCODE.NOT_FOUND.getJSONRES();
@@ -324,7 +316,7 @@ public class WebServiceController {
 		logger.debug("session_key： "+session_key+".");
 		String newwxUserName = "";
 		newwxUserName = filterEmoji(wxUserName);	
-		logger.debug("newwxUserName："+newwxUserName+".");
+		logger.debug("过滤username中的表情符："+newwxUserName+".");
 		/*try {
 			wxUserName = new String(wxUserName.getBytes("ISO-8859-1"), "utf-8");
 		} catch (UnsupportedEncodingException e) {
@@ -348,7 +340,7 @@ public class WebServiceController {
 			return obj;
 		} else {
 			//验证成功
-			//
+			logger.debug(phone + ";code:" + smscode + " 验证成功。。。");
 			if(unionid == null || unionid.equals("")) {
 				//使用String encryptedData,String iv,String session_key解码获取unionid
 			}			
@@ -362,18 +354,18 @@ public class WebServiceController {
 		return webServiceService.login(phone, openId, headimgurl, wxUserName, unionid);
 	}
 	
-	/*@RequestMapping(value = "/getAllPublicUser", method = RequestMethod.GET)
+	@RequestMapping(value = "/getAllPublicUser", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> getAllPublicUser(){
-		return WeChatOpenIdExchange.getAllPublicUser();
+		return userService.getAllPublicUser();
 	}
 	
 	@RequestMapping(value = "/getPublicUserUnionId", method = RequestMethod.GET)
 	@ResponseBody
 	public String getPublicUserUnionId(){
-		return WeChatOpenIdExchange.getPublicUserUnionId("orEjLv5S6uXJ1s8NS2P-PqWBF9jg");
+		return userService.getPublicUserUnionId("orEjLv5S6uXJ1s8NS2P-PqWBF9jg");
 	}
-	*/
+	
 	@RequestMapping(value = "/getPublicOpenId", method = RequestMethod.GET)
 	@ResponseBody
 	public String getPublicOpenId(){
@@ -419,11 +411,11 @@ public class WebServiceController {
 	public void singleCallByTts(String phone) {
 		String json = "{\"deviceName\":\"" + "测试" + "\",\"way\":" + 1 + "}";
 		try {
-			System.out.println("准备启用阿里云语音服务");
+			logger.debug("准备启用阿里云语音服务");
 			SingleCallByTtsResponse scbtr = VmsUtils.singleCallByTts(phone, "TTS_126866281", json);
-			System.out.println(scbtr.getMessage());
+			logger.debug(scbtr.getMessage());			
 		} catch (ClientException e) {
-			// TODO Auto-generated catch block
+			logger.debug("阿里云语音服务异常");
 			e.printStackTrace();
 		}
 		

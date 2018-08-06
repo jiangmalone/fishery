@@ -294,6 +294,7 @@ public class UserService {
 		}
 	}
 	public Map<String, Object> HomePageDetail(String relation) {
+		logger.debug("根据微信用户："+relation+"，开始获取首页数据");
 		WXUser wxUser = wxuserDao.findUserByRelation(relation);
 		String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 		Map<String, Object> map = new HashMap<>();
@@ -302,7 +303,7 @@ public class UserService {
 		List<Pond> pondList = pondDao.queryPondByRelation(relation);
 
 		for(Pond pond:pondList) {
-			System.out.println("池塘名:"+pond.getName());
+			logger.debug("用户的池塘："+pond.getName());			
 			Map<String, Object> map11=new HashMap<>();
 			map11.put("pondname", pond.getName());
 			map11.put("address", pond.getAddress());
@@ -316,21 +317,24 @@ public class UserService {
 			List<Map> controllerLM = new ArrayList<>();
 			//获得传感器离线/在线
 			if(sensorlist!=null) {
-				System.out.println("sensorlist"+sensorlist.size());
+				logger.debug("池塘："+pond.getName()+"，关联的传感器数量："+sensorlist.size());
 				for(Sensor sensor:sensorlist) {
 					Map<String, Object> sensorMap=new HashMap<>();
 					Map<String, Object> sensorDataMap=new HashMap<>();
 					//获得传感器在线/离线状态
 					GetDevicesStatus api = new GetDevicesStatus(sensor.getDevice_sn(),key);
 			        BasicResponse<DevicesStatusList> response = api.executeApi();
+			        logger.debug("从onenet上获取传感器在线/离线状态");
 			        if(response.errno == 0) {
 			        	sensorMap.put("online", response.data.getDevices().get(0).getIsonline());
 			        }else {
+			        	logger.debug("未查询到传感器状态，显示离线");
 			        	sensorMap.put("online", false);
 			        }
 			        //获得传感器最新数据
 			        GetLatesDeviceData lddapi = new GetLatesDeviceData(sensor.getDevice_sn(), key);
 			        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
+			        logger.debug("获得传感器最新数据:"+response2.getJson());
 			        System.out.println(response2.getJson());
 			        if(response2.errno == 0) {
 			        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response2.data.getDevices().get(0).getDatastreams();
@@ -375,7 +379,7 @@ public class UserService {
 			        	//获得控制器最新数据
 				        GetLatesDeviceData lddapi = new GetLatesDeviceData(controller.getDevice_sn(), key);
 				        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
-				        System.out.println(response2.getJson());
+				        logger.debug("获取首页控制器数据："+response2.getJson());
 				        if(response2.errno == 0) {
 				        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> datastreamsList = response2.data.getDevices().get(0).getDatastreams();
 				        	if(datastreamsList!=null) {
@@ -433,6 +437,7 @@ public class UserService {
 	}
 	
 	public int hasEquipment(String relation) {
+		logger.debug("进入判断用户："+relation+"是否有设备");
 		List<AIO> aioList = aioDao.findAIOByRelation(relation);
 		List<Sensor> sensorList = sensorDao.findSensorsByRelation(relation);
 		List<Controller> controllerList = controllerDao.findByRelation(relation);
@@ -527,7 +532,7 @@ public class UserService {
 		JSONObject obj = WechatConfig.getAccessTokenForInteface();
 		String access_token = (String) obj.get("access_token");
 		JSONObject AllUserOpenId = WechatConfig.returnAllUserOpenId(access_token, null);
-		System.out.println("获得全部用户数据"+AllUserOpenId);
+		logger.debug("获得全部用户数据"+AllUserOpenId);
 		int total = (int) AllUserOpenId.get("total");
 		int count = (int) AllUserOpenId.get("count");
 		logger.debug("total"+total);
@@ -538,9 +543,6 @@ public class UserService {
 		for(int i=0;i<openIds.length();i++) {
 			openIdList.add(openIds.getString(i));
 		}
-		System.out.println(AllUserOpenId.get("data"));
-		System.out.println(data.get("openid"));
-		System.out.println(AllUserOpenId.get("count"));
 
 		returnmap.put("total", total);
 		returnmap.put("count", count);

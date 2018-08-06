@@ -4,9 +4,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.geariot.platform.fishery.dao.WXUserDao;
 
+@Service
+@Component
 public class WechatSendMessageUtils {
 	
 	//private static final Logger log = LogManager.getLogger(WechatSendMessageUtils.class);

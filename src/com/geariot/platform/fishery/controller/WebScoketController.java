@@ -12,11 +12,16 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.geariot.platform.fishery.Thread.RealTimeThread;
 import com.geariot.platform.fishery.Thread.ServerEncoder;
+import com.geariot.platform.fishery.service.WebServiceService;
 
 @ServerEndpoint(value ="/websocket",encoders= {ServerEncoder.class})
 public class WebScoketController {
+	private Logger logger = LogManager.getLogger(WebScoketController.class);
 	//静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
 		private static int onlineCount = 0;
 
@@ -37,7 +42,7 @@ public class WebScoketController {
 			this.session = session;
 			webSocketSet.add(this);     //加入set中
 			addOnlineCount();           //在线数加1
-			System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());
+			logger.debug("有新连接加入！当前在线人数为" + getOnlineCount());
 		}
 
 		/**
@@ -50,8 +55,8 @@ public class WebScoketController {
 			subOnlineCount();           //在线数减1
 			if(rtthread!=null) {
 				rtthread.stop();
-			}			
-			System.out.println("有一连接关闭！当前在线人数为" + getOnlineCount());
+			}
+			logger.debug("有一连接关闭！当前在线人数为" + getOnlineCount());
 		}
 
 		/**
@@ -61,7 +66,8 @@ public class WebScoketController {
 		 */
 		@OnMessage
 		public void onMessage(String message, Session session) {
-			System.out.println("来自客户端的消息:" + message);
+			logger.debug("启用Webscoket");
+			logger.debug("来自客户端的消息:" + message);
 			rtthread = new RealTimeThread(session, message);
 			rtthread.start();
 	  /*      session.getAsyncRemote().*/
@@ -74,7 +80,7 @@ public class WebScoketController {
 		 */
 		@OnError
 		public void onError(Session session, Throwable error){
-			System.out.println("发生错误");
+			logger.debug("Webscoket发生错误");
 			error.printStackTrace();
 		}
 

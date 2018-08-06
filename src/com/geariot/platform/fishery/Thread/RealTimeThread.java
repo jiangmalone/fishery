@@ -34,9 +34,7 @@ public class RealTimeThread extends Thread {
     }
 
     @Override
-    public void run() {
-
-    	
+    public void run() {   	
     		this.equipmentService= BeanContext.getApplicationContext().getBean(EquipmentService.class);  
     		Sensor sensor = equipmentService.realTimeData(device_sn); 
     		

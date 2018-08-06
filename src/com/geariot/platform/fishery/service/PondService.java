@@ -72,8 +72,11 @@ public class PondService {
 //	}
 	
 	public Map<String, Object> delPonds(Integer... pondIds) {
+		logger.debug("开始删除塘口："+pondIds.toString());
+	
 		Controller controller = null;
 		for (Integer pondId : pondIds) {
+			logger.debug("开始删除塘口："+pondId);
 			// 删除塘口时需要先将塘口的鱼种子表置为空,否则无法删除
 			//pondDao.findPondByPondId(pondId).setPondFishs(null);  
 			pondfishDao.deleteByPondId(pondId);
@@ -98,8 +101,10 @@ public class PondService {
 	}
 
 	public Map<String, Object> modifyPond(Pond pond) {
+		logger.debug("开始修改塘口："+pond.getId());
 		Pond exist = pondDao.findPondByPondId(pond.getId());
 		if (exist == null) {
+			logger.debug("塘口："+pond.getId()+"不存在");
 			return RESCODE.POND_NOT_EXIST.getJSONRES();
 		} else {
 			if (pondDao.checkPondExistByNameAndRelation(pond.getName(), pond.getRelation())) {
@@ -149,13 +154,6 @@ public class PondService {
 				map.put("user", wxUser==null?"":wxUser.getName());
 				return map;
 			}
-			if(relation.contains("CO")){
-				Company company = companyDao.findCompanyByRelation(relation);
-				map.put("user", company==null?"":company.getName());
-				return map;
-			}
-			map.put("user", "");
-			return map;
 		}
 		map.put("user", "");
 		return map;
@@ -206,96 +204,6 @@ public class PondService {
 		return RESCODE.SUCCESS.getJSONRES(list);
 	}
 
-	/*public Map<String, Object> appHomepage(String relation) {
-		if(! relation.contains("WX")){
-			return RESCODE.WRONG_PARAM.getJSONRES();
-		}
-		Sensor_Data sensor_Data = null;
-		Sensor_Data oneWay = null;
-		Sensor_Data twoWay = null;
-		AIO aioTemp = null;
-		List<Pond> ponds = pondDao.queryPondByNameAndRelation(relation, null);
-		for (Pond pond : ponds) {
-			List<AIO> temp = new ArrayList<>();
-			// 塘口内添加sensor的list
-			List<Sensor> sensors = sensorDao.findSensorsByPondId(pond.getId());
-			for (Sensor sensor : sensors) {
-				sensor_Data = sensor_DataDao.findDataByDeviceSns(sensor.getDevice_sn());
-				if (sensor_Data == null) {
-					sensor.setOxygen(0);
-					sensor.setpH_value(0);
-					sensor.setWater_temperature(0);
-					sensor.setWayStatus(sensor.getStatus());
-				} else {
-					sensor.setOxygen(sensor_Data.getOxygen());
-					sensor.setpH_value(sensor_Data.getpH_value());
-					sensor.setWater_temperature(sensor_Data.getWater_temperature());
-					sensor.setWayStatus(sensor.getStatus());
-				}
-			}
-			pond.setSensors(sensors);
-			List<AIO> aios = aioDao.findAIOsByPondId(pond.getId());
-			for (AIO aio : aios) {
-				oneWay = sensor_DataDao.findDataByDeviceSnAndWay(aio.getDevice_sn(), 1);
-				AeratorStatus oneStatus = statusDao.findByDeviceSnAndWay(aio.getDevice_sn(), 1);
-				if(oneWay == null){
-					StringBuffer sb = new StringBuffer(aio.getStatus());
-					char a = sb.charAt(0);
-					aio.setOxygen(0);
-					aio.setWater_temperature(0);
-					aio.setpH_value(0);
-					aio.setWay(1);
-					aio.setTimed(oneStatus.isTimed());
-					aio.setOnoff(oneStatus.isOn_off());
-					aio.setWayStatus(Integer.parseInt(String.valueOf(a)));
-				}else{
-					StringBuffer sb = new StringBuffer(aio.getStatus());
-					char a = sb.charAt(0);
-					aio.setWater_temperature(oneWay.getWater_temperature());
-					aio.setOxygen(oneWay.getOxygen());
-					aio.setpH_value(oneWay.getpH_value());
-					aio.setWay(1);
-					aio.setTimed(oneStatus.isTimed());
-					aio.setOnoff(oneStatus.isOn_off());
-					aio.setWayStatus(Integer.parseInt(String.valueOf(a)));
-				}
-				twoWay = sensor_DataDao.findDataByDeviceSnAndWay(aio.getDevice_sn(), 2);
-				AeratorStatus twoStatus = statusDao.findByDeviceSnAndWay(aio.getDevice_sn(), 2);
-				aioTemp = new AIO();
-				aioTemp.setId(EightInteger.eightInteger());
-				aioTemp.setDevice_sn(aio.getDevice_sn());
-				aioTemp.setName(aio.getName());
-				aioTemp.setPondId(aio.getPondId());
-				aioTemp.setRelation(aio.getRelation());
-			//	aioTemp.setType(aio.getType());
-				aioTemp.setStatus(aio.getStatus());
-				aioTemp.setWay(2);
-				if(twoWay == null){
-					StringBuffer sbs = new StringBuffer(aio.getStatus());
-					char b = sbs.charAt(1);
-					aioTemp.setOxygen(0);
-					aioTemp.setWater_temperature(0);
-					aioTemp.setpH_value(0);
-					aioTemp.setTimed(twoStatus.isTimed());
-					aioTemp.setOnoff(twoStatus.isOn_off());
-					aioTemp.setWayStatus(Integer.parseInt(String.valueOf(b)));
-				}else{
-					StringBuffer sbs = new StringBuffer(aio.getStatus());
-					char b = sbs.charAt(1);
-					aioTemp.setWater_temperature(twoWay.getWater_temperature());
-					aioTemp.setOxygen(twoWay.getOxygen());
-					aioTemp.setpH_value(twoWay.getpH_value());
-					aioTemp.setTimed(twoStatus.isTimed());
-					aioTemp.setOnoff(twoStatus.isOn_off());
-					aioTemp.setWayStatus(Integer.parseInt(String.valueOf(b)));
-				}
-				temp.add(aioTemp);
-			}
-			aios.addAll(temp);
-			pond.setAios(aios);
-		}
-		return RESCODE.SUCCESS.getJSONRES(ponds);
-	}*/
 
 	public Map<String, Object> pondDetail(int pondId) {
 		Pond pond = pondDao.findPondByPondId(pondId);

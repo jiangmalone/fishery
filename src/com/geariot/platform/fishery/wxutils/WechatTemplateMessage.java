@@ -2,6 +2,8 @@ package com.geariot.platform.fishery.wxutils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.entity.StringEntity;
 import org.apache.logging.log4j.LogManager;
@@ -11,21 +13,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.geariot.platform.fishery.dao.ControllerDao;
 import com.geariot.platform.fishery.entities.AIO;
+import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Pond;
+import com.geariot.platform.fishery.service.EquipmentService;
 import com.geariot.platform.fishery.service.SocketSerivce;
 import com.geariot.platform.fishery.utils.ApplicationUtil;
 import com.geariot.platform.fishery.utils.HttpRequest;
 
 public class WechatTemplateMessage {
 	
-	@Autowired
-	private ControllerDao controllerDao;
+	
 	
 	private static final String MSG_TEMPLATE_ID="P9tXcCFGquvWFcqPyDD5OK7BZ6rFFfwZcGu54wrBBa8";
 //	private static final Logger log = Logger.getLogger(WechatTemplateMessage.class);
 	private static final Logger log = LogManager.getLogger(WechatTemplateMessage.class);
 	private static final String ALARM_TEMPLATE_ID="rWbgpqTb6alKSu4Wusf7ItFq2FQRQrzk1CNQV0uyJ_4";
-	private static SocketSerivce service = (SocketSerivce) ApplicationUtil.getBean("socketSerivce");
+	/*private static EquipmentService service = (EquipmentService) ApplicationUtil.getBean("EquipmentService");*/
 	//private static final String ALARM_TEMPLATE_ID=null;
    private static SimpleDateFormat sdf=new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 	private static String invokeTemplateMessage(JSONObject params){
@@ -238,20 +241,28 @@ public static void sendDataAlarmMSG(String msg,String openId,String deviceSn) {
 	
 	public static void alarmMSG(String msg,String openId,String deviceSn) {
 		log.debug("向微信用户发送报警信息");
-		
-		AIO aio=service.findAIOByDeviceSn(deviceSn);
+		EquipmentService service = new EquipmentService();
+		/*AIO aio=service.findAIOByDeviceSn(deviceSn);
 		Pond pond=null;
 		if(aio!=null) {
 		pond=service.findPondById(aio.getPondId());
-		}
-		
+		}*/
+		String pondName = "";
+		Map<String, Object> returnController = service.getControllersBydevice_sn(deviceSn);				
+		for(int i=0;i<returnController.size();i++) {
+			Map<String, Object> port_controller = (Map<String, Object>) returnController.get(i+"");
+			List<Controller> controllerList = (List<Controller>) port_controller.get("controller");
+			for(Controller con:controllerList) {
+				pondName = pondName + con.getName()+" ";
+			}			
+		}		
 		JSONObject params=new JSONObject();
 		JSONObject data=new JSONObject();
 		params.put("touser", openId);
 		params.put("template_id", ALARM_TEMPLATE_ID);
 		data.put("first", keywordFactory("报警信息","#173177"));
-		if(pond!=null) {
-		data.put("keyword1", keywordFactory(pond.getName(),"#173177"));
+		if(pondName!="") {
+		data.put("keyword1", keywordFactory(pondName,"#173177"));
 		}else {
 		data.put("keyword1", keywordFactory("报警的设备没有绑定塘口","#173177"));
 		}
@@ -261,8 +272,7 @@ public static void sendDataAlarmMSG(String msg,String openId,String deviceSn) {
 		data.put("remark", keywordFactory(""));
 		params.put("data", data);
 		String result=invokeTemplateMessage(params);
-		log.debug("报警信息结果："+result);
-		
+		log.debug("报警信息结果："+result);		
 	}
 	
 	public static void sendSelftestMSG(String msg,String openId,String deviceSn) {

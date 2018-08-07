@@ -319,4 +319,22 @@ public class EquipmentController {
 		 equipmentService.saveALLDataYesterday();
 	}
 	
+	@RequestMapping(value ="/getControllersBydevice_sn", method = RequestMethod.GET)
+	public Map<String, Object> getControllersBydevice_sn(){	
+		String pondName = "";
+		Map<String, Object> returnController= equipmentService.getControllersBydevice_sn("35664847");
+		for(int i=0;i<returnController.size();i++) {
+			Map<String, Object> port_controller = (Map<String, Object>) returnController.get(i+"");
+			List<Controller> controllerList = (List<Controller>) port_controller.get("controller");
+			for(Controller con:controllerList) {
+				int j= 0;
+				pondName = pondName + con.getName() + " ";
+				j++;
+			}
+			
+		}
+		System.out.println("pondName:"+pondName);
+		  return equipmentService.getControllersBydevice_sn("35664847");
+	}
+	
 }

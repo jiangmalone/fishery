@@ -142,15 +142,6 @@ public class EquipmentService {
 	private DP4Dao dp4Dao;
 	
 	
-	
-	/*
-	private String type = "";
-	private String relation = "";
-	private Company company = null;
-	private AIO aio = null;
-	private Sensor sensor = null;
-	private Controller controller = null;
-	private WXUser wxUser = null;*/
 	private String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 
 	public Map<String, Object> VertifyDevicesn(String divsn) {
@@ -740,217 +731,6 @@ public class EquipmentService {
 	/*	}	*/	
 	}
 	
-	/*public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number) {
-		int from = (page - 1) * number;
-		if ((device_sn == null || device_sn.length() < 0) && (userName == null || userName.length() < 0)) {
-			return noConditionsQuery(from, number);
-		}
-		if ((device_sn == null || device_sn.length() < 0)
-				&& (userName != null && !userName.isEmpty() && !userName.trim().isEmpty())) {
-			return nameConditionQuery(userName, from, number);
-		}
-		if ((device_sn != null && !device_sn.isEmpty() && !device_sn.trim().isEmpty())
-				&& (userName == null || userName.length() < 0)) {
-			return deviceSnConditionQuery(device_sn, from, number);
-		}
-		return doubleConditionQuery(device_sn, userName, from, number);
-	}
-
-	private Map<String, Object> doubleConditionQuery(String device_sn, String userName, int from, int number) {
-		List<Equipment> equipments = new ArrayList<>();
-		List<Company> companies = companyDao.companies(userName);
-		List<WXUser> wxUsers = wxUserDao.wxUsers(userName);
-		List<String> relations = new ArrayList<>();
-		for (Company company : companies) {
-			relations.add(company.getRelation());
-		}
-		for (WXUser wxUser : wxUsers) {
-			relations.add(wxUser.getRelation());
-		}
-		if (relations.isEmpty()) {
-			return RESCODE.SUCCESS.getJSONRES(equipments, 0, 0);
-		} else {
-			equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
-			shareDealMethod(equipments);
-			long count = pondDao.adminFindEquipmentCountDouble(device_sn, relations);
-			int size = (int) Math.ceil(count / (double) number);
-			return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
-		}
-	}*/
-
-/*	private Map<String, Object> deviceSnConditionQuery(String device_sn, int from, int number) {
-		List<Equipment> equipments = pondDao.adminFindEquipmentBySn(device_sn);
-		shareDealMethod(equipments);
-		long count = pondDao.adminFindEquipmentCountSn(device_sn);
-		int size = (int) Math.ceil(count / (double) number);
-		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
-	}
-
-	private Map<String, Object> nameConditionQuery(String userName, int from, int number) {
-		List<Equipment> equipments = new ArrayList<>();
-		List<Company> companies = companyDao.companies(userName);
-		List<WXUser> wxUsers = wxUserDao.wxUsers(userName);
-		List<String> relations = new ArrayList<>();
-		for (Company company : companies) {
-			relations.add(company.getRelation());
-		}
-		for (WXUser wxUser : wxUsers) {
-			relations.add(wxUser.getRelation());
-		}
-		if (relations.isEmpty()) {
-			return RESCODE.SUCCESS.getJSONRES(equipments, 0, 0);
-		} else {
-			equipments = pondDao.adminFindEquipmentByName(relations, from, number);
-			shareDealMethod(equipments);
-			long count = pondDao.adminFindEquipmentCountName(relations);
-			int size = (int) Math.ceil(count / (double) number);
-			return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
-		}
-	}*/
-
-	/*private List<Equipment> shareDealMethod(List<Equipment> equipments) {
-		for (Equipment equipment : equipments) {
-			type = equipment.getDevice_sn().substring(0, 2);
-			switch (type) {
-				case "01":
-					aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
-					relation = aio.getRelation();
-					if (relation == null) {
-						equipment.setName("");
-						equipment.setRelation("0");
-					} else {
-						if (relation.contains("CO")) {
-							company = companyDao.findCompanyByRelation(relation);
-							if (company == null) {
-								equipment.setName("");
-								equipment.setRelation("0");
-							} else {
-								equipment.setUserName(company.getName());
-								equipment.setRelation(relation);
-							}
-						} else if (relation.contains("WX")) {
-							wxUser = wxUserDao.findUserByRelation(relation);
-							if (wxUser == null) {
-								equipment.setName("");
-								equipment.setRelation("0");
-							} else {
-								equipment.setUserName(wxUser.getName());
-								equipment.setRelation(relation);
-							}
-						} else {
-							equipment.setName("");
-							equipment.setRelation("0");
-						}
-					}
-					break;
-				case "02":
-					aio = aioDao.findAIOByDeviceSns(equipment.getDevice_sn());
-					relation = aio.getRelation();
-					if (relation == null) {
-						equipment.setName("");
-						equipment.setRelation("0");
-					} else {
-						if (relation.contains("CO")) {
-							company = companyDao.findCompanyByRelation(relation);
-							if (company == null) {
-								equipment.setName("");
-								equipment.setRelation("0");
-							} else {
-								equipment.setUserName(company.getName());
-								equipment.setRelation(relation);
-							}
-						} else if (relation.contains("WX")) {
-							wxUser = wxUserDao.findUserByRelation(relation);
-							if (wxUser == null) {
-								equipment.setName("");
-								equipment.setRelation("0");
-							} else {
-								equipment.setUserName(wxUser.getName());
-								equipment.setRelation(relation);
-							}
-						} else {
-							equipment.setName("");
-							equipment.setRelation("0");
-						}
-					}
-					break;
-				case "03":
-					sensor = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn());
-					relation = sensor.getRelation();
-					if (relation == null) {
-						equipment.setName("");
-						equipment.setRelation("0");
-					} else {
-						if (relation.contains("CO")) {
-							company = companyDao.findCompanyByRelation(relation);
-							if (company == null) {
-								equipment.setName("");
-								equipment.setRelation("0");
-							} else {
-								equipment.setUserName(company.getName());
-								equipment.setRelation(relation);
-							}
-						} else if (relation.contains("WX")) {
-							wxUser = wxUserDao.findUserByRelation(relation);
-							if (wxUser == null) {
-								equipment.setName("");
-								equipment.setRelation("0");
-							} else {
-								equipment.setUserName(wxUser.getName());
-								equipment.setRelation(relation);
-							}
-						} else {
-							equipment.setName("");
-							equipment.setRelation("0");
-						}
-					}
-					break;
-				case "04":
-					controller = controllerDao.findControllerByDeviceSns(equipment.getDevice_sn());
-					relation = controller.getRelation();
-					if (relation == null) {
-						equipment.setName("");
-						equipment.setRelation("0");
-					} else {
-						if (relation.contains("CO")) {
-							company = companyDao.findCompanyByRelation(relation);
-							if (company == null) {
-								equipment.setName("");
-								equipment.setRelation("0");
-							} else {
-								equipment.setUserName(company.getName());
-								equipment.setRelation(relation);
-							}
-						} else if (relation.contains("WX")) {
-							wxUser = wxUserDao.findUserByRelation(relation);
-							if (wxUser == null) {
-								equipment.setName("");
-								equipment.setRelation("0");
-							} else {
-								equipment.setUserName(wxUser.getName());
-								equipment.setRelation(relation);
-							}
-						} else {
-							equipment.setName("");
-							equipment.setRelation("0");
-						}
-					}
-					break;
-				default:
-					break;
-			}
-		}
-		return equipments;
-	}*/
-
-/*	private Map<String, Object> noConditionsQuery(int from, int number) {
-		List<Equipment> equipments = pondDao.adminFindEquipmentAll(from, number);
-		shareDealMethod(equipments);
-		long count = pondDao.adminFindEquipmentCountAll();
-		int size = (int) Math.ceil(count / (double) number);
-		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
-	}
-*/
 	public Map<String, Object> companyFindEquipment(String device_sn, String relation, int page, int number) {
 		int from = (page - 1) * number;
 		Sensor sensor = null;
@@ -992,24 +772,93 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> dataToday(String device_sn, int way) {
-		logger.debug(device_sn);
-		Map<String, Object> mapReturn = new HashMap();
-		List<Map<String, Object>> DOList = new ArrayList<>();
-		List<Map<String, Object>> WTList = new ArrayList<>();
-		List<Map<String, Object>> pHList = new ArrayList<>();
-		//数据的获取针对传感器，传感器不需要way，way为一体机留用
-		//获得当天数据，从零点开始00:00:00
+		logger.debug("获得设备："+device_sn+"今日数据");
+		Map<String, Object> mapReturn = new HashMap<>();
+		long startLong = System.currentTimeMillis();
+		
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
 		Date dateEnd = new Date();//当前时间
+		dateEnd.setHours(24);
+		dateEnd.setMinutes(0);
+		dateEnd.setSeconds(0);
 		Date dateStart = new Date();//今日零点
 		dateStart.setHours(0);
 		dateStart.setMinutes(0);
 		dateStart.setSeconds(0);
-		int min = dateEnd.getHours()*60 + dateEnd.getMinutes();
-		logger.debug("开始时间："+dateStart);
-		logger.debug("结束时间："+dateEnd);
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
-		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		int min = 24*60;
+		
+		String dataFormat1 = sdf1.format(dateStart);
+		String dataFormat2  = sdf1.format(dateEnd);
+		String dataFormatEnd = dataFormat2+"T00:00:00";
+		String dataFormatStart = dataFormat1+"T00:00:00";
+		
+
+		/**
+		 * 今日数据点查询
+		 * @param datastreamids:查询的数据流，多个数据流之间用逗号分隔（可选）,String
+		 * @param start:提取数据点的开始时间（可选）,String
+		 * @param end:提取数据点的结束时间（可选）,String
+		 * @param devid:设备ID,String
+		 * 
+		 * @param duration:查询时间区间（可选，单位为秒）,Integer
+		 *  start+duration：按时间顺序返回从start开始一段时间内的数据点
+		 *  end+duration：按时间倒序返回从end回溯一段时间内的数据点
+		 * 
+		 * @param limit:限定本次请求最多返回的数据点数，0<n<=6000（可选，默认1440）,Integer
+		 * @param cursor:指定本次请求继续从cursor位置开始提取数据（可选）,String
+		 * @param interval:通过采样方式返回数据点，interval值指定采样的时间间隔（可选）,Integer
+		 * @param metd:指定在返回数据点时，同时返回统计结果，可能的值为（可选）,String
+		 * @param first:返回结果中最值的时间点。1-最早时间，0-最近时间，默认为1（可选）,Integer
+		 * @param sort:值为DESC|ASC时间排序方式，DESC:倒序，ASC升序，默认升序,String
+		 * @param key:masterkey 或者 设备apikey
+		 */
+		List<DatapointsItem> pHList = new ArrayList<>();
+		List<DatapointsItem> DOLsit = new ArrayList<>();
+		List<DatapointsItem> WTList = new ArrayList<>();
+		List<DatapointsItem> pHList1 = new ArrayList<>();
+		List<DatapointsItem> DOLsit1 = new ArrayList<>();
+		List<DatapointsItem> WTList1 = new ArrayList<>();
+		GetDatapointsListApi api = new GetDatapointsListApi(null, dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, 137,
+				null, null, null, key);
+		BasicResponse<DatapointsList> response = api.executeApi();
+		logger.debug("设备："+device_sn + "的今日数据："+response.getJson());
+		Map<String, Object> map = null;
+		if(response.errno==0) {
+			List<DatastreamsItem> dl= response.getData().getDevices();
+			System.out.println("参数个数："+dl.size());		
+			System.out.println("总共获得数据量为："+response.getData().getCount());
+			for(int i=0;i<dl.size();i++) {				
+				DatastreamsItem di = dl.get(i);
+				List<DatapointsItem> ld =di.getDatapoints();
+				/*System.out.println(di.getId()+"参数下数据量："+ld.size());*/
+				if("pH".equals(di.getId())) {
+					/*System.out.println("pH数据：");*/
+					for(int j=0;j<ld.size();j++) {
+						pHList.add(ld.get(j));
+					/*	System.out.println(ld.get(j).getValue());*/
+					}
+				}else if("DO".equals(di.getId()) ) {
+					/*System.out.println("DO数据：");*/
+					for(int j=0;j<ld.size();j++) {
+						DOLsit.add(ld.get(j));
+						/*System.out.println(ld.get(j).getValue());*/
+					}
+				}else if("WT".equals(di.getId())) {
+					/*System.out.println("WT数据");*/
+					for(int j=0;j<ld.size();j++) {
+						WTList.add(ld.get(j));
+						/*System.out.println(ld.get(j).getValue());*/
+					}
+				}
+								
+			}
+		}
+		
+		
+		
 		for(int i = 0 ; i<(min/20+1) ; i++) {
 			Date dateStart1 = new Date();
 			dateStart1.setTime(dateStart.getTime());
@@ -1017,74 +866,73 @@ public class EquipmentService {
 			Date dateEnd1 = new Date();
 			dateEnd1.setTime(dateStart.getTime());
 			dateEnd1.setMinutes(dateEnd1.getMinutes()+3);
-			System.out.println("+++++++++++++++");
+		/*	System.out.println("+++++++++++++++");*/
 			String start = sdf1.format(dateStart1) + "T" + sdf2.format(dateStart1);
 			String end = sdf1.format(dateEnd1) + "T" + sdf2.format(dateEnd1);	
-			System.out.println("开始时间："+start);
-			System.out.println("结束时间："+end);
 			
-			GetDatapointsListApi api = new GetDatapointsListApi(null, start, end, device_sn, null, 6000, null, 137,
-					null, null, null, key);
-			BasicResponse<DatapointsList> response = api.executeApi();
-			
-			if(response.errno==0) {
-				List<DatastreamsItem> dl= response.getData().getDevices();
-				logger.debug("获取当天数据");
-				logger.debug("参数个数："+dl.size());
-				logger.debug("总共获得数据量为："+response.getData().getCount());
-				
-				for(int k=0;k<dl.size();k++) {				
-					DatastreamsItem di = dl.get(k);
-					List<DatapointsItem> ld =di.getDatapoints();					
-					logger.debug(di.getId()+"参数下数据量："+ld.size());					
-					if("DO".equals(di.getId())) {
-						float sum = 0;						
-						for(int j=0;j<ld.size();j++) {
-							sum += Float.parseFloat((String)ld.get(j).getValue());					
-						}
-						Map<String, Object>	 singlemap = new HashMap<>();
-						singlemap.put("value",(float)(Math.round(sum/ld.size()*100))/100);
-						singlemap.put("at", sdf3.format(dateStart));
-						DOList.add(singlemap);
-					}else if("WT".equals(di.getId())) {
-						
-						float sum = 0;						
-						for(int j=0;j<ld.size();j++) {
-							sum += Float.parseFloat((String)ld.get(j).getValue());					
-						}
-						Map<String, Object>	 singlemap = new HashMap<>();
-						singlemap.put("value",(float)(Math.round(sum/ld.size()*100))/100);
-						singlemap.put("at", sdf3.format(dateStart));
-						WTList.add(singlemap);
-						
-					}else if("pH".equals(di.getId())) {
-						
-						float sum = 0;						
-						for(int j=0;j<ld.size();j++) {
-							sum += Float.parseFloat((String)ld.get(j).getValue());					
-						}
-						Map<String, Object>	 singlemap = new HashMap<>();
-						singlemap.put("value", (float)(Math.round(sum/ld.size()*100))/100);
-						singlemap.put("at", sdf3.format(dateStart));
-						pHList.add(singlemap);
-					
-					}
-									
-				}				
+		/*	System.out.println("开始时间："+dateStart1);
+			System.out.println("结束时间："+dateEnd1);*/
+			float sum1 =0;
+			int count1 = 0;
+			float sum2 =0;
+			int count2 = 0;
+			float sum3 =0;
+			int count3 = 0;
+			for(DatapointsItem dpsi:pHList) {
+				String at = dpsi.getAt();
+				 try {
+					Date dt = sdf3.parse(at);					
+					if(dt.getTime()>dateStart1.getTime()&&dt.getTime()<dateEnd1.getTime()) {
+						/*System.out.println(dt);	*/			
+						sum1 += Float.parseFloat((String)dpsi.getValue());
+						count1++;
+					}					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			for(DatapointsItem dpsi:DOLsit) {
+				String at = dpsi.getAt();
+				 try {
+					Date dt = sdf3.parse(at);					
+					if(dt.getTime()>dateStart1.getTime()&&dt.getTime()<dateEnd1.getTime()) {
+			
+						sum2 += Float.parseFloat((String)dpsi.getValue());
+						count2++;
+					}					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			for(DatapointsItem dpsi:WTList) {
+				String at = dpsi.getAt();
+				 try {
+					Date dt = sdf3.parse(at);					
+					if(dt.getTime()>dateStart1.getTime()&&dt.getTime()<dateEnd1.getTime()) {				
+						sum3 += Float.parseFloat((String)dpsi.getValue());
+						count3++;
+					}					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			pHList1.add(new DatapointsItem(sdf3.format(dateStart), ((float)(Math.round(sum1/count1*100))/100)==0?null:(float)(Math.round(sum1/count1*100))/100));
+			DOLsit1.add(new DatapointsItem(sdf3.format(dateStart), ((float)(Math.round(sum2/count2*100))/100)==0?null:(float)(Math.round(sum2/count2*100))/100));
+			WTList1.add(new DatapointsItem(sdf3.format(dateStart), ((float)(Math.round(sum3/count3*100))/100)==0?null:(float)(Math.round(sum3/count3*100))/100));
 			dateStart.setMinutes(dateStart.getMinutes()+20);
 		}
-
+		long endLong = System.currentTimeMillis();
+		System.out.println("程序运行时间："+(endLong-startLong));
 		
-		/*
-		 * 转换成前端需要的格式
-		 */
 		List<String> doatList = new ArrayList<>();
 		List<Float> dovalueList = new ArrayList<>();
 		Map<String, Object> DOMap = new HashMap<>();
-		for(int t = 0;t<DOList.size();t++) {
-			doatList.add((String) DOList.get(t).get("at"));
-			dovalueList.add((Float) DOList.get(t).get("value"));
+		for(int t = 0;t<DOLsit1.size();t++) {
+			doatList.add((String) DOLsit1.get(t).getAt());
+			dovalueList.add((Float) DOLsit1.get(t).getValue());
 		}
 		DOMap.put("value", dovalueList);
 		DOMap.put("at", doatList);
@@ -1092,9 +940,9 @@ public class EquipmentService {
 		List<String> wtatList = new ArrayList<>();
 		List<Float> wtvalueList = new ArrayList<>();
 		Map<String, Object> WTMap = new HashMap<>();
-		for(int t = 0;t<WTList.size();t++) {
-			wtatList.add((String) WTList.get(t).get("at"));
-			wtvalueList.add((Float) WTList.get(t).get("value"));
+		for(int t = 0;t<WTList1.size();t++) {
+			wtatList.add((String) WTList1.get(t).getAt());
+			wtvalueList.add((Float) WTList1.get(t).getValue());
 		}
 		WTMap.put("value", wtvalueList);
 		WTMap.put("at", wtatList);
@@ -1102,9 +950,9 @@ public class EquipmentService {
 		List<String> phatList = new ArrayList<>();
 		List<Float> phvalueList = new ArrayList<>();
 		Map<String, Object> pHMap = new HashMap<>();
-		for(int t = 0;t<pHList.size();t++) {
-			phatList.add((String) pHList.get(t).get("at"));
-			phvalueList.add((Float) pHList.get(t).get("value"));
+		for(int t = 0;t<pHList1.size();t++) {
+			phatList.add((String) pHList1.get(t).getAt());
+			phvalueList.add((Float) pHList1.get(t).getValue());
 		}
 		pHMap.put("value", phvalueList);
 		pHMap.put("at", phatList);
@@ -1134,6 +982,7 @@ public class EquipmentService {
 	}
 	
 	public Map<String, Object> dataYesterday(String device_sn) {
+		logger.debug("获取设备："+device_sn+"昨日数据");
 		Map<String, Object> mapReturn = new HashMap();
 		//数据的获取针对传感器，传感器不需要way，way为一体机留用
 		//获得昨天数据，从零点开始00:00:00
@@ -1154,10 +1003,7 @@ public class EquipmentService {
 		if(response.errno == 0 && count!=0) {
 			List<DatastreamsItem> datastreamsItemList = response.data.getDevices();
 			List<DatastreamsItem> dl= response.getData().getDevices();
-			/*System.out.println("参数个数："+dl.size());
 			
-			System.out.println("总共获得数据量为：");
-			System.out.println(response.getData().getCount());*/
 			
 			for(int i=0;i<dl.size();i++) {
 				List<String> atList = new ArrayList<String>();
@@ -1165,7 +1011,7 @@ public class EquipmentService {
 				DatastreamsItem di = dl.get(i);
 				List<DatapointsItem> ld =di.getDatapoints();
 				if(di.getId().equals("location")==false) {
-					System.out.println(di.getId()+"参数下数据量："+ld.size());
+					logger.debug(di.getId()+"参数下数据量："+ld.size());
 					for(int j=0;j<ld.size();j++) {
 						atList.add(ld.get(j).getAt());
 						valueList.add(Float.parseFloat((ld.get(j).getValue().toString())));
@@ -1214,7 +1060,8 @@ public class EquipmentService {
 					List<DatastreamsItem> datastreamsItemList = response.data.getDevices();
 					List<DatastreamsItem> dl= response.getData().getDevices();
 					logger.debug("参数个数："+dl.size());
-					logger.debug("总共获得数据量为："+response.getData().getCount());				
+					logger.debug("总共获得数据量为："+response.getData().getCount());	
+			
 					for(int i=0;i<dl.size();i++) {
 						List<String> atList = new ArrayList<String>();
 						List<Float> valueList = new ArrayList<Float>();
@@ -1352,95 +1199,199 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> data3days(String device_sn, int way) {
-		Map<String, Object> mapReturn = new HashMap();
-		List<Map<String, Object>> DOList = new ArrayList<>();
-		List<Map<String, Object>> WTList = new ArrayList<>();
-		List<Map<String, Object>> pHList = new ArrayList<>();
-		//数据的获取针对传感器，传感器不需要way，way为一体机留用
-		//获得当天数据，从零点开始00:00:00
+		
+		logger.debug("获得设备："+device_sn+"3日数据");
+		Map<String, Object> mapReturn = new HashMap<>();
+		
+		
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
+		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
 		Date dateEnd = new Date();//当前时间
+		dateEnd.setHours(24);
+		dateEnd.setMinutes(0);
+		dateEnd.setSeconds(0);
 		Date dateStart = new Date();//今日零点
 		dateStart.setDate(dateStart.getDate()-2);
 		dateStart.setHours(0);
 		dateStart.setMinutes(0);
 		dateStart.setSeconds(0);
-		long mm = dateEnd.getTime()  - dateStart.getTime();
-		logger.debug("开始时间："+dateStart);
-		logger.debug("结束时间："+dateEnd);
-		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
-		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		for(int i = 0 ; i<(mm/1000/60/60+1) ; i++) {
+		int min = 24*60;
+		
+		String dataFormat1 = sdf1.format(dateStart);
+		String dataFormat2  = sdf1.format(dateEnd);
+		String dataFormatEnd = dataFormat2+"T00:00:00";
+		String dataFormatStart = dataFormat1+"T00:00:00";
+		
+
+		/**
+		 * 今日数据点查询
+		 * @param datastreamids:查询的数据流，多个数据流之间用逗号分隔（可选）,String
+		 * @param start:提取数据点的开始时间（可选）,String
+		 * @param end:提取数据点的结束时间（可选）,String
+		 * @param devid:设备ID,String
+		 * 
+		 * @param duration:查询时间区间（可选，单位为秒）,Integer
+		 *  start+duration：按时间顺序返回从start开始一段时间内的数据点
+		 *  end+duration：按时间倒序返回从end回溯一段时间内的数据点
+		 * 
+		 * @param limit:限定本次请求最多返回的数据点数，0<n<=6000（可选，默认1440）,Integer
+		 * @param cursor:指定本次请求继续从cursor位置开始提取数据（可选）,String
+		 * @param interval:通过采样方式返回数据点，interval值指定采样的时间间隔（可选）,Integer
+		 * @param metd:指定在返回数据点时，同时返回统计结果，可能的值为（可选）,String
+		 * @param first:返回结果中最值的时间点。1-最早时间，0-最近时间，默认为1（可选）,Integer
+		 * @param sort:值为DESC|ASC时间排序方式，DESC:倒序，ASC升序，默认升序,String
+		 * @param key:masterkey 或者 设备apikey
+		 */
+		List<DatapointsItem> pHList = new ArrayList<>();
+		List<DatapointsItem> DOLsit = new ArrayList<>();
+		List<DatapointsItem> WTList = new ArrayList<>();
+		List<DatapointsItem> pHList1 = new ArrayList<>();
+		List<DatapointsItem> DOLsit1 = new ArrayList<>();
+		List<DatapointsItem> WTList1 = new ArrayList<>();
+		
+		GetDatapointsListApi api1 = new GetDatapointsListApi("WT", dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, null,
+				null, null, null, key);
+		BasicResponse<DatapointsList> response1 = api1.executeApi();
+		logger.debug("设备："+device_sn + "的3日数据："+response1.getJson());
+		if(response1.errno==0) {
+			Map<String, Object> map = null;
+			List<DatastreamsItem> dl= response1.getData().getDevices();
+		
+			logger.debug("参数个数："+dl.size());
+			logger.debug("总共获得数据量为："+response1.getData().getCount());
+			for(int i=0;i<dl.size();i++) {				
+				DatastreamsItem di = dl.get(i);
+				List<DatapointsItem> ld =di.getDatapoints();
+				if("WT".equals(di.getId())) {
+					/*System.out.println("WT数据");*/
+					for(int j=0;j<ld.size();j++) {
+						WTList.add(ld.get(j));
+						/*System.out.println(ld.get(j).getValue());*/
+					}
+				}
+								
+			}
+		}
+		
+		GetDatapointsListApi api2 = new GetDatapointsListApi("pH", dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, null,
+				null, null, null, key);
+		BasicResponse<DatapointsList> response2 = api2.executeApi();
+		logger.debug("设备："+device_sn + "的3日数据："+response2.getJson());
+		if(response2.errno==0) {
+			Map<String, Object> map = null;
+			List<DatastreamsItem> dl= response2.getData().getDevices();
+			logger.debug("参数个数："+dl.size());
+			logger.debug("总共获得数据量为："+response1.getData().getCount());
+			for(int i=0;i<dl.size();i++) {				
+				DatastreamsItem di = dl.get(i);
+				List<DatapointsItem> ld =di.getDatapoints();
+				/*System.out.println(di.getId()+"参数下数据量："+ld.size());*/
+				if("pH".equals(di.getId())) {
+					/*System.out.println("pH数据：");*/
+					for(int j=0;j<ld.size();j++) {
+						pHList.add(ld.get(j));
+					/*	System.out.println(ld.get(j).getValue());*/
+					}
+				}
+								
+			}
+		}
+		
+		GetDatapointsListApi api3 = new GetDatapointsListApi("DO", dataFormatStart, dataFormatEnd, device_sn, null, 6000, null, null,
+				null, null, null, key);
+		BasicResponse<DatapointsList> response3 = api3.executeApi();
+		logger.debug("设备："+device_sn + "的3日数据："+response3.getJson());
+		if(response3.errno==0) {
+			Map<String, Object> map = null;
+			List<DatastreamsItem> dl= response3.getData().getDevices();
+			logger.debug("参数个数："+dl.size());
+			logger.debug("总共获得数据量为："+response1.getData().getCount());
+			for(int i=0;i<dl.size();i++) {				
+				DatastreamsItem di = dl.get(i);
+				List<DatapointsItem> ld =di.getDatapoints();
+				if("DO".equals(di.getId()) ) {
+					/*System.out.println("DO数据：");*/
+					for(int j=0;j<ld.size();j++) {
+						DOLsit.add(ld.get(j));
+						/*System.out.println(ld.get(j).getValue());*/
+					}
+				}
+								
+			}
+		}				
+		for(int i = 0 ; i<(24*3+1) ; i++) {
 			Date dateStart1 = new Date();
 			dateStart1.setTime(dateStart.getTime());
-			dateStart1.setMinutes(dateStart1.getMinutes()-10);
+			dateStart1.setMinutes(dateStart1.getMinutes()-3);
 			Date dateEnd1 = new Date();
 			dateEnd1.setTime(dateStart.getTime());
-			dateEnd1.setMinutes(dateEnd1.getMinutes()+10);
-			System.out.println("+++++++++++++++");
+			dateEnd1.setMinutes(dateEnd1.getMinutes()+3);
+
 			String start = sdf1.format(dateStart1) + "T" + sdf2.format(dateStart1);
 			String end = sdf1.format(dateEnd1) + "T" + sdf2.format(dateEnd1);	
-			System.out.println("开始时间："+start);
-			System.out.println("结束时间："+end);
 			
-			GetDatapointsListApi api = new GetDatapointsListApi(null, start, end, device_sn, null, 6000, null, 137,
-					null, null, null, key);
-			BasicResponse<DatapointsList> response = api.executeApi();
-			System.out.println(response.getJson());
-			if(response.errno==0) {
-				List<DatastreamsItem> dl= response.getData().getDevices();
-				logger.debug("获取三日数据");
-				logger.debug("参数个数："+dl.size());
-				logger.debug("总共获得数据量为："+response.getData().getCount());
-				
-				for(int k=0;k<dl.size();k++) {				
-					DatastreamsItem di = dl.get(k);
-					List<DatapointsItem> ld =di.getDatapoints();					
-					/*logger.debug(di.getId()+"参数下数据量："+ld.size());		*/			
-					if("DO".equals(di.getId())) {
-						float sum = 0;						
-						for(int j=0;j<ld.size();j++) {
-							sum += Float.parseFloat((String)ld.get(j).getValue());					
-						}
-						Map<String, Object>	 singlemap = new HashMap<>();
-						singlemap.put("value", (float)(Math.round(sum/ld.size()*100))/100);
-						/*singlemap.put("value", sum/ld.size());*/
-						singlemap.put("at", sdf3.format(dateStart));
-						DOList.add(singlemap);
-					}else if("WT".equals(di.getId())) {					
-						float sum = 0;						
-						for(int j=0;j<ld.size();j++) {
-							sum += Float.parseFloat((String)ld.get(j).getValue());					
-						}
-						Map<String, Object>	 singlemap = new HashMap<>();
-						singlemap.put("value",(float)(Math.round(sum/ld.size()*100))/100);
-						/*singlemap.put("value",sum/ld.size());*/
-						singlemap.put("at", sdf3.format(dateStart));
-						WTList.add(singlemap);
-						
-					}else if("pH".equals(di.getId())) {					
-						float sum = 0;						
-						for(int j=0;j<ld.size();j++) {
-							sum += Float.parseFloat((String)ld.get(j).getValue());					
-						}
-						Map<String, Object>	 singlemap = new HashMap<>();
-						singlemap.put("value", (float)(Math.round(sum/ld.size()*100))/100);
-						/*singlemap.put("value", sum/ld.size());*/
-						singlemap.put("at", sdf3.format(dateStart));
-						pHList.add(singlemap);
-					
-					}
-									
-				}				
+	
+			float sum1 =0;
+			int count1 = 0;
+			float sum2 =0;
+			int count2 = 0;
+			float sum3 =0;
+			int count3 = 0;
+			for(DatapointsItem dpsi:pHList) {
+				String at = dpsi.getAt();
+				 try {
+					Date dt = sdf3.parse(at);					
+					if(dt.getTime()>dateStart1.getTime()&&dt.getTime()<dateEnd1.getTime()) {
+						/*System.out.println(dt);	*/			
+						sum1 += Float.parseFloat((String)dpsi.getValue());
+						count1++;
+					}					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			for(DatapointsItem dpsi:DOLsit) {
+				String at = dpsi.getAt();
+				 try {
+					Date dt = sdf3.parse(at);					
+					if(dt.getTime()>dateStart1.getTime()&&dt.getTime()<dateEnd1.getTime()) {
+			
+						sum2 += Float.parseFloat((String)dpsi.getValue());
+						count2++;
+					}					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			for(DatapointsItem dpsi:WTList) {
+				String at = dpsi.getAt();
+				 try {
+					Date dt = sdf3.parse(at);					
+					if(dt.getTime()>dateStart1.getTime()&&dt.getTime()<dateEnd1.getTime()) {				
+						sum3 += Float.parseFloat((String)dpsi.getValue());
+						count3++;
+					}					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			pHList1.add(new DatapointsItem(sdf3.format(dateStart), ((float)(Math.round(sum1/count1*100))/100)==0?null:(float)(Math.round(sum1/count1*100))/100));
+			DOLsit1.add(new DatapointsItem(sdf3.format(dateStart), ((float)(Math.round(sum2/count2*100))/100)==0?null:(float)(Math.round(sum2/count2*100))/100));
+			WTList1.add(new DatapointsItem(sdf3.format(dateStart), ((float)(Math.round(sum3/count3*100))/100)==0?null:(float)(Math.round(sum3/count3*100))/100));
 			dateStart.setMinutes(dateStart.getMinutes()+60);
 		}
+		
 		List<String> doatList = new ArrayList<>();
 		List<Float> dovalueList = new ArrayList<>();
 		Map<String, Object> DOMap = new HashMap<>();
-		for(int t = 0;t<DOList.size();t++) {
-			doatList.add((String) DOList.get(t).get("at"));
-			dovalueList.add((Float) DOList.get(t).get("value"));
+		for(int t = 0;t<DOLsit1.size();t++) {
+			doatList.add((String) DOLsit1.get(t).getAt());
+			dovalueList.add((Float) DOLsit1.get(t).getValue());
 		}
 		DOMap.put("value", dovalueList);
 		DOMap.put("at", doatList);
@@ -1448,9 +1399,9 @@ public class EquipmentService {
 		List<String> wtatList = new ArrayList<>();
 		List<Float> wtvalueList = new ArrayList<>();
 		Map<String, Object> WTMap = new HashMap<>();
-		for(int t = 0;t<WTList.size();t++) {
-			wtatList.add((String) WTList.get(t).get("at"));
-			wtvalueList.add((Float) WTList.get(t).get("value"));
+		for(int t = 0;t<WTList1.size();t++) {
+			wtatList.add((String) WTList1.get(t).getAt());
+			wtvalueList.add((Float) WTList1.get(t).getValue());
 		}
 		WTMap.put("value", wtvalueList);
 		WTMap.put("at", wtatList);
@@ -1458,12 +1409,17 @@ public class EquipmentService {
 		List<String> phatList = new ArrayList<>();
 		List<Float> phvalueList = new ArrayList<>();
 		Map<String, Object> pHMap = new HashMap<>();
-		for(int t = 0;t<pHList.size();t++) {
-			phatList.add((String) pHList.get(t).get("at"));
-			phvalueList.add((Float) pHList.get(t).get("value"));
+		for(int t = 0;t<pHList1.size();t++) {
+			phatList.add((String) pHList1.get(t).getAt());
+			phvalueList.add((Float) pHList1.get(t).getValue());
 		}
 		pHMap.put("value", phvalueList);
 		pHMap.put("at", phatList);
+		
+		mapReturn.put("pH", pHMap);
+		mapReturn.put("DO", DOMap);
+		mapReturn.put("WT", WTMap);
+		
 		
 		Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
 		if(sensor!=null) {
@@ -1481,165 +1437,12 @@ public class EquipmentService {
 			mapReturn.put("Limit", limit);
 			
 		}
-		
-		mapReturn.put("pH", pHMap);
-		mapReturn.put("DO", DOMap);
-		mapReturn.put("WT", WTMap);
 		return mapReturn;
 	}
 	
 	
 	
-	/*public Map<String, Object> dataAll(String device_sn, int way,int day) {
-		List<Sensor_Data> list = new ArrayList<>();
-		if (way > 0) {
-			list = sensor_DataDao.sevenData(device_sn, way,day);
-		} else {
-			list = sensor_DataDao.sevenData(device_sn,day);
-		}
-		List<PH> phs = new ArrayList<>();
-		List<Oxygen> oxygens = new ArrayList<>();
-		List<Temperature> temperatures = new ArrayList<>();
-		PH ph = null;
-		Oxygen oxygen = null;
-		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		//SimpleDateFormat isSameDay = new SimpleDateFormat("MM-dd");
-		//String temp = "";
-		List<Sensor_Data> splitlist = new ArrayList<>();
-		int i = 0;
-		while (i < 2016) {
-			try {
-				splitlist.add(list.get(i));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				break;
-			}
-			i = i + 8;
-		}
-		if (!list.isEmpty()) {
-		//	addVirtualData(splitlist);
-			for (Sensor_Data sensor_Data : splitlist) {
-				if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
-					temp = isSameDay.format(sensor_Data.getReceiveTime());
-					ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
-					oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
-					temperature = new Temperature(sensor_Data.getWater_temperature(),
-							isSameDay.format(sensor_Data.getReceiveTime()));
-					phs.add(ph);
-					oxygens.add(oxygen);
-					temperatures.add(temperature);
-				} else {
-				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
-				temperature = new Temperature(sensor_Data.getWater_temperature(),
-						format.format(sensor_Data.getReceiveTime()));
-				phs.add(ph);
-				oxygens.add(oxygen);
-				temperatures.add(temperature);
-				//}
-			}
-		}
-
-		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-		map.put("phs", phs);
-		map.put("oxygens", oxygens);
-		map.put("temperatures", temperatures);
-		return map;//
-	}*/
-
-/*	public Map<String, Object> pcDataToday(String device_sn, int way) {
-		List<Sensor_Data> list = new ArrayList<>();
-		if (way > 0) {
-			list = sensor_DataDao.today(device_sn, way);
-		} else {
-			list = sensor_DataDao.today(device_sn);
-		}
-		//addVirtualData(list);
-		List<PH> phs = new ArrayList<>();
-		List<Oxygen> oxygens = new ArrayList<>();
-		List<Temperature> temperatures = new ArrayList<>();
-		PH ph = null;
-		Oxygen oxygen = null;
-		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Sensor_Data sensor_Data = null;
-		for (int i = RandomUtils.nextInt(6); i < 288; i = i + 6) {
-			try {
-				sensor_Data = list.get(i);
-				ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-				oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
-				temperature = new Temperature(sensor_Data.getWater_temperature(),
-						format.format(sensor_Data.getReceiveTime()));
-				phs.add(ph);
-				oxygens.add(oxygen);
-				temperatures.add(temperature);
-			} catch (Exception e) {
-				break;
-			}
-		}
-		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-		map.put("phs", phs);
-		map.put("oxygens", oxygens);
-		map.put("temperatures", temperatures);
-		return map;//
-	}*/
-
-/*	public Map<String, Object> pcDataAll(String device_sn, int way,int day) {
-		List<Sensor_Data> list = new ArrayList<>();
-		if (way > 0) {
-			list = sensor_DataDao.sevenData(device_sn, way,day);
-		} else {
-			list = sensor_DataDao.sevenData(device_sn,day);
-		}
-		List<PH> phs = new ArrayList<>();
-		List<Oxygen> oxygens = new ArrayList<>();
-		List<Temperature> temperatures = new ArrayList<>();
-		PH ph = null;
-		Oxygen oxygen = null;
-		Temperature temperature = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		//SimpleDateFormat isSameDay = new SimpleDateFormat("MM-dd");
-		//String temp = "";
-		List<Sensor_Data> splitlist = new ArrayList<>();
-		int i = 0;
-		while (i < 2016) {
-			try {
-				splitlist.add(list.get(i));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				break;
-			}
-			i = i + 8;
-		}
-		//addVirtualData(splitlist);
-		for (Sensor_Data sensor_Data : splitlist) {
-			if (!temp.equals(isSameDay.format(sensor_Data.getReceiveTime()))) {
-				temp = isSameDay.format(sensor_Data.getReceiveTime());
-				ph = new PH(sensor_Data.getpH_value(), isSameDay.format(sensor_Data.getReceiveTime()));
-				oxygen = new Oxygen(sensor_Data.getOxygen(), isSameDay.format(sensor_Data.getReceiveTime()));
-				temperature = new Temperature(sensor_Data.getWater_temperature(),
-						isSameDay.format(sensor_Data.getReceiveTime()));
-				phs.add(ph);
-				oxygens.add(oxygen);
-				temperatures.add(temperature);
-			} else {
-			ph = new PH(sensor_Data.getpH_value(), format.format(sensor_Data.getReceiveTime()));
-			oxygen = new Oxygen(sensor_Data.getOxygen(), format.format(sensor_Data.getReceiveTime()));
-			temperature = new Temperature(sensor_Data.getWater_temperature(),
-					format.format(sensor_Data.getReceiveTime()));
-			phs.add(ph);
-			oxygens.add(oxygen);
-			temperatures.add(temperature);
-			}
-		}
-
-		Map<String, Object> map = RESCODE.SUCCESS.getJSONRES();
-		map.put("phs", phs);
-		map.put("oxygens", oxygens);
-		map.put("temperatures", temperatures);
-		return map;//
-	}*/
+	
 
 	public Map<String, Object> addTimer(Timer timer) {
 		timerDao.save(timer);
@@ -1689,31 +1492,7 @@ public class EquipmentService {
 	
 	public Map<String, Object> modifyEquipment(String device_sn, Object newEquipment) {
 		newEquipment.getClass().getName();
-		/*String type = null;
-		Map<String, Object> map = null;
-		try {
-			type = device_sn.substring(0, 2);
-		} catch (Exception e) {
-			return RESCODE.DEVICESNS_INVALID.getJSONRES();
-		}
-		if (type.equals("01") || type.equals("02")) {
-			AIO aio = aioDao.findAIOByDeviceSns(device_sn);
-			aio.setName(name);
-			map = RESCODE.SUCCESS.getJSONRES();
-			map.put("equipment", aio);
-		} else if (type.equals("03")) {
-			Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
-			sensor.setName(name);
-			map = RESCODE.SUCCESS.getJSONRES();
-			map.put("equipment", sensor);
-		} else if (type.equals("04")) {
-			Controller controller = controllerDao.findControllerByDeviceSns(device_sn);
-			controller.setName(name);
-			map = RESCODE.SUCCESS.getJSONRES();
-			map.put("equipment", controller);
-		}
-
-		return map;*/
+	
 		return null;
 	}
 	
@@ -1863,17 +1642,17 @@ public class EquipmentService {
 		String ds_id= obj1.getString("ds_id");//数据流
 		String value = obj1.getString("value");//触发时的值，不能直接使用，分数值和map
 		double va = Double.parseDouble(value);
-		logger.debug("dev_id"+dev_id);
-		logger.debug("数据流"+ds_id);
-		logger.debug("触发器类型"+triggertype);
-		System.out.println(""+triggerid);
-		System.out.println("数值为："+value);
+		logger.debug("dev_id："+dev_id);
+		logger.debug("数据流："+ds_id);
+		logger.debug("触发器类型："+triggertype);
+		logger.debug("触发器id："+triggerid);
+		logger.debug("数值为："+value);
+		
 		//根据触发器id获得触发器，根据设备编号获得传感器（传感器只有一路），为传感器设置状态
 		//状态值0：正常，1：预警，2：危险
 		Dev_Trigger trigger = dev_triggerDao.findTriggerBytriggerId(triggerid);
 		if(trigger!=null) {
-			System.out.println("触发器本地类型："+trigger.getTrigertype());
-			
+			logger.debug("触发器本地类型："+trigger.getTrigertype());
 			//控制器的缺相断电触发
 			if(trigger.getTrigertype()==3) {
 				String device_sn = trigger.getDevice_sn();
@@ -1885,7 +1664,7 @@ public class EquipmentService {
 					
 					String json = "{\"deviceName\":\"" +controllerList.get(0).getDevice_sn()+ "\",\"way\":" + 0 + "}";
 					try {
-						System.out.println("准备启用阿里云语音服务");
+						logger.debug("准备启用阿里云语音服务");
 						SingleCallByTtsResponse scbtr =VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
 					} catch (ClientException e) {
 						// TODO Auto-generated catch block
@@ -1897,7 +1676,7 @@ public class EquipmentService {
 					WechatSendMessageUtils.sendWechatAlarmMessages("控制器第"+i+"路缺相", publicOpenID, device_sn);
 					String json = "{\"deviceName\":\"" + controllerList.get(i-1).getName() + "\",\"way\":" + i + "}";
 					try {
-						System.out.println("准备启用阿里云语音服务");
+						logger.debug("准备启用阿里云语音服务");
 						VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
 					} catch (ClientException e) {
 						// TODO Auto-generated catch block
@@ -2099,7 +1878,7 @@ public class EquipmentService {
         	/*
 	    	 *溶解氧
 	    	 */
-        	
+       	
 	    	Map threshold12 = new HashMap<String, Float>();
 			threshold12.put("lolmt", 2);
 			threshold12.put("uplmt", 5);
@@ -2110,6 +1889,7 @@ public class EquipmentService {
 	    	 * 水温
 	    	 */
 	    	 int trigger21 = addTrigger("WT", device_sn, "<", 18, 0,0);
+	    	 int trigger22 = addTrigger("WT", device_sn, ">", 30, 0,0);
 	    	 Map threshold23 = new HashMap<String, Float>();
              threshold23.put("lolmt", 18);
              threshold23.put("uplmt",30 );
@@ -2135,7 +1915,7 @@ public class EquipmentService {
      		threshold35.put("lolmt", 7.8);
      		threshold35.put("uplmt", 8.5);
      		 int trigger35 = addTrigger("pH", device_sn, "inout", threshold34, 4,0);
-    		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
+    		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger22==1&&trigger23==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
      			 return 1;
      		 }else {
      			 return 0;
@@ -2157,6 +1937,7 @@ public class EquipmentService {
     	 * 水温
     	 */
     	 int trigger21 = addTrigger("WT", device_sn, "<", 18, 0,0);
+    	 int trigger22 = addTrigger("WT", device_sn, ">", 30, 0,0);
     	 Map threshold23 = new HashMap<String, Float>();
     	 threshold23.put("lolmt", 18);
          threshold23.put("uplmt",30 );
@@ -2182,7 +1963,7 @@ public class EquipmentService {
   		threshold35.put("lolmt", 7.8);
   		threshold35.put("uplmt", 8.5);
   		 int trigger35 = addTrigger("pH", device_sn, "inout", threshold34, 4,0);
- 		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
+ 		 if(trigger11==1&&trigger12==1&&trigger21==1&&trigger22==1&&trigger23==1&&trigger31==1&&trigger32==1&&trigger33==1&&trigger34==1) {
  			 return 1;
  		 }else {
  			 return 0;
@@ -2354,7 +2135,7 @@ public class EquipmentService {
 				return 0;
 			}else return 1;
 		}catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.debug(e.getMessage());
 			return 1;
 		}
 	}
@@ -2503,6 +2284,7 @@ public class EquipmentService {
 	
 	public Map<String, Object> getDianosing(int pondId){
 		//根据pondId获得池塘各个参数与分析结果和解决方案
+		logger.debug("根据"+pondId+"获得池塘各个参数与分析结果和解决方案");
 		Map<String, Object> diaResult = new HashMap<>();
 		String result = null;//参数分析结果
 		String solution = null;//解决方案
@@ -2602,7 +2384,7 @@ public class EquipmentService {
 		 * 优先使用传感器设备数据
 		 * 目前，只分析一台设备的数据
 		 */
-		logger.debug("塘口"+pondId);
+		logger.debug("分析塘口："+pondId+"的数据");
 
 		
 		List<Sensor> sensorList= sensorDao.findSensorsByPondId(pondId);

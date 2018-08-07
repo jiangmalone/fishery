@@ -30,9 +30,11 @@ import com.geariot.platform.fishery.timer.CMDUtils;
 import com.geariot.platform.fishery.utils.VmsUtils;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
+import cmcc.iot.onenet.javasdk.api.datastreams.GetDatastreamApi;
 import cmcc.iot.onenet.javasdk.api.device.GetDevicesStatus;
 import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
 import cmcc.iot.onenet.javasdk.response.BasicResponse;
+import cmcc.iot.onenet.javasdk.response.datastreams.DatastreamsResponse;
 import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
 import cmcc.iot.onenet.javasdk.response.device.DevicesStatusList;
 
@@ -69,6 +71,7 @@ public class TimerTask {
 			logger.debug("时间不为空");
 			long now = sdf.parse(sdf.format(new Date())).getTime();			
 			for (Timer timer : lt) {
+				int way = timer.getWay();
 				//60000毫秒=1*60*1000等于5分钟，可能会有处理定时任务上的时间误差所以定个5分钟
 				String device_sn = timer.getDevice_sn();
 				List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(device_sn, timer.getWay());
@@ -78,35 +81,85 @@ public class TimerTask {
 					WXUser wxUser = wxUserDao.findUserByRelation(controllerList.get(0).getRelation());
 					String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
 					logger.debug("publicOpenID:"+publicOpenID);
-					if (now-sdf.parse(timer.getStartTime()).getTime() <= 60000 && now-sdf.parse(timer.getStartTime()).getTime() >= 0) {
-						logger.debug("检测到数据中有待执行的定时任务，准备向终端发送打开增氧机的命令");
-						WechatSendMessageUtils.sendWechatOnOffMessages("定时开始，准备打开增氧机", publicOpenID, device_sn);
-						int way = timer.getWay();
-						String divsn=timer.getDevice_sn();
-						String text = "KM"+(way+1)+":"+1;
-						int results = CMDUtils.sendStrCmd(divsn,text);					
-						if(results == 0) {
-							WechatSendMessageUtils.sendWechatOnOffMessages("自动打开"+controllertype[controllerList.get(0).getType()]+"成功", publicOpenID, controllerList.get(0).getDevice_sn());
-						}else {//打开
-							WechatSendMessageUtils.sendWechatOnOffMessages("自动打开"+controllertype[controllerList.get(0).getType()]+"失败", publicOpenID, controllerList.get(0).getDevice_sn());
-						}
-					}
-					if (now-sdf.parse(timer.getEndTime()).getTime() <= 60000 && now-sdf.parse(timer.getEndTime()).getTime() >= 0) {
-						logger.debug("检测到数据中有待执行的定时任务，准备向终端发送关闭增氧机的命令");
-						WechatSendMessageUtils.sendWechatOnOffMessages("定时结束，准备关闭增氧机", publicOpenID, device_sn);
-						int way = timer.getWay();
-						String divsn=timer.getDevice_sn();
-						String text = "KM"+(way+1)+":"+0;
-						int results = CMDUtils.sendStrCmd(divsn,text);
-						if(results==0) {
-							WechatSendMessageUtils.sendWechatOnOffMessages("自动关闭"+controllertype[controllerList.get(0).getType()]+"成功", publicOpenID, controllerList.get(0).getDevice_sn());
-						}else {//打开
-							WechatSendMessageUtils.sendWechatOnOffMessages("自动关闭"+controllertype[controllerList.get(0).getType()]+"失败", publicOpenID, controllerList.get(0).getDevice_sn());
-						}
-						
-					}
-				}				
-			}
+					
+					GetDevicesStatus apiOnline = new GetDevicesStatus(device_sn,key);
+			        BasicResponse<DevicesStatusList> responseOnline = apiOnline.executeApi();
+			        if(responseOnline.errno==0) {
+			        	boolean isOnline = responseOnline.data.getDevices().get(0).getIsonline();
+			        	if(isOnline) {
+			        		/*
+			        		 * 获取增氧机相关数据流
+			        		 */
+			        		GetLatesDeviceData api = new GetLatesDeviceData(device_sn,key);
+			     	        BasicResponse<DeciceLatestDataPoint> response = api.executeApi();				     	       
+			     	        List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
+			     	       if(DatastreamsList == null) {
+			     	    	   logger.debug("无数据流");
+			     	       }else {
+			     	    	  int PF = 0;
+			     	    	  int KM = 0;
+			     	    	  int DP  = 0;
+			     	    	  for(int i=0;i<DatastreamsList.size();i++) {
+				     	        	if(DatastreamsList.get(i).getId().equals("PF")) {
+				     	        		PF = Integer.parseInt(DatastreamsList.get(i).getValue().toString()) ;						     	        		
+				     	        	}else if(DatastreamsList.get(i).getId().equals("KM"+(way+1))) {
+				     	        		KM = Integer.parseInt(DatastreamsList.get(i).getValue().toString()) ;	
+				     	        	}else if(DatastreamsList.get(i).getId().equals("DP"+(way+1))) {
+				     	        		DP = Integer.parseInt(DatastreamsList.get(i).getValue().toString()) ;	
+				     	        	}					     	   					     	        	
+				     	      }
+			     	    	  
+			     	    	  
+			     	    	  
+			     	    	 if (now-sdf.parse(timer.getStartTime()).getTime() <= 60000 && now-sdf.parse(timer.getStartTime()).getTime() >= 0) {
+			     	    		logger.debug("检测到数据中有待执行的定时任务，准备向终端发送打开增氧机的命令");
+								WechatSendMessageUtils.sendWechatOnOffMessages("定时开始，准备打开增氧机", publicOpenID, device_sn);
+								if(PF==0&&DP==0) {
+				     	    		  logger.debug("增氧机未断电且不缺相");
+				     	    		 if(KM != 1) {
+						     	    		logger.debug("增氧机未打开，向增氧机发送打开命令。");
+											String divsn=timer.getDevice_sn();
+											String text = "KM"+(way+1)+":"+1;
+											int results = CMDUtils.sendStrCmd(divsn,text);					
+											if(results == 0) {
+												WechatSendMessageUtils.sendWechatOnOffMessages("自动打开"+controllertype[controllerList.get(0).getType()]+"成功", publicOpenID, controllerList.get(0).getDevice_sn());
+											}else {//打开
+												WechatSendMessageUtils.sendWechatOnOffMessages("自动打开"+controllertype[controllerList.get(0).getType()]+"失败", publicOpenID, controllerList.get(0).getDevice_sn());
+											}
+					     	    	  }else {
+					     	    		  	logger.debug("增氧机已经打开，不进行打开操作");
+					     	    	  }				     	    					     	    		  
+				     	    	  }
+			     	    	 }
+			     	    	 
+			     	    	if (now-sdf.parse(timer.getEndTime()).getTime() <= 60000 && now-sdf.parse(timer.getEndTime()).getTime() >= 0) {
+			     	    		logger.debug("检测到数据中有待执行的定时任务，准备向终端发送关闭增氧机的命令");
+								WechatSendMessageUtils.sendWechatOnOffMessages("定时结束，准备关闭增氧机", publicOpenID, device_sn);
+								if(PF==0&&DP==0) {
+				     	    		  logger.debug("增氧机未断电且不缺相");
+				     	    		 if(KM != 0) {						     	    	
+					     	    		logger.debug("增氧机未关闭，向增氧机发送关闭命令！");
+										String divsn=timer.getDevice_sn();
+										String text = "KM"+(way+1)+":"+0;
+										int results = CMDUtils.sendStrCmd(divsn,text);
+										if(results==0) {
+											WechatSendMessageUtils.sendWechatOnOffMessages("自动关闭"+controllertype[controllerList.get(0).getType()]+"成功", publicOpenID, controllerList.get(0).getDevice_sn());
+										}else {//打开
+											WechatSendMessageUtils.sendWechatOnOffMessages("自动关闭"+controllertype[controllerList.get(0).getType()]+"失败", publicOpenID, controllerList.get(0).getDevice_sn());
+										}
+				     	    		 }
+								
+								}			     	    	  			     	    	 			     	    	 		     	    	  				     	    	  
+			     	    	}				     	        
+			        	}			        	
+			        }else {
+			        	logger.debug("增氧机:"+device_sn+"不在线");
+			        }													
+				
+			       }
+				}
+			}				
+
 		}		
 		logger.debug("定时任务结束");
 	}

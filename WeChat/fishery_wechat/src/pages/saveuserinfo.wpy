@@ -172,6 +172,14 @@ export default class Saveuserinfo extends wepy.page {
     }
   }
   onLoad(option) {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
     this.info = this.$parent.globalData
     console.log(this.info)
     this.$apply()

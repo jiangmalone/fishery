@@ -109,7 +109,6 @@
     </view>
     <button open-type="getUserInfo" class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}"
             @tap="confirminfo">注册/登录</button>
-    <!--<button class="{{verificationCode!==''&&phoneNumber!==''?'lo-but able':'lo-but disable'}}" @tap="confirminfo">注册/登录</button>-->
   </view>
 </template>
 <script>

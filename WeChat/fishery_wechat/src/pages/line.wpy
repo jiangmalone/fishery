@@ -498,12 +498,6 @@ export default class Line extends wepy.page {
               },
               animation: false,
               color: ['#8dc1aa'],
-              tooltip: {
-                trigger: 'none',
-                axisPointer: {
-                  type: 'cross'
-                }
-              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -534,14 +528,6 @@ export default class Line extends wepy.page {
                     }
                   }
                 },
-                axisPointer: {
-                  label: {
-                    show: true,
-                    formatter: function (params) {
-                      return echarts.format.formatTime('hh:mm', params.value)
-                    }
-                  }
-                },
                 splitLine: {
                   show: false
                 }
@@ -553,18 +539,10 @@ export default class Line extends wepy.page {
                     color: '#c4c4c4'
                   }
                 },
-                // max: res.data.Limit?res.data.Limit.up_limit:,
                 splitLine: {
                   lineStyle: {
                     color: '#e9e7de',
                     type: 'dashed'
-                  }
-                },
-                axisPointer: {
-                  label: {
-                    formatter: function (params) {
-                      return params.value.toFixed(2)
-                    }
                   }
                 },
               }],
@@ -623,12 +601,6 @@ export default class Line extends wepy.page {
               },
               animation: false,
               color: ['#8dc1aa'],
-              tooltip: {
-                trigger: 'none',
-                axisPointer: {
-                  type: 'cross'
-                }
-              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -659,14 +631,6 @@ export default class Line extends wepy.page {
                     }
                   }
                 },
-                axisPointer: {
-                  label: {
-                    show: true,
-                    formatter: function (params) {
-                      return echarts.format.formatTime('hh:mm', params.value)
-                    }
-                  }
-                },
                 splitLine: {
                   show: false
                 }
@@ -682,13 +646,6 @@ export default class Line extends wepy.page {
                   lineStyle: {
                     color: '#e9e7de',
                     type: 'dashed'
-                  }
-                },
-                axisPointer: {
-                  label: {
-                    formatter: function (params) {
-                      return params.value.toFixed(2)
-                    }
                   }
                 },
               }],
@@ -708,12 +665,6 @@ export default class Line extends wepy.page {
               },
               animation: false,
               color: ['#8dc1aa'],
-              tooltip: {
-                trigger: 'none',
-                axisPointer: {
-                  type: 'cross'
-                }
-              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -744,14 +695,6 @@ export default class Line extends wepy.page {
                     }
                   }
                 },
-                axisPointer: {
-                  label: {
-                    show: true,
-                    formatter: function (params) {
-                      return echarts.format.formatTime('hh:mm', params.value)
-                    }
-                  }
-                },
                 splitLine: {
                   show: false
                 }
@@ -767,13 +710,6 @@ export default class Line extends wepy.page {
                   lineStyle: {
                     color: '#e9e7de',
                     type: 'dashed'
-                  }
-                },
-                axisPointer: {
-                  label: {
-                    formatter: function (params) {
-                      return params.value.toFixed(2)
-                    }
                   }
                 },
               }],
@@ -814,12 +750,6 @@ export default class Line extends wepy.page {
               },
               animation: false,
               color: ['#8dc1aa'],
-              tooltip: {
-                trigger: 'none',
-                axisPointer: {
-                  type: 'cross'
-                }
-              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -843,14 +773,6 @@ export default class Line extends wepy.page {
                     }
                   }
                 },
-                axisPointer: {
-                  label: {
-                    show: true,
-                    formatter: function (params) {
-                      return echarts.format.formatTime('hh:mm\nMM-dd', params.value)
-                    }
-                  }
-                },
                 splitLine: {
                   show: false
                 }
@@ -862,18 +784,10 @@ export default class Line extends wepy.page {
                     color: '#c4c4c4'
                   }
                 },
-                // max: res.data.Limit?res.data.Limit.up_limit:,
                 splitLine: {
                   lineStyle: {
                     color: '#e9e7de',
                     type: 'dashed'
-                  }
-                },
-                axisPointer: {
-                  label: {
-                    formatter: function (params) {
-                      return params.value.toFixed(2)
-                    }
                   }
                 },
               }],
@@ -932,12 +846,6 @@ export default class Line extends wepy.page {
               },
               animation: false,
               color: ['#8dc1aa'],
-              tooltip: {
-                trigger: 'none',
-                axisPointer: {
-                  type: 'cross'
-                }
-              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -961,14 +869,6 @@ export default class Line extends wepy.page {
                     }
                   }
                 },
-                axisPointer: {
-                  label: {
-                    show: true,
-                    formatter: function (params) {
-                      return echarts.format.formatTime('hh:mm\nMM-dd', params.value)
-                    }
-                  }
-                },
                 splitLine: {
                   show: false
                 }
@@ -984,13 +884,6 @@ export default class Line extends wepy.page {
                   lineStyle: {
                     color: '#e9e7de',
                     type: 'dashed'
-                  }
-                },
-                axisPointer: {
-                  label: {
-                    formatter: function (params) {
-                      return params.value.toFixed(2)
-                    }
                   }
                 },
               }],
@@ -1010,12 +903,6 @@ export default class Line extends wepy.page {
               },
               animation: false,
               color: ['#8dc1aa'],
-              tooltip: {
-                trigger: 'none',
-                axisPointer: {
-                  type: 'cross'
-                }
-              },
               xAxis: [{
                 type: 'category',
                 boundaryGap: false,
@@ -1039,14 +926,6 @@ export default class Line extends wepy.page {
                     }
                   }
                 },
-                axisPointer: {
-                  label: {
-                    show: true,
-                    formatter: function (params) {
-                      return echarts.format.formatTime('hh:mm\nMM-dd', params.value)
-                    }
-                  }
-                },
                 splitLine: {
                   show: false
                 }
@@ -1062,13 +941,6 @@ export default class Line extends wepy.page {
                   lineStyle: {
                     color: '#e9e7de',
                     type: 'dashed'
-                  }
-                },
-                axisPointer: {
-                  label: {
-                    formatter: function (params) {
-                      return params.value.toFixed(2)
-                    }
                   }
                 },
               }],
@@ -1149,12 +1021,6 @@ export default class Line extends wepy.page {
                 },
                 animation: false,
                 color: ['#8dc1aa'],
-                tooltip: {
-                  trigger: 'none',
-                  axisPointer: {
-                    type: 'cross'
-                  }
-                },
                 xAxis: [{
                   type: 'category',
                   boundaryGap: false,
@@ -1185,14 +1051,6 @@ export default class Line extends wepy.page {
                       }
                     }
                   },
-                  axisPointer: {
-                    label: {
-                      show: true,
-                      formatter: function (params) {
-                        return echarts.format.formatTime('hh:mm', params.value)
-                      }
-                    }
-                  },
                   splitLine: {
                     show: false
                   }
@@ -1204,18 +1062,10 @@ export default class Line extends wepy.page {
                       color: '#c4c4c4'
                     }
                   },
-                  // max: res.data.Limit?res.data.Limit.up_limit:,
                   splitLine: {
                     lineStyle: {
                       color: '#e9e7de',
                       type: 'dashed'
-                    }
-                  },
-                  axisPointer: {
-                    label: {
-                      formatter: function (params) {
-                        return params.value.toFixed(2)
-                      }
                     }
                   },
                 }],
@@ -1274,12 +1124,6 @@ export default class Line extends wepy.page {
                 },
                 animation: false,
                 color: ['#8dc1aa'],
-                tooltip: {
-                  trigger: 'none',
-                  axisPointer: {
-                    type: 'cross'
-                  }
-                },
                 xAxis: [{
                   type: 'category',
                   boundaryGap: false,
@@ -1310,14 +1154,6 @@ export default class Line extends wepy.page {
                       }
                     }
                   },
-                  axisPointer: {
-                    label: {
-                      show: true,
-                      formatter: function (params) {
-                        return echarts.format.formatTime('hh:mm', params.value)
-                      }
-                    }
-                  },
                   splitLine: {
                     show: false
                   }
@@ -1333,13 +1169,6 @@ export default class Line extends wepy.page {
                     lineStyle: {
                       color: '#e9e7de',
                       type: 'dashed'
-                    }
-                  },
-                  axisPointer: {
-                    label: {
-                      formatter: function (params) {
-                        return params.value.toFixed(2)
-                      }
                     }
                   },
                 }],
@@ -1359,12 +1188,6 @@ export default class Line extends wepy.page {
                 },
                 animation: false,
                 color: ['#8dc1aa'],
-                tooltip: {
-                  trigger: 'none',
-                  axisPointer: {
-                    type: 'cross'
-                  }
-                },
                 xAxis: [{
                   type: 'category',
                   boundaryGap: false,
@@ -1395,14 +1218,6 @@ export default class Line extends wepy.page {
                       }
                     }
                   },
-                  axisPointer: {
-                    label: {
-                      show: true,
-                      formatter: function (params) {
-                        return echarts.format.formatTime('hh:mm', params.value)
-                      }
-                    }
-                  },
                   splitLine: {
                     show: false
                   }
@@ -1418,13 +1233,6 @@ export default class Line extends wepy.page {
                     lineStyle: {
                       color: '#e9e7de',
                       type: 'dashed'
-                    }
-                  },
-                  axisPointer: {
-                    label: {
-                      formatter: function (params) {
-                        return params.value.toFixed(2)
-                      }
                     }
                   },
                 }],
@@ -1483,6 +1291,14 @@ export default class Line extends wepy.page {
       this.$apply()
     }
     onLoad(options) {
+      wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
       if (options.id) {
         this.ind = options.id
       }
@@ -1559,12 +1375,6 @@ export default class Line extends wepy.page {
                   },
                   animation: false,
                   color: ['#8dc1aa'],
-                  tooltip: {
-                    trigger: 'none',
-                    axisPointer: {
-                      type: 'cross'
-                    }
-                  },
                   xAxis: [{
                     type: 'category',
                     boundaryGap: false,
@@ -1594,14 +1404,6 @@ export default class Line extends wepy.page {
                         }
                       }
                     },
-                    axisPointer: {
-                      label: {
-                        show: true,
-                        formatter: function (params) {
-                          return echarts.format.formatTime('hh:mm', params.value)
-                        }
-                      }
-                    },
                     splitLine: {
                       show: false
                     }
@@ -1613,18 +1415,10 @@ export default class Line extends wepy.page {
                         color: '#c4c4c4'
                       }
                     },
-                    // max: res.data.Limit?res.data.Limit.up_limit:,
                     splitLine: {
                       lineStyle: {
                         color: '#e9e7de',
                         type: 'dashed'
-                      }
-                    },
-                    axisPointer: {
-                      label: {
-                        formatter: function (params) {
-                          return params.value.toFixed(2)
-                        }
                       }
                     },
                   }],
@@ -1683,12 +1477,6 @@ export default class Line extends wepy.page {
                   },
                   animation: false,
                   color: ['#8dc1aa'],
-                  tooltip: {
-                    trigger: 'none',
-                    axisPointer: {
-                      type: 'cross'
-                    }
-                  },
                   xAxis: [{
                     type: 'category',
                     boundaryGap: false,
@@ -1719,14 +1507,6 @@ export default class Line extends wepy.page {
                         }
                       }
                     },
-                    axisPointer: {
-                      label: {
-                        show: true,
-                        formatter: function (params) {
-                          return echarts.format.formatTime('hh:mm', params.value)
-                        }
-                      }
-                    },
                     splitLine: {
                       show: false
                     }
@@ -1742,13 +1522,6 @@ export default class Line extends wepy.page {
                       lineStyle: {
                         color: '#e9e7de',
                         type: 'dashed'
-                      }
-                    },
-                    axisPointer: {
-                      label: {
-                        formatter: function (params) {
-                          return params.value.toFixed(2)
-                        }
                       }
                     },
                   }],
@@ -1768,12 +1541,6 @@ export default class Line extends wepy.page {
                   },
                   animation: false,
                   color: ['#8dc1aa'],
-                  tooltip: {
-                    trigger: 'none',
-                    axisPointer: {
-                      type: 'cross'
-                    }
-                  },
                   xAxis: [{
                     type: 'category',
                     boundaryGap: false,
@@ -1804,14 +1571,6 @@ export default class Line extends wepy.page {
                         }
                       }
                     },
-                    axisPointer: {
-                      label: {
-                        show: true,
-                        formatter: function (params) {
-                          return echarts.format.formatTime('hh:mm', params.value)
-                        }
-                      }
-                    },
                     splitLine: {
                       show: false
                     }
@@ -1827,13 +1586,6 @@ export default class Line extends wepy.page {
                       lineStyle: {
                         color: '#e9e7de',
                         type: 'dashed'
-                      }
-                    },
-                    axisPointer: {
-                      label: {
-                        formatter: function (params) {
-                          return params.value.toFixed(2)
-                        }
                       }
                     },
                   }],

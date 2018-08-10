@@ -651,6 +651,14 @@ export default class Addcontroler extends wepy.page {
     }
   }
   onLoad(options) {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
     // 获取url中参数（设备号和操作类型）
     if (options.number) {
       this.equimentNum = options.number

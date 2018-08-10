@@ -88,8 +88,8 @@ export default class extends wepy.app {
     life: '',
     location: '',
     weather: '',
-    // relation: 'WX10',
-    relation: 'WX44',
+    relation: 'WX10',
+    // relation: 'WX44',
     currentId: 0,
     device_sn: null,
     login: {

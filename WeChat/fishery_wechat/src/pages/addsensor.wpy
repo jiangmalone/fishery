@@ -391,6 +391,14 @@ export default class Addsensor extends wepy.page {
     }
   }
   onLoad(options) {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
     if (options.number) {
       this.equimentNum = options.number
       console.log(this.equimentNum)

@@ -3,49 +3,30 @@ export default class WxCanvas {
     this.ctx = ctx;
     this.canvasId = canvasId;
     this.chart = null;
-
-    // this._initCanvas(zrender, ctx);
     this._initStyle(ctx);
     this._initEvent();
   }
-
   getContext(contextType) {
     if (contextType === '2d') {
       return this.ctx;
     }
   }
-
-  // canvasToTempFilePath(opt) {
-  //   if (!opt.canvasId) {
-  //     opt.canvasId = this.canvasId;
-  //   }
-
-  //   return wx.canvasToTempFilePath(opt, this);
-  // }
-
   setChart(chart) {
     this.chart = chart;
   }
-
   attachEvent () {
-    // noop
   }
-
   detachEvent() {
-    // noop
   }
-
   _initCanvas(zrender, ctx) {
     zrender.util.getContext = function () {
       return ctx;
     };
-
     zrender.util.$override('measureText', function (text, font) {
       ctx.font = font || '12px sans-serif';
       return ctx.measureText(text);
     });
   }
-
   _initStyle(ctx) {
     var styles = ['fillStyle', 'strokeStyle', 'globalAlpha',
       'textAlign', 'textBaseAlign', 'shadow', 'lineWidth',
@@ -62,7 +43,6 @@ export default class WxCanvas {
         }
       });
     });
-
     ctx.createRadialGradient = () => {
       return ctx.createCircularGradient(arguments);
     };

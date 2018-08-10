@@ -271,6 +271,14 @@ export default class Addtangkou extends wepy.page {
     }
   }
   onLoad(options) {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
     this.action = options.action ? options.action : 'add'
     this.fishlist = options.select ? JSON.parse(options.select) : []
     this.tangkouinfo = options.type ? JSON.parse(options.type) : this.tangkouinfo

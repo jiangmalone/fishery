@@ -101,7 +101,6 @@
 <template>
   <view class="diagnosis">
     <!--列表-->
-    <!--<repeat wx:for="{{dataInfo}}" wx:key="index" item="item" class="diaBox" @tap="openModal">-->
     <view class="diaBox" wx:for="{{dataInfo}}" wx:key="index" id="{{index}}" wx:if="{{item.result!==''}}" @tap="openModal">
       <!--标题-->
       <view class="diaTitle">
@@ -170,6 +169,14 @@
     events = {}
     onLoad() {
       wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
+      wepy.request({
         url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/analysisData',
         data: {
           relation: this.$parent.globalData.relation
@@ -178,10 +185,6 @@
         success: res => {
           this.dataInfo = res.data
           this.$apply()
-          // Analysis:""
-          // pondName:"2222asggg"
-          // result:"水体溶氧最小值0.0，最大值0.0，均值为0.0。PH最小值0.0，最大值0.0，均值为0.0。水温最小值0.0，最大值0.0，均值为0.0。"
-          // solution:
         }
       })
     }

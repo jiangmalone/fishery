@@ -223,11 +223,14 @@ export default class Autoset extends wepy.page {
             wepy.showToast({title: '请填写高限', duration: 1500, icon: 'none'})
             return 0
           }
-          if (this.limit.low_limit >= this.limit.up_limit) {
+          let low = Number(this.limit.low_limit)
+          let up = Number(this.limit.up_limit)
+          let high = Number(this.limit.high_limit)
+          if (low >= up) {
             wepy.showToast({title: '错误：上限必须高于下限', duration: 1500, icon: 'none'})
             return 0
-          } else if (this.limit.up_limit >= this.limit.high_limit) {
-            wepy.showToast({title: '错误：上限必须高于下限', duration: 1500, icon: 'none'})
+          } else if (up >= high) {
+            wepy.showToast({title: '错误：高限必须高于上限', duration: 1500, icon: 'none'})
             return 0
           }
           let timeinfo = {
@@ -303,6 +306,14 @@ export default class Autoset extends wepy.page {
     }
   }
   onLoad(options) {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
     let data = JSON.parse(options.data)
     console.log(options)
     this.itemdata = data

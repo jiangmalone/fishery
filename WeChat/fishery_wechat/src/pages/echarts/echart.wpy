@@ -21,7 +21,6 @@ export default class echart extends wepy.component {
       type: String,
       default: 'ec-canvas',
     },
-    // canvasId:String,
     onInit: {
       required: true,
       type: Function,
@@ -34,7 +33,7 @@ export default class echart extends wepy.component {
   };
 
   onLoad() {
-    // this.canvasIds = this.props.canvasIds
+  
     console.log('canvasiD',typeof(this.canvasId))
     if (!this.data.ec) {
       console.warn(

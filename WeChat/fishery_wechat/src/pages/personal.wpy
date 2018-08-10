@@ -233,6 +233,14 @@ export default class Personal extends wepy.page {
     }
   }
   onLoad() {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
     this.name = this.$parent.globalData.name
     this.headImg = this.$parent.globalData.headImg
     this.$apply()

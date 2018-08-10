@@ -64,10 +64,15 @@ export default class Equimentsuccess extends wepy.page {
       })
     }
   }
-  // onLoad () {
-  //   wepy.switchTab({
-  //     url: 'home'
-  //   })
-  // }
+  onLoad () {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
+  }
 }
 </script>

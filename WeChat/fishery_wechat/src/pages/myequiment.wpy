@@ -217,6 +217,7 @@ export default class Myequiment extends wepy.page {
         content: `是否删除设备：${item.id}`,
         success: (res) => {
           if (res.confirm) {
+            wepy.showLoading()
             wepy.request({
               url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/delEquipments',
               data: {
@@ -232,6 +233,9 @@ export default class Myequiment extends wepy.page {
                   console.log(this.equimentlist, index)
                   this.$apply()
                 }
+              },
+              complete: () => {
+                wepy.hideLoading()
               }
             })
           } else if (res.cancel) {
@@ -249,6 +253,14 @@ export default class Myequiment extends wepy.page {
     }
   }
   onLoad() {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
     // 初始化获取列表信息
     wepy.request({
       url: this.$parent.globalData.baseUrl + 'api/' + 'pond/WXquery',

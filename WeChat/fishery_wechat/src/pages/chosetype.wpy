@@ -238,6 +238,14 @@ export default class Chosetype extends wepy.page {
     }
   }
   onLoad(option) {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
     let data = JSON.parse(option.data)
     if (option.data !== '{}') {
       this.lastdata = data

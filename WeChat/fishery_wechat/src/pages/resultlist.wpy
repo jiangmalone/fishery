@@ -161,5 +161,15 @@ export default class Resultlist extends wepy.page {
       this.$apply()
     }
   }
+  onLoad() {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
+  }
 }
 </script>

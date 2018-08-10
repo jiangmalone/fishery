@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 10,
 			"list": [
 				{
 					"id": 0,
@@ -89,6 +89,12 @@
 					"id": -1,
 					"name": "传感器",
 					"pathName": "pages/myequiment",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "scan",
+					"pathName": "pages/scan",
 					"query": ""
 				}
 			]

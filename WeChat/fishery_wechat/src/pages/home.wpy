@@ -520,17 +520,7 @@
         <view class="noWeather" wx:else>
           <text>暂无数据</text>
         </view>
-
       </view>
-
-      <!--塘口列表滑块（大于3）-->
-      <!--<view class="tab" wx:if="{{tangkoulist.length > 3}}">-->
-        <!--<repeat for="{{tangkoulist}}" key="index" item="item">-->
-          <!--<swiper-item>-->
-            <!--<text class="{{currentId === index ? 'tab-index-active' : 'tab-index'}}" data-id="{{index}}" data-tangkou="{{item}}" @tap="chosetangkou">{{index+1}} {{item.pondname}}</text>-->
-          <!--</swiper-item>-->
-        <!--</repeat>-->
-      <!--</view>-->
 
       <!--塘口列表滑块（小于3）-->
       <view class="tab1" >
@@ -582,7 +572,8 @@
             <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="unit1">℃</view>
           </view>
           <view class="sborder1"></view>
-          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="{{realTimeDataInfo.wt_status===0?'sresult blue': (realTimeDataInfo.wt_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.wt_status===0?'正常': (realTimeDataInfo.wt_status===1?'预警':'危险')}}</view>
+          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" 
+          class="{{realTimeDataInfo.wt_status===0?'sresult blue': 'sresult yellow'}}">{{realTimeDataInfo.wt_status===0?'正常':'预警'}}</view>
         </view>
 
         <!--ph-->
@@ -599,14 +590,7 @@
           <view class="sborder1"></view>
           <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="{{realTimeDataInfo.pH_status===0?'sresult blue': (realTimeDataInfo.pH_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.pH_status===0?'正常': (realTimeDataInfo.pH_status===1?'预警':'危险')}}</view>
         </view>
-
       </view>
-
-      <!--传感器列表不存在-->
-      <!--<view class="sensor" wx:else>-->
-        <!--<view class="stype">暂无传感器数据</view>-->
-      <!--</view>-->
-
       <!--分隔栏-->
       <view class="cut"></view>
 
@@ -631,18 +615,18 @@
               </text>
 
               <!--右侧开关上方-->
-              <text class="off">{{item.switch==='0'?'已关闭':(item.switch==='1'?'已开启':'设备离线')}}</text>
+              <text class="off">{{item.online?(item.switch==='1'?'已开启':'已关闭'):'已关闭'}}</text>
             </view>
 
             <view class="shezhi">
 
               <!--自动设置-->
-              <view class="{{item.online?(item.controller.status === 0 ? 'choseAuto blueBtn' : 'choseAuto grayBtn'):'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}}, {{controllerIdx}}))">自动设置</view>
+              <view class="{{item.online&&item.controller.status === 0?(item.controller.status === 0 ? 'choseAuto blueBtn' : 'choseAuto grayBtn'):'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}}, {{controllerIdx}}))">自动设置</view>
 
               <!--开关-->
               <view class="but" @tap="controlSwitch({{item.controller}}, {{item.switch}}, {{controllerIdx}})">
                 <text style="color: #5C6979;">开</text>
-                <image class='switch' src="../images/turnon.jpg" wx:if="{{item.switch==='1'}}"></image>
+                <image class='switch' src="../images/turnon.jpg" wx:if="{{item.online&&item.controller.status === 0&&item.switch==='1'}}"></image>
                 <image class='switch' src="../images/toggle@2x.png" wx:else></image>
                 <text style="color: #5C6979;">关</text>
               </view>
@@ -927,10 +911,6 @@ export default class Home extends wepy.page {
                 this.tangkoudetail = res.data.myHome[num]
                 this.$apply()
                 let deviceSn = res.data.myHome[num].sensorlist[0].sensor.device_sn
-                // let location = res.data.myHome[num].address
-                // if (!location) {
-                //   return 0
-                // }
                 wepy.showLoading()
                 // 获取第一的塘口的天气信息
                 if (res.data.myHome[num].lon !== 0) {
@@ -1001,6 +981,14 @@ export default class Home extends wepy.page {
     })
   }
   onLoad() {
+    wepy.request({
+          url: this.$parent.globalData.baseUrl + 'api/' + 'webService/checkLogin',
+          data: {
+            phone: this.$parent.globalData.phone
+          },
+          method: 'GET',
+          success: res => {}
+        })
     // yyyy/mm/dd
     let nowDate = new Date()
     let year = nowDate.getFullYear()

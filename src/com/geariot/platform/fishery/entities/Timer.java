@@ -22,6 +22,7 @@ public class Timer {
 	private String endTime;					//每日关闭时间 例如 16:30
 	private String device_sn;				//传感器或一体机设备编号
 	private int way;                        //控制第几路，1是第一路，2为第二路
+	private boolean isValid;				//是否有效	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getId() {
@@ -54,6 +55,11 @@ public class Timer {
 	public void setWay(int way) {
 		this.way = way;
 	}
-	
+	public boolean isValid() {
+		return isValid;
+	}
+	public void setValid(boolean isValid) {
+		this.isValid = isValid;
+	}
 	
 }

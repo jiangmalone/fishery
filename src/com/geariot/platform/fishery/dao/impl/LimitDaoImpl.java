@@ -90,4 +90,19 @@ public class LimitDaoImpl implements LimitDao {
 		return  (Limit_Install) query.uniqueResult();
 	}
 
+	@Override
+	public void delAuto(String device_sn, int way) {
+		String sql = "update limit_install set valid=false where device_sn= :device_sn and way = :way";
+		this.getSession().createSQLQuery(sql).setString("device_sn", device_sn)
+						.setInteger("way", way).setCacheable(Constants.SELECT_CACHE).executeUpdate();		
+	}
+
+	@Override
+	public void openAuto(String device_sn, int way) {
+		String sql = "update limit_install set valid=true where device_sn= :device_sn and way = :way";
+		this.getSession().createSQLQuery(sql).setString("device_sn", device_sn)
+						.setInteger("way", way).setCacheable(Constants.SELECT_CACHE).executeUpdate();
+		
+	}
+
 }

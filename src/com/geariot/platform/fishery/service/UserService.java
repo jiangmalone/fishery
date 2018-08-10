@@ -491,39 +491,58 @@ public class UserService {
 		logger.debug("进入获取公众号openId");
 		String unionId ="";
 		System.out.println(openId);
+		
+		/*
+		 * 在wxuser表中，根据小程序openid获得wxuser，查看wxuser是否有unionId
+		 */
 		if(wxuserDao.findUsersByOpenId(openId) != null && wxuserDao.findUsersByOpenId(openId).size()>0) {
-			List<WXUser> wxuser =wxuserDao.findUsersByOpenId(openId);
-			unionId = wxuser.get(0).getUnionid();
+			List<WXUser> wxuserList =wxuserDao.findUsersByOpenId(openId);
+			for(WXUser wxuser:wxuserList) {
+				if(wxuser.getUnionid() != null&&wxuser.getUnionid() !="") {
+					unionId = wxuser.getUnionid();
+					break;
+				}
+				
+			}
+			
 		}		
 		//openId相同，其unionId必然相同
 		
-		if(unionId !=null) {//在小程序用户表中unionId不为空
+		if(unionId !=null && unionId != "") {//在小程序用户表中unionId不为空
 			WXUser_union wxuser_union = wxUser_unionDao.getByUnionId(unionId);
 			if(wxuser_union == null) {//公众号中unionId为空
 				//未查询到unionId，进入
-				logger.debug("未获取unionId，开始更新公众号库");				
+				logger.debug("根据unionId未获取到公众号openid，更新公众号库");				
 				Map<String, Object>	publicOpenIds =  getAllPublicUser();	
 				List<String> openIdList = (List<String>) publicOpenIds.get("openid");
+				
 				for(String publicOpenId:openIdList) {
-					String uId =  getPublicUserUnionId(publicOpenId);
-					WXUser_union wxu = new WXUser_union();
-					wxu.setOpenId(publicOpenId);
-					wxu.setUnionId(uId);
-					
-					if(wxUser_unionDao.getByUnionId(uId) == null) {
-						logger.debug("公众号库中数据不存在，数据不更新");
-						wxUser_unionDao.save(wxu);
+										
+					if(wxUser_unionDao.getByUnionId(unionId) == null) {
+						
+						if(wxUser_unionDao.getByOpenId(publicOpenId) == null) {
+							logger.debug("公众号库中数据不存在，数据更新");
+							WXUser_union wxu = new WXUser_union();
+							String uid = getPublicUserUnionId(publicOpenId);
+							wxu.setOpenId(publicOpenId);
+							wxu.setUnionId(uid);
+							wxUser_unionDao.save(wxu);
+						}						
 					}else {
 						logger.debug("公众号库中已有数据不更新");
 					}					
 				}
+				
 				WXUser_union wu = wxUser_unionDao.getByUnionId(unionId);
 				return wu==null?"":wu.getOpenId();
 			} else {
+				logger.debug("直接返回公众号openId:"+wxuser_union.getOpenId());
 				return wxuser_union.getOpenId();
 			}	
+		}else {
+			return null;
 		}		
-		return null;
+		
 	}
 	
 	public static Map<String, Object> getAllPublicUser() {
@@ -551,11 +570,14 @@ public class UserService {
 	}
 	
 	public static String getPublicUserUnionId(String openId) {
-		logger.debug("根据公众号openid："+openId+"获取用户unionid");
+		logger.debug("根据公众号openid："+openId+"，获取用户unionid。");
 		JSONObject obj = WechatConfig.getAccessTokenForInteface();
 		String access_token = (String) obj.get("access_token");
+		logger.debug("access_token:"+access_token);
 		JSONObject info = WechatConfig.getWXUserInfo(access_token, openId);
-		String unionid = (String) info.get("unionid");		
+		logger.debug("info:"+info);
+		String unionid = (String) info.get("unionid");
+		logger.debug("用户unionid:"+unionid);
 		return unionid;
 	}
 

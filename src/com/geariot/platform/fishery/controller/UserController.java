@@ -87,5 +87,17 @@ public class UserController {
 	public Map<String, Object> diagnosing(String relation){
 		return userService.diagnosing(relation);
 	}
+	
+	
+	@RequestMapping(value = "/getPublicOpenId" , method = RequestMethod.GET)
+	public String getPublicOpenId(String openId){
+		return userService.getPublicOpenId(openId);
+	}
+	
+	
+	@RequestMapping(value = "/getPublicUserUnionId" , method = RequestMethod.GET)
+	public String getPublicUserUnionId(String openId){
+		return userService.getPublicUserUnionId(openId);
+	}
 
 }

@@ -87,4 +87,20 @@ public class TimerDaoImpl implements TimerDao {
 		Query query = queryUtils.addString("device_sn", device_sn).addInteger("way", way).getQuery();
 		return  (List<Timer>)query.list();
 	}
+
+	@Override
+	public void delAuto(String device_sn, int way) {
+		String sql = "update timer set valid=false where device_sn= :device_sn and way = :way";
+		this.getSession().createSQLQuery(sql).setString("device_sn", device_sn)
+						.setInteger("way", way).setCacheable(Constants.SELECT_CACHE).executeUpdate();
+		
+	}
+
+	@Override
+	public void openAuto(String device_sn, int way) {
+		String sql = "update timer set valid=true where device_sn= :device_sn and way = :way";
+		this.getSession().createSQLQuery(sql).setString("device_sn", device_sn)
+						.setInteger("way", way).setCacheable(Constants.SELECT_CACHE).executeUpdate();
+		
+	}
 }

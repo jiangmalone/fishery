@@ -45,4 +45,8 @@ public class DeviceDaoImpl implements DeviceDao {
         Query query = queryUtils.addStringLike("device_sn", "%").getQuery();
         return  query.list();
 	}
+	@Override
+	public void updateIsOnline(Device device) {
+		this.getSession().merge(device);
+	}
 }

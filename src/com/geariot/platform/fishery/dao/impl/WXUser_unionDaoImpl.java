@@ -29,5 +29,11 @@ public class WXUser_unionDaoImpl implements WXUser_unionDao {
 		String hql = "from WXUser_union where unionId= :unionId ";
 		return (WXUser_union) getSession().createQuery(hql).setString("unionId", unionId).setCacheable(Constants.SELECT_CACHE).uniqueResult();
 	}
+	
+	@Override
+	public WXUser_union getByOpenId(String openId) {
+		String hql = "from WXUser_union where openId= :openId ";
+		return (WXUser_union) getSession().createQuery(hql).setString("openId", openId).setCacheable(Constants.SELECT_CACHE).uniqueResult();
+	}
 
 }

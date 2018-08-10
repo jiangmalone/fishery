@@ -19,4 +19,8 @@ public interface LimitDao {
 	void updateLimit(Limit_Install limit_Install);
 
 	Limit_Install findLimitByDeviceSnsAndWay(String device_sn, int way);
+	
+	void delAuto(String device_sn,int way);
+	
+	void openAuto(String device_sn,int way);
 }

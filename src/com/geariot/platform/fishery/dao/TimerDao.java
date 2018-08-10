@@ -22,4 +22,8 @@ public interface TimerDao {
 	void updateTimer(Timer timer);
 	
 	void delete(String device_sn, int way);
+	
+	void delAuto(String device_sn, int way);
+	
+	void openAuto(String device_sn, int way);
 }

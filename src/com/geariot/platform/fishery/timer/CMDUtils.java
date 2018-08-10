@@ -47,9 +47,7 @@ public class CMDUtils {
 		
 		SendCmdsApi api = new SendCmdsApi(devId, null, null, null,contents, apikey);
 		String cmdUuid="";
-		try{
-			
-			
+		try{						
 			BasicResponse<NewCmdsResponse> response = api.executeApi();
 			System.out.println(response.getJson());
 			JSONObject tempjson = JSONObject.fromObject(response.getJson());

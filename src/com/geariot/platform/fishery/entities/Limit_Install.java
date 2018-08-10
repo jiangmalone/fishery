@@ -23,12 +23,9 @@ public class Limit_Install {
 	private float high_limit;			//溶氧高限
 	private String device_sn;			//控制器设备编号
 	private int way;                    //第几路
-	public int getWay() {
-		return way;
-	}
-	public void setWay(int way) {
-		this.way = way;
-	}
+	
+	private boolean valid;				//溶氧上下限触发是否有效
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getId() {
@@ -62,4 +59,16 @@ public class Limit_Install {
 		this.device_sn = device_sn;
 	}
 
+	public boolean isValid() {
+		return valid;
+	}
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
+	public int getWay() {
+		return way;
+	}
+	public void setWay(int way) {
+		this.way = way;
+	}
 }

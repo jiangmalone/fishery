@@ -19,4 +19,5 @@ public interface DeviceDao {
     int delete(String devicesn);
     Device findDevice(String deviceSns);
     List<Device> getAllDevices(); 
+    void updateIsOnline(Device device);
 }

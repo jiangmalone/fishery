@@ -319,7 +319,7 @@ public class EquipmentService {
 	}
 
 
-	public Map<String, Object> addController(Controller[] controllers) {
+	public synchronized Map<String, Object> addController(Controller[] controllers) {
 
 		if(controllers.length>0) {
 			String device_sn = controllers[0].getDevice_sn();
@@ -348,6 +348,7 @@ public class EquipmentService {
 						limit.setHigh_limit(20);
 						limit.setUp_limit(6);
 						limit.setLow_limit(4);
+						limit.setValid(true);
 						limit.setDevice_sn(controller.getDevice_sn());
 						limit.setWay(controller.getPort());
 						logger.debug("控制器编号"+controller.getDevice_sn());
@@ -1466,6 +1467,20 @@ public class EquipmentService {
 
 	}
 	
+	public Map<String, Object> delAuto(String device_sn,int way) {
+		timerDao.delAuto(device_sn, way);
+		limitDao.delAuto(device_sn, way);
+		return RESCODE.SUCCESS.getJSONRES();
+
+	}
+	
+	public Map<String, Object> openAuto(String device_sn,int way) {
+		timerDao.openAuto(device_sn, way);
+		limitDao.openAuto(device_sn, way);
+		return RESCODE.SUCCESS.getJSONRES();
+
+	}
+
 
 	public Map<String, Object> delLimit(String device_sn,int way) {
 		List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(device_sn, way);
@@ -1627,7 +1642,7 @@ public class EquipmentService {
 	/*
 	 * 触发器触发，改变传感器状态
 	 */	
-	public void triggeractive(JSONObject data) {
+	public synchronized void triggeractive(JSONObject data) {
 		logger.debug("触发器触发");
 		logger.debug("触发器"+data);
 		/*JSONObject tempjson = JSONObject.fromObject(data);*/
@@ -1686,54 +1701,72 @@ public class EquipmentService {
 			}
 			if(trigger.getTrigertype()==2) {//增氧机触发
 				logger.debug("增氧机触发");
-				logger.debug("触发设备："+trigger.getDevice_sn());
+				logger.debug("触发传感器设备："+trigger.getDevice_sn());
 				Sensor sensor = sensorDao.findSensorByDeviceSns(trigger.getDevice_sn());
-				sensor.getPondId();
 				List<Controller> controllers = controllerDao.findByRelation(sensor.getRelation());
 				List<Controller> controllerList = new ArrayList<>();
 				for(Controller controller:controllers) {
-					if( controller.getPondId() == sensor.getPondId()) {
+					if( controller.getPondId() == sensor.getPondId() && controller.getType()==0) {
 						controllerList.add(controller);
 					}
 				}
-				logger.debug(controllerList.size());
+				logger.debug("触发传感器："+trigger.getDevice_sn()+",根据传感器找到其所在塘口："+sensor.getPondId()+",找到塘口下增氧机控制器数量："+controllerList.size());
 				if(controllerList !=null &&controllerList.size()>0) {
-					WXUser wxUser = wxUserDao.findUserByRelation(controllerList.get(0).getRelation());
-					String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
-					if(triggertype.equals("<")) {//低于溶氧下限，打开增氧机
-						/*
-						 *判断增氧机状态 
-						 */
-						String divsn= controllerList.get(0).getDevice_sn();
-						int way = trigger.getWay();
-						String id = "KM"+(way+1);
-						GetDatastreamApi api = new GetDatastreamApi(divsn, id, key);
-						BasicResponse<DatastreamsResponse> response = api.executeApi();
-						int currentvalue =  Integer.parseInt(response.data.getCurrentValue().toString()) ;	
-						if(currentvalue != 1) {
-							WechatSendMessageUtils.sendWechatOnOffMessages("低于溶氧下限，打开增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
-							String text = "KM"+(way+1)+":"+1;
-							CMDUtils.sendStrCmd(divsn,text);
+					for(Controller con:controllerList) {
+						WXUser wxUser = wxUserDao.findUserByRelation(con.getRelation());
+						String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
+						Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(con.getDevice_sn(), con.getPort());
+						if(limit.isValid()) {
+							if(triggertype.equals("<")) {//低于溶氧下限，打开增氧机
+								logger.debug("低于溶氧下限，准备打开增氧机");
+								/*
+								 *判断增氧机状态 
+								 */
+								String divsn= controllerList.get(0).getDevice_sn();
+								int way = trigger.getWay();
+								String id = "KM"+(way+1);
+								GetDatastreamApi api = new GetDatastreamApi(divsn, id, key);
+								BasicResponse<DatastreamsResponse> response = api.executeApi();
+								int currentvalue =  Integer.parseInt(response.data.getCurrentValue().toString()) ;	
+								if(currentvalue != 1) {
+									logger.debug("增氧机未打开");
+									WechatSendMessageUtils.sendWechatOnOffMessages("低于溶氧下限，准备打开增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
+									String text = "KM"+(way+1)+":"+1;
+									int results = CMDUtils.sendStrCmd(divsn,text);							
+									if(results==0) {
+										WechatSendMessageUtils.sendWechatOnOffMessages("打开增氧机成功", publicOpenID, controllerList.get(0).getDevice_sn());
+									}else {//打开
+										WechatSendMessageUtils.sendWechatOnOffMessages("打开增氧机失败", publicOpenID, controllerList.get(0).getDevice_sn());
+									}
+								}
+								
+							}else if(triggertype.equals(">")) {//高于溶氧上限，关闭增氧机
+								logger.debug("高于溶氧上限，准备关闭增氧机");
+								/*
+								 *判断增氧机状态 
+								 */
+								String divsn= controllerList.get(0).getDevice_sn();
+								int way = trigger.getWay();
+								String id = "KM"+(way+1);
+								GetDatastreamApi api = new GetDatastreamApi(divsn, id, key);
+								BasicResponse<DatastreamsResponse> response = api.executeApi();
+								int currentvalue =  Integer.parseInt(response.data.getCurrentValue().toString()) ;	
+								if(currentvalue != 0) {
+									logger.debug("增氧机未关闭");
+									WechatSendMessageUtils.sendWechatOnOffMessages("高于溶氧上限，准备关闭增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
+									String text = "KM"+(way+1)+":"+0;
+									
+									int results = CMDUtils.sendStrCmd(divsn,text);
+									if(results==0) {
+										WechatSendMessageUtils.sendWechatOnOffMessages("关闭增氧机成功", publicOpenID, controllerList.get(0).getDevice_sn());
+									}else {//打开
+										WechatSendMessageUtils.sendWechatOnOffMessages("关闭增氧机失败", publicOpenID, controllerList.get(0).getDevice_sn());
+									}
+								}							
+							}
 						}						
-					}else if(triggertype.equals(">")) {//高于溶氧上限，关闭增氧机
-						/*
-						 *判断增氧机状态 
-						 */
-						String divsn= controllerList.get(0).getDevice_sn();
-						int way = trigger.getWay();
-						String id = "KM"+(way+1);
-						GetDatastreamApi api = new GetDatastreamApi(divsn, id, key);
-						BasicResponse<DatastreamsResponse> response = api.executeApi();
-						int currentvalue =  Integer.parseInt(response.data.getCurrentValue().toString()) ;	
-						if(currentvalue != 0) {
-							WechatSendMessageUtils.sendWechatOnOffMessages("高于溶氧上限，关闭增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
-							String text = "KM"+(way+1)+":"+0;
-							CMDUtils.sendStrCmd(divsn,text);
-						}
-						
-					}
-				}
-					
+					}					
+				}					
 			}
 			Sensor sensor = sensorDao.findSensorByDeviceSns(trigger.getDevice_sn());
 			
@@ -1870,9 +1903,7 @@ public class EquipmentService {
 	     			 return 1;
 	     		 }else {
 	     			 return 0;
-	     		 }
-	     		
-	     		
+	     		 }	     	     		
         }else if (fishtype==2) {//虾
         	//预警触发器与危险触发器
         	/*
@@ -2534,5 +2565,9 @@ public class EquipmentService {
 	
 	public List<Controller> getAllControllers(){
 		return controllerDao.getAllControllers();
+	}
+	
+	public List<Device> getAllDevices(){
+		return deviceDao.getAllDevices();
 	}
 }

@@ -11,7 +11,10 @@ import com.geariot.platform.fishery.timer.TimerTask;
 import com.geariot.platform.fishery.wxutils.WeChatOpenIdExchange;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
+import cmcc.iot.onenet.javasdk.api.datastreams.GetDatastreamApi;
+import cmcc.iot.onenet.javasdk.response.BasicResponse;
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsItem.DatapointsItem;
+import cmcc.iot.onenet.javasdk.response.datastreams.DatastreamsResponse;
 import net.sf.json.JSONObject;
 import sun.invoke.empty.Empty;
 import sun.util.logging.resources.logging;
@@ -172,9 +175,12 @@ public class EquipmentController {
 		//先删除
 		equipmentService.delTimer(param.getDevice_sn(),  param.getWay());
 		//后添加
-		for(Timer timer:param.getTimers()) {
+		logger.debug("设置设备编号："+param.getDevice_sn()+"的自动设置时间");
+		for(Timer timer:param.getTimers()) {			
+			logger.debug("自动时间："+timer.getStartTime()+"--"+timer.getEndTime());
 			timer.setDevice_sn(param.getDevice_sn());
 			timer.setWay(param.getWay());
+			timer.setValid(true);
 			equipmentService.addTimer(timer);
 		}
 		return RESCODE.SUCCESS.getJSONRES();		
@@ -240,19 +246,35 @@ public class EquipmentController {
 	
 	@RequestMapping(value ="/sendcmd", method = RequestMethod.POST)
 	public int sendcmd(@RequestBody controllerParam param){
-		//
+		logger.debug("进入sendcmd,向设备发送命令");
 		String[] type = {"增氧机","投饵机","打水机","其他"};
 		Controller controller = param.getController();
 		WXUser wxUser =  wxUserDao.findUserByRelation(controller.getRelation());		
 		String contents = "KM"+(controller.getPort()+1)+":"+param.getKey();
-		long start = System.currentTimeMillis();
-		int result = CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);
-		long stop = System.currentTimeMillis();
-		System.out.println("程序执行时间："+(stop-start));
-		logger.debug("程序执行时间："+(stop-start));
+		
+		GetDatastreamApi api = new GetDatastreamApi(controller.getDevice_sn(), "KM"+(controller.getPort()+1), "7zMmzMWnY1jlegImd=m4p9EgZiI=");
+		BasicResponse<DatastreamsResponse> response = api.executeApi();
+		if(response.errno == 0) {
+			logger.debug(response.getJson());
+			int currentvalue = Integer.parseInt((String)response.data.getCurrentValue()) ;
+			if(currentvalue == 0) {
+				logger.debug("控制器处于关闭状态");
+				if(param.getKey()==1) {
+					logger.debug("手动打开控制器，自动设置失效");
+					equipmentService.delAuto(controller.getDevice_sn(), controller.getPort());					
+				}				
+			}else if(currentvalue == 1) {
+				logger.debug("控制器处于打开状态");
+				if(param.getKey()==0) {
+					logger.debug("手动关闭控制器，自动设置生效");
+					equipmentService.openAuto(controller.getDevice_sn(), controller.getPort());					
+				}
+			}
+		}
+		
+		int result = CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);				
 		String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
-		System.out.println("openId:"+wxUser.getOpenId());
-		System.out.println("向设备"+controller.getDevice_sn()+"发送命令，将结果推送至微信用户"+publicOpenID);
+		logger.debug("向设备"+controller.getDevice_sn()+"发送命令，将结果推送至微信用户"+publicOpenID);
 		String controllertype = "";
 		switch (controller.getType()){
 			case 0:

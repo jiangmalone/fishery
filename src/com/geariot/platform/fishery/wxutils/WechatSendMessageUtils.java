@@ -3,6 +3,8 @@ package com.geariot.platform.fishery.wxutils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,7 @@ import com.geariot.platform.fishery.dao.WXUserDao;
 @Component
 public class WechatSendMessageUtils {
 	
-	//private static final Logger log = LogManager.getLogger(WechatSendMessageUtils.class);
+	private static final Logger log = LogManager.getLogger(WechatSendMessageUtils.class);
     private static ExecutorService  executorService  = Executors.newFixedThreadPool(10);
 	
 	public static void  sendWechatMessages(final StringBuilder sb,final String openId,final String deviceSn) {
@@ -31,6 +33,7 @@ public class WechatSendMessageUtils {
 
             @Override
             public void run(){
+            	log.debug("向"+openId+"发送"+deviceSn+"设备的警告信息："+message+"");
             	WechatTemplateMessage.alarmMSG(message, openId,deviceSn);
             }
         });

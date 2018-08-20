@@ -98,6 +98,7 @@ public class WebServiceService {
 			wxUser.setUnionid(unionid);
 			wxUser.setLogin(true);
 			wxUser.setName(wxUserName);
+			wxUserDao.updateUser(wxUser);
 			return RESCODE.SUCCESS.getJSONRES(wxUser);
 		}
 	}

@@ -72,9 +72,10 @@ public class TimerTask {
 	
 	private String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 
+	
 	@Scheduled(cron = "0 */15 * * * ?") // 每15分钟执行一次
 	public void judgeTime() throws ParseException {
-		logger.debug("进入定时任务");
+		logger.debug("进入定时任务1");
 		//定时检测增氧机的定时任务
 		List<Timer> lt = timerDao.findAllTimer();
 		if (!lt.isEmpty()) {
@@ -176,7 +177,8 @@ public class TimerTask {
 		logger.debug("定时任务结束");
 	}
 	
-	@Scheduled(cron = "0 0 1 1/1 * ?")//每天凌晨一点执行一次
+	@Scheduled(cron = "0 0 1 * * ?")//每天凌晨一点执行一次
+	//@Scheduled(cron = "0 */10 * * * ?") // 每15分钟执行一次
 	public void dosaveData() {
 		logger.debug("凌晨一点，开始存储昨日所有数据");
 		long start = System.currentTimeMillis();	
@@ -186,8 +188,9 @@ public class TimerTask {
 	}
 	
 	@Scheduled(cron = "0 0 */1 * * ?")//每小时执行一次
+	//@Scheduled(cron = "0 */20 * * * ?") // 每15分钟执行一次
 	public void checkOnline() {
-		logger.debug("定时检测设备是否在线");
+		logger.debug("进入定时检测设备是否在线");
 		long start = System.currentTimeMillis();	
 		List<Device> deviceList = equipmentService.getAllDevices();
 		for(Device device:deviceList) {
@@ -226,17 +229,18 @@ public class TimerTask {
 						String json = "{\"deviceName\":\"" + deviceName + "\",\"way\":" + "0" + "}";
 						try {
 							logger.debug("准备启用阿里云语音服务");
-							VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
-						} catch (ClientException e) {
-							// TODO Auto-generated catch block
+							VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_142385982", json);
+						} catch (ClientException e) {							
 							e.printStackTrace();
 						}
+						deviceOld.setOnline(false);
+						deviceDao.updateIsOnline(deviceOld);
 			    	 }
 			     }
 		     }		    
 		}
 		
 		long end = System.currentTimeMillis();
-		logger.debug("共耗时："+(end-start)+",存储结束！");
+		logger.debug("共耗时："+(end-start)+",定时检测离线结束！");
 	}
 }

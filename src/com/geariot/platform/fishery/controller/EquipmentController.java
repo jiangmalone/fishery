@@ -76,6 +76,11 @@ public class EquipmentController {
 	public void changeControllerWayOnoff(String divsn, int way ,int key){
 		equipmentService.changeControllerWayOnoff(divsn,way,key);
 	}
+	
+	@RequestMapping(value = "/query", method = RequestMethod.GET)
+	public Map<String, Object> queryEquipment(String device_sn, String userName, int page, int number) {
+		return equipmentService.queryEquipment(device_sn, userName, page, number);
+	}
 
 
 	@RequestMapping(value = "/delEquipments", method = RequestMethod.GET)
@@ -209,7 +214,8 @@ public class EquipmentController {
 	
 	
 	@RequestMapping(value = "/setLimit", method = RequestMethod.POST)
-	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){	
+	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){
+		
 		System.out.println("设备编号:"+limit_Install.getDevice_sn());
 		System.out.println("way:"+limit_Install.getWay());
 		Limit_Install limit_Install2 = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
@@ -244,11 +250,23 @@ public class EquipmentController {
 		equipmentService.triggeractive(data);
 	}
 	
+	@RequestMapping(value ="/sendcmdtest", method = RequestMethod.POST)
+	public int sendcmdtest(@RequestBody controllerParam param){
+		Controller controller = param.getController();
+		String contents = "KM"+(controller.getPort()+1)+":"+param.getKey();
+		long start = System.currentTimeMillis();
+		int result = CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);
+		long end = System.currentTimeMillis();
+		System.out.println("总共花费："+(end-start));
+		return result;
+	}
+	
 	@RequestMapping(value ="/sendcmd", method = RequestMethod.POST)
 	public int sendcmd(@RequestBody controllerParam param){
 		logger.debug("进入sendcmd,向设备发送命令");
 		String[] type = {"增氧机","投饵机","打水机","其他"};
 		Controller controller = param.getController();
+		System.out.println("用户："+controller.getRelation());
 		WXUser wxUser =  wxUserDao.findUserByRelation(controller.getRelation());		
 		String contents = "KM"+(controller.getPort()+1)+":"+param.getKey();
 		
@@ -272,7 +290,12 @@ public class EquipmentController {
 			}
 		}
 		
-		int result = CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);				
+		int result = CMDUtils.sendStrCmd(controller.getDevice_sn(), contents);	
+		if(wxUser == null) {
+			System.out.println("用户不存在");
+		}else {
+			System.out.println(wxUser.getName());
+		}
 		String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
 		logger.debug("向设备"+controller.getDevice_sn()+"发送命令，将结果推送至微信用户"+publicOpenID);
 		String controllertype = "";
@@ -291,9 +314,7 @@ public class EquipmentController {
 				break;
 		}
 		if(result == 0) {//成功
-			if(param.getKey() == 0) {//关闭
-				/*WechatSendMessageUtils.sendWechatOxygenOnOffMessages(msg, openId, deviceSn, onOff);
-				*/						
+			if(param.getKey() == 0) {//关闭					
 				WechatSendMessageUtils.sendWechatOnOffMessages("关闭"+controllertype+"成功", publicOpenID, controller.getDevice_sn());
 			}else {//打开
 				WechatSendMessageUtils.sendWechatOnOffMessages("打开"+controllertype+"成功", publicOpenID, controller.getDevice_sn());
@@ -357,6 +378,11 @@ public class EquipmentController {
 		}
 		System.out.println("pondName:"+pondName);
 		  return equipmentService.getControllersBydevice_sn("35664847");
+	}
+	
+	@RequestMapping(value ="/adminFindEquipment", method = RequestMethod.GET)
+	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number){
+		return equipmentService.adminFindEquipment(device_sn,userName,page,number);
 	}
 	
 }

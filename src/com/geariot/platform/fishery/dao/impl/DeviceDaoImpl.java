@@ -49,4 +49,13 @@ public class DeviceDaoImpl implements DeviceDao {
 	public void updateIsOnline(Device device) {
 		this.getSession().merge(device);
 	}
+	@Override
+	public List<Device> queryList(String device_sn,int page, int number) {
+		QueryUtils qutils = new QueryUtils(getSession(), "from Device");
+		Query query = qutils.addString("device_sn", device_sn)
+		.setFirstResult(page)
+		.setMaxResults(number)
+		.getQuery();
+		return query.list();
+	}
 }

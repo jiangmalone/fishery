@@ -169,6 +169,79 @@ public class EquipmentService {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
 	}
+	
+	
+	public Map<String, Object> queryEquipment(String device_sn, String userName, int page, int number){
+		
+		int from = (page - 1) * number;	
+		List<Device> deviceList = deviceDao.queryList(device_sn,page, number);
+		if(deviceList == null || deviceList.isEmpty()) {
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else {
+			List<EquipmentDetail> equipmentDetailList = new ArrayList<>();
+			for(Device device : deviceList) {				
+				switch (device.getType()) {
+				case 1:					
+					Sensor sensor = sensorDao.findSensorByDeviceSns(device.getDevice_sn());
+					if(sensor!=null) {						
+						String uName = wxUserDao.findUserByRelation(sensor.getRelation())==null?"":wxUserDao.findUserByRelation(sensor.getRelation()).getName();
+						if(userName == null || userName=="") {
+							EquipmentDetail ed = new EquipmentDetail();
+							ed.setDevice_sn(sensor.getDevice_sn());
+							ed.setName(sensor.getName());
+							ed.setUserName(uName);
+							ed.setType("传感器");
+							ed.setOnline(device.isOnline());
+							equipmentDetailList.add(ed);
+						}else {
+							if(userName.equals(uName)) {
+								EquipmentDetail ed = new EquipmentDetail();
+								ed.setDevice_sn(sensor.getDevice_sn());
+								ed.setName(sensor.getName());
+								ed.setUserName(uName);
+								ed.setOnline(device.isOnline());
+								equipmentDetailList.add(ed);
+							}						
+						}
+					}					
+					break;
+				case 2:
+					
+					break;
+				case 3:
+					List<Controller> conList = controllerDao.findControllerByDeviceSns(device.getDevice_sn());
+					for(Controller con : conList) {
+						if(con!=null) {
+							String uName1 = wxUserDao.findUserByRelation(con.getRelation())==null?"":wxUserDao.findUserByRelation(con.getRelation()).getName();
+							if(userName == null || userName=="") {
+								EquipmentDetail ed1 = new EquipmentDetail();
+								ed1.setDevice_sn(con.getDevice_sn());
+								ed1.setName(con.getName()+"-"+(con.getPort()+1)+"路");
+								ed1.setUserName(wxUserDao.findUserByRelation(con.getRelation()).getName());
+								ed1.setType("控制器");
+								ed1.setOnline(device.isOnline());
+								equipmentDetailList.add(ed1);
+							}else {
+								if(userName.equals(uName1)) {
+									EquipmentDetail ed1 = new EquipmentDetail();
+									ed1.setDevice_sn(con.getDevice_sn());
+									ed1.setName(con.getName()+"-"+(con.getPort()+1)+"路");
+									ed1.setUserName(wxUserDao.findUserByRelation(con.getRelation()).getName());
+									ed1.setType("控制器");
+									ed1.setOnline(device.isOnline());
+									equipmentDetailList.add(ed1);
+								}
+							}
+						}						
+					}					
+					break;
+				default:
+					break;
+				}
+			}
+			return RESCODE.SUCCESS.getJSONRES(equipmentDetailList);
+		}
+	}
 
 	//删除设备
 	public Map<String, Object> delEquipment(String device_sn){
@@ -323,9 +396,9 @@ public class EquipmentService {
 
 		if(controllers.length>0) {
 			String device_sn = controllers[0].getDevice_sn();
-			logger.debug(device_sn);
+			logger.debug("开始准备添加控制器（全码）："+device_sn);
 			String api_device_sn = device_sn.substring(2, device_sn.length());
-			logger.debug(api_device_sn);
+			logger.debug("准备添加控制器："+api_device_sn);
 			if(deviceDao.findDevice(api_device_sn)==null) {
 //				在设备表中，若没有改设备编号，在设备表中添加设备
 				//dsid,device_sn,type,threshold,localtype,way
@@ -1675,7 +1748,15 @@ public class EquipmentService {
 				WXUser wxUser = wxUserDao.findUserByRelation(controllerList.get(0).getRelation());
 				String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
 				if(ds_id.equals("PF")) {
-					WechatSendMessageUtils.sendWechatAlarmMessages("控制器断电", publicOpenID, device_sn);
+					logger.debug("向"+publicOpenID+"发送" + "控制器:"+device_sn+"断电");
+					try {
+						Thread.currentThread().sleep(100);
+						WechatSendMessageUtils.sendWechatAlarmMessages("控制器断电", publicOpenID, device_sn);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}	
+					
 					
 					String json = "{\"deviceName\":\"" +controllerList.get(0).getDevice_sn()+ "\",\"way\":" + 0 + "}";
 					try {
@@ -1685,10 +1766,18 @@ public class EquipmentService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}else {
+				}else if(ds_id.contains("DP")){
 					String dp = ds_id.substring(2, 3);
 					int i = Integer.parseInt(dp);
-					WechatSendMessageUtils.sendWechatAlarmMessages("控制器第"+i+"路缺相", publicOpenID, device_sn);
+					logger.debug("向"+publicOpenID+"发送" + "控制器:"+device_sn+"缺相");
+					try {
+						Thread.currentThread().sleep(100);
+						WechatSendMessageUtils.sendWechatAlarmMessages("控制器第"+i+"路缺相", publicOpenID, device_sn);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
 					String json = "{\"deviceName\":\"" + controllerList.get(i-1).getName() + "\",\"way\":" + i + "}";
 					try {
 						logger.debug("准备启用阿里云语音服务");
@@ -2141,14 +2230,15 @@ public class EquipmentService {
 		 * @param key:masterkey 或者 设备apikey
 		 */
 		//微信小程序使用url
-		String url = "https://www.fisherymanager.net/fishery/api/equipment/triggeractive";
+		//String url = "https://www.fisherymanager.net/fishery/api/equipment/triggeractive";
 		//本机使用
-		//String url = "https://45b427a0.ngrok.io/fishery/api/equipment/triggeractive";
+		String url = "https://df4b82e2.ngrok.io/fishery/api/equipment/triggeractive";
+		String title = device_sn+"_"+dsid;
 		List<String> devids=new ArrayList<String>();
 		devids.add(device_sn);
 		String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 		int triggerid;	
-		AddTriggersApi api = new AddTriggersApi(null, dsid, devids, null, url, type, threshold, key);
+		AddTriggersApi api = new AddTriggersApi(title, dsid, devids, null, url, type, threshold, key);
 		try{
 			BasicResponse<NewTriggersResponse> response = api.executeApi();
 			System.out.println(response.getJson());
@@ -2569,5 +2659,76 @@ public class EquipmentService {
 	
 	public List<Device> getAllDevices(){
 		return deviceDao.getAllDevices();
+	}
+	
+	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number) {
+		int from = (page - 1) * number;	
+		List<Device> deviceList = deviceDao.queryList(device_sn,page, number);
+		if(deviceList == null || deviceList.isEmpty()) {
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else {
+			List<EquipmentDetail> equipmentDetailList = new ArrayList<>();
+			for(Device device : deviceList) {				
+				switch (device.getType()) {
+				case 1:					
+					Sensor sensor = sensorDao.findSensorByDeviceSns(device.getDevice_sn());
+					if(sensor!=null) {						
+						String uName = wxUserDao.findUserByRelation(sensor.getRelation())==null?"":wxUserDao.findUserByRelation(sensor.getRelation()).getName();
+						if(userName == null || userName=="") {
+							EquipmentDetail ed = new EquipmentDetail();
+							ed.setDevice_sn(sensor.getDevice_sn());
+							ed.setName(sensor.getName());
+							ed.setUserName(uName);
+							ed.setType("传感器");
+							ed.setOnline(device.isOnline());
+							equipmentDetailList.add(ed);
+						}else {
+							if(userName.equals(uName)) {
+								EquipmentDetail ed = new EquipmentDetail();
+								ed.setDevice_sn(sensor.getDevice_sn());
+								ed.setName(sensor.getName());
+								ed.setUserName(uName);
+								ed.setOnline(device.isOnline());
+								equipmentDetailList.add(ed);
+							}						
+						}
+					}					
+					break;
+				case 2:
+					
+					break;
+				case 3:
+					List<Controller> conList = controllerDao.findControllerByDeviceSns(device.getDevice_sn());
+					for(Controller con : conList) {
+						if(con!=null) {
+							String uName1 = wxUserDao.findUserByRelation(con.getRelation())==null?"":wxUserDao.findUserByRelation(con.getRelation()).getName();
+							if(userName == null || userName=="") {
+								EquipmentDetail ed1 = new EquipmentDetail();
+								ed1.setDevice_sn(con.getDevice_sn());
+								ed1.setName(con.getName()+"-"+(con.getPort()+1)+"路");
+								ed1.setUserName(wxUserDao.findUserByRelation(con.getRelation()).getName());
+								ed1.setType("控制器");
+								ed1.setOnline(device.isOnline());
+								equipmentDetailList.add(ed1);
+							}else {
+								if(userName.equals(uName1)) {
+									EquipmentDetail ed1 = new EquipmentDetail();
+									ed1.setDevice_sn(con.getDevice_sn());
+									ed1.setName(con.getName()+"-"+(con.getPort()+1)+"路");
+									ed1.setUserName(wxUserDao.findUserByRelation(con.getRelation()).getName());
+									ed1.setType("控制器");
+									ed1.setOnline(device.isOnline());
+									equipmentDetailList.add(ed1);
+								}
+							}
+						}						
+					}					
+					break;
+				default:
+					break;
+				}
+			}
+			return RESCODE.SUCCESS.getJSONRES(equipmentDetailList);
+		}
 	}
 }

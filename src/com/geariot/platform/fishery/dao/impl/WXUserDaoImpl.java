@@ -82,10 +82,11 @@ public class WXUserDaoImpl implements WXUserDao {
 
 	@Override
 	public void logout(String phone) {
-		String sql = "update wxuser set openId='',headimgurl='',name= '', login=false where phone= :phone";
+		String sql = "update wxuser set openId='',headimgurl='',name= '', login=false, unionid=''  where phone= :phone";
 		this.getSession().createSQLQuery(sql).setString("phone", phone).setCacheable(Constants.SELECT_CACHE).executeUpdate();
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public WXUser findUserByRelation(String relation) {
 		QueryUtils queryUtils = new QueryUtils(getSession(), "from WXUser");

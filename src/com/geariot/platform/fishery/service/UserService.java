@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sound.midi.ControllerEventListener;
 
 import com.geariot.platform.fishery.entities.*;
 
@@ -21,6 +22,7 @@ import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.AeratorStatusDao;
 import com.geariot.platform.fishery.dao.CompanyDao;
 import com.geariot.platform.fishery.dao.ControllerDao;
+import com.geariot.platform.fishery.dao.Dev_TriggerDao;
 import com.geariot.platform.fishery.dao.LimitDao;
 import com.geariot.platform.fishery.dao.PondDao;
 import com.geariot.platform.fishery.dao.PondFishDao;
@@ -78,6 +80,9 @@ public class UserService {
     private SensorDao sensorDao;
     
     @Autowired
+    private Dev_TriggerDao triggerDao;
+    
+    @Autowired
     private TimerDao timerDao;
     
     @Autowired
@@ -100,11 +105,13 @@ public class UserService {
     
     
 	public Map<String, Object> addWXUser(WXUser wxuser) {
-		List<WXUser> exist = wxuserDao.findUsersByOpenId(wxuser.getOpenId());
+		/*List<WXUser> exist = wxuserDao.findUsersByOpenId(wxuser.getOpenId());*/
+		WXUser exist = wxuserDao.findUserByPhone(wxuser.getPhone());
 		if (exist != null) {
 			return RESCODE.ACCOUNT_EXIST.getJSONRES();
 		}
 		wxuser.setCreateDate(new Date());
+		wxuser.setLogin(false);
 		wxuserDao.save(wxuser);
 		wxuser.setRelation("WX"+wxuser.getId());
 		return RESCODE.SUCCESS.getJSONRES(wxuser);
@@ -169,33 +176,26 @@ public class UserService {
 			WXUser exist = wxuserDao.findUserById(WXUserId);
 			if (exist == null) {
 				return RESCODE.DELETE_ERROR.getJSONRES();
-			} else {
-				//删名下一体机前需要将AeratorStatus记录删掉
-				List<AIO> aios = aioDao.queryAIOByNameAndRelation(exist.getRelation(), null);
-				for(AIO aio : aios){
-					aeratorStatusDao.delete(aio.getDevice_sn());
-					limitDao.delete(aio.getDevice_sn());
-					timerDao.delete(aio.getDevice_sn());
+			} else {			
+				String relation = exist.getRelation();			
+				//删除传感器
+				List<Sensor> sensorList = sensorDao.findSensorsByRelation(relation);
+				for(Sensor sensor : sensorList) {
+					equipmentService.delEquipment(sensor.getDevice_sn());					
+				}				
+				//删除一体机				
+				List<AIO> aioList = aioDao.findAIOByRelation(relation);
+				for(AIO aio:aioList) {
+					equipmentService.delEquipment(aio.getDevice_sn());
 				}
-				aioDao.deleteByRelation(exist.getRelation());
-				//删除控制器和传感器前需要将之间的绑定关系删掉,再删两者
-				List<Sensor> sensors = sensorDao.querySensorByNameAndRelation(exist.getRelation(), null);
-				for(Sensor sensor : sensors){
-					limitDao.delete(sensor.getDevice_sn());
-					timerDao.delete(sensor.getDevice_sn());
-					sensor_ControllerDao.delete(sensor.getId());
+				//删除控制器
+				List<Controller> controllerList = controllerDao.findByRelation(relation);
+				for(Controller con:controllerList) {
+					equipmentService.delEquipment(con.getDevice_sn());
 				}
-				List<Controller> controllers = controllerDao.queryControllerByNameAndRelation(exist.getRelation(), null);
-				for(Controller Controller : controllers){
-					sensor_ControllerDao.deleteController(Controller.getId());
-				}
-				sensorDao.deleteByRelation(exist.getRelation());
-				controllerDao.deleteByRelation(exist.getRelation());
-				List<Pond> ponds = pondDao.queryPondByNameAndRelation(exist.getRelation(), null);
-				for(Pond pond : ponds){
-					pondFishDao.deleteByPondId(pond.getId());
-				}
-				pondDao.deleteByRelation(exist.getRelation());
+				//删除塘口
+				
+				pondDao.deleteByRelation(relation);
 				wxuserDao.deleteUser(WXUserId);
 			}
 		}

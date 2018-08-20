@@ -24,8 +24,6 @@ public class Admin {
 	private int companyId;					//关联企业用户的Id(管理员默认为0),可支持多个登录账户绑定同一个企业用户
 	private String comment;				//备注
 	
-	
-
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {

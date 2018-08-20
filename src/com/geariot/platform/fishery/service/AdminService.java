@@ -15,6 +15,7 @@ import com.geariot.platform.fishery.entities.Admin;
 import com.geariot.platform.fishery.entities.Company;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.utils.MD5;
+import com.sun.media.jfxmedia.logging.Logger;
 
 /**
  * @author mxy940127
@@ -31,11 +32,11 @@ public class AdminService {
 	private CompanyDao companyDao;
 	
 	public Map<String, Object> add(Admin admin) {
+	
 		Admin exist = adminDao.findAdminByAccount(admin.getAccount());
 		if(exist != null){
 			return RESCODE.ACCOUNT_EXIST.getJSONRES();
-		}
-		else {
+		}else {
 			admin.setPassword(MD5.compute(admin.getPassword()));
 			if(admin.getCompanyId()>0){
 				Company com = companyDao.findCompanyById(admin.getCompanyId());
@@ -55,7 +56,7 @@ public class AdminService {
 		if(exist == null){
 			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
 		}else{
-			if(exist.getPassword().equals(MD5.compute(password))){
+			if(exist.getPassword().equals(MD5.compute(password))){				
 				Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(exist);
 				if(exist.getCompanyId()>0){
 					Company com = companyDao.findCompanyById(exist.getCompanyId());

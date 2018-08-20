@@ -27,6 +27,7 @@ public class CMDUtils {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static String apikey="7zMmzMWnY1jlegImd=m4p9EgZiI=";
 	public static int sendStrCmd(String devId,String contents){
+		int result = 1;
 		logger.debug("开始向编号为"+devId+"的设备发送命令");
 		/**
 		 * 发送命令
@@ -46,41 +47,36 @@ public class CMDUtils {
 		 */
 		
 		SendCmdsApi api = new SendCmdsApi(devId, null, null, null,contents, apikey);
-		String cmdUuid="";
-		try{						
-			BasicResponse<NewCmdsResponse> response = api.executeApi();
-			System.out.println(response.getJson());
-			JSONObject tempjson = JSONObject.fromObject(response.getJson());
-
-			JSONObject temp12 = tempjson.getJSONObject("data");
-			String temp13 = temp12.getString("cmd_uuid");
-			cmdUuid=temp13;
-			Thread.currentThread().sleep(3500);
-			/**
-			 * 查询命令响应
-			 * @param cmduuid:命令id,String
-			 * @param key:masterkey或者设备apikey
-			 */
-			/*QueryCmdsRespApi api1=new QueryCmdsRespApi(cmdUuid,apikey);*/
-			QueryCmdsStatus api1=new QueryCmdsStatus(cmdUuid,apikey);
-			BasicResponse<CmdsResponse> response1 = api1.executeApi();
-			if(response.errno==0) {
-				if(response1.data.getStatus()==4) {
-					return 0;
-				}else {
-					return 1;
-				}
-				
-			}else {
-				return 1;
-			}	
-			
-		}catch(Exception e){
-			System.out.println(e.getMessage());
-			return 1;
-		}
+		BasicResponse<NewCmdsResponse> response = api.executeApi();
+		logger.debug(response.getJson());
 		
-
+		JSONObject tempjson = JSONObject.fromObject(response.getJson());
+		JSONObject temp12 = tempjson.getJSONObject("data");
+		String cmdUuid = temp12.getString("cmd_uuid");
+		for(int i=0;i<3;i++) {
+			try{													
+				logger.debug("等2s，等待设备接受指令");
+				Thread.currentThread().sleep(2000);			
+				QueryCmdsStatus api1=new QueryCmdsStatus(cmdUuid,apikey);
+				BasicResponse<CmdsResponse> response1 = api1.executeApi();
+				System.out.println(response1.getJson());
+				if(response.errno==0) {					
+					if(response1.data.getStatus()==4) {
+						result=0;
+						break;
+					}else {
+						result=1;
+					
+					}
+					
+				}
+									
+			}catch(Exception e){
+				System.out.println(e.getMessage());
+			}
+		}
+			
+		return result;
 	}
 
 }

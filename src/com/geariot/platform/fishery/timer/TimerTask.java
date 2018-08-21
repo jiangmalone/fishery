@@ -100,8 +100,9 @@ public class TimerTask {
 				        	boolean isOnline = responseOnline.data.getDevices().get(0).getIsonline();
 				        	if(isOnline) {
 				        		
-				        		/* * 获取增氧机相关数据流
-				        		*/ 
+				        		/*
+				        		 * 获取增氧机相关数据流
+				        		 */ 
 				        		GetLatesDeviceData api = new GetLatesDeviceData(device_sn,key);
 				     	        BasicResponse<DeciceLatestDataPoint> response = api.executeApi();				     	       
 				     	        List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
@@ -215,7 +216,7 @@ public class TimerTask {
 							case 2:
 								
 								break;
-							case 3:
+							case 3:							
 								List<Controller> conList = controllerDao.findControllerByDeviceSns(deviceOld.getDevice_sn());
 								wxUser = wxUserDao.findUserByRelation(conList.get(0).getRelation());
 								deviceName = conList.get(0).getName();						
@@ -225,7 +226,7 @@ public class TimerTask {
 						}
 			    		
 						String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());	
-			    		WechatSendMessageUtils.sendWechatAlarmMessages("设备离线", publicOpenID, device.getDevice_sn());
+			    		WechatSendMessageUtils.sendWechatAlarmMessages("设备离线", publicOpenID, device.getDevice_sn(),deviceName);
 						String json = "{\"deviceName\":\"" + deviceName + "\",\"way\":" + "0" + "}";
 						try {
 							logger.debug("准备启用阿里云语音服务");

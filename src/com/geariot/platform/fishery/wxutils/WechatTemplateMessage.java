@@ -22,7 +22,8 @@ import com.geariot.platform.fishery.utils.HttpRequest;
 
 public class WechatTemplateMessage {
 	
-	
+	@Autowired
+	private EquipmentService equipmentService;
 	
 	private static final String MSG_TEMPLATE_ID="P9tXcCFGquvWFcqPyDD5OK7BZ6rFFfwZcGu54wrBBa8";
 //	private static final Logger log = Logger.getLogger(WechatTemplateMessage.class);
@@ -239,7 +240,7 @@ public static void sendDataAlarmMSG(String msg,String openId,String deviceSn) {
 		}
 	}
 	
-	public static void alarmMSG(String msg,String openId,String deviceSn) {
+	public static void alarmMSG(String msg,String openId,String deviceSn,String pondName) {
 		log.debug("向微信用户发送报警信息");
 		EquipmentService service = new EquipmentService();
 		/*AIO aio=service.findAIOByDeviceSn(deviceSn);
@@ -247,15 +248,7 @@ public static void sendDataAlarmMSG(String msg,String openId,String deviceSn) {
 		if(aio!=null) {
 		pond=service.findPondById(aio.getPondId());
 		}*/
-		String pondName = "";
-		Map<String, Object> returnController = service.getControllersBydevice_sn(deviceSn);				
-		for(int i=0;i<returnController.size();i++) {
-			Map<String, Object> port_controller = (Map<String, Object>) returnController.get(i+"");
-			List<Controller> controllerList = (List<Controller>) port_controller.get("controller");
-			for(Controller con:controllerList) {
-				pondName = pondName + con.getName()+" ";
-			}			
-		}		
+			
 		JSONObject params=new JSONObject();
 		JSONObject data=new JSONObject();
 		params.put("touser", openId);

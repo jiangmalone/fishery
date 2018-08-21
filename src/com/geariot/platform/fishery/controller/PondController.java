@@ -2,6 +2,8 @@ package com.geariot.platform.fishery.controller;
 
 import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.service.PondService;
+import com.geariot.platform.fishery.service.WebServiceService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +19,14 @@ public class PondController {
 	@Autowired
 	private PondService pondService;
 	
+	@Autowired
+	private WebServiceService webservice;
+	
+	
 	@RequestMapping(value = "/addPond" , method = RequestMethod.POST)
 	public Map<String,Object> addPond(@RequestBody Pond pond){
+		String address = webservice.getLocation(pond.getLongitude(), pond.getLatitude());
+		pond.setAddress(address);
 		return pondService.addPond(pond);
 	}
 	

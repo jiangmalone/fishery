@@ -172,6 +172,7 @@ public class UserService {
 	}
 
 	public Map<String, Object> deleteWXUser(Integer[] WXUserIds) {
+		logger.debug("进入删除用户");
 		for (int WXUserId : WXUserIds) {
 			WXUser exist = wxuserDao.findUserById(WXUserId);
 			if (exist == null) {
@@ -193,8 +194,7 @@ public class UserService {
 				for(Controller con:controllerList) {
 					equipmentService.delEquipment(con.getDevice_sn());
 				}
-				//删除塘口
-				
+				//删除塘口				
 				pondDao.deleteByRelation(relation);
 				wxuserDao.deleteUser(WXUserId);
 			}

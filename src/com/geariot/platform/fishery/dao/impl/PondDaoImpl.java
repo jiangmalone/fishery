@@ -94,13 +94,13 @@ public class PondDaoImpl implements PondDao {
 	@Override
 	public List<Equipment> findEquipmentByPondId(int pondId, int from, int pageSize) {
 		StringBuilder sb = new StringBuilder(2048);
-		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status, a.relation as relation ");
+		sb.append("select a.device_sn as device_sn, a.name as name,a.relation as relation ");
 		sb.append("from AIO a where a.pondId = :pondId ");
 		sb.append("UNION ALL ");
-		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status, b.relation as relation ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.relation as relation ");
 		sb.append("from Sensor b where b.pondId = :pondId ");
 		sb.append("UNION ALL ");
-		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status, c.relation as relation ");
+		sb.append("select c.device_sn as device_sn, c.name as name,c.relation as relation ");
 		sb.append("from Controller c where c.pondId = :pondId");
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
@@ -112,13 +112,13 @@ public class PondDaoImpl implements PondDao {
 	public long equipmentByPondIdCount(int pondId) {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select count(*) from (");
-		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("select a.device_sn as device_sn, a.name as name ");
 		sb.append("from AIO a where a.pondId = :pondId ");
 		sb.append("UNION ALL ");
-		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("select b.device_sn as device_sn, b.name as name ");
 		sb.append("from Sensor b where b.pondId = :pondId ");
 		sb.append("UNION ALL ");
-		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("select c.device_sn as device_sn, c.name as name ");
 		sb.append("from Controller c where c.pondId = :pondId) ");
 		sb.append("as total");
 		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString())
@@ -166,13 +166,13 @@ public class PondDaoImpl implements PondDao {
 	public long adminFindEquipmentCountAll() {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select count(*) from (");
-		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("select a.device_sn as device_sn, a.name as name ");
 		sb.append("from AIO a ");
 		sb.append("UNION ALL ");
-		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("select b.device_sn as device_sn, b.name as name ");
 		sb.append("from Sensor b ");
 		sb.append("UNION ALL ");
-		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("select c.device_sn as device_sn, c.name as name ");
 		sb.append("from Controller c) ");
 		sb.append("as total");
 		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString()).uniqueResult();

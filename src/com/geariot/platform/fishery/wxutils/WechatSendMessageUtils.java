@@ -28,13 +28,13 @@ public class WechatSendMessageUtils {
         });
 	}
 	
-	public static void  sendWechatAlarmMessages(final String message,final String openId,final String deviceSn) {
+	public static void  sendWechatAlarmMessages(final String message,final String openId,final String deviceSn,final String pondname) {
 		executorService.execute(new Runnable() {
 
             @Override
             public void run(){
             	log.debug("向"+openId+"发送"+deviceSn+"设备的警告信息："+message+"");
-            	WechatTemplateMessage.alarmMSG(message, openId,deviceSn);
+            	WechatTemplateMessage.alarmMSG(message, openId,deviceSn,pondname);
             }
         });
 	}

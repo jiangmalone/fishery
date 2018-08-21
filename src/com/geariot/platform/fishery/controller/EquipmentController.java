@@ -167,10 +167,10 @@ public class EquipmentController {
 		return equipmentService.myEquipment(relation);
 	}	
 	
-	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
+/*	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
 	public Map<String, Object> companyFindEquipment(String device_sn, String relation, int page, int number){
 		return equipmentService.companyFindEquipment(device_sn, relation, page, number);
-	}
+	}*/
 	
 	@RequestMapping(value = "/setTimer", method = RequestMethod.POST)
 	public Map<String, Object> autoSet(@RequestBody Param param){

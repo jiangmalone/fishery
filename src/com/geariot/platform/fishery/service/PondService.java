@@ -77,6 +77,7 @@ public class PondService {
 		Controller controller = null;
 		for (Integer pondId : pondIds) {
 			logger.debug("开始删除塘口："+pondId);
+			logger.debug("删除用户："+pondDao.findPondByPondId(pondId).getRelation()+"的塘口："+pondDao.findPondByPondId(pondId).getName());;
 			// 删除塘口时需要先将塘口的鱼种子表置为空,否则无法删除
 			//pondDao.findPondByPondId(pondId).setPondFishs(null);  
 			pondfishDao.deleteByPondId(pondId);

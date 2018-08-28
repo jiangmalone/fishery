@@ -101,6 +101,12 @@ public class EquipmentController {
 	public Map<String, Object> modifySensor(@RequestBody Sensor...sensors) {
 		return equipmentService.modifySensor(sensors);
 	}
+	
+	@RequestMapping(value = "/querySensor", method = RequestMethod.GET)
+	public Map<String, Object> querySensor(String device_sn) {
+		return equipmentService.querySensor(device_sn);
+	}
+	
 
 	@RequestMapping(value = "/addController", method = RequestMethod.POST)
 	public Map<String, Object> addController(@RequestBody Controller... controllers) {
@@ -111,8 +117,8 @@ public class EquipmentController {
 	public Map<String, Object> modifyController(@RequestBody Controller... controllers) {
 		return equipmentService.modifyController(controllers);
 	}
-	@RequestMapping(value = "/getControllersBydevice_sn", method = RequestMethod.POST)
-	public Map<String, Object> getControllersBydevice_sn(String device_sn) {
+	@RequestMapping(value = "/getControllersBydevice_sn", method = RequestMethod.GET)
+	public List<Map<String, Object>> getControllersBydevice_sn(String device_sn) {
 		return equipmentService.getControllersBydevice_sn(device_sn);
 	}
 	
@@ -362,23 +368,23 @@ public class EquipmentController {
 		 equipmentService.saveALLDataYesterday();
 	}
 	
-	@RequestMapping(value ="/getControllersBydevice_sn", method = RequestMethod.GET)
-	public Map<String, Object> getControllersBydevice_sn(){	
+/*	@RequestMapping(value ="/getControllersBydevice_sn", method = RequestMethod.GET)
+	public Map<String, Object> getControllersBydevicesn(String device_sn){	
 		String pondName = "";
-		Map<String, Object> returnController= equipmentService.getControllersBydevice_sn("35664847");
+		Map<String, Object> returnController= equipmentService.getControllersBydevice_sn(device_sn);
 		for(int i=0;i<returnController.size();i++) {
 			Map<String, Object> port_controller = (Map<String, Object>) returnController.get(i+"");
 			List<Controller> controllerList = (List<Controller>) port_controller.get("controller");
 			for(Controller con:controllerList) {
 				int j= 0;
-				pondName = pondName + con.getName() + " ";
+				pondName = pondName + con.getName() + "/";
 				j++;
 			}
 			
 		}
 		System.out.println("pondName:"+pondName);
-		  return equipmentService.getControllersBydevice_sn("35664847");
-	}
+		return equipmentService.getControllersBydevice_sn(device_sn);
+	}*/
 	
 	@RequestMapping(value ="/adminFindEquipment", method = RequestMethod.GET)
 	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number){

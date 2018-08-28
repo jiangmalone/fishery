@@ -510,12 +510,12 @@ public class BindService {
 	
 	return null;*/
 	public Map<String , Object> delControllerBind(String device_sn,int port){
+		logger.debug("delControllerBind+控制器设备编号："+device_sn+",控制器port:"+port);
 		List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(device_sn, port);
 		logger.debug("共有："+controllerList.size());
 		if(controllerList.size()>0) {
 			Controller controller = controllerList.get(0);
 			controller.setPondId(0);
-			controller.setName("");
 			controller.setPondIds(null);
 			controllerDao.updateController(controller);
 			for(int i=1;i<controllerList.size();i++) {
@@ -525,8 +525,5 @@ public class BindService {
 		}else {
 			return RESCODE.NO_DEVICE.getJSONRES();
 		}		
-	}
-	
-	
-	
+	}	
 }

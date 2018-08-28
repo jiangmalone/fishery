@@ -15,8 +15,7 @@ import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 import cmcc.iot.onenet.javasdk.api.datastreams.GetDatastreamApi;
 import cmcc.iot.onenet.javasdk.response.BasicResponse;
 import cmcc.iot.onenet.javasdk.response.datastreams.DatastreamsResponse;
-@Service
-@Component
+
 public class HighlimitTrigger {
 	
 	private static final Logger log = LogManager.getLogger(HighlimitTrigger.class);

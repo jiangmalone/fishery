@@ -488,10 +488,8 @@ public class UserService {
 	}
 	
 	public String getPublicOpenId(String openId) {
-		logger.debug("进入获取公众号openId");
-		String unionId ="";
-		System.out.println(openId);
-		
+		logger.debug("getPublicOpenId+进入获取公众号openId");
+		String unionId ="";		
 		/*
 		 * 在wxuser表中，根据小程序openid获得wxuser，查看wxuser是否有unionId
 		 */
@@ -501,25 +499,19 @@ public class UserService {
 				if(wxuser.getUnionid() != null&&wxuser.getUnionid() !="") {
 					unionId = wxuser.getUnionid();
 					break;
-				}
-				
-			}
-			
+				}				
+			}			
 		}		
-		//openId相同，其unionId必然相同
-		
+		//openId相同，其unionId必然相同		
 		if(unionId !=null && unionId != "") {//在小程序用户表中unionId不为空
 			WXUser_union wxuser_union = wxUser_unionDao.getByUnionId(unionId);
 			if(wxuser_union == null) {//公众号中unionId为空
 				//未查询到unionId，进入
-				logger.debug("根据unionId未获取到公众号openid，更新公众号库");				
+				logger.debug("getPublicOpenId+根据unionId未获取到公众号openid，更新公众号库");				
 				Map<String, Object>	publicOpenIds =  getAllPublicUser();	
-				List<String> openIdList = (List<String>) publicOpenIds.get("openid");
-				
-				for(String publicOpenId:openIdList) {
-										
-					if(wxUser_unionDao.getByUnionId(unionId) == null) {
-						
+				List<String> openIdList = (List<String>) publicOpenIds.get("openid");				
+				for(String publicOpenId:openIdList) {										
+					if(wxUser_unionDao.getByUnionId(unionId) == null) {						
 						if(wxUser_unionDao.getByOpenId(publicOpenId) == null) {
 							logger.debug("公众号库中数据不存在，数据更新");
 							WXUser_union wxu = new WXUser_union();
@@ -534,12 +526,14 @@ public class UserService {
 				}
 				
 				WXUser_union wu = wxUser_unionDao.getByUnionId(unionId);
+				logger.debug("getPublicOpenId+更新数据库后获取用户公众号openId："+wu==null?"":wu.getOpenId());
 				return wu==null?"":wu.getOpenId();
 			} else {
 				logger.debug("直接返回公众号openId:"+wxuser_union.getOpenId());
 				return wxuser_union.getOpenId();
 			}	
 		}else {
+			logger.debug("getPublicOpenId+wxuser表中无unionId");
 			return null;
 		}		
 		

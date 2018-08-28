@@ -72,10 +72,10 @@ public class TimerTask {
 	
 	private String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 
-	
-	@Scheduled(cron = "0 */15 * * * ?") // 每15分钟执行一次
+
+	@Scheduled(cron = "0 15 * * * ?") // 每15分钟执行一次
 	public void judgeTime() throws ParseException {
-		logger.debug("进入定时任务1");
+		logger.debug("进入定时任务,检测是否需要定时增氧");
 		//定时检测增氧机的定时任务
 		List<Timer> lt = timerDao.findAllTimer();
 		if (!lt.isEmpty()) {
@@ -100,9 +100,9 @@ public class TimerTask {
 				        	boolean isOnline = responseOnline.data.getDevices().get(0).getIsonline();
 				        	if(isOnline) {
 				        		
-				        		/*
-				        		 * 获取增氧机相关数据流
-				        		 */ 
+				        		
+				        		// * 获取增氧机相关数据流
+				        		  
 				        		GetLatesDeviceData api = new GetLatesDeviceData(device_sn,key);
 				     	        BasicResponse<DeciceLatestDataPoint> response = api.executeApi();				     	       
 				     	        List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
@@ -175,7 +175,7 @@ public class TimerTask {
 				
 			}				
 		}		
-		logger.debug("定时任务结束");
+		logger.debug("定时增氧检测结束");
 	}
 	
 	@Scheduled(cron = "0 0 1 * * ?")//每天凌晨一点执行一次
@@ -191,7 +191,7 @@ public class TimerTask {
 	@Scheduled(cron = "0 0 */1 * * ?")//每小时执行一次
 	//@Scheduled(cron = "0 */20 * * * ?") // 每15分钟执行一次
 	public void checkOnline() {
-		logger.debug("进入定时检测设备是否在线");
+		logger.debug("进入每小时定时检测设备是否在线");
 		long start = System.currentTimeMillis();	
 		List<Device> deviceList = equipmentService.getAllDevices();
 		for(Device device:deviceList) {
@@ -242,6 +242,6 @@ public class TimerTask {
 		}
 		
 		long end = System.currentTimeMillis();
-		logger.debug("共耗时："+(end-start)+",定时检测离线结束！");
+		logger.debug("共耗时："+(end-start)+",每小时定时检测离线结束！");
 	}
 }

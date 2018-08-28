@@ -193,6 +193,7 @@ public class EquipmentService {
 							ed.setName(sensor.getName());
 							ed.setUserName(uName);
 							ed.setType(1);
+							ed.setRelation(sensor.getRelation());
 							GetDevicesStatus api = new GetDevicesStatus(sensor.getDevice_sn(),key);
 					        BasicResponse<DevicesStatusList> response = api.executeApi();
 					        logger.debug("从onenet上获取传感器在线/离线状态");
@@ -215,6 +216,7 @@ public class EquipmentService {
 								ed.setDevice_sn(sensor.getDevice_sn());
 								ed.setName(sensor.getName());
 								ed.setUserName(uName);
+								ed.setRelation(sensor.getRelation());
 								ed.setType(1);
 								GetDevicesStatus api = new GetDevicesStatus(sensor.getDevice_sn(),key);
 						        BasicResponse<DevicesStatusList> response = api.executeApi();
@@ -248,6 +250,7 @@ public class EquipmentService {
 								Equipment ed1 = new Equipment();
 								ed1.setDevice_sn(con.getDevice_sn());
 								ed1.setName(con.getName()+"-"+(con.getPort()+1)+"路");
+								ed1.setRelation(con.getRelation());
 								ed1.setUserName(wxUserDao.findUserByRelation(con.getRelation()).getName());
 								ed1.setType(3);
 								ed1.setWay(con.getPort()+1);
@@ -304,6 +307,7 @@ public class EquipmentService {
 								if(userName.equals(uName1)) {
 									Equipment ed1 = new Equipment();
 									ed1.setDevice_sn(con.getDevice_sn());
+									ed1.setRelation(con.getRelation());
 									ed1.setName(con.getName()+"-"+(con.getPort()+1)+"路");
 									ed1.setUserName(wxUserDao.findUserByRelation(con.getRelation()).getName());
 									ed1.setType(3);
@@ -372,7 +376,7 @@ public class EquipmentService {
 
 	//删除设备
 	public Map<String, Object> delEquipment(String device_sn){
-		logger.debug("进入删除设备，设备编号为："+device_sn);
+		logger.debug("delEquipment+进入删除设备，设备编号为："+device_sn);
 		Device  d = deviceDao.findDevice(device_sn);
 		if(d!=null) {
 			int type = d.getType();
@@ -416,7 +420,7 @@ public class EquipmentService {
 			}
 			return RESCODE.SUCCESS.getJSONRES();
 		}else {
-			logger.debug("设备表中未找到需要删除的设备");
+			logger.debug("delEquipment+设备表中未找到需要删除的设备");
 			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
 		}		
 	}
@@ -592,27 +596,27 @@ public class EquipmentService {
 		}
 			
 	}
-	public Map<String, Object> getControllersBydevice_sn(String device_sn){
+	public List<Map<String, Object>> getControllersBydevice_sn(String device_sn){
 		List<Controller> controllerList = controllerDao.findControllerByDeviceSns(device_sn);
-		Map<String, Object> returnController = new HashMap<>();
+		logger.debug("getControllersBydevice_sn+设备"+device_sn+":"+controllerList.size());
+		List<Map<String, Object>> returnList = new ArrayList<>();
 		//获得所有port
 		Set<Integer> portSet = new HashSet<>();
 		for(Controller controller:controllerList) {
 			portSet.add(controller.getPort());
 		}
-		for(int i:portSet) {
-			int j=0;
+		Iterator<Integer> it = portSet.iterator(); 
+		int j=0;
+		while (it.hasNext()) {			
+		  int str = it.next();  		  
 			//根据设备路获得控制器
-			List<Controller> controller_port_List = controllerDao.findControllerByDeviceSnAndWay(device_sn, i);			
+			List<Controller> controller_port_List = controllerDao.findControllerByDeviceSnAndWay(device_sn, str);			
 			Map<String, Object> port_controller = new HashMap<>();
-			port_controller.put("port", i);
+			port_controller.put("port", str);
 			port_controller.put("controller", controller_port_List);
-			returnController.put(j+"", port_controller);
-			j++;
-		}
-		
-		
-		return returnController;
+			returnList.add(port_controller);
+		} 
+		return returnList;
 	}
 	
 	//测试用，具体实现后续完成
@@ -684,46 +688,65 @@ public class EquipmentService {
 
 
 	public Sensor realTimeData(String device_sn) {
-		logger.debug("获取"+device_sn+"的实时数据");
-    	GetLatesDeviceData api = new GetLatesDeviceData(device_sn,key);
-        BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
-        logger.debug(response.getJson());
-        if(response.getErrno()==0) {
+		logger.debug("realTimeData+进入获取"+device_sn+"的实时数据");		
+		GetDevicesStatus apiStatus = new GetDevicesStatus(device_sn,key);
+        BasicResponse<DevicesStatusList> responseStatus = apiStatus.executeApi();
+        if(responseStatus.getErrno() == 0) {
+        	if(responseStatus.data.getDevices().get(0).getIsonline()) {
+        		GetLatesDeviceData api = new GetLatesDeviceData(device_sn,key);
+                BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
+                logger.debug(response.getJson());
+                if(response.getErrno()==0) {                	
+                	 List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();                	
+                	 //实时数据仅提供给传感器
+                     if(sensorDao.findSensorByDeviceSns(device_sn)!=null) {//设备为传感器，将水温、溶解氧、pH存入传感器表
+                     	Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+                     	for(int i=0;i<DatastreamsList.size();i++) {
+                     		/*logger.debug("数据流："+DatastreamsList.get(i).getId());
+                     		logger.debug("数据流数值："+DatastreamsList.get(i).getValue());*/
+                         	String id = DatastreamsList.get(i).getId();                         	
+                         	if(id.equals("pH")) {
+                         		String v = String.valueOf(DatastreamsList.get(i).getValue());
+                             	float value = Float.parseFloat(v);
+                         		sensor.setpH_value(value);
+                         	}else if(id.equals("DO")) {
+                         		String v = String.valueOf(DatastreamsList.get(i).getValue());
+                             	float value = Float.parseFloat(v);
+                         		sensor.setOxygen(value);
+                         	}else if(id.equals("WT")) {
+                         		String v = String.valueOf(DatastreamsList.get(i).getValue());
+                             	float value = Float.parseFloat(v);
+                         		sensor.setWater_temperature(value);
+                         	}                           	
+                         }
+                     	logger.debug("realTimeData+将实时数据存入到传感器并返回");
+                     	sensor.setStatus(1);
+                     	return sensor;
+                     }else {
+                    	 logger.debug("realTimeData+数据库中不存在该设备");
+                    	 return null;
+                     }
+                }else {
+                	return null;
+                }
+        	}else {
+        		Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+        		sensor.setpH_value(0);
+        		sensor.setOxygen(0);
+        		sensor.setWater_temperature(0);
+        		sensor.setStatus(0);
+        		return sensor;
+        	}
         	
-        	 List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
-        	
-        	 //实时数据仅提供给传感器
-             if(sensorDao.findSensorByDeviceSns(device_sn)!=null) {//设备为传感器，将水温、溶解氧、pH存入传感器表
-             	Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
-             	for(int i=0;i<DatastreamsList.size();i++) {
-             		logger.debug("数据流："+DatastreamsList.get(i).getId());
-             		logger.debug("数据流数值："+DatastreamsList.get(i).getValue());
-                 	String id = DatastreamsList.get(i).getId();
-                 	
-                 	if(id.equals("pH")) {
-                 		String v = String.valueOf(DatastreamsList.get(i).getValue());
-                     	float value = Float.parseFloat(v);
-                 		sensor.setpH_value(value);
-                 	}else if(id.equals("DO")) {
-                 		String v = String.valueOf(DatastreamsList.get(i).getValue());
-                     	float value = Float.parseFloat(v);
-                 		sensor.setOxygen(value);
-                 	}else if(id.equals("WT")) {
-                 		String v = String.valueOf(DatastreamsList.get(i).getValue());
-                     	float value = Float.parseFloat(v);
-                 		sensor.setWater_temperature(value);
-                 	}  
-                 	
-                 }
-             	logger.debug("将数据存入到传感器中");
-             	return sensor;
-             }else {
-            	 logger.debug("数据库中不存在该设备");
-            	 return null;
-             }
-        }else {
-        	return null;
-        }
+        } else {
+        	Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+    		sensor.setpH_value(0);
+    		sensor.setOxygen(0);
+    		sensor.setWater_temperature(0);
+    		sensor.setStatus(2);
+    		return sensor;
+        }       
+    	
 	}
 	
 	public Map<String, Object> myEquipment(String relation) {
@@ -1846,8 +1869,7 @@ public class EquipmentService {
 	 * 触发器触发，改变传感器状态
 	 */	
 	public synchronized void triggeractive(JSONObject data) {
-		logger.debug("触发器触发");
-		logger.debug("触发器"+data);
+		logger.debug("触发器触发数据："+data);
 		/*JSONObject tempjson = JSONObject.fromObject(data);*/
 		JSONObject tempjson = data;
 		JSONObject temp12 = tempjson.getJSONObject("trigger");
@@ -1860,12 +1882,11 @@ public class EquipmentService {
 		String ds_id= obj1.getString("ds_id");//数据流
 		String value = obj1.getString("value");//触发时的值，不能直接使用，分数值和map
 		double va = Double.parseDouble(value);
-		logger.debug("dev_id："+dev_id);
+/*		logger.debug("dev_id："+dev_id);
 		logger.debug("数据流："+ds_id);
 		logger.debug("触发器类型："+triggertype);
 		logger.debug("触发器id："+triggerid);
-		logger.debug("数值为："+value);
-		
+		logger.debug("数值为："+value);*/		
 		//根据触发器id获得触发器，根据设备编号获得传感器（传感器只有一路），为传感器设置状态
 		//状态值0：正常，1：预警，2：危险
 		Dev_Trigger trigger = dev_triggerDao.findTriggerBytriggerId(triggerid);
@@ -1929,13 +1950,13 @@ public class EquipmentService {
 						controllerList.add(controller);
 					}
 				}
-				logger.debug("触发传感器："+trigger.getDevice_sn()+",根据传感器找到其所在塘口："+sensor.getPondId()+",找到塘口下增氧机控制器数量："+controllerList.size());
+				logger.debug("触发传感器："+trigger.getDevice_sn()+",根据传感器找到其所在塘口："+sensor.getPondId()+",找到塘口下增氧机："+controllerList.get(0).getDevice_sn()+"增氧机控制器数量："+controllerList.size());
 				if(controllerList !=null &&controllerList.size()>0) {
 					for(Controller con:controllerList) {
 						WXUser wxUser = wxUserDao.findUserByRelation(con.getRelation());
 						String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
 						Limit_Install limit = limitDao.findLimitByDeviceSnsAndWay(con.getDevice_sn(), con.getPort());
-						if(limit.isValid()) {
+						if(limit.isValid()) {																		
 							if(triggertype.equals("<")) {//低于溶氧下限，打开增氧机
 								logger.debug("低于溶氧下限，准备打开增氧机");
 								/*
@@ -1960,28 +1981,57 @@ public class EquipmentService {
 								}
 								
 							}else if(triggertype.equals(">")) {//高于溶氧上限，关闭增氧机
-								logger.debug("高于溶氧上限，准备关闭增氧机");
+								String divsn= controllerList.get(0).getDevice_sn();
+								int way = trigger.getWay();
+								logger.debug("高于溶氧上限，准备关闭增氧机");																
+								/*
+								 * 判断是否处于定时增氧时间内
+								 */
+								boolean flag = true;
+								SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+								long now = 0;
+								try {
+									now = sdf.parse(sdf.format(new Date())).getTime();
+								} catch (ParseException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(divsn, way);
+										
+								for(Timer timer:timerList) {
+									try {
+										if(now-sdf.parse(timer.getEndTime()).getTime() <= 0 && now-sdf.parse(timer.getStartTime()).getTime() >= 0) {
+											flag = false;
+											break;
+										}
+									} catch (ParseException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									
+								}																							
 								/*
 								 *判断增氧机状态 
 								 */
-								String divsn= controllerList.get(0).getDevice_sn();
-								int way = trigger.getWay();
-								String id = "KM"+(way+1);
-								GetDatastreamApi api = new GetDatastreamApi(divsn, id, key);
-								BasicResponse<DatastreamsResponse> response = api.executeApi();
-								int currentvalue =  Integer.parseInt(response.data.getCurrentValue().toString()) ;	
-								if(currentvalue != 0) {
-									logger.debug("增氧机未关闭");
-									WechatSendMessageUtils.sendWechatOnOffMessages("高于溶氧上限，准备关闭增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
-									String text = "KM"+(way+1)+":"+0;
-									
-									int results = CMDUtils.sendStrCmd(divsn,text);
-									if(results==0) {
-										WechatSendMessageUtils.sendWechatOnOffMessages("关闭增氧机成功", publicOpenID, controllerList.get(0).getDevice_sn());
-									}else {//打开
-										WechatSendMessageUtils.sendWechatOnOffMessages("关闭增氧机失败", publicOpenID, controllerList.get(0).getDevice_sn());
+								if(flag) {
+									String id = "KM"+(way+1);
+									GetDatastreamApi api = new GetDatastreamApi(divsn, id, key);
+									BasicResponse<DatastreamsResponse> response = api.executeApi();
+									int currentvalue =  Integer.parseInt(response.data.getCurrentValue().toString()) ;	
+									if(currentvalue != 0) {
+										logger.debug("增氧机未关闭");
+										WechatSendMessageUtils.sendWechatOnOffMessages("高于溶氧上限，准备关闭增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
+										String text = "KM"+(way+1)+":"+0;
+										
+										int results = CMDUtils.sendStrCmd(divsn,text);
+										if(results==0) {
+											WechatSendMessageUtils.sendWechatOnOffMessages("关闭增氧机成功", publicOpenID, controllerList.get(0).getDevice_sn());
+										}else {//打开
+											WechatSendMessageUtils.sendWechatOnOffMessages("关闭增氧机失败", publicOpenID, controllerList.get(0).getDevice_sn());
+										}
 									}
-								}							
+								}
+															
 							}
 						}						
 					}					
@@ -2409,9 +2459,9 @@ public class EquipmentService {
 		 * @param key:masterkey 或者 设备apikey
 		 */
 		//微信小程序使用url
-		//String url = "https://www.fisherymanager.net/fishery/api/equipment/triggeractive";
+		String url = "https://www.fisherymanager.net/fishery/api/equipment/triggeractive";
 		//本机使用
-		String url = "https://df4b82e2.ngrok.io/fishery/api/equipment/triggeractive";
+		//String url = "https://df4b82e2.ngrok.io/fishery/api/equipment/triggeractive";
 		String title = device_sn+"_"+dsid;
 		List<String> devids=new ArrayList<String>();
 		devids.add(device_sn);
@@ -2841,23 +2891,28 @@ public class EquipmentService {
 	}
 	
 	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number) {
+		logger.debug("进入adminFindEquipment");
 		int from = (page - 1) * number;	
-		List<Device> deviceList = deviceDao.queryList(device_sn,page, number);
+		List<Device> deviceList = deviceDao.queryList(device_sn,from,number);
+		logger.debug("查询到的设备数量为："+deviceList.size());
 		if(deviceList == null || deviceList.isEmpty()) {
+			logger.debug("设备列表中不存在");
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}else {
 			List<Equipment> equipmentDetailList = new ArrayList<>();
-			for(Device device : deviceList) {				
+			for(Device device : deviceList) {
+				logger.debug("设备编号："+device.getDevice_sn());
 				switch (device.getType()) {
 				case 1:					
 					Sensor sensor = sensorDao.findSensorByDeviceSns(device.getDevice_sn());
 					if(sensor!=null) {						
-						String uName = wxUserDao.findUserByRelation(sensor.getRelation())==null?"":wxUserDao.findUserByRelation(sensor.getRelation()).getName();
+						String uName = wxUserDao.findUserByRelation(sensor.getRelation())==null?"":wxUserDao.findUserByRelation(sensor.getRelation()).getName();						
 						if(userName == null || userName=="") {
 							Equipment ed = new Equipment();
 							ed.setDevice_sn(sensor.getDevice_sn());
 							ed.setName(sensor.getName());
 							ed.setUserName(uName);
+							ed.setRelation(sensor.getRelation());
 							ed.setType(1);
 							GetDevicesStatus api = new GetDevicesStatus(sensor.getDevice_sn(),key);
 					        BasicResponse<DevicesStatusList> response = api.executeApi();
@@ -2879,6 +2934,7 @@ public class EquipmentService {
 							if(userName.equals(uName)) {
 								Equipment ed = new Equipment();
 								ed.setDevice_sn(sensor.getDevice_sn());
+								ed.setRelation(sensor.getRelation());
 								ed.setName(sensor.getName());
 								ed.setUserName(uName);
 								ed.setType(1);
@@ -2901,19 +2957,28 @@ public class EquipmentService {
 								equipmentDetailList.add(ed);
 							}						
 						}
+					}else {
+						logger.debug("在传感器列表中未查到");
+						Equipment ed = new Equipment();
+						ed.setDevice_sn(device.getDevice_sn());				
+						ed.setType(1);
+						ed.setStatus(2);
+						ed.setWay(0);
+						equipmentDetailList.add(ed);
 					}					
 					break;
 				case 2:
 					
 					break;
 				case 3:
-					List<Controller> conList = controllerDao.findControllerByDeviceSns(device.getDevice_sn());
+					/*List<Controller> conList = controllerDao.findControllerByDeviceSns(device.getDevice_sn());
 					for(Controller con : conList) {
 						if(con!=null) {
 							String uName1 = wxUserDao.findUserByRelation(con.getRelation())==null?"":wxUserDao.findUserByRelation(con.getRelation()).getName();
 							if(userName == null || userName=="") {
 								Equipment ed1 = new Equipment();
 								ed1.setDevice_sn(con.getDevice_sn());
+								ed1.setRelation(con.getRelation());
 								ed1.setName(con.getName()+"-"+(con.getPort()+1)+"路");
 								ed1.setUserName(wxUserDao.findUserByRelation(con.getRelation()).getName());
 								ed1.setType(3);
@@ -2971,6 +3036,7 @@ public class EquipmentService {
 								if(userName.equals(uName1)) {
 									Equipment ed1 = new Equipment();
 									ed1.setDevice_sn(con.getDevice_sn());
+									ed1.setRelation(con.getRelation());
 									ed1.setName(con.getName()+"-"+(con.getPort()+1)+"路");
 									ed1.setUserName(wxUserDao.findUserByRelation(con.getRelation()).getName());
 									ed1.setType(3);
@@ -3028,7 +3094,34 @@ public class EquipmentService {
 								}
 							}
 						}						
-					}					
+					}*/	
+					Equipment ed = new Equipment();
+					String equipmentName = "";
+					ed.setDevice_sn(device.getDevice_sn());
+					List<Controller> conList = controllerDao.findControllerByDeviceSns(device.getDevice_sn());
+					if(conList == null || conList.isEmpty()) {
+						ed.setType(3);
+					}else {
+						ed.setRelation(conList.get(0).getRelation());
+						ed.setUserName(wxUserDao.findUserByRelation(conList.get(0).getRelation()).getName());
+						ed.setType(3);
+						for(Controller con : conList) {
+							equipmentName += con.getName() + "/";
+						}
+					}																												
+					GetDevicesStatus api = new GetDevicesStatus(device.getDevice_sn(),key);
+			        BasicResponse<DevicesStatusList> response = api.executeApi();
+			        logger.debug("获取首页控制器状态："+response.getJson());
+			        if(response.errno == 0) {
+			        	if(response.data.getDevices().get(0).getIsonline()) {
+			        		ed.setStatus(1);
+			        	}else {
+			        		ed.setStatus(0);
+			        	}			        	
+			        }else {
+			        	ed.setStatus(2);
+			        }	
+			        equipmentDetailList.add(ed);
 					break;
 				default:
 					break;
@@ -3040,5 +3133,19 @@ public class EquipmentService {
 		}
 	}
 	
-	
+	public Map<String, Object> querySensor(String device_sn) {
+		Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+		GetDevicesStatus apiStatus = new GetDevicesStatus(device_sn,key);
+        BasicResponse<DevicesStatusList> responseStatus = apiStatus.executeApi();
+        if(responseStatus.getErrno() == 0) {
+        	if(responseStatus.data.getDevices().get(0).getIsonline()) {
+        		sensor.setStatus(1);
+        	}else {
+        		sensor.setStatus(0);
+        	}
+        }else {
+        	sensor.setStatus(2);
+        }
+        return RESCODE.SUCCESS.getJSONRES(sensor);
+	}
 }

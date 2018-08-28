@@ -20,10 +20,8 @@ public class Sensor {
 
 	private int id;							//传感器Id,自增
 	private String device_sn;				//设备编号
-	private int pondId;						//绑定的塘口Id
-	/*private int status;						//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
-*/	
-	private int status;						
+	private int pondId;						//绑定的塘口Id	
+	private int status;						//状态(0,1,2 == 离线,在线,数据异常)
 	private String name;					//传感器名称,可自己定义
 	private String relation;				//绑定的用户relation
 	private String port_status;				//表示传感器两路绑定状态, 如01 00 10 11等

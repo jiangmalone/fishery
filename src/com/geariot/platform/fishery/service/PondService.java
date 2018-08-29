@@ -235,9 +235,25 @@ public class PondService {
 	public Map<String, Object> relationEquipment(String relation, int page, int number) {
 		int from = (page - 1) * number;
 		List<Equipment> equipments = pondDao.equipmentRelation(relation, from, number);
+		List<com.geariot.platform.fishery.entities.Equipment> equipmentList = new ArrayList<>();
+		for(Equipment e:equipments) {
+			com.geariot.platform.fishery.entities.Equipment equip = new com.geariot.platform.fishery.entities.Equipment();
+			equip.setDevice_sn(e.getDevice_sn());
+			equip.setName(e.getName());
+			equip.setRelation(relation);
+			if(sensorDao.findSensorByDeviceSns(e.getDevice_sn())!=null) {
+				equip.setType(1);
+			}else if(controllerDao.findControllerByDeviceSns(e.getDevice_sn())!=null){
+				equip.setType(3);
+			}else {
+				equip.setType(0);
+			}
+			equipmentList.add(equip);
+		}
+		
 		long count = pondDao.equipmentRelationCount(relation);
 		int size = (int) Math.ceil(count / (double) number);
-		return RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+		return RESCODE.SUCCESS.getJSONRES(equipmentList, size, count);
 	}
 	
 	public int pondHasSensor(int pondId) {

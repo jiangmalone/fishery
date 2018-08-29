@@ -17,6 +17,15 @@ public class Equipment {
 	public Equipment() {
 		super();
 	}
+	
+
+	public Equipment(String device_sn, String name, int type) {
+		super();
+		this.device_sn = device_sn;
+		this.name = name;
+		this.type = type;
+	}
+
 
 	public Equipment(String device_sn, String name, String userName, int type, String relation, int status,int way ) {
 		super();

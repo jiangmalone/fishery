@@ -43,7 +43,8 @@ public class RealTimeThread extends Thread {
         			sensor = equipmentService.realTimeData(device_sn); 
        
                 	logger.debug("sensor:"+sensor.toString());
-                	session.getAsyncRemote().sendObject(sensor);
+                	JSONObject jo = JSONObject.fromObject(sensor);
+                	session.getAsyncRemote().sendObject(jo);
 /*                	JSONObject obj = JSONObject.fromObject(sensor);
                     session.getAsyncRemote().sendText(obj.toString());*/
 //                  session.getBasicRemote().sendObject(list.get(i)); //No encoder specified for object of class [class AlarmMessage]

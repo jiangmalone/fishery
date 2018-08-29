@@ -24,14 +24,12 @@ public class Sensor {
 	private int status;						//状态(0,1,2 == 离线,在线,数据异常)
 	private String name;					//传感器名称,可自己定义
 	private String relation;				//绑定的用户relation
-	private String port_status;				//表示传感器两路绑定状态, 如01 00 10 11等
 	
-	
-	//以下这些字段均用@Transient注解了
+	private String port_status;				//表示传感器两路绑定状态, 如01 00 10 11等	
 	private float oxygen;						//溶氧量	
 	private int oxygen_status;					//溶氧状态
 	private float water_temperature;			//水温
-	private int WT_status;					//水温状态
+	private int wt_status;					//水温状态
 	private float pH_value;						//ph值
 	private int pH_status;						//pH状态
 	private int wayStatus;
@@ -111,10 +109,10 @@ public class Sensor {
 	}
 
 	public int getWT_status() {
-		return WT_status;
+		return wt_status;
 	}
 	public void setWT_status(int wT_status) {
-		WT_status = wT_status;
+		wt_status = wT_status;
 	}
 
 	public int getpH_status() {
@@ -135,7 +133,7 @@ public class Sensor {
 		return "Sensor [id=" + id + ", device_sn=" + device_sn + ", pondId=" + pondId + ", status=" + status + ", name="
 				+ name + ", relation=" + relation + ", port_status=" + port_status + ", oxygen=" + oxygen
 				+ ", oxygen_status=" + oxygen_status + ", water_temperature=" + water_temperature + ", WT_status="
-				+ WT_status + ", pH_value=" + pH_value + ", pH_status=" + pH_status + ", wayStatus=" + wayStatus + "]";
+				+ wt_status + ", pH_value=" + pH_value + ", pH_status=" + pH_status + ", wayStatus=" + wayStatus + "]";
 	}
 	
 	

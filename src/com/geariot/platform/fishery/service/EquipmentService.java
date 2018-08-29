@@ -404,16 +404,60 @@ public class EquipmentService {
 					break;
 				case 3://控制器
 					logger.debug("删除设备类型为控制器");
+					/*logger.debug("第一步：删除controller表中数据，控制器编号："+device_sn);
 					controllerDao.delete(device_sn);
+					logger.debug("第二步：删除device表中数据，设备编号："+device_sn);
 					deviceDao.delete(device_sn);
+					logger.debug("第三步：删除控制器上下高限关联传感器的触发器");
 					deleteTriggerBySensorId(device_sn);
 					dev_triggerDao.delete(device_sn);
+					logger.debug("第四步：删除与控制器："+device_sn+",关联的onenet上的触发器：断电，缺相");
 					List<Dev_Trigger> devTriList2 = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
 					for(Dev_Trigger devTri:devTriList2) {
 						DeleteTriggersApi api = new DeleteTriggersApi(devTri.getTriger_id(), key);
 						BasicResponse<Void> response = api.executeApi();
-						System.out.println("errno:"+response.errno+" error:"+response.error);
+						//System.out.println("errno:"+response.errno+" error:"+response.error);
 					}
+					logger.debug("删除上下限，及时间表数据");
+					limitDao.delete(device_sn);
+					timerDao.delete(device_sn);*/
+					logger.debug("delEquipment+第一步：删除与控制器："+device_sn+",关联的onenet上的触发器：断电，缺相");
+					List<Dev_Trigger> devTriList2 = dev_triggerDao.findDev_TriggerBydevsn(device_sn);
+					for(Dev_Trigger devTri:devTriList2) {
+						DeleteTriggersApi api = new DeleteTriggersApi(devTri.getTriger_id(), key);
+						BasicResponse<Void> response = api.executeApi();	
+						logger.debug("delEquipment+第一步："+response.getJson());
+						dev_triggerDao.deleteByTriggerId(devTri.getTriger_id());
+					}
+					logger.debug("delEquipment+第二步：删除与控制器:"+device_sn+"上下高限关联传感器的触发器");
+					List<Controller> controllerL = controllerDao.findControllerByDeviceSns(device_sn);
+					for(Controller cont : controllerL) {
+						List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(cont.getDevice_sn(), cont.getPort());
+						List<Integer> pondIds =new ArrayList<>();
+						for(Controller con:controllerList) {
+							pondIds.add(con.getPondId());
+						}
+						for(int pondId:pondIds) {
+							List<Sensor> sensorList = sensorDao.findSensorsByPondId(pondId);
+							for(Sensor sensor:sensorList) {
+								List<Dev_Trigger> triggerList = dev_triggerDao.findDev_TriggerBydevsn(sensor.getDevice_sn());
+								for(Dev_Trigger trigger:triggerList) {
+									if(trigger.getTrigertype()==2 || trigger.getTrigertype()==5) {
+										DeleteTriggersApi api = new DeleteTriggersApi(trigger.getTriger_id(), key);
+										BasicResponse<Void> response = api.executeApi();
+										logger.debug("delEquipment+第二步："+response.getJson());
+										dev_triggerDao.deleteByTriggerId(trigger.getTriger_id());
+									}
+								}
+								
+							}
+						}
+					}	
+					logger.debug("delEquipment+第三步：删除controller表中数据，控制器编号："+device_sn);
+					controllerDao.delete(device_sn);
+					logger.debug("delEquipment+第四步：删除device表中数据，设备编号："+device_sn);
+					deviceDao.delete(device_sn);
+					logger.debug("delEquipment+第五步:删除上下限，及时间表数据");
 					limitDao.delete(device_sn);
 					timerDao.delete(device_sn);
 					break;
@@ -1738,7 +1782,8 @@ public class EquipmentService {
 	}
 	
 	public Map<String, Object> modifySensor(Sensor...sensors){
-		System.out.println("进入修改");
+		//pondId
+		System.out.println("modifySensor进入修改");
 		boolean flag = false;
 		for(Sensor sensor:sensors) {
 			if(deviceDao.findDevice(sensor.getDevice_sn())==null) {
@@ -1750,27 +1795,28 @@ public class EquipmentService {
 				float lon  = 0;
 				GetLatesDeviceData api = new GetLatesDeviceData(sensor.getDevice_sn(),key);
 		        BasicResponse<DeciceLatestDataPoint> response = api.executeApi();
-		        System.out.println("errno:"+response.errno+" error:"+response.error);
-		        System.out.println(response.getJson());
-		        List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
-		        for(int i=0;i<DatastreamsList.size();i++) {
-		        	if(DatastreamsList.get(i).getId().equals("location")) {
-		        		System.out.println(DatastreamsList.get(i).getId());
-			        	System.out.println(DatastreamsList.get(i).getValue());
-			        	String location = DatastreamsList.get(i).getValue().toString();
-			        	lat = Float.parseFloat(location.substring(5, location.indexOf(",")));
-			        	System.out.println(lat);
-			        	lon = Float.parseFloat(location.substring(location.indexOf(",")+6,location.length()-1));
-			        	System.out.println(lon);
-		        	}
-		        	
-		        }				
-				pondExsit.setLatitude(lat);
-				pondExsit.setLongitude(lon);
-				String address = webServiceService.getLocation(lon, lat);
-				pondExsit.setAddress(address);						
-				pondDao.update(pondExsit);					
-				flag = true;
+		        if(response.errno==0) {
+		        	 System.out.println("errno:"+response.errno+" error:"+response.error);
+				     System.out.println(response.getJson());
+				        List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> DatastreamsList = response.data.getDevices().get(0).getDatastreams();
+				        for(int i=0;i<DatastreamsList.size();i++) {
+				        	if(DatastreamsList.get(i).getId().equals("location")) {
+				        		System.out.println(DatastreamsList.get(i).getId());
+					        	System.out.println(DatastreamsList.get(i).getValue());
+					        	String location = DatastreamsList.get(i).getValue().toString();
+					        	lat = Float.parseFloat(location.substring(5, location.indexOf(",")));
+					        	System.out.println(lat);
+					        	lon = Float.parseFloat(location.substring(location.indexOf(",")+6,location.length()-1));
+					        	System.out.println(lon);
+				        	}				        	
+				        }				
+						pondExsit.setLatitude(lat);
+						pondExsit.setLongitude(lon);
+						String address = webServiceService.getLocation(lon, lat);
+						pondExsit.setAddress(address);						
+						pondDao.update(pondExsit);											
+		        }
+		        flag = true;		       
 			}
 		}
 		if(flag) {
@@ -1778,9 +1824,8 @@ public class EquipmentService {
 			return RESCODE.SUCCESS.getJSONRES();
 		}else {
 			System.out.println("修改失败");
-			return RESCODE.ACCOUNT_NOT_EXIST.getJSONRES();
-		}
-		
+			return RESCODE.MODIFY_Failed.getJSONRES();
+		}		
 	}
 	
 	public Map<String, Object> modifyAio(AIO...aios){
@@ -1950,7 +1995,7 @@ public class EquipmentService {
 						controllerList.add(controller);
 					}
 				}
-				logger.debug("触发传感器："+trigger.getDevice_sn()+",根据传感器找到其所在塘口："+sensor.getPondId()+",找到塘口下增氧机："+controllerList.get(0).getDevice_sn()+"增氧机控制器数量："+controllerList.size());
+				logger.debug("触发传感器："+trigger.getDevice_sn()+",根据传感器找到其所在塘口："+sensor.getPondId()+",找到塘口下增氧机："+(controllerList.size()>0?controllerList.get(0).getDevice_sn():"")+"增氧机控制器数量："+controllerList.size());
 				if(controllerList !=null &&controllerList.size()>0) {
 					for(Controller con:controllerList) {
 						WXUser wxUser = wxUserDao.findUserByRelation(con.getRelation());
@@ -2503,7 +2548,7 @@ public class EquipmentService {
 	     GetDevicesStatus api1 = new GetDevicesStatus(devId,key);
 	     BasicResponse<DevicesStatusList> response1 = api1.executeApi();
 	     System.out.println("errno:"+response1.errno+" error:"+response1.error);
-	     System.out.println(response1.data.getDevices().get(0).getIsonline());
+	     //System.out.println(response1.data.getDevices().get(0).getIsonline());
 	     if(response1.errno == 0) {//获取设备状态
 	    	 System.out.println("获取设备状态");
 	    	 if(response1.data.getDevices().get(0).getIsonline() != null) {
@@ -2893,6 +2938,7 @@ public class EquipmentService {
 	public Map<String, Object> adminFindEquipment(String device_sn, String userName, int page, int number) {
 		logger.debug("进入adminFindEquipment");
 		int from = (page - 1) * number;	
+		List<Device> deviceListCount = deviceDao.queryList(device_sn, 0, 0);
 		List<Device> deviceList = deviceDao.queryList(device_sn,from,number);
 		logger.debug("查询到的设备数量为："+deviceList.size());
 		if(deviceList == null || deviceList.isEmpty()) {
@@ -3127,7 +3173,9 @@ public class EquipmentService {
 					break;
 				}
 			}
-			long count = pondDao.adminFindEquipmentCountAll();
+			//long count = pondDao.adminFindEquipmentCountAll();
+			
+			long count = device_sn==""||device_sn==null?deviceDao.getAllDevices().size():1;
 			int size = (int) Math.ceil(count / (double) number);
 			return RESCODE.SUCCESS.getJSONRES(equipmentDetailList,size,count);
 		}

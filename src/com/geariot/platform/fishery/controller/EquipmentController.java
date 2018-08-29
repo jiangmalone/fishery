@@ -84,7 +84,7 @@ public class EquipmentController {
 
 
 	@RequestMapping(value = "/delEquipments", method = RequestMethod.GET)
-	public Map<String, Object> delEquipment(String  device_sn) {
+	public Map<String, Object> delEquipment(String device_sn) {
 		return equipmentService.delEquipment(device_sn);
 	}
 	
@@ -269,7 +269,7 @@ public class EquipmentController {
 	
 	@RequestMapping(value ="/sendcmd", method = RequestMethod.POST)
 	public int sendcmd(@RequestBody controllerParam param){
-		logger.debug("进入sendcmd,向设备发送命令");
+		logger.debug("sendcmd+向设备发送命令");
 		String[] type = {"增氧机","投饵机","打水机","其他"};
 		Controller controller = param.getController();
 		System.out.println("用户："+controller.getRelation());

@@ -553,11 +553,14 @@
           </view>
           <view class="sborder"></view>
           <view class="ovalue">
-            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}">{{realTimeDataInfo.oxygen}}</view>
+            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}">{{realTimeDataInfo.oxygen===0?'':realTimeDataInfo.oxygen}}</view>
             <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="unit">mg/L</view>
           </view>
           <view class="sborder1"></view>
-          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="{{realTimeDataInfo.oxygen_status===0?'sresult blue': (realTimeDataInfo.oxygen_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.oxygen_status===0?'正常': (realTimeDataInfo.oxygen_status===1?'预警':'危险')}}</view>
+          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}"
+          class="{{realTimeDataInfo.oxygen_status===2?'sresult red': (realTimeDataInfo.oxygen_status===1?'sresult yellow':'sresult blue')}}">
+          {{realTimeDataInfo.oxygen_status===2?'危险': (realTimeDataInfo.oxygen_status===1?'预警':'正常')}}
+          </view>
         </view>
 
         <!--温度-->
@@ -568,12 +571,12 @@
           </view>
           <view class="sborder"></view>
           <view class="ovalue" style="color: #f19649">
-            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}">{{realTimeDataInfo.water_temperature}}</view>
+            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}">{{realTimeDataInfo.water_temperature===0?'':realTimeDataInfo.water_temperature}}</view>
             <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="unit1">℃</view>
           </view>
           <view class="sborder1"></view>
-          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" 
-          class="{{realTimeDataInfo.wt_status===0?'sresult blue': 'sresult yellow'}}">{{realTimeDataInfo.wt_status===0?'正常':'预警'}}</view>
+          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}"
+          class="{{realTimeDataInfo.wt_status===1?'sresult yellow': 'sresult blue'}}">{{realTimeDataInfo.wt_status===1?'预警':'正常'}}</view>
         </view>
 
         <!--ph-->
@@ -584,11 +587,13 @@
           </view>
           <view class="sborder"></view>
           <view class="phvalue" style="color: #56acb8">
-            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}">{{realTimeDataInfo.pH_value}}</view>
-            <!--<view class="unit1"> </view>-->
+            <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}">{{realTimeDataInfo.pH_value===0?'':realTimeDataInfo.pH_value}}</view>
           </view>
           <view class="sborder1"></view>
-          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}" class="{{realTimeDataInfo.pH_status===0?'sresult blue': (realTimeDataInfo.pH_status===1?'sresult yellow':'sresult red')}}">{{realTimeDataInfo.pH_status===0?'正常': (realTimeDataInfo.pH_status===1?'预警':'危险')}}</view>
+          <view wx:if="{{tangkoudetail.sensorlist[0].online === true}}"
+          class="{{realTimeDataInfo.pH_status===2?'sresult red': (realTimeDataInfo.pH_status===1?'sresult yellow':'sresult blue')}}">
+          {{realTimeDataInfo.pH_status===2?'危险': (realTimeDataInfo.pH_status===1?'预警':'正常')}}
+          </view>
         </view>
       </view>
       <!--分隔栏-->
@@ -621,7 +626,8 @@
             <view class="shezhi">
 
               <!--自动设置-->
-              <view class="{{item.online&&item.controller.status === 0?(item.controller.status === 0 ? 'choseAuto blueBtn' : 'choseAuto grayBtn'):'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}}, {{controllerIdx}}))">自动设置</view>
+              <!--<view class="{{item.online&&item.controller.status === 0?(item.controller.status === 0 ? 'choseAuto blueBtn' : 'choseAuto grayBtn'):'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}}, {{controllerIdx}}))">自动设置</view>-->
+              <view class="{{item.autoIsValid? 'choseAuto blueBtn':'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}}, {{controllerIdx}}))">自动设置</view>
 
               <!--开关-->
               <view class="but" @tap="controlSwitch({{item.controller}}, {{item.switch}}, {{controllerIdx}})">
@@ -660,7 +666,8 @@ export default class Home extends wepy.page {
     currentId: 0,
     realTimeDataInfo: [],
     isHomeDetail: false,
-    isWeather: false
+    isWeather: false,
+    socketOpen: false
   }
 
   methods = {
@@ -684,7 +691,8 @@ export default class Home extends wepy.page {
           },
           method: 'POST',
           success: (res) => {
-            if (res.data === 0) {
+            this.tangkoudetail.controllerList[controllerIdx] = res.data
+            if (res.data.result === 0) {
               this.tangkoudetail.controllerList[controllerIdx].switch = key
               wepy.showToast({
                 title: '切换开关成功',
@@ -727,6 +735,7 @@ export default class Home extends wepy.page {
           method: 'GET',
           success: res => {
             this.realTimeDataInfo = res.data
+            this.$apply()
           }
         })
         let deviceSn = e.target.dataset.tangkou.sensorlist[0].sensor.device_sn
@@ -740,15 +749,18 @@ export default class Home extends wepy.page {
 
         wepy.onSocketOpen((res) => {
           console.log('WebSocket连接已打开！' + res.data)
+          this.socketOpen=true
           wepy.sendSocketMessage({
             data: deviceSn
           })
         })
 
         wepy.onSocketMessage((res) => {
-          console.log('收到服务器内容：' + res.data)
-          this.realTimeDataInfo = JSON.parse(res.data)
-          console.log(this.realTimeDataInfo)
+          if(res.data){
+            console.log('收到服务器内容：' + res.data)
+            this.realTimeDataInfo = JSON.parse(res.data)
+            this.$apply()
+          }
         })
       }
       if (!this.location) {
@@ -776,7 +788,7 @@ export default class Home extends wepy.page {
 
     // 自动设置按钮
     autoset(limit, time, item, name, allList, index) {
-      if (allList.online && item.status === 0) {
+      if (allList.autoIsValid) {
         wepy.showActionSheet({
           itemList: ['确定自动', '取消自动', '设置自动参数'],
           success: (res) => {
@@ -951,14 +963,17 @@ export default class Home extends wepy.page {
                   console.log('ws.myhome',res.data.myHome[num])
                   wepy.onSocketOpen((res) => {
                     console.log('WebSocket连接已打开！' + res.data)
+                    this.socketOpen=true
                     wepy.sendSocketMessage({
                       data: deviceSn
                     })
                   })
                   wepy.onSocketMessage((res) => {
-                    console.log('收到服务器内容：' + res.data)
-                    this.realTimeDataInfo = JSON.parse(res.data)
-                    console.log(this.realTimeDataInfo)
+                    if(res.data){
+                      console.log('收到服务器内容：' + res.data)
+                      this.realTimeDataInfo = JSON.parse(res.data)
+                      this.$apply()
+                    }
                   })
                 }
               } else {

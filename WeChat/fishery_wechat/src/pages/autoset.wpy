@@ -21,6 +21,7 @@
       padding: 28rpx;
       color: #5C6979;
       .rightinp{
+        width: 150rpx;
         float: right;
         text-align: right;
       }

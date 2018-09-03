@@ -229,7 +229,9 @@
   <view class="line">
     <view class="header">
       <view class="sensorname" @tap="showModal">{{tangkoulist[ind].pondname}}<image class="header-img" src="../images/gd_7_copy@2x.png" style="width:30rpx;height:20rpx;"></image></view>
-      <view class="{{realTimeDataInfo.oxygen_status!==0?'status orange':(realTimeDataInfo.wt_status!==0?'status orange':(realTimeDataInfo.pH_status!==0?'status orange':'status green'))}}">{{realTimeDataInfo.oxygen_status!==0?' ● 异常':(realTimeDataInfo.wt_status!==0?' ● 异常':(realTimeDataInfo.pH_status!==0?' ● 异常':' ● 正常'))}}</view>
+      <view class="{{realTimeDataInfo.oxygen_status!==0?'status orange':(realTimeDataInfo.wt_status!==0?'status orange':(realTimeDataInfo.pH_status!==0?'status orange':'status green'))}}">
+        {{realTimeDataInfo.oxygen_status!==0?' ● 异常':(realTimeDataInfo.wt_status!==0?' ● 异常':(realTimeDataInfo.pH_status!==0?' ● 异常':' ● 正常'))}}
+      </view>
     </view>
     <view class="content">
       <view class="cot-name">
@@ -242,21 +244,21 @@
             <image class="o2" src="../images/o_3_copy.png"></image>
             <view class="data">溶氧 {{realTimeDataInfo.oxygen}}mg/L</view>
           </view>
-          <view class="res">{{realTimeDataInfo.oxygen_status===0?'正常': (realTimeDataInfo.oxygen_status===1?'预警':'危险')}}</view>
+          <view class="res">{{realTimeDataInfo.oxygen===0?'离线':(realTimeDataInfo.oxygen_status===2?'危险': (realTimeDataInfo.oxygen_status===1?'预警':'正常'))}}</view>
         </view>
         <view class="cot-index">
           <view class="target">
             <image class="o2" src="../images/w@2x.png"></image>
             <view class="data">水温 {{realTimeDataInfo.water_temperature}}℃</view>
           </view>
-          <view class="res">{{realTimeDataInfo.wt_status===0?'正常': (realTimeDataInfo.wt_status===1?'预警':'危险')}}</view>
+          <view class="res">{{realTimeDataInfo.water_temperature===0?'离线':(realTimeDataInfo.wt_status===2?'危险': (realTimeDataInfo.wt_status===1?'预警':'正常'))}}</view>
         </view>
         <view class="cot-index">
           <view class="target">
             <image class="ph" src="../images/ph@2x.png"></image>
             <view class="data1">PH {{realTimeDataInfo.pH_value}}</view>
           </view>
-          <view class="res">{{realTimeDataInfo.pH_status===0?'正常': (realTimeDataInfo.pH_status===1?'预警':'危险')}}</view>
+          <view class="res">{{realTimeDataInfo.pH_value===0?'离线':(realTimeDataInfo.pH_status===2?'危险': (realTimeDataInfo.pH_status===1?'预警':'正常'))}}</view>
         </view>
         <view class="cut"></view>
       </view>
@@ -432,8 +434,6 @@ export default class Line extends wepy.page {
       mychartc: Echartsc
     }
     data = {
-      haha: 'myline',
-      haha2: 'myline2',
       switchToday: false,
       showModal: false,
       time: '',

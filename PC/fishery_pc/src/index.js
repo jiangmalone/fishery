@@ -13,7 +13,7 @@ const app = dva({
 });
 
 // 2. Plugins
-// app.use({});
+app.use({});
 
 // 3. Register global model
 app.model(require('./models/global'));

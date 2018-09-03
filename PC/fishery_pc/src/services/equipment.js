@@ -23,15 +23,19 @@ export async function queryAdminEquipment(params) {
     return request(`/api/equipment/adminFindEquipment?${stringify(params)}`);
 }
 
+export async function getPond(params) {
+  return request(`/api/equipment/adminFindEquipment?${stringify(params)}`);
+}
+
 export async function getDataToday(params) {          //获得设备数据汇总  （曲线图数据）
-    return request(`api/equipment/pc/dataToday?${stringify(params)}`);
+    return request(`api/equipment/dataToday?${stringify(params)}`);
 }
 
 export async function getDataAll(params) {          //获得设备数据汇总  （曲线图数据）
-    return request(`api/equipment/pc/dataAll?${stringify(params)}`);
+    return request(`api/equipment/data3days?${stringify(params)}`);
 }
 
-export async function getRealTimeData(params) {          //获得设备实时数据 
+export async function getRealTimeData(params) {          //获得设备实时数据
     return request(`api/equipment/realTimeData?${stringify(params)}`);
 }
 

@@ -42,9 +42,11 @@ public class RealTimeThread extends Thread {
     			while (true) {        			
         			sensor = equipmentService.realTimeData(device_sn); 
        
-                	logger.debug("sensor:"+sensor.toString());
-                	JSONObject jo = JSONObject.fromObject(sensor);
-                	session.getAsyncRemote().sendObject(jo);
+                	logger.debug("Webscoket返回数据：+sensor:"+sensor.toString());
+                	/*JSONObject jo = JSONObject.fromObject(sensor);
+                	session.getAsyncRemote().sendObject(jo);*/
+                	JSONObject obj = JSONObject.fromObject(sensor);
+                	session.getAsyncRemote().sendObject(sensor);
 /*                	JSONObject obj = JSONObject.fromObject(sensor);
                     session.getAsyncRemote().sendText(obj.toString());*/
 //                  session.getBasicRemote().sendObject(list.get(i)); //No encoder specified for object of class [class AlarmMessage]

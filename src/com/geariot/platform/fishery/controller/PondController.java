@@ -4,6 +4,8 @@ import com.geariot.platform.fishery.entities.Pond;
 import com.geariot.platform.fishery.service.PondService;
 import com.geariot.platform.fishery.service.WebServiceService;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/pond")
 public class PondController {
-	
+	private Logger logger = LogManager.getLogger(PondController.class);
 	@Autowired
 	private PondService pondService;
 	
@@ -32,6 +34,7 @@ public class PondController {
 	
 	@RequestMapping(value = "/delPonds" , method = RequestMethod.GET)
 	public Map<String,Object> delPonds(Integer... pondIds){
+		logger.debug("手动删除塘口："+pondIds);
 		return pondService.delPonds(pondIds);
 	}
 	

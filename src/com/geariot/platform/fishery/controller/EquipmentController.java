@@ -20,6 +20,7 @@ import sun.invoke.empty.Empty;
 import sun.util.logging.resources.logging;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,7 @@ import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Param;
 import com.geariot.platform.fishery.entities.Sensor;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/equipment")
 public class EquipmentController {
-	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger(EquipmentController.class);
+	private Logger logger = LogManager.getLogger(EquipmentController.class);
 	@Autowired
 	private EquipmentService equipmentService;
 	
@@ -66,6 +68,9 @@ public class EquipmentController {
 	
 	@Autowired
 	private SensorDao sensorDao;
+	
+	@Autowired
+	private HttpServletRequest request;
 	
 	@RequestMapping(value = "/VertifyDevicesn",method = RequestMethod.GET)
 	public Map<String, Object> VertifyDevicesn(String divsn){
@@ -85,6 +90,25 @@ public class EquipmentController {
 
 	@RequestMapping(value = "/delEquipments", method = RequestMethod.GET)
 	public Map<String, Object> delEquipment(String device_sn) {
+		List<Controller> conList = controllerDao.findControllerByDeviceSns(device_sn);
+		Sensor sen= sensorDao.findSensorByDeviceSns(device_sn);
+		String relation = "";
+		String openId="";
+		if(conList!=null && conList.size()>0) {
+			relation = conList.get(0).getRelation();
+		}else if(sen!=null) {
+			relation = sen.getRelation();
+		}
+		if(relation.equals("")==false) {
+			 openId = wxUserDao.findUserByRelation(relation).getOpenId();			
+		}
+		String ip="";
+		if (request.getHeader("x-forwarded-for") == null) {  
+			 ip= request.getRemoteAddr();  
+		}else {
+			ip= request.getHeader("x-forwarded-for");  
+		}  
+		logger.debug("用户："+openId+"接口调用，删除设备："+device_sn+",ip:"+ip);
 		return equipmentService.delEquipment(device_sn);
 	}
 	
@@ -268,8 +292,14 @@ public class EquipmentController {
 	}
 	
 	@RequestMapping(value ="/sendcmd", method = RequestMethod.POST)
-	public int sendcmd(@RequestBody controllerParam param){
-		logger.debug("sendcmd+向设备发送命令");
+	public Map<String, Object> sendcmd(@RequestBody controllerParam param){
+		String ip = "";
+		if (request.getHeader("x-forwarded-for") == null) {  
+			 ip= request.getRemoteAddr();  
+		}else {
+			ip= request.getHeader("x-forwarded-for");  
+		}  
+		/*logger.debug("sendcmd+向设备发送命令");
 		String[] type = {"增氧机","投饵机","打水机","其他"};
 		Controller controller = param.getController();
 		System.out.println("用户："+controller.getRelation());
@@ -332,7 +362,9 @@ public class EquipmentController {
 				WechatSendMessageUtils.sendWechatOnOffMessages("打开"+controllertype+"失败", publicOpenID, controller.getDevice_sn());
 			}
 		}		
-		return result;
+		return result;*/
+		logger.debug("进入接口：sendcmd"+",ip:"+ip+",对控制器"+param.getController().getDevice_sn()+"进行操作");
+		return equipmentService.sendcmd(param);
 	}
 	
 	@RequestMapping(value ="/refeshcondition", method = RequestMethod.GET)

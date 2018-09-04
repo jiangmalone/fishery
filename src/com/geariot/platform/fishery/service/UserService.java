@@ -414,10 +414,23 @@ public class UserService {
 			        List<Timer> timerList = timerDao.findTimerByDeviceSnAndWay(controller.getDevice_sn(), controller.getPort());
 			        Limit_Install limit= limitDao.findLimitByDeviceSnsAndWay(controller.getDevice_sn(), controller.getPort());
 			        String controllerKey = equipmentService.getControllerPortStatus(controller.getDevice_sn(), controller.getPort());
+			        Boolean autoIsValid = true;
+			        for(Timer timer:timerList) {
+			        	if(timer.isValid()==false) {
+			        		autoIsValid = false;
+			        		break;
+			        	}
+			        }
+			        if(limit!=null) {
+			        	if(limit.isValid() == false) {
+			        		autoIsValid = false;
+			        	}
+			        }
 			        controllerMap.put("switch", controllerKey);
 			        controllerMap.put("TimerList", timerList);
 			        controllerMap.put("Limit", limit);
 			        controllerMap.put("controller", controller);
+			        controllerMap.put("autoIsValid", autoIsValid);
 			        controllerLM.add(controllerMap);
 	
 				}

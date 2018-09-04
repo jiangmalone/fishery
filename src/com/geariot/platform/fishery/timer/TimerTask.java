@@ -3,11 +3,8 @@ package com.geariot.platform.fishery.timer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.sound.midi.ControllerEventListener;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +12,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.ControllerDao;
@@ -23,10 +19,8 @@ import com.geariot.platform.fishery.dao.DeviceDao;
 import com.geariot.platform.fishery.dao.SensorDao;
 import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
-import com.geariot.platform.fishery.entities.AIO;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Device;
-import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.entities.WXUser;
@@ -36,11 +30,9 @@ import com.geariot.platform.fishery.timer.CMDUtils;
 import com.geariot.platform.fishery.utils.VmsUtils;
 import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 
-import cmcc.iot.onenet.javasdk.api.datastreams.GetDatastreamApi;
 import cmcc.iot.onenet.javasdk.api.device.GetDevicesStatus;
 import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
 import cmcc.iot.onenet.javasdk.response.BasicResponse;
-import cmcc.iot.onenet.javasdk.response.datastreams.DatastreamsResponse;
 import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
 import cmcc.iot.onenet.javasdk.response.device.DevicesStatusList;
 
@@ -73,7 +65,7 @@ public class TimerTask {
 	private String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 
 
-	@Scheduled(cron = "0 15 * * * ?") // 每15分钟执行一次
+	@Scheduled(cron = "0 */15 * * * ?") // 每15分钟执行一次
 	public void judgeTime() throws ParseException {
 		logger.debug("进入定时任务,检测是否需要定时增氧");
 		//定时检测增氧机的定时任务
@@ -179,7 +171,6 @@ public class TimerTask {
 	}
 	
 	@Scheduled(cron = "0 0 1 * * ?")//每天凌晨一点执行一次
-	//@Scheduled(cron = "0 */10 * * * ?") // 每15分钟执行一次
 	public void dosaveData() {
 		logger.debug("凌晨一点，开始存储昨日所有数据");
 		long start = System.currentTimeMillis();	
@@ -189,12 +180,12 @@ public class TimerTask {
 	}
 	
 	@Scheduled(cron = "0 0 */1 * * ?")//每小时执行一次
-	//@Scheduled(cron = "0 */20 * * * ?") // 每15分钟执行一次
 	public void checkOnline() {
 		logger.debug("进入每小时定时检测设备是否在线");
 		long start = System.currentTimeMillis();	
 		List<Device> deviceList = equipmentService.getAllDevices();
 		for(Device device:deviceList) {
+			logger.debug("检查设备："+device.getDevice_sn()+"是否在线");
 			 GetDevicesStatus api = new GetDevicesStatus(device.getDevice_sn(),key);
 		     BasicResponse<DevicesStatusList> response = api.executeApi();
 		     if(response.errno==0) {
@@ -239,8 +230,7 @@ public class TimerTask {
 			    	 }
 			     }
 		     }		    
-		}
-		
+		}		
 		long end = System.currentTimeMillis();
 		logger.debug("共耗时："+(end-start)+",每小时定时检测离线结束！");
 	}

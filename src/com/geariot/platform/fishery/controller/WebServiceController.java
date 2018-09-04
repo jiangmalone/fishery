@@ -68,7 +68,7 @@ public class WebServiceController {
 
 	private String appkey = "QlGVlWcxjennYwAafkOGBBPj";
 
-	private static String BASEURL = "http://www.fisherymanager.net/index.html#/";
+	private static String BASEURL = "http://www.fisherymanager.net/fishery/index.html#/";
 	
 
 

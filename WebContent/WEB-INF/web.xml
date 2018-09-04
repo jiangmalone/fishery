@@ -8,7 +8,6 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:application.xml</param-value>
 	</context-param>
-
 	<listener>
 	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
    </listener>
@@ -19,7 +18,7 @@
 	<!--</listener>-->
 
 	<welcome-file-list>
-	    <welcome-file>index.jsp</welcome-file>
+	    <welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
 	<servlet>

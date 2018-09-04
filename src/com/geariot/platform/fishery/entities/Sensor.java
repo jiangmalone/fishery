@@ -111,8 +111,8 @@ public class Sensor {
 	public int getWT_status() {
 		return wt_status;
 	}
-	public void setWT_status(int wT_status) {
-		wt_status = wT_status;
+	public void setWT_status(int wt_status) {
+		wt_status = wt_status;
 	}
 
 	public int getpH_status() {
@@ -132,7 +132,7 @@ public class Sensor {
 	public String toString() {
 		return "Sensor [id=" + id + ", device_sn=" + device_sn + ", pondId=" + pondId + ", status=" + status + ", name="
 				+ name + ", relation=" + relation + ", port_status=" + port_status + ", oxygen=" + oxygen
-				+ ", oxygen_status=" + oxygen_status + ", water_temperature=" + water_temperature + ", WT_status="
+				+ ", oxygen_status=" + oxygen_status + ", water_temperature=" + water_temperature + ", wt_status="
 				+ wt_status + ", pH_value=" + pH_value + ", pH_status=" + pH_status + ", wayStatus=" + wayStatus + "]";
 	}
 	

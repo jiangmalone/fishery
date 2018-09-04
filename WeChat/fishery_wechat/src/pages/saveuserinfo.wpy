@@ -61,23 +61,23 @@
   </view>
   <view class="row row-flex">
     <image src="../images/me_4@2x.png" style="width:26rpx;height:28rpx;margin-left:44rpx;margin-top:42rpx"></image>
-    <text style="color:#6F6F6F;font-size: 16px;margin-left:28rpx;margin-top:34rpx">姓名</text>
-    <input style="font-size: 28rpx;margin-left: 122rpx;margin-top:34rpx;" value="{{info.name}}" placeholder="请输入你的真实姓名" placeholder-style="color:#6B93BF" bindinput="bindValue('name')"/>
+    <text style="width:150rpx;color:#6F6F6F;font-size: 16px;margin-left:28rpx;margin-top:34rpx">姓名</text>
+    <input style="font-size: 28rpx;margin-top:34rpx;" value="{{info.name}}" placeholder="请输入你的真实姓名" placeholder-style="color:#6B93BF" bindinput="bindValue('name')"/>
   </view>
   <view class="row1 row-flex">
     <image src="../images/sex@2x.png" style="width:24rpx;height:40rpx;margin-left:44rpx;margin-top:40rpx"></image>
-     <text style="color:#6F6F6F;font-size: 16px;margin-left:30rpx;margin-top:38rpx">性别</text>
-    <input style="font-size: 28rpx;margin-left: 122rpx;margin-top:34rpx;" value="{{info.sex}}" placeholder="男／女" placeholder-style="color:#6B93BF" bindinput="bindValue('sex')"/>
+     <text style="width:150rpx;color:#6F6F6F;font-size: 16px;margin-left:30rpx;margin-top:38rpx">性别</text>
+    <input style="font-size: 28rpx;margin-top:34rpx;" value="{{info.sex}}" placeholder="男／女" placeholder-style="color:#6B93BF" bindinput="bindValue('sex')"/>
   </view>
   <view class="row1 row-flex">
     <image src="../images/fill_1@2x.png" style="width:24rpx;height:36rpx;margin-left:44rpx;margin-top:38rpx"></image>
-     <text style="color:#6F6F6F;font-size: 16px;margin-left:30rpx;margin-top:38rpx">手机号码</text>
-    <input style="font-size: 28rpx;margin-left: 60rpx;margin-top:34rpx;" value="{{info.phone}}" placeholder="请输入您的手机号码" placeholder-style="color:#6B93BF" bindinput="bindValue('phone')"/>
+     <text style="width:150rpx;color:#6F6F6F;font-size: 16px;margin-left:30rpx;margin-top:38rpx">手机号码</text>
+    <input style="font-size: 28rpx;margin-top:34rpx;" value="{{info.phone}}" placeholder="请输入您的手机号码" placeholder-style="color:#6B93BF" bindinput="bindValue('phone')"/>
   </view>
   <view class="row1 row-flex">
     <image src="../images/tm_12@2x.png" style="width:30rpx;height:30rpx;margin-left:42rpx;margin-top:46rpx"></image>
-     <text style="color:#6F6F6F;font-size: 16px;margin-left:26rpx;margin-top:38rpx">养殖年限</text>
-    <input style="font-size: 28rpx;margin-left: 60rpx;margin-top:34rpx;" placeholder="请输入年限" placeholder-style="color:#6B93BF" bindinput="bindValue('life')" value="{{info.life}}"/>
+     <text style="width:150rpx;color:#6F6F6F;font-size: 16px;margin-left:26rpx;margin-top:38rpx">养殖年限</text>
+    <input style="font-size: 28rpx;margin-top:34rpx;" placeholder="请输入年限" placeholder-style="color:#6B93BF" bindinput="bindValue('life')" value="{{info.life}}"/>
   </view>
   <button class="{{info.name===''?'disable':(info.sex===''?'disable':(info.phone===''?'disable':'able'))}}" @tap="confirminfo">保存</button>
 </view>

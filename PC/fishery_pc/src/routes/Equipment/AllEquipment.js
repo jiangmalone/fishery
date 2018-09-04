@@ -29,10 +29,10 @@ class AllEquipmentQuery extends PureComponent {
         let obj = {}
         if(this.state.device_sn) {
             obj.device_sn = this.state.device_sn
-        } 
+        }
         if(this.state.name){
             obj.userName = this.state.name
-        } 
+        }
         obj.page = page;
         obj.number = 10;
         this.props.dispatch({
@@ -57,6 +57,7 @@ class AllEquipmentQuery extends PureComponent {
 
         const columns = [
             {
+                key: 'index',
                 title: '序号',
                 dataIndex: 'index',
                 render: (text, record, index) => {
@@ -64,23 +65,40 @@ class AllEquipmentQuery extends PureComponent {
                 }
             },
             {
+                key: 'device_sn',
                 title: '设备编号',
                 dataIndex: 'device_sn',
                 render: (text, record, index) => {
-                    return <Link to={`/equipment/detail/${text}/${record.relation}/${record.id}`}>{text}</Link>
+                    return <Link to={`/equipment/detail/${text}/${record.relation}/${record.type}`}>{text}</Link>
+                  // return <Link to={`/equipment/detail/${text}/${record.relation}/${3}`}>{text}</Link>
                 },
             },
             {
+                key: 'name',
                 title: '设备名称',
                 dataIndex: 'name',
             },
             {
+                key: 'type',
+                title: '设备类型',
+                dataIndex: 'type',
+                render: (text, record, index) => {
+                    let str = ''
+                    switch (text) {
+                        case 1: str = '传感器'; break;
+                        case 3: str = '控制器'; break;
+                    }
+                    return <span>{str}</span>
+                }
+            },
+            {
+                key: 'userName',
                 title: '所属者',
                 dataIndex: 'userName',
                 render:(text,record,index)=>{
-                    if(record.relation!=='0'&&record.relation.slice(0,2)=='CO'){
+                    if(record.relation&&record.relation.slice(0,2)=='CO'){
                         return <Link to={`/userManage/company-user/${record.relation.slice(2)}/${record.relation}`}>{record.userName}</Link>
-                    } else if (record.relation!=='0'&&record.relation.slice(0,2)=='WX') {
+                    } else if (record.relation&&record.relation.slice(0,2)=='WX') {
                         return <Link to={`/userManage/common-user/${record.relation}`}>{record.userName}</Link>
                     } else {
                         return <span>{text}</span>
@@ -88,24 +106,27 @@ class AllEquipmentQuery extends PureComponent {
                 }
             },
             {
+                key: 'status',
                 title: '设备状态',
                 dataIndex: 'status',
                 render: (text, record, index) => {
-                    let status = text.split('');
-                    status.map((item, index) => {
-                        let str = ''
-                        console.log(item)
-                        switch (item) {
-                            case '0': str = '正常'; break;
-                            case '1': str = '离线'; break;
-                            case '2': str = '断电'; break;
-                            case '3': str = '缺相'; break;
-                            case '4': str = '数据异常'; break;
+                    let str = ''
+                    if (record.type==1) {
+                        switch (text) {
+                            case 0: str = '离线'; break;
+                            case 1: str = '在线'; break;
+                            case 2: str = '异常'; break;
                         }
-                        status[index] = str;
-                    })
-                   
-                    return <span>{status.join('/')}</span>
+                    }else{
+                        switch (text) {
+                            case 0: str = '离线'; break;
+                            case 1: str = '断电'; break;
+                            case 2: str = '缺相'; break;
+                            case 3: str = '异常'; break;
+                            case 4: str = '正常'; break;
+                        }
+                    }
+                    return <span>{str}</span>
                 }
             }
         ];
@@ -128,6 +149,7 @@ class AllEquipmentQuery extends PureComponent {
                     <Table loading={loading}
                         dataSource={this.props.list}
                         columns={columns}
+                        rowKey={record=>record.dataIndex}
                         pagination={this.props.pagination}
                         bordered
                         onChange={this.handleTableChange}

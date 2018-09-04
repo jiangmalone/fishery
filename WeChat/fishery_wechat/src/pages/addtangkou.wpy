@@ -1,5 +1,8 @@
 <style lang="less">
 .addcontroler{
+  input{
+    width: 300rpx;
+  }
   color: #323B45;
   font-size: 32rpx;
   .addcontroler-item{
@@ -164,7 +167,7 @@
     </view>
     <view class="addcontroler-item">
       <image class="num" src="../images/map4@2x.png"></image>塘口位置
-      <input class="rightinp" @tap="mapchose" value="{{tangkouinfo.address}}" placeholder="绑定传感设备后自动获取" placeholder-style="color:#B8B8B8" disabled/>
+      <input class="rightinp" @tap="mapchose" value="{{tangkouinfo.address}}" placeholder="请绑定传感器" placeholder-style="color:#B8B8B8" disabled/>
     </view>
       <!--确定按钮-->
     <view class="confirmbut" @tap="addtangkou">确定</view>

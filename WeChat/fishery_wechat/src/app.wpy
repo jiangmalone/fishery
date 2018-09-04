@@ -7,6 +7,9 @@
   justify-content: space-between;
   box-sizing: border-box;
 }
+input {
+  display: block;
+}
 </style>
 
 <script>
@@ -88,8 +91,8 @@ export default class extends wepy.app {
     life: '',
     location: '',
     weather: '',
-    relation: 'WX10',
-    // relation: 'WX44',
+    // relation: 'WX15',
+    relation: 'WX28',
     currentId: 0,
     device_sn: null,
     login: {

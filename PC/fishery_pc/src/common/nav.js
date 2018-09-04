@@ -139,7 +139,7 @@ export const getNavData = app => {
             isSideMenu: false,
             children: [
               {
-                path: ':device_sn/:relation/:id',
+                path: ':device_sn/:relation/:type',
                 component: dynamicWrapper(app, ['equipment'], () => import('../routes/Equipment/EquipmentDetail')),
               }
             ]

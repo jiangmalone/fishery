@@ -29,10 +29,11 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
             let obj = {}
             validateFieldsAndScroll((err, values) => {
                 if (!err) {
-                    obj = values
+                    obj = values;
+                    onOk(obj);
                 }
             })
-            onOk(obj)
+            
         }}
         onCancel={onCancel}
         wrapClassName={wrapClassName}
@@ -59,7 +60,11 @@ function AddModal({ modifyId, visible, form, onOk, onCancel, wrapClassName, show
                 {getFieldDecorator('depth', { rules: [{ type: 'number', message: '请填写正确值' }] })(<InputNumber style={{ width: 200 }} addonAfter="m" />)}m
             </FormItem>
             <FormItem label="养殖品种" {...formItemLayout} style={{ width: '100%' }}>
-                {getFieldDecorator('pondFishs')(<Select
+                {getFieldDecorator('pondFishs', {
+                    rules: [
+                        { required: true, message: '请选择养殖品种' },
+                    ],
+                })(<Select
                     mode="tags"
                     placeholder="请选择"
                     style={{ width: '200px' }}

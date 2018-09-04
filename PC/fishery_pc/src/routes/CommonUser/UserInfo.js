@@ -357,7 +357,7 @@ class UserInfo extends PureComponent {
                 dataIndex: 'device_sn',
                 render: (text, record, index) => {
                     console.log(record);
-                    return <Link to={`/equipment/detail/${text}/${this.props.match.params.id}/${record.id}`}>{text}</Link>
+                    return <Link to={`/equipment/detail/${text}/${this.props.match.params.id}/${record.type}`}>{text}</Link>
                 },
             },
             {
@@ -365,15 +365,12 @@ class UserInfo extends PureComponent {
                 dataIndex: 'name',
             },
             {
-                title: '设备状态',
-                dataIndex: 'wayStatus',
+                title: '设备类型',
+                dataIndex: 'type',
                 render: (text, record, index) => {
                     switch (text) {
-                        case 0: text = '正常'; break;
-                        case 1: text = '离线'; break;
-                        case 2: text = '断电'; break;
-                        case 3: text = '缺相'; break;
-                        case 4: text = '数据异常'; break;
+                        case 1: text = '传感器'; break;
+                        case 3: text = '控制器'; break;
                     }
                     return <span>{text}</span>
                 }

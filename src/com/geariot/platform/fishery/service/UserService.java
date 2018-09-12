@@ -426,6 +426,9 @@ public class UserService {
 			        		autoIsValid = false;
 			        	}
 			        }
+			        if(controller.getStatus()!=0) {
+			        	autoIsValid = false;
+			        }
 			        controllerMap.put("switch", controllerKey);
 			        controllerMap.put("TimerList", timerList);
 			        controllerMap.put("Limit", limit);
@@ -525,7 +528,7 @@ public class UserService {
 				List<String> openIdList = (List<String>) publicOpenIds.get("openid");				
 				for(String publicOpenId:openIdList) {										
 					if(wxUser_unionDao.getByUnionId(unionId) == null) {						
-						if(wxUser_unionDao.getByOpenId(publicOpenId) == null) {
+						if(wxUser_unionDao.getByOpenId(publicOpenId) == null||wxUser_unionDao.getByOpenId(publicOpenId).size()==0) {
 							logger.debug("公众号库中数据不存在，数据更新");
 							WXUser_union wxu = new WXUser_union();
 							String uid = getPublicUserUnionId(publicOpenId);
@@ -539,7 +542,10 @@ public class UserService {
 				}
 				
 				WXUser_union wu = wxUser_unionDao.getByUnionId(unionId);
-				logger.debug("getPublicOpenId+更新数据库后获取用户公众号openId："+wu==null?"":wu.getOpenId());
+				logger.debug("getPublicOpenId+更新数据库后获取用户公众号openId：");
+				if(wu!=null) {
+					logger.debug(wu.getOpenId());
+				}
 				return wu==null?"":wu.getOpenId();
 			} else {
 				logger.debug("直接返回公众号openId:"+wxuser_union.getOpenId());

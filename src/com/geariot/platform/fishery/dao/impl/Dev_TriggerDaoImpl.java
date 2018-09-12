@@ -67,6 +67,15 @@ public class Dev_TriggerDaoImpl implements Dev_TriggerDao {
         Query query = queryUtils.addString("device_sn", deviceSns).addInteger("way", way).getQuery();
         return (List<Dev_Trigger>) query.list();
 	}
+	/* (non-Javadoc)
+	 * @see com.geariot.platform.fishery.dao.Dev_TriggerDao#findAll()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Dev_Trigger> findAll() {
+		String hql = "from Dev_Trigger";
+		return this.getSession().createQuery(hql).list();
+	}
 
 
 }

@@ -27,7 +27,7 @@ public class ModifyTriggersApi extends AbstractAPI {
 	private List<String>dsuuids;
 	private String desturl;
 	private String type;
-	private Integer threshold;
+	private Object threshold;
 	private HttpPutMethod HttpMethod;
 
 	/**
@@ -43,7 +43,7 @@ public class ModifyTriggersApi extends AbstractAPI {
 	 * @param key:masterkey 或者 设备apikey
 	 */
 	public ModifyTriggersApi(String tirggerId, String title, String dsid, List<String> devids, List<String> dsuuids,
-			String desturl, String type, Integer threshold,String key) {
+			String desturl, String type, Object threshold,String key) {
 		super();
 		this.tirggerId = tirggerId;
 		this.title = title;

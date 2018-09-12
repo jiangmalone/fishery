@@ -1,5 +1,8 @@
 package com.geariot.platform.fishery.dao.impl;
 
+import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.geariot.platform.fishery.dao.WXUser_unionDao;
 import com.geariot.platform.fishery.entities.WXUser_union;
 import com.geariot.platform.fishery.utils.Constants;
+import com.geariot.platform.fishery.utils.QueryUtils;
 @Transactional
 @Repository
 public class WXUser_unionDaoImpl implements WXUser_unionDao {
@@ -31,9 +35,10 @@ public class WXUser_unionDaoImpl implements WXUser_unionDao {
 	}
 	
 	@Override
-	public WXUser_union getByOpenId(String openId) {
-		String hql = "from WXUser_union where openId= :openId ";
-		return (WXUser_union) getSession().createQuery(hql).setString("openId", openId).setCacheable(Constants.SELECT_CACHE).uniqueResult();
+	public List<WXUser_union> getByOpenId(String openId) {
+		QueryUtils queryUtils = new QueryUtils(getSession(), "from WXUser_union");
+		Query query = queryUtils.addStringLike("openId", openId).getQuery();
+		return query.list();
 	}
 
 }

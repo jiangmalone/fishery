@@ -7,6 +7,8 @@ import cmcc.iot.onenet.javasdk.api.device.GetDevicesStatus;
 import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
 import cmcc.iot.onenet.javasdk.api.triggers.AddTriggersApi;
 import cmcc.iot.onenet.javasdk.api.triggers.DeleteTriggersApi;
+import cmcc.iot.onenet.javasdk.api.triggers.GetTriggersApi;
+import cmcc.iot.onenet.javasdk.api.triggers.ModifyTriggersApi;
 import cmcc.iot.onenet.javasdk.response.BasicResponse;
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList;
 import cmcc.iot.onenet.javasdk.response.datapoints.DatapointsList.DatastreamsItem;
@@ -16,6 +18,7 @@ import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
 import cmcc.iot.onenet.javasdk.response.device.DeviceResponse;
 import cmcc.iot.onenet.javasdk.response.device.DevicesStatusList;
 import cmcc.iot.onenet.javasdk.response.triggers.NewTriggersResponse;
+import cmcc.iot.onenet.javasdk.response.triggers.TriggersResponse;
 
 import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
 import com.aliyuncs.exceptions.ClientException;
@@ -1286,7 +1289,7 @@ public class EquipmentService {
 				List<Float> valueList = new ArrayList<Float>();
 				DatastreamsItem di = dl.get(i);
 				List<DatapointsItem> ld =di.getDatapoints();
-				if(di.getId().equals("location")==false) {
+				if(di.getId().equals("WT")||di.getId().equals("DO")||di.getId().equals("pH")||di.getId().equals("DOS")) {
 					logger.debug(di.getId()+"参数下数据量："+ld.size());
 					for(int j=0;j<ld.size();j++) {
 						atList.add(ld.get(j).getAt());
@@ -2507,7 +2510,7 @@ public class EquipmentService {
 		 * @param key:masterkey 或者 设备apikey
 		 */
 		//微信小程序使用url
-		String url = "https://www.fisherymanager.net/fishery/api/equipment/triggeractive";
+		String url = "https://www.fisherymanager.net/api/equipment/triggeractive";
 		//本机使用
 		//String url = "https://df4b82e2.ngrok.io/fishery/api/equipment/triggeractive";
 		String title = device_sn+"_"+dsid;
@@ -3339,4 +3342,65 @@ public class EquipmentService {
 	        returnMap.put("result", result);	        	        
 		return returnMap;
 	}
+	
+	public List<Dev_Trigger> getAlltrigger(){
+		return dev_triggerDao.findAll();
+	}
+	
+	public void findOnetrigger(String tirggerid) {
+		String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
+		/**
+		 * 查询单个触发器
+		 * @param tirggerid:触发器ID,String
+		 * @param key:masterkey 或者 设备apikey
+		 */
+		GetTriggersApi api = new GetTriggersApi(tirggerid, key);
+		BasicResponse<TriggersResponse> response = api.executeApi();
+			
+		if(response.errno==0) {			
+			System.out.println("title:"+response.data.getTitle());
+			System.out.println("ds_id："+response.data.getDs_id());
+			System.out.println(response.data.getDev_ids().size());
+			System.out.println(response.data.getType());
+			System.out.println(response.data.getThreshold().toString());
+		}
+		System.out.println(response.getJson());
+	}
+	
+	public void modifyallTrigger() {
+		logger.debug("进入修改全部触发器url");
+		List<Dev_Trigger> triggers = getAlltrigger();
+		for (Dev_Trigger trigger:triggers) {
+			logger.debug("触发器:"+trigger.getTriger_id()+"url");
+			String tirggerid = trigger.getTriger_id();
+			String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
+			/**
+			 * 查询单个触发器
+			 * @param tirggerid:触发器ID,String
+			 * @param key:masterkey 或者 设备apikey
+			 */
+			GetTriggersApi api = new GetTriggersApi(tirggerid, key);
+			BasicResponse<TriggersResponse> response = api.executeApi();
+			
+			if(response.errno==0) {
+				String title = response.data.getTitle();
+				String dsid = response.data.getDs_id();
+				String type = response.data.getType();
+				Object Threshold = response.data.getThreshold();
+				List<String > devicesid =new ArrayList<String>();
+				devicesid.add(trigger.getDevice_sn());
+				String url = "https://www.fisherymanager.net/api/equipment/triggeractive";
+				
+				/*ModifyTriggersApi(String tirggerId, String title, String dsid, List<String> devids, List<String> dsuuids,
+				String desturl, String type, Integer threshold,String key)*/
+				ModifyTriggersApi apim = new ModifyTriggersApi(tirggerid, title, dsid, devicesid, null, url, type, Threshold, key);
+				BasicResponse<Void> responsem = apim.executeApi();
+				System.out.println("errno:"+responsem.errno+" error:"+response.error);
+				
+			}
+			
+		}
+		logger.debug("结束修改全部触发器url");
+	}
+	
 }

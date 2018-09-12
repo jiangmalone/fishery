@@ -16,4 +16,6 @@ public interface Dev_TriggerDao {
     List<Dev_Trigger> findDev_TriggerBydevsn(String deviceSns);
     
     List<Dev_Trigger> findDev_TriggerByDevsnAndWay(String deviceSns,int way);
+    
+    List<Dev_Trigger> findAll();
 }

@@ -202,6 +202,18 @@ public class EquipmentController {
 		return equipmentService.companyFindEquipment(device_sn, relation, page, number);
 	}*/
 	
+	@RequestMapping(value = "/findOneTrigger", method = RequestMethod.GET)
+	public void checkSet(String id){
+		equipmentService.findOnetrigger(id);
+		
+	}
+	
+	@RequestMapping(value = "/modifyallTrigger", method = RequestMethod.GET)
+	public void modifyallTrigger(){
+		equipmentService.modifyallTrigger();
+		
+	}
+	
 	@RequestMapping(value = "/setTimer", method = RequestMethod.POST)
 	public Map<String, Object> autoSet(@RequestBody Param param){
 		System.out.println("设备id："+param.getDevice_sn());

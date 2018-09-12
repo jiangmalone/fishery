@@ -9,23 +9,56 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class TriggersResponse {
 	@JsonProperty("id")
 	private String id;
+	
 	@JsonProperty("title")
 	private String title;
+	
+	@JsonProperty("ds_id")
+	private String ds_id;
+	
 	@JsonProperty("ds_uuids")
 	private List<String> dsuuids;
+	
+	@JsonProperty("dev_ids")
+	private List<String> dev_ids;
+	
 	@JsonProperty("url")
 	private String url;
+	
 	@JsonProperty("type")
 	private String type;
+	
 	@JsonProperty("threshold")
-	private int threshold;
+	private Object threshold;
+	
 	@JsonProperty("invalid")
 	private boolean invalid;
+	
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	
 	@JsonProperty("create_time")
 	private Date createtime;
+	
 	@JsonProperty("target_type")
 	private Date targettype;
+	
+	
+	
+	public String getDs_id() {
+		return ds_id;
+	}
+	public void setDs_id(String ds_id) {
+		this.ds_id = ds_id;
+	}
+	public List<String> getDev_ids() {
+		return dev_ids;
+	}
+	public void setDev_ids(List<String> dev_ids) {
+		this.dev_ids = dev_ids;
+	}
+	public void setThreshold(Object threshold) {
+		this.threshold = threshold;
+	}
 	public Date getTargettype() {
 		return targettype;
 	}
@@ -68,11 +101,8 @@ public class TriggersResponse {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public int getThreshold() {
+	public Object getThreshold() {
 		return threshold;
-	}
-	public void setThreshold(int threshold) {
-		this.threshold = threshold;
 	}
 	public boolean isInvalid() {
 		return invalid;

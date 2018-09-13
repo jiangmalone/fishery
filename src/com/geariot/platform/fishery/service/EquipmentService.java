@@ -532,7 +532,7 @@ public class EquipmentService {
 								        	System.out.println(lon);
 							        	}
 						    	   }
-					        } 
+				 	    	  } 
 				 	       }
 						       
 				        }

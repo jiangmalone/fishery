@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.utils.HttpRequest;
+import com.geariot.platform.fishery.wxutils.WechatLoginUse;
 
 import net.sf.json.JSONArray;
 
@@ -34,6 +36,9 @@ public class WebServiceService {
 
 	@Autowired
 	private WXUserDao wxUserDao;
+	
+	@Autowired
+	private UserService userService;
 
 	/*public Map<String, Object> bindUser(String phone, String openId){
 		logger.debug("绑定用户的openId：" + openId);
@@ -152,5 +157,91 @@ public class WebServiceService {
 		Map<String, Object> head = new HashMap<String, Object>();
 		head.put("Content-Type", "application/json");
 		return head;
+	}
+	
+	public Map<String, Object> wechatLogin(String code){
+		logger.debug("微信登陆，获得用户code:"+code);
+		long start = System.currentTimeMillis();
+		Map<String, Object> map =  getWechatInfo(code);
+		long end1 = System.currentTimeMillis();
+		logger.debug("第一段时间："+(end1-start));
+		if(map.get("openId")==null) {
+			logger.debug("根据用户code，未获得openId");
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}else {
+			logger.debug("openId:"+(String)map.get("openId"));
+			logger.debug("session_key:"+(String)map.get("session_key"));
+			logger.debug("unionid:"+(String)map.get("unionid"));
+			Map<String, String> entity = new HashMap<>();			
+			entity.put("openId", (String)map.get("openId"));
+			entity.put("session_key", (String)map.get("session_key"));
+			entity.put("unionid", (String)map.get("unionid"));
+			//防止同一微信用户登录多个手机号
+			List<WXUser> wxUserList =  userService.findWXUser((String)map.get("openId"));
+			long end2 = System.currentTimeMillis();
+			logger.debug("第二段时间："+(end2-start));
+			if(wxUserList.size() == 0) {
+				return RESCODE.NOT_FOUND.getJSONRES(entity);
+			}else if(wxUserList.size()>1){
+				logger.debug("该openId下有多个用户");
+				int count =0;
+				for(WXUser wxUser:wxUserList) {
+					if(wxUser.isLogin() == true) {
+						count++;
+					}
+				}
+				if(count>1) {
+					return RESCODE.WX_LOGIN_REPEAT.getJSONRES(entity);
+				}else if(count==0){
+					return RESCODE.NOT_FOUND.getJSONRES(entity);
+				}else {
+					WXUser wx = new WXUser();
+					for(WXUser wxUser:wxUserList) {
+						if(wxUser.isLogin() == true) {
+							wx = wxUser;
+						}
+					}
+					wx.setOpenId((String)map.get("openId"));
+					wx.setUnionid((String)map.get("unionid"));
+					logger.debug("getuserinfo:"+RESCODE.SUCCESS.getJSONRES(wx));
+					return RESCODE.SUCCESS.getJSONRES(wx);
+				}
+				
+			}else {
+				WXUser wx = wxUserList.get(0);
+				wx.setOpenId((String)map.get("openId"));
+				wx.setUnionid((String)map.get("unionid"));
+				
+				if(wx.isLogin() == true) {
+					logger.debug("用户已登陆，getuserinfo:"+RESCODE.SUCCESS.getJSONRES(wx));
+					return RESCODE.SUCCESS.getJSONRES(wx);
+				}else {
+					return RESCODE.NO_LOGIN.getJSONRES(entity);
+				}
+				
+			}			
+		}
+		
+		
+	}
+	public Map<String, Object> getWechatInfo(String code) {
+		String wechatInfo = WechatLoginUse.wechatInfo(code);
+		JSONObject resultJson;
+		Map<String, Object> wxuserin = new HashMap<>();
+		try {
+			resultJson = new JSONObject(wechatInfo);
+			logger.debug("resultJson"+resultJson);
+			if (resultJson.get("message").equals("success")) {
+				String openId = resultJson.getString("openid");
+				String session_key = resultJson.getString("session_key");
+				String unionid = resultJson.getString("unionid");				
+				wxuserin.put("openId", openId);
+				wxuserin.put("session_key", session_key);
+				wxuserin.put("unionid", unionid);				
+				return wxuserin;
+			}return RESCODE.NOT_FOUND.getJSONRES();
+		}catch (Exception e){
+			return RESCODE.NOT_FOUND.getJSONRES();
+		}
 	}
 }

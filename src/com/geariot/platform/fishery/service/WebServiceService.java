@@ -225,7 +225,11 @@ public class WebServiceService {
 		
 	}
 	public Map<String, Object> getWechatInfo(String code) {
+		long start_1 = System.currentTimeMillis();
+		
 		String wechatInfo = WechatLoginUse.wechatInfo(code);
+		long end_1 = System.currentTimeMillis();
+		logger.debug("WechatLoginUse.wechatInfo(code)："+(end_1-start_1));
 		JSONObject resultJson;
 		Map<String, Object> wxuserin = new HashMap<>();
 		try {

@@ -242,8 +242,7 @@ public class HttpRequest {
 			interfaceName = interfaceName+"?"+paramString;
 		}
 		HttpGet httpGet = new HttpGet(interfaceName);
-//		httpGet.setConfig(setTimeOut());
-		
+		//httpGet.setConfig(setTimeOut());		
 		//设置请求头
 		if(head!=null){
 			for(Map.Entry<String, Object> h :head.entrySet()){

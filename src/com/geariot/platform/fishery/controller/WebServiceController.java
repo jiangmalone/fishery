@@ -368,7 +368,7 @@ public class WebServiceController {
 	    if (nick_name == null) {
 	        return nick_name;
 	    }
-	    Pattern emoji = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",
+	    Pattern emoji = Pattern.compile("[\\ud800\\udc00-\\udbff\\udfff\\ud800-\\udfff]|[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",
 	            Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
 	    Matcher emojiMatcher = emoji.matcher(nick_name);
 	    if (emojiMatcher.find()) {

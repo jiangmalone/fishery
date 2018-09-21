@@ -79,8 +79,6 @@ public enum RESCODE {
 		return String.valueOf(this.nCode);
 	}
 	
-	
-
 	/**
 	 * 最新的返回json
 	 */
@@ -90,8 +88,7 @@ public enum RESCODE {
 		map.put(Constants.RESPONSE_MSG_KEY, this.nMsg);
 		return map;
 	}
-	
-	
+		
 	public Map<String,Object> getJSONRES(Object entity){
 		Map<String, Object> jsonres = getJSONRES();
 		jsonres.put(Constants.RESPONSE_DATA_KEY, entity);
@@ -111,6 +108,5 @@ public enum RESCODE {
 		map.put(Constants.RESPONSE_CODE_KEY, e.getErrorCode());
 		map.put(Constants.RESPONSE_MSG_KEY, e.getMessage());
 		return map;
-	}
-	
+	}	
 }

@@ -426,7 +426,10 @@ public class UserService {
 			        		autoIsValid = false;
 			        	}
 			        }
-			        if(controller.getStatus()!=0) {
+			        if((boolean) controllerMap.get("online") == false) {
+			        	autoIsValid = false;
+			        }
+			        if(controller.getStatus() != 0) {
 			        	autoIsValid = false;
 			        }
 			        controllerMap.put("switch", controllerKey);

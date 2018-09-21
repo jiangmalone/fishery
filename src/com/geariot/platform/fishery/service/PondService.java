@@ -54,6 +54,12 @@ public class PondService {
 	@Autowired
 	private CompanyDao companyDao;
 
+	@Autowired
+	private Dev_TriggerDao triggerDao;
+	
+	@Autowired
+	private EquipmentService equipmentService;
+	
 	private Logger logger = LogManager.getLogger(PondService.class);
 
 	public Map<String, Object> addPond(Pond pond) {
@@ -61,6 +67,9 @@ public class PondService {
 			return RESCODE.POND_NAME_EXIST.getJSONRES();
 		} else {
 			pondDao.save(pond);
+			
+			
+			
 			return RESCODE.SUCCESS.getJSONRES(pond);
 		}
 	}
@@ -101,7 +110,16 @@ public class PondService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 
+	/**
+	 * 修改塘口
+	 * 1.不修改鱼的种类
+	 * 2.修改鱼的种类
+	 * 		修改该塘口下传感器的触发器
+	 * @param pond
+	 * @return
+	 */
 	public Map<String, Object> modifyPond(Pond pond) {
+		
 		logger.debug("开始修改塘口："+pond.getId());
 		Pond exist = pondDao.findPondByPondId(pond.getId());
 		if (exist == null) {
@@ -111,6 +129,23 @@ public class PondService {
 			if (pondDao.checkPondExistByNameAndRelation(pond.getName(), pond.getRelation())) {
 				if (pond.getName().equals(exist.getName())) {
 					pondDao.update(pond);
+					List<PondFish> pondfishes =  pondfishDao.getFishbyPondId(pond.getId());
+					List<Sensor> sensorList = sensorDao.findSensorsByPondId(pond.getId());
+					if(pondfishes != null && pondfishes.size()>0) {
+						logger.debug("修改传感器的触发器");
+						for(int i = 0 ; i<sensorList.size();i++) {
+							equipmentService.deleteTriggerBySensorId(sensorList.get(i).getDevice_sn());
+							equipmentService.addTrigerbyFishtype(sensorList.get(i).getDevice_sn(), pondfishes.get(0).getType());
+						}
+						
+					}else {
+						
+						logger.debug("塘口中没有鱼/虾/蟹,删除传感器的触发器");
+						for(int i = 0 ; i<sensorList.size();i++) {
+							equipmentService.deleteTriggerBySensorId(sensorList.get(i).getDevice_sn());
+						}						
+					}
+					
 					return RESCODE.SUCCESS.getJSONRES(pond);
 				} else {
 					return RESCODE.POND_NAME_EXIST.getJSONRES();

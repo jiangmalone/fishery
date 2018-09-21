@@ -13,13 +13,14 @@
       ],
       "proxy":{
         "/api":{
-          "target": "http://www.fisherymanager.net/api/",
+          "target": "https://www.fisherymanager.net/fishery/api/",
           "changeOrigin": true,
           "pathRewrite": { "^/api": "" }
         }
       }
     }
   },
+  "publicPath":"/fishery/",
   "externals": {
     "g2": "G2",
     "g-cloud": "Cloud",

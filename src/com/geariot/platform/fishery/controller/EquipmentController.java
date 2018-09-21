@@ -263,6 +263,7 @@ public class EquipmentController {
 		Limit_Install limit_Install2 = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
 		if(limit_Install2 == null) {
 			System.out.println("增氧限制未设置");
+			limit_Install.setValid(true);
 			limitDao.save(limit_Install);
 			List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
 			List<Sensor> sensorList = sensorDao.findSensorsByRelation(controllerList.get(0).getRelation());
@@ -272,6 +273,7 @@ public class EquipmentController {
 					if(sensor.getPondId() == pondId) {
 						equipmentService.addTrigger("DO", sensor.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
 						equipmentService.addTrigger("DO", sensor.getDevice_sn(), ">", limit_Install.getUp_limit(), 2,limit_Install.getWay());
+						equipmentService.addTrigger("DO", sensor.getDevice_sn(), ">", limit_Install.getHigh_limit(), 5,limit_Install.getWay());
 					}
 				}
 			}			

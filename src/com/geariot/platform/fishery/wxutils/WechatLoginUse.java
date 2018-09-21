@@ -10,12 +10,15 @@ public class WechatLoginUse {
 	//	private static Logger log = Logger.getLogger(WechatLoginUse.class);
 	private static Logger log = LogManager.getLogger(WechatLoginUse.class);
 	public static String wechatInfo(String code){
+		long start_2 = System.currentTimeMillis();
 		//返回前台
 		JSONObject wechatInfo = new JSONObject();
 
 		//access token
 		JSONObject resultJson = WechatConfig.getAccessToken(code);
-		log.debug(resultJson);
+		long end_2 = System.currentTimeMillis();
+		log.debug(" WechatConfig.getAccessToken(code):"+(end_2-start_2));
+		log.debug("resultJson:"+resultJson);
 		String openid = resultJson.getString("openid");
 		String session_key = resultJson.getString("session_key");
 		String unionid = resultJson.getString("unionid") == null?"":resultJson.getString("unionid");

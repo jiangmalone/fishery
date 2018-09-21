@@ -1771,6 +1771,7 @@ public class EquipmentService {
 						DeleteTriggersApi api = new DeleteTriggersApi(trigger.getTriger_id(), key);
 						BasicResponse<Void> response = api.executeApi();
 						System.out.println("errno:"+response.errno+" error:"+response.error);
+						dev_triggerDao.deleteByTriggerId(trigger.getTriger_id());
 					}
 				}
 			}
@@ -1949,6 +1950,11 @@ public class EquipmentService {
 				WXUser wxUser = wxUserDao.findUserByRelation(controllerList.get(0).getRelation());
 				String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
 				if(ds_id.equals("PF")) {
+					/*for(Controller con:controllerList) {
+						delLimit(con.getDevice_sn(), con.getPort());
+						delTimer(con.getDevice_sn(), con.getPort());
+					}*/
+					
 					logger.debug("向"+publicOpenID+"发送" + "控制器:"+device_sn+"断电");
 					try {
 						Thread.currentThread();
@@ -1957,9 +1963,7 @@ public class EquipmentService {
 					} catch (InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
-					}	
-					
-					
+					}						
 					String json = "{\"deviceName\":\"" +controllerList.get(0).getDevice_sn()+ "\",\"way\":" + 0 + "}";
 					try {
 						logger.debug("准备启用阿里云语音服务");
@@ -1980,8 +1984,14 @@ public class EquipmentService {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					int j = i-1;
+					/*delLimit(controllerList.get(0).getDevice_sn(), j);
+					delTimer(controllerList.get(0).getDevice_sn(), j);*/
 					
-					String json = "{\"deviceName\":\"" + controllerList.get(i-1).getName() + "\",\"way\":" + i + "}";
+					String name = controllerList.get(j).getName();
+					logger.debug("设备名："+name);
+					String json = "{\"deviceName\":\"" + name + "\",\"way\":" + i + "}";
+					logger.debug("语音消息:"+ json);
 					try {
 						logger.debug("准备启用阿里云语音服务");
 						VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);

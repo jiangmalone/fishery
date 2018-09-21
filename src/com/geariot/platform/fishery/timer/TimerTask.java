@@ -113,7 +113,7 @@ public class TimerTask {
 						     	        		DP = Integer.parseInt(DatastreamsList.get(i).getValue().toString()) ;	
 						     	        	}					     	   					     	        	
 						     	      }					     	    	  					     	    						     	    	  
-					     	    	 if (now-sdf.parse(timer.getEndTime()).getTime() <= 0 && now-sdf.parse(timer.getStartTime()).getTime() >= 0) {
+					     	    	 if (now-sdf.parse(timer.getEndTime()).getTime() < 0 && now-sdf.parse(timer.getStartTime()).getTime() >= 0) {
 					     	    		logger.debug("检测到数据中有待执行的定时任务，准备向终端发送打开增氧机的命令");
 										WechatSendMessageUtils.sendWechatOnOffMessages("定时开始，准备打开"+controllertype[controllerList.get(0).getType()], publicOpenID, device_sn);
 										if(PF==0&&DP==0) {

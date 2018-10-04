@@ -32,7 +32,6 @@ import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.dao.WXUser_unionDao;
 import com.geariot.platform.fishery.dao.DiagDao;
-import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.utils.VmsUtils;
 import com.geariot.platform.fishery.wxutils.WeChatOpenIdExchange;
@@ -276,9 +275,9 @@ public class UserService {
 		List<Pond> ponds = pondDao.queryPondByNameAndRelation(company.getRelation(), null);
 		List<Equipment> equipments = pondDao.adminFindEquipmentByName(relations, 0, 2000);
 		for(Equipment equipment :equipments){
-			if(equipment.getStatus().contains("0")){
+	
 				count++;
-			}
+		
 		}
 		map.put("pondCount", ponds.size());
 		map.put("equip", count+"/"+equipments.size());

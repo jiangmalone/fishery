@@ -190,10 +190,13 @@ public class TimerTask {
 		    	 Boolean isOnline = response.data.getDevices().get(0).getIsonline();
 			     Device deviceOld = deviceDao.findDevice(device.getDevice_sn());
 			     if(isOnline) {
+			    	 logger.debug("设备在线");
 			    	 deviceOld.setOnline(true);
 			    	 deviceDao.updateIsOnline(deviceOld);
 			     }else {
+			    	 logger.debug("设备离线");
 			    	 if(deviceOld.isOnline()) {
+			    		 logger.debug("设备之前处于在线状态");
 			    		 WXUser wxUser = null;
 			    		 String deviceName = null;
 			    		 switch (deviceOld.getType()) {

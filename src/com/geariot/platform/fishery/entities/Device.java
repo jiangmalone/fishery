@@ -17,6 +17,7 @@ public class Device {
     private String device_sn;				//设备编号
     private int type;                      //设备类型  1 传感器 2 一体机 3 控制器
     private boolean isOnline;				//设备是否在线
+    private String companyRelation;			//关联公司
 
    
 	@Id
@@ -44,5 +45,12 @@ public class Device {
 	}
 	public void setOnline(boolean isOnline) {
 		this.isOnline = isOnline;
+	}
+	public String getCompanyRelation() {
+		return companyRelation;
+	}
+	public void setCompanyRelation(String companyRelation) {
+		this.companyRelation = companyRelation;
 	} 
+	
 }

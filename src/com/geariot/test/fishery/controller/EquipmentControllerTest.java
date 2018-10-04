@@ -83,7 +83,7 @@ public class EquipmentControllerTest {
 	@Test
 	public void realTimeData() throws Exception {
 		mockMvc.perform(get("/equipment/realTimeData").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("device_sn", "31969520")
+				.param("device_sn", "35663780")
 		).andDo(print()).andExpect(status().is2xxSuccessful());
 	}
 	

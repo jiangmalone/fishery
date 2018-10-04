@@ -478,6 +478,104 @@ public class EquipmentService {
 		int results = CMDUtils.sendStrCmd(divsn,text);
 	}
 	
+	//后台为企业添加设备
+	public Map<String, Object> addEquipment(String device_sn, String name, String relation) {
+		Device device = deviceDao.findDevice(device_sn);
+		if(device==null) {
+			return RESCODE.NO_DEVICE.getJSONRES();
+		}else if(device.getCompanyRelation()!=null){
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}else {
+			device.setCompanyRelation(relation);
+			deviceDao.updateIsOnline(device);
+			return RESCODE.SUCCESS.getJSONRES();
+		}
+		/*String deviceSn;
+		String realDevice_sn;
+		try {
+			deviceSn = device_sn.trim().substring(0, 2);
+			
+		} catch (Exception e) {
+			return RESCODE.DEVICESNS_INVALID.getJSONRES();
+		}
+		Map<String, Object>  result = VertifyDevicesn(device_sn);
+		System.out.println((int)result.get("code"));
+		if((int)result.get("code") == 0) {
+			logger.debug("onenet上存在该设备");
+			if (deviceSn.equals("01") || deviceSn.equals("02")) {
+				Device device = deviceDao.findDevice(realDevice_sn);					
+				AIO exist = aioDao.findAIOByDeviceSns(realDevice_sn);
+				if (exist != null || device != null) {
+					return RESCODE.AIO_EXIST.getJSONRES();
+				} else {
+					Device deviceNew = new Device();
+					deviceNew.setDevice_sn(realDevice_sn);
+					deviceNew.setType(2);
+					AIO aio = new AIO();
+					aio.setDevice_sn(realDevice_sn);
+					aio.setName(name);
+					aio.setRelation(relation);
+					aio.setStatus("11");
+					aioDao.save(aio);
+					// 初始化两个增氧机状态
+					AeratorStatus status1 = new AeratorStatus();
+					status1.setDevice_sn(realDevice_sn);
+					status1.setOn_off(false);
+					status1.setTimed(false);
+					status1.setWay(1);
+					statusDao.save(status1);
+					AeratorStatus status2 = new AeratorStatus();
+					status2.setDevice_sn(realDevice_sn);
+					status2.setOn_off(false);
+					status2.setTimed(false);
+					status2.setWay(2);
+					statusDao.save(status2);
+					return RESCODE.SUCCESS.getJSONRES();
+				}
+			} else if (deviceSn.equals("03")) {
+				Sensor exist = sensorDao.findSensorByDeviceSns(realDevice_sn);
+				Device device = deviceDao.findDevice(realDevice_sn);	
+				if (exist != null || device != null) {
+					return RESCODE.SENSOR_EXIST.getJSONRES();
+				} else {
+					Device deviceNew = new Device();
+					deviceNew.setDevice_sn(realDevice_sn);
+					deviceNew.setType(1);
+					Sensor sensor = new Sensor();
+					sensor.setDevice_sn(realDevice_sn);
+					sensor.setName(name);
+					sensor.setRelation(relation);
+					sensorDao.save(sensor);
+					return RESCODE.SUCCESS.getJSONRES();
+				}
+			} else if (deviceSn.equals("04")) {
+				Device device = deviceDao.findDevice(realDevice_sn);
+				List<Controller> exist = controllerDao.findControllerByDeviceSns(realDevice_sn);
+				if ((exist != null && exist.size()>0)|| device != null) {
+					return RESCODE.SENSOR_EXIST.getJSONRES();
+				} else {
+					Device deviceNew = new Device();
+					deviceNew.setDevice_sn(realDevice_sn);
+					deviceNew.setType(3);
+					deviceDao.save(deviceNew);
+					Controller controller = new Controller();
+					controller.setDevice_sn(realDevice_sn);
+					controller.setName(name);
+					controller.setRelation(relation);
+					controller.setStatus(1);			
+					controllerDao.save(controller);
+					return RESCODE.SUCCESS.getJSONRES();
+				}
+			} else {
+				return RESCODE.DEVICESNS_INVALID.getJSONRES();
+			}
+		}else {
+			return RESCODE.NO_DEVICE.getJSONRES();
+		} */
+		
+	}
+	
+	
 	public Map<String, Object> addSensor(Sensor...sensors) {
 		//为塘口添加传感器
 		//只可添加一个传感器，数组形式为便于前端渲染	
@@ -1009,46 +1107,137 @@ public class EquipmentService {
 			
 	/*	}	*/	
 	}
-/*	
+	
 	public Map<String, Object> companyFindEquipment(String device_sn, String relation, int page, int number) {
 		int from = (page - 1) * number;
-		Sensor sensor = null;
+		logger.debug("第一步：找到公司");
 		Company company = companyDao.findCompanyByRelation(relation);
 		if (company == null) {
 			return RESCODE.NOT_FOUND.getJSONRES();
 		} else {
 			List<String> relations = new ArrayList<>();
 			relations.add(company.getRelation());
+			logger.debug("第二步:找到设备");			
 			if (device_sn == null || device_sn.length() < 0) {
-				List<Equipment> equipments = pondDao.adminFindEquipmentByName(relations, from, number);
-				for (Equipment equipment : equipments) {
-					String type = equipment.getDevice_sn().substring(0, 2);
-					if (type.equals("03")) {
-						sensor = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn());
-						if (sensor == null) {
-							equipment.setSensorId(0);
-						} else {
-							equipment.setSensorId(sensor.getId());
+				List<Equipment> equipmentsReturn = new ArrayList<>();
+				List<Device> deviceList = deviceDao.findDevicesByCompanyRelation(relation, from, number);
+				logger.debug(deviceList.size());
+				for(Device device : deviceList) {
+					Equipment equipment = new Equipment();
+					equipment.setDevice_sn(device.getDevice_sn());
+					equipment.setType(device.getType());
+					String name = " ";
+					switch (device.getType()) {
+					case 1:
+						name = sensorDao.findSensorByDeviceSns(device.getDevice_sn()).getName();
+						equipment.setRelation(sensorDao.findSensorByDeviceSns(device.getDevice_sn()).getRelation());
+						break;
+					case 2:
+						
+						break;
+					case 3:
+						List<Controller> controllers = controllerDao.findControllerByDeviceSns(device.getDevice_sn());
+						for(Controller con : controllers) {
+							name += con.getName() + "/";
 						}
-					} else {
-						equipment.setSensorId(0);
+						if(controllers!=null&& controllers.size()>0) {
+							equipment.setRelation(controllerDao.findControllerByDeviceSns(device.getDevice_sn()).get(0).getRelation());
+						}					
+						break;
+					default:
+						break;
 					}
+					equipment.setName(name);
+					equipment.setUserName(company.getName());
+					GetDevicesStatus api = new GetDevicesStatus(equipment.getDevice_sn(),key);
+			        BasicResponse<DevicesStatusList> response = api.executeApi();
+			        logger.debug("从onenet上获取设备在线/离线状态");
+			        if(response.errno == 0) {
+			        	if(response.data.getDevices().get(0).getIsonline()) {
+			        		equipment.setStatus(1);
+			        	}else {
+			        		equipment.setStatus(0);
+			        	}
+			        	
+			        }else {
+			        	logger.debug("未查询到设备状态");
+			        	equipment.setStatus(2);
+			        }
+			        equipmentsReturn.add(equipment);
+			        
 				}
-				long count = pondDao.adminFindEquipmentCountName(relations);
+				long count = deviceDao.findDevicesByCompanyRelation(relation).size();
+
 				int size = (int) Math.ceil(count / (double) number);
-				Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+
+				Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(equipmentsReturn, size, count);
+
 				map.put("user", company.getName());
+
 				return map;
 			} else {
-				List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
-				long count = pondDao.adminFindEquipmentCountDouble(device_sn, relations);
+				List<Equipment> equipmentsReturn = new ArrayList<>();
+				/*List<Equipment> equipments = pondDao.adminFindEquipmentDouble(device_sn, relations, from, number);
+				List<Equipment> equipmentsReturn = new ArrayList<>();
+				for (Equipment equipment : equipments) {
+					equipment.setType(deviceDao.findDevice(equipment.getDevice_sn()).getType());
+					equipment.setUserName(company.getName());
+					equipmentsReturn.add(equipment);
+				}*/
+				List<Device> deviceList = deviceDao.queryList(device_sn, from, number);
+				for(Device device : deviceList) {
+					Equipment equipment = new Equipment();
+					equipment.setDevice_sn(device.getDevice_sn());
+					equipment.setType(device.getType());
+					String name = " ";
+					switch (device.getType()) {
+					case 1:
+						name = sensorDao.findSensorByDeviceSns(device.getDevice_sn()).getName();
+						equipment.setRelation(sensorDao.findSensorByDeviceSns(device.getDevice_sn()).getRelation());
+						break;
+					case 2:
+						
+						break;
+					case 3:
+						List<Controller> controllers = controllerDao.findControllerByDeviceSns(device.getDevice_sn());
+						for(Controller con : controllers) {
+							name += con.getName() + "/";
+						}
+						if(controllers!=null&& controllers.size()>0) {
+							equipment.setRelation(controllerDao.findControllerByDeviceSns(device.getDevice_sn()).get(0).getRelation());
+						}					
+						break;
+					default:
+						break;
+					}
+					equipment.setName(name);
+					equipment.setUserName(company.getName());
+					GetDevicesStatus api = new GetDevicesStatus(equipment.getDevice_sn(),key);
+			        BasicResponse<DevicesStatusList> response = api.executeApi();
+			        logger.debug("从onenet上获取设备在线/离线状态");
+			        if(response.errno == 0) {
+			        	if(response.data.getDevices().get(0).getIsonline()) {
+			        		equipment.setStatus(1);
+			        	}else {
+			        		equipment.setStatus(0);
+			        	}
+			        	
+			        }else {
+			        	logger.debug("未查询到设备状态");
+			        	equipment.setStatus(2);
+			        }
+			        equipmentsReturn.add(equipment);
+			        
+				}
+				long count = 1;
 				int size = (int) Math.ceil(count / (double) number);
-				Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(equipments, size, count);
+				Map<String, Object> map = RESCODE.SUCCESS.getJSONRES(equipmentsReturn, size, count);
 				map.put("user", company.getName());
 				return map;
 			}
+			
 		}
-	}*/
+	}
 
 	public Map<String, Object> dataToday(String device_sn, int way) {
 		logger.debug("获得设备："+device_sn+"今日数据");
@@ -1780,10 +1969,32 @@ public class EquipmentService {
 		return RESCODE.SUCCESS.getJSONRES();
 	}
 	
-	public Map<String, Object> modifyEquipment(String device_sn, Object newEquipment) {
-		newEquipment.getClass().getName();
-	
-		return null;
+	public Map<String, Object> modifyEquipment(String device_sn, String name) {
+		
+		Device device = deviceDao.findDevice(device_sn);
+		if(device!=null) {
+			switch (device.getType()) {
+			case 1:
+				Sensor sensor = sensorDao.findSensorByDeviceSns(device_sn);
+				sensor.setName(name);
+				sensorDao.updateSensor(sensor);
+				break;
+			case 2:
+				
+				break;
+			case 3:
+				List<Controller> controllers = controllerDao.findControllerByDeviceSns(device_sn);
+				for(Controller con : controllers) {
+					con.setName(name+"-"+(con.getPort()+1)+"路");
+					controllerDao.updateController(con);
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 	
 	public Map<String, Object> modifySensor(Sensor...sensors){
@@ -3411,6 +3622,13 @@ public class EquipmentService {
 			
 		}
 		logger.debug("结束修改全部触发器url");
+	}
+	
+	public Map<String, Object> CompanyDelEquipments(String device){
+		Device d =  deviceDao.findDevice(device);
+		d.setCompanyRelation(null);
+		deviceDao.updateIsOnline(d);
+		return RESCODE.SUCCESS.getJSONRES();
 	}
 	
 }

@@ -16,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.geariot.platform.fishery.dao.PondDao;
+import com.geariot.platform.fishery.entities.Equipment;
 import com.geariot.platform.fishery.entities.Fish_Category;
 import com.geariot.platform.fishery.entities.Pond;
-import com.geariot.platform.fishery.model.Equipment;
+
 import com.geariot.platform.fishery.utils.QueryUtils;
 
 /**
@@ -183,13 +184,10 @@ public class PondDaoImpl implements PondDao {
 	@Override
 	public List<Equipment> adminFindEquipmentByName(List<String> relations, int from, int pageSize) {
 		StringBuilder sb = new StringBuilder(2048);
-		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
-		sb.append("from AIO a where a.relation in :relations ");
-		sb.append("UNION ALL ");
-		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.relation as relation, b.pondId as way ");
 		sb.append("from Sensor b where b.relation in :relations ");
 		sb.append("UNION ALL ");
-		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.relation as relation, c.port as way ");
 		sb.append("from Controller c where c.relation in :relations ");
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
@@ -202,13 +200,13 @@ public class PondDaoImpl implements PondDao {
 	public long adminFindEquipmentCountName(List<String> relations) {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select count(*) from (");
-		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
+		sb.append("select a.device_sn as device_sn, a.name as name ");
 		sb.append("from AIO a where a.relation in :relations ");
 		sb.append("UNION ALL ");
-		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("select b.device_sn as device_sn, b.name as name ");
 		sb.append("from Sensor b where b.relation in :relations ");
 		sb.append("UNION ALL ");
-		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("select c.device_sn as device_sn, c.name as name ");
 		sb.append("from Controller c where c.relation in :relations) ");
 		sb.append("as total");
 		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString()).setParameterList("relations", relations).uniqueResult();
@@ -252,13 +250,10 @@ public class PondDaoImpl implements PondDao {
 	@Override
 	public List<Equipment> adminFindEquipmentDouble(String device_sn, List<String> relations, int from, int pageSize) {
 		StringBuilder sb = new StringBuilder(2048);
-		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
-		sb.append("from AIO a where a.device_sn like :device_sn and a.relation in :relations ");
-		sb.append("UNION ALL ");
-		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		sb.append("select b.device_sn as device_sn, b.name as name, b.relation as relation ");
 		sb.append("from Sensor b where b.device_sn like :device_sn and b.relation in :relations ");
 		sb.append("UNION ALL ");
-		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.relation as relation ");
 		sb.append("from Controller c where c.device_sn like :device_sn and c.relation in :relations ");
 		return getSession().createSQLQuery(sb.toString())
 				.setResultTransformer(Transformers.aliasToBean(Equipment.class))
@@ -273,13 +268,11 @@ public class PondDaoImpl implements PondDao {
 	public long adminFindEquipmentCountDouble(String device_sn, List<String> relations) {
 		StringBuilder sb = new StringBuilder(2048);
 		sb.append("select count(*) from (");
-		sb.append("select a.device_sn as device_sn, a.name as name, a.status as status ");
-		sb.append("from AIO a where a.device_sn like :device_sn and a.relation in :relations ");
-		sb.append("UNION ALL ");
-		sb.append("select b.device_sn as device_sn, b.name as name, b.status as status ");
+		
+		sb.append("select b.device_sn as device_sn, b.name as name, b.relation as relation ");
 		sb.append("from Sensor b where b.device_sn like :device_sn and b.relation in :relations ");
 		sb.append("UNION ALL ");
-		sb.append("select c.device_sn as device_sn, c.name as name, c.status as status ");
+		sb.append("select c.device_sn as device_sn, c.name as name, c.relation as relation ");
 		sb.append("from Controller c where c.device_sn like :device_sn and c.relation in :relations) ");
 		sb.append("as total");
 		BigInteger big =  (BigInteger) getSession().createSQLQuery(sb.toString())
@@ -293,9 +286,6 @@ public class PondDaoImpl implements PondDao {
 	@Override
 	public List<Equipment> equipmentRelation(String relation, int from, int pageSize) {
 		StringBuilder sb = new StringBuilder(2048);
-		sb.append("select a.device_sn as device_sn, a.name as name ");
-		sb.append("from AIO a where a.relation = :relation ");
-		sb.append("UNION ALL ");
 		sb.append("select b.device_sn as device_sn, b.name as name ");
 		sb.append("from Sensor b where b.relation = :relation ");
 		sb.append("UNION ALL ");

@@ -86,7 +86,10 @@ public class EquipmentController {
 	public Map<String, Object> queryEquipment(String device_sn, String userName, int page, int number) {
 		return equipmentService.queryEquipment(device_sn, userName, page, number);
 	}
-
+	@RequestMapping(value = "/CompanyDelEquipments", method = RequestMethod.GET)
+	public Map<String, Object> CompanyDelEquipments(String device_sn) {
+		return equipmentService.CompanyDelEquipments(device_sn);
+	}
 
 	@RequestMapping(value = "/delEquipments", method = RequestMethod.GET)
 	public Map<String, Object> delEquipment(String device_sn) {
@@ -111,7 +114,10 @@ public class EquipmentController {
 		logger.debug("用户："+openId+"接口调用，删除设备："+device_sn+",ip:"+ip);
 		return equipmentService.delEquipment(device_sn);
 	}
-	
+	@RequestMapping(value = "/add", method = RequestMethod.GET)
+	public Map<String, Object> addEquipment(String device_sn, String name, String relation) {
+		return equipmentService.addEquipment(device_sn, name, relation);
+	}
 	@RequestMapping(value = "/modifyEquipment", method = RequestMethod.GET)
 	public Map<String, Object> modifyEquipment(String device_sn,String name) {
 		return equipmentService.modifyEquipment(device_sn,name);
@@ -197,10 +203,10 @@ public class EquipmentController {
 		return equipmentService.myEquipment(relation);
 	}	
 	
-/*	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
+	@RequestMapping(value ="/companyFindEquipment", method = RequestMethod.GET)
 	public Map<String, Object> companyFindEquipment(String device_sn, String relation, int page, int number){
 		return equipmentService.companyFindEquipment(device_sn, relation, page, number);
-	}*/
+	}
 	
 	@RequestMapping(value = "/findOneTrigger", method = RequestMethod.GET)
 	public void checkSet(String id){

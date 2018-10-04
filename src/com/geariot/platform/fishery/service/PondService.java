@@ -2,11 +2,17 @@ package com.geariot.platform.fishery.service;
 
 import com.geariot.platform.fishery.dao.*;
 import com.geariot.platform.fishery.entities.*;
-import com.geariot.platform.fishery.model.Equipment;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.EightInteger;
 import com.geariot.platform.fishery.utils.FishCateList;
+
+import cmcc.iot.onenet.javasdk.api.device.GetDevicesStatus;
+import cmcc.iot.onenet.javasdk.api.device.GetLatesDeviceData;
+import cmcc.iot.onenet.javasdk.response.BasicResponse;
+import cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint;
+import cmcc.iot.onenet.javasdk.response.device.DevicesStatusList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +30,9 @@ public class PondService {
 
 	@Autowired
 	private PondDao pondDao;
+	
+	@Autowired
+	private DeviceDao deviceDao;
 
 	@Autowired
 	private FishCateDao fishCateDao;
@@ -59,6 +69,8 @@ public class PondService {
 	
 	@Autowired
 	private EquipmentService equipmentService;
+	
+	private String key = "7zMmzMWnY1jlegImd=m4p9EgZiI=";
 	
 	private Logger logger = LogManager.getLogger(PondService.class);
 
@@ -200,13 +212,90 @@ public class PondService {
 		Sensor sensor = null;
 		Pond pond = pondDao.findPondByPondId(pondId);
 		List<Equipment> equipments = pondDao.findEquipmentByPondId(pondId, from, number);
+		List<Equipment> equipmentsReturn = new ArrayList<>();
 		for(Equipment equipment : equipments){
-			if(equipment.getDevice_sn().substring(0, 2).equals("03")){
-				sensor = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn());
-				if(sensor != null){
-					equipment.setSensorId(sensor.getId());
-				}
+			equipment.setType(deviceDao.findDevice(equipment.getDevice_sn()).getType());
+			String relation ="";
+			if(sensorDao.findSensorByDeviceSns(equipment.getDevice_sn())!=null) {
+				relation = sensorDao.findSensorByDeviceSns(equipment.getDevice_sn()).getRelation();
 			}
+			if(relation.contains("CO")) {
+				equipment.setUserName(companyDao.findCompanyByRelation(relation).getName());
+			}else if(relation.contains("WX")) {
+				equipment.setUserName(wxUserDao.findUserByRelation(relation).getName());
+			}			
+			if(equipment.getType()==1) {
+				//传感器				
+				GetDevicesStatus api = new GetDevicesStatus(equipment.getDevice_sn(),key);
+		        BasicResponse<DevicesStatusList> response = api.executeApi();
+		        logger.debug("从onenet上获取传感器在线/离线状态");
+		        if(response.errno == 0) {
+		        	if(response.data.getDevices().get(0).getIsonline()) {
+		        		equipment.setStatus(1);
+		        	}else {
+		        		equipment.setStatus(0);
+		        	}
+		        	
+		        }else {
+		        	logger.debug("未查询到传感器状态，显示离线");
+		        	equipment.setStatus(2);
+		        }
+			}else if(equipment.getType()==3) {
+				Map<String, Object> controllerMap=new HashMap<>();
+				Map<String, Object> controllerDataMap=new HashMap<>();
+				//获得设备离线/在线状态
+				GetDevicesStatus api = new GetDevicesStatus(equipment.getDevice_sn(),key);
+		        BasicResponse<DevicesStatusList> response = api.executeApi();
+		        logger.debug("获取首页控制器状态："+response.getJson());
+
+		        if(response.errno == 0) {
+		        	if(response.data.getDevices().get(0).getIsonline()) {
+		        		//设备在线
+		        		//获得控制器最新数据
+				        GetLatesDeviceData lddapi = new GetLatesDeviceData(equipment.getDevice_sn(), key);
+				        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
+				        logger.debug("获取首页控制器数据："+response2.getJson());
+				        if(response2.errno == 0) {
+				        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> datastreamsList = response2.data.getDevices().get(0).getDatastreams();
+				        	if(datastreamsList!=null) {
+				        		for(int i=0;i<datastreamsList.size();i++) {
+						        	controllerDataMap.put(datastreamsList.get(i).getId(), datastreamsList.get(i).getValue());
+						        }        	
+						        controllerMap.put("data", controllerDataMap);	
+						        String  PF =  (String) controllerDataMap.get("PF");						       
+						        if(controllerDataMap.get("PF") !=null) {	
+							        logger.debug("断电1或正常0："+PF);
+							        if(PF.equals("1")) {
+							        	equipment.setStatus(1);//设备断电							        								        								        		
+							        }else {
+							        	if(controllerDataMap.get("DP"+(equipment.getWay()+1))!=null) {
+							        		 String DP = (String) controllerDataMap.get("DP"+(equipment.getWay()+1));
+								        	if(DP.equals("1")) {
+								        		logger.debug("缺相1或正常0："+DP);
+								        		equipment.setStatus(2);//设备缺相								        		
+								        	}else {
+								        		equipment.setStatus(4);//设备正常
+								        	}
+							        	}
+							        }
+						        }
+				        	}else {
+				        		controllerMap.put("data", false);
+				        	}					        
+				        }else {
+				        	controllerMap.put("data", false);
+				        }
+		        		
+		        	}else {
+		        		equipment.setStatus(0);//设备离线
+		        	}
+		        	
+		        	
+			}else {
+				equipment.setStatus(3);//数据异常
+			}					
+		}
+			equipmentsReturn.add(equipment);
 		}
 		long count = this.pondDao.equipmentByPondIdCount(pondId);
 		int size = (int) Math.ceil(count / (double) number);

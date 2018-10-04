@@ -78,7 +78,7 @@ public class PondController {
 		return pondService.relationEquipment(relation, page, number);
 	}	
 	@RequestMapping(value = "/pondHasSensor" , method = RequestMethod.GET)
-	public int relationEquipment(String pondId){
+	public int relationEquipment2(String pondId){
 		int pId = Integer.parseInt(pondId);
 		//返回1表示已使用，返回0表示未使用
 		return pondService.pondHasSensor(pId);

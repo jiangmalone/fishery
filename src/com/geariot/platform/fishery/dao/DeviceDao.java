@@ -20,5 +20,7 @@ public interface DeviceDao {
     Device findDevice(String deviceSns);
     List<Device> getAllDevices(); 
     void updateIsOnline(Device device);
-    List<Device> queryList(String device_sn,int page, int number);
+    List<Device> queryList(String device_sn,int page, int number);    
+    List<Device> findDevicesByCompanyRelation(String relation, int page, int number);
+    List<Device> findDevicesByCompanyRelation(String relation);
 }

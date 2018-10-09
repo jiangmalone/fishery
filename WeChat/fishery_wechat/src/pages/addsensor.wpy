@@ -315,7 +315,6 @@ export default class Addsensor extends wepy.page {
       if (this.equimentinfo[0].name && this.equimentinfo[0].pondId) {
         wepy.showLoading()
         if (this.ableBtn === true) {
-          console.log('typ', typeof this.equimentinfo[0].pondId.toString())
           wepy.request({
             url: this.$parent.globalData.baseUrl + 'api/' + 'pond/pondHasSensor',
             data: {
@@ -350,6 +349,7 @@ export default class Addsensor extends wepy.page {
                   })
                 } else {
                   wepy.showLoading()
+                  this.ableBtn = false
                   wepy.request({
                     url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/addSensor',
                     data: this.equimentinfo,

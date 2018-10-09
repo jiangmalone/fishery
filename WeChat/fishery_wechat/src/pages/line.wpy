@@ -979,7 +979,7 @@ export default class Line extends wepy.page {
             console.log('WebSocket 已关闭！', res)
           })
           wepy.connectSocket({
-            url: 'wss://www.fisherymanager.net/fishery/websocket'
+            url: 'wss://www.fisherymanager.net/websocket'
           })
 
           wepy.onSocketOpen((res) => {
@@ -1318,7 +1318,7 @@ export default class Line extends wepy.page {
             let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
 
             wepy.connectSocket({
-              url: 'wss://www.fisherymanager.net/fishery/websocket'
+              url: 'wss://www.fisherymanager.net/websocket'
             })
 
             wepy.onSocketOpen((res) => {

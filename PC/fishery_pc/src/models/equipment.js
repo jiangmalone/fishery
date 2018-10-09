@@ -1,4 +1,4 @@
-import { queryEquipment, companyFindEquipment, addEquipment, modifyEquipment, delEquipments } from '../services/equipment'
+import { queryEquipment, companyFindEquipment, addEquipment, modifyEquipment, delEquipments,CompanyDelEquipments } from '../services/equipment'
 import update from 'immutability-helper'
 import { message } from 'antd';
 export default {
@@ -102,13 +102,13 @@ export default {
       const response = yield call(modifyEquipment, payload.data);
       if (response.code == '0') {
         message.success('修改设备成功', 1);
-        yield put({
-          type: 'modifyList',
-          payload: {
-            index: payload.index,
-            data: response.equipment,
-          },
-        });
+        // yield put({
+        //   type: 'modifyList',
+        //   payload: {
+        //     index: payload.index,
+        //     data: response.equipment,
+        //   },
+        // });
 
         yield put({
           type: 'changeModal',
@@ -121,7 +121,7 @@ export default {
       }
     },
     *delEquipments({ payload }, { call, put }) {
-      const response = yield call(delEquipments, { device_sns: payload.device_sns });
+      const response = yield call(delEquipments, { device_sn: payload.device_sn});
       if (response.code == '0') {
         message.success('删除设备成功', 1);
         yield put({

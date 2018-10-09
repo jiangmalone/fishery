@@ -94,8 +94,6 @@ export default class EquipmentDetail extends React.Component {
       this.setState({
         controllers: newList
       })
-    }).catch((err) => {
-      console.log(err)
     })
   }
 
@@ -121,8 +119,6 @@ export default class EquipmentDetail extends React.Component {
           user: res.user
         })
       }
-    }).catch((error) => {
-      console.log(error)
     })
   }
   getRealTimeData = () => {
@@ -131,20 +127,14 @@ export default class EquipmentDetail extends React.Component {
     }).then(res => {
       let state = '离线';
       switch (res.status) {
-        case '0':
-          state = '正常';
-          break;
-        case '1':
+        case 0:
           state = '离线';
           break;
-        case '2':
-          state = '断电';
+        case 1:
+          state = '在线';
           break;
-        case '3':
-          state = '缺相';
-          break;
-        case '4':
-          state = '数据异常';
+        case 2:
+          state = '异常';
           break;
       }
       this.setState({
@@ -156,10 +146,7 @@ export default class EquipmentDetail extends React.Component {
         this.setState({realTimeData: [res]})
       } else {
         this.setState({realTimeData: []})
-        message('暂无实时数据', 2)
       }
-    }).catch(error => {
-      console.log(error);
     })
   }
 
@@ -176,13 +163,9 @@ export default class EquipmentDetail extends React.Component {
         pondId: v
       }).then((res) => {
         if (res.code !== 0) {
-          message.error(res.msg, 2);
         } else {
           this.getRealTimeData()
-          message.success(res.msg, 2)
         }
-      }).catch((error) => {
-        console.log(error)
       })
     }
   }
@@ -198,13 +181,9 @@ export default class EquipmentDetail extends React.Component {
       relation:this.state.controllersPort.relation
     }).then((res) => {
       if (res.code !== 0) {
-        message.error(res.msg, 2);
       } else {
         this.getInfo();
-        message.success(res.msg, 2)
       }
-    }).catch((error) => {
-      console.log(error)
     })
   }
   disBind = () => {
@@ -214,8 +193,6 @@ export default class EquipmentDetail extends React.Component {
     }).then((res) => {
       this.getRealTimeData()
       this.queryEquipment();
-    }).catch((error) => {
-      console.log(error)
     })
   }
   disBinds=()=>{
@@ -225,8 +202,6 @@ export default class EquipmentDetail extends React.Component {
     }).then((res) => {
       this.getInfo();
       this.queryEquipment();
-    }).catch((error) => {
-      console.log(error)
     })
   }
   handleCancel = () => {
@@ -268,9 +243,6 @@ export default class EquipmentDetail extends React.Component {
       } else {
         message.error(res.msg, 1)
       }
-    }).catch(error => {
-      message.error('绑定失败！', 1)
-      console.log(error);
     })
   }
 
@@ -476,7 +448,7 @@ export default class EquipmentDetail extends React.Component {
       },
       {
         title: '溶氧(mg/L)',
-        dataIndex: 'oxygen_status'
+        dataIndex: 'oxygen'
       },
       {
         title: '水温(℃)',

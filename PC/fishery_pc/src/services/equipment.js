@@ -44,17 +44,22 @@ export async function addEquipment(params) {
     return request(`/api/equipment/add?${stringify(params)}`);
 }
 
+export async function CompanyDelEquipments(params) {
+    return request(`/api/equipment/CompanyDelEquipments?${stringify(params)}`);
+}
+
 export async function modifyEquipment(params) {
-    return request(`/api/equipment/modifyEquipment?${stringify(params)}`);
+  return request(`/api/equipment/modifyEquipment?${stringify(params)}`);
 }
 
 export async function delEquipments(params) {
+  console.log(params)
     let str = ''
-    for (let item of params.device_sns) {
-        str = 'device_sns=' + item + '&' + str
+    for (let item of params.device_sn) {
+        str = 'device_sn=' + item + '&' + str
     }
     str = str.slice(0, -1)
-    return request(`/api/equipment/delEquipments?${str}`)
+    return request(`/api/equipment/CompanyDelEquipments?${str}`)
 }
 
 export async function realTimeData(params) {

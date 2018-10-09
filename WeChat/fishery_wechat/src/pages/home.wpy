@@ -744,7 +744,7 @@ export default class Home extends wepy.page {
           console.log('WebSocket 已关闭！', res)
         })
         wepy.connectSocket({
-          url: 'wss://www.fisherymanager.net/fishery/websocket'
+          url: 'wss://www.fisherymanager.net/websocket'
         })
 
         wepy.onSocketOpen((res) => {
@@ -958,7 +958,7 @@ export default class Home extends wepy.page {
                     }
                   })
                   wepy.connectSocket({
-                    url: 'wss://www.fisherymanager.net/fishery/websocket'
+                    url: 'wss://www.fisherymanager.net/websocket'
                   })
                   console.log('ws.myhome',res.data.myHome[num])
                   wepy.onSocketOpen((res) => {

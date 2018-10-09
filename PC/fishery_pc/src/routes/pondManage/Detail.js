@@ -108,22 +108,31 @@ class PondDetail extends PureComponent {
             dataIndex: 'status',
             key: 'status',
             render: (text, record, index) => {
-                let status = text.split('');
-
-                status.map((item, index) => {
-                    let str = ''
-                    console.log(item)
-                    switch (item) {
-                        case '0': str = '正常'; break;
-                        case '1': str = '离线'; break;
-                        case '2': str = '断电'; break;
-                        case '3': str = '缺相'; break;
-                        case '4': str = '数据异常'; break;
-                    }
-                    status[index] = str;
-                })
-
-                return <span>{status.join('/')}</span>
+              console.log('text',text)
+                // let status = text.split('');
+                //
+                // status.map((item, index) => {
+                //     let str = ''
+                //     console.log(item)
+                //     switch (item) {
+                //         case '0': str = '正常'; break;
+                //         case '1': str = '离线'; break;
+                //         case '2': str = '断电'; break;
+                //         case '3': str = '缺相'; break;
+                //         case '4': str = '数据异常'; break;
+                //     }
+                //     status[index] = str;
+                // })
+              // return <span>{status.join('/')}</span>
+              let str = ''
+              switch (text) {
+                case 0: str = '正常'; break;
+                case 1: str = '离线'; break;
+                case 2: str = '断电'; break;
+                case 3: str = '缺相'; break;
+                case 4: str = '数据异常'; break;
+              }
+                return <span>{str}</span>
             }
         }, {
             title: '操作',

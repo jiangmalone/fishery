@@ -1,4 +1,4 @@
-import { queryAdminEquipment, addEquipment, modifyEquipment, delEquipments } from '../services/equipment'
+import { queryAdminEquipment, addEquipment, modifyEquipment, delEquipments,CompanyDelEquipments } from '../services/equipment'
 import update from 'immutability-helper'
 import { message } from 'antd';
 

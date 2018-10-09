@@ -75,7 +75,7 @@ export default class EquipmentManagement extends React.Component {
         this.props.dispatch({
             type: 'equipment/delEquipments',
             payload: {
-                device_sns: idArray,
+                device_sn: idArray,
                 pagination: this.props.pagination,
                 relation: this.props.match.params.relation
             },
@@ -121,10 +121,22 @@ export default class EquipmentManagement extends React.Component {
                     data: values
                 },
             });
+            setTimeout(()=>{
+              this.props.dispatch({
+                type: 'equipment/companyFindEquipment',
+                payload: {
+                  number: 10,
+                  page: 1,
+                  relation: this.props.match.params.relation
+                  // relation: 'CO1'
+                },
+              });
+            },1500)
+
         }
-        this.setState({
-            showAddModal: false
-        })
+        // this.setState({
+        //     showAddModal: false
+        // })
     }
 
     onCancel = () => {
@@ -243,31 +255,28 @@ export default class EquipmentManagement extends React.Component {
                 title: '设备编号',
                 dataIndex: 'device_sn',
                 render: (text, record, index) => {
-                    return <Link to={`/equipment/detail/${record.device_sn}/${this.props.match.params.relation}/${record.sensorId}`}>{text}</Link>
+                  // return <Link to={`/equipment/detail/${text}/${this.props.match.params.relation}/${record.type}`}>{text}</Link>
+                    return <Link to={`/equipment/detail/${text}/${record.relation}/${record.type}`}>{text}</Link>
                 },
             },
             {
                 title: '设备类型',
-                // dataIndex: 'type',
+                dataIndex: 'type',
                 render: (text, record, index) => {
                     let str = '';
-                    if (record.device_sn != undefined) {
-                        const type = record.device_sn.substring(0, 2);
-                        switch (type) {
-                            case '01':
-                            case '02':
+                        switch (text) {
+                            case 1:
+                              str = '传感器';
+                              break;
+                            case 2:
                                 str = '一体机';
                                 break;
-                            case '03':
-                                str = '传感器';
-                                break;
-                            case '04':
+                            case 3:
                                 str = '控制器';
                                 break;
                             default:
                                 break;
                         }
-                    }
                     return (<span>{str}</span>)
                 }
             },
@@ -277,46 +286,65 @@ export default class EquipmentManagement extends React.Component {
             },
             {
                 title: '设备状态',
-                dataIndex: 'wayStatus',
+                dataIndex: 'status',
                 render: (text, record, index) => {
                     let str = '';
-                    if (record.wayStatus != undefined) {
-                        switch (record.wayStatus) {
+                    console.log(record)
+                    if (record.type === 1) {
+                        switch (text) {
                             case 0:
-                                str = '正常';
-                                break;
-                            case 1:
                                 str = '离线';
                                 break;
+                            case 1:
+                                str = '在线';
+                                break;
                             case 2:
-                                str = '断电';
-                                break;
-                            case 3:
-                                str = '缺相';
-                                break;
-                            case 4:
                                 str = '数据异常';
                                 break;
                             default:
                                 break;
                         }
+                    } else {
+                      switch (text) {
+                        case 0:
+                          str = '离线';
+                          break;
+                        case 1:
+                          str = '断电';
+                          break;
+                        case 2:
+                          str = '缺相';
+                          break;
+                        case 3:
+                          str = '数据异常';
+                          break;
+                        case 4:
+                          str = '正常';
+                          break;
+                        default:
+                          break;
+                      }
                     }
                     return (<span>{str}</span>)
                 }
             },
             {
                 title: '操作',
-                // dataIndex: 'keyword',
                 render: (text, record, index) => {
+                  const type = window.localStorage.getItem('authority');
+                  if (type === "1") {
+                    return <span>请联系管理员</span>
+                  } else {
                     return <span>
                         <span
-                            onClick={() => { this.modifyInfo(record, index) }}>
+                          onClick={() => { this.modifyInfo(record, index) }}>
                             <a href="javascript:void(0);" style={{ marginRight: '15px' }}>修改</a>
                         </span>
                         <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete([record.device_sn + ''])}>
                             <a href="javascript:void(0);">删除</a>
                         </Popconfirm>
                     </span>
+                  }
                 }
             },
         ];
@@ -347,14 +375,14 @@ export default class EquipmentManagement extends React.Component {
                 </Card>
                 <Card bordered={false}>
                     <div>
-                        <div >
+                      {window.localStorage.getItem('authority')==="0"&&<div >
                             <Button onClick={this.showAddModal}>
                                 新建设备
                             </Button>
                             <Popconfirm title="确认要删除嘛?" onConfirm={() => this.onDelete(this.state.selectedRowKeys)}>
                                 <Button className={styles.deletebutton} > 删除设备</Button>
                             </Popconfirm>
-                        </div>
+                        </div>}
                         <Table
                             loading={this.props.loading}
                             dataSource={this.props.list}

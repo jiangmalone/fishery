@@ -61,6 +61,7 @@ export default class CompanyUserDetail extends React.Component {
             page: 1,
             number: 100
         }).then(res => {
+          console.log('~',res)
             if (res && res.code == 0) {
                 let markers = [];
                 res.data.map((pond, index) => {
@@ -98,7 +99,7 @@ export default class CompanyUserDetail extends React.Component {
         return this.state.ponds.map((item, index) => {
             // if (!(item.longitude == 0 && item.latitude == 0)) {
 
-            // } 
+            // }
             let offset = (0, 0)
             if (this.state.selectMarker == item.id) {
                 offset = { x: 0, y: -20 }

@@ -347,7 +347,7 @@ public class WebServiceController {
 	}
 	@RequestMapping(value = "/sms", method = RequestMethod.GET)
 	@ResponseBody
-	public void sms() {
+	public void sms(String phone) {
 		try {
 			webServiceService.smsTest();
 		} catch (ClientException e) {

@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.geariot.platform.fishery.dao.AIODao;
 import com.geariot.platform.fishery.dao.ControllerDao;
@@ -222,7 +223,12 @@ public class TimerTask {
 						String json = "{\"deviceName\":\"" + deviceName + "\",\"way\":" + "0" + "}";
 						try {
 							logger.debug("准备启用阿里云语音服务");
-							VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_142385982", json);
+							SingleCallByTtsResponse singleCallByTtsResponse =VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_142385982", json);
+							logger.debug("文本转语音外呼---------------");
+							logger.debug("RequestId=" + singleCallByTtsResponse.getRequestId());						
+							logger.debug("Code=" + singleCallByTtsResponse.getCode());
+							logger.debug("Message=" + singleCallByTtsResponse.getMessage());
+							logger.debug("CallId=" + singleCallByTtsResponse.getCallId());
 						} catch (ClientException e) {							
 							e.printStackTrace();
 						}

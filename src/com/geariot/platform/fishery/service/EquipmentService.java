@@ -2236,7 +2236,12 @@ public class EquipmentService {
 					String json = "{\"deviceName\":\"" +controllerList.get(0).getDevice_sn()+ "\",\"way\":" + 0 + "}";
 					try {
 						logger.debug("准备启用阿里云语音服务");
-						SingleCallByTtsResponse scbtr =VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
+						SingleCallByTtsResponse singleCallByTtsResponse = VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
+						logger.debug("文本转语音外呼---------------");
+						logger.debug("RequestId=" + singleCallByTtsResponse.getRequestId());						
+						logger.debug("Code=" + singleCallByTtsResponse.getCode());
+						logger.debug("Message=" + singleCallByTtsResponse.getMessage());
+						logger.debug("CallId=" + singleCallByTtsResponse.getCallId());
 					} catch (ClientException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -2263,7 +2268,12 @@ public class EquipmentService {
 					logger.debug("语音消息:"+ json);
 					try {
 						logger.debug("准备启用阿里云语音服务");
-						VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
+						SingleCallByTtsResponse singleCallByTtsResponse = VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
+						logger.debug("文本转语音外呼---------------");
+						logger.debug("RequestId=" + singleCallByTtsResponse.getRequestId());						
+						logger.debug("Code=" + singleCallByTtsResponse.getCode());
+						logger.debug("Message=" + singleCallByTtsResponse.getMessage());
+						logger.debug("CallId=" + singleCallByTtsResponse.getCallId());
 					} catch (ClientException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

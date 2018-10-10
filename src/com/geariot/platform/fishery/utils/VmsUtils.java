@@ -1,5 +1,8 @@
 package com.geariot.platform.fishery.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsRequest;
@@ -7,6 +10,7 @@ import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.geariot.platform.fishery.service.WebServiceService;
 
 /**
  * Created on 17/6/10.
@@ -19,6 +23,7 @@ import com.aliyuncs.profile.IClientProfile;
  * 备注:Demo工程编码采用UTF-8
  */
 public class VmsUtils {
+	private Logger logger = LogManager.getLogger(VmsUtils.class);
 
     //产品名称:云通信语音API产品,开发者无需替换
     static final String product = "Dyvmsapi";
@@ -26,10 +31,10 @@ public class VmsUtils {
     static final String domain = "dyvmsapi.aliyuncs.com";
 
     //TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-    static final String accessKeyId = "LTAINPjOCCQlrxNH";
-    static final String accessKeySecret = "Z4A53V9WvzcupDzjHfCHoAc9uvRewo";
-    /*static final String accessKeyId = "LTAIn3g4DqQFIuVP";
-    static final String accessKeySecret = "nt5XbfunKpwwv9M5U1Moy0v7JSl3DQ";*/
+   /* static final String accessKeyId = "LTAINPjOCCQlrxNH";
+    static final String accessKeySecret = "Z4A53V9WvzcupDzjHfCHoAc9uvRewo";*/
+    static final String accessKeyId = "LTAIn3g4DqQFIuVP";
+    static final String accessKeySecret = "nt5XbfunKpwwv9M5U1Moy0v7JSl3DQ";
 /*    static final String accessKeyId = "LTAIOnROT0Zn3EL6";
     static final String accessKeySecret = "AKVqINrsKfhJiQf1nBtBR76DQw9Jog";*/
     

@@ -310,16 +310,10 @@ export default class EquipmentManagement extends React.Component {
                           str = '离线';
                           break;
                         case 1:
-                          str = '断电';
+                          str = '在线';
                           break;
                         case 2:
-                          str = '缺相';
-                          break;
-                        case 3:
                           str = '数据异常';
-                          break;
-                        case 4:
-                          str = '正常';
                           break;
                         default:
                           break;

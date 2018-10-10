@@ -120,10 +120,8 @@ class AllEquipmentQuery extends PureComponent {
                     }else{
                         switch (text) {
                             case 0: str = '离线'; break;
-                            case 1: str = '断电'; break;
-                            case 2: str = '缺相'; break;
-                            case 3: str = '异常'; break;
-                            case 4: str = '正常'; break;
+                            case 1: str = '在线'; break;
+                            case 2: str = '异常'; break;
                         }
                     }
                     return <span>{str}</span>

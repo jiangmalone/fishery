@@ -493,11 +493,11 @@ export default class EquipmentDetail extends React.Component {
         render: (text, record, index) => {
           let str =''
           switch (text) {
-            case 0: str = '离线'; break;
-            case 1: str = '断电'; break;
-            case 2: str = '缺相'; break;
-            case 3: str = '异常'; break;
-            case 4: str = '正常'; break;
+            case 0: str = '正常'; break;
+            case 1: str = '离线'; break;
+            case 2: str = '断电'; break;
+            case 3: str = '缺相'; break;
+            case 4: str = '数据异常'; break;
           }
           return <span>{str}</span>
         }

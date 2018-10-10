@@ -756,10 +756,60 @@ public class EquipmentService {
 		while (it.hasNext()) {			
 		  int str = it.next();  		  
 			//根据设备路获得控制器
-			List<Controller> controller_port_List = controllerDao.findControllerByDeviceSnAndWay(device_sn, str);			
+		  	//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
+			List<Controller> controller_port_List = controllerDao.findControllerByDeviceSnAndWay(device_sn, str);
+			Controller controller = null;
+			if(controller_port_List!=null&&controller_port_List.size()>0) {
+				Map<String, Object> controllerDataMap=new HashMap<>();
+				controller = controller_port_List.get(0);
+				GetDevicesStatus api = new GetDevicesStatus(controller.getDevice_sn(),key);
+		        BasicResponse<DevicesStatusList> response = api.executeApi();
+		        logger.debug("获取控制器状态："+response.getJson());
+		        if(response.errno == 0) {
+		        	if(response.data.getDevices().get(0).getIsonline()) {
+		        		GetLatesDeviceData lddapi = new GetLatesDeviceData(controller.getDevice_sn(), key);
+				        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
+				        logger.debug("获取控制器数据："+response2.getJson());
+				        if(response2.errno == 0) {
+				        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> datastreamsList = response2.data.getDevices().get(0).getDatastreams();
+				        	if(datastreamsList!=null) {
+				        		for(int i=0;i<datastreamsList.size();i++) {
+						        	controllerDataMap.put(datastreamsList.get(i).getId(), datastreamsList.get(i).getValue());
+						        }        	
+						       
+						        String  PF =  (String) controllerDataMap.get("PF");						       
+						        if(controllerDataMap.get("PF") !=null) {	
+							        logger.debug("断电1或正常0："+PF);
+							        if(PF.equals("1")) {
+							        	controller.setStatus(2);							        								        								        		
+							        }else {
+							        	if(controllerDataMap.get("DP"+(controller.getPort()+1))!=null) {
+							        		 String DP = (String) controllerDataMap.get("DP"+(controller.getPort()+1));
+								        	if(DP.equals("1")) {
+								        		logger.debug("缺相1或正常0："+DP);
+								        		controller.setStatus(3);								        		
+								        	}else {
+								        		controller.setStatus(0);
+								        	}
+							        	}
+							        }
+						        }
+				        	}else {
+				        		controller.setStatus(4);
+				        	}					        
+				        }else {
+				        	controller.setStatus(4);
+				        }
+		        	}else {
+		        		controller.setStatus(1);
+		        	}
+		        }else {
+		        	controller.setStatus(4);
+		        }
+			}
 			Map<String, Object> port_controller = new HashMap<>();
 			port_controller.put("port", str);
-			port_controller.put("controller", controller_port_List);
+			port_controller.put("controller", controller);
 			returnList.add(port_controller);
 		} 
 		return returnList;

@@ -16,10 +16,13 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.utils.HttpRequest;
+import com.geariot.platform.fishery.utils.SmsDemo;
 import com.geariot.platform.fishery.wxutils.WechatLoginUse;
 
 import net.sf.json.JSONArray;
@@ -247,5 +250,11 @@ public class WebServiceService {
 		}catch (Exception e){
 			return RESCODE.NOT_FOUND.getJSONRES();
 		}
+	}
+	
+	public void smsTest() throws ClientException {
+		SendSmsResponse response =  SmsDemo.sendSms();
+		System.out.println(response.toString());
+		System.out.println(response.getMessage());
 	}
 }

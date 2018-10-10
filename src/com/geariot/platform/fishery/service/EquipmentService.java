@@ -760,8 +760,16 @@ public class EquipmentService {
 			List<Controller> controller_port_List = controllerDao.findControllerByDeviceSnAndWay(device_sn, str);
 			Controller controller = null;
 			if(controller_port_List!=null&&controller_port_List.size()>0) {
+				
+				int size = controller_port_List.size();
+				int[] pondIds = new int[size];
+				for(int i = 0 ; i<controller_port_List.size();i++ ) {
+					pondIds[i] = controllerList.get(i).getPondId();
+				}
+				
 				Map<String, Object> controllerDataMap=new HashMap<>();
 				controller = controller_port_List.get(0);
+				controller.setPondIds(pondIds);
 				GetDevicesStatus api = new GetDevicesStatus(controller.getDevice_sn(),key);
 		        BasicResponse<DevicesStatusList> response = api.executeApi();
 		        logger.debug("获取控制器状态："+response.getJson());

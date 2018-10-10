@@ -345,7 +345,17 @@ public class WebServiceController {
 		}
 		
 	}
-	
+	@RequestMapping(value = "/sms", method = RequestMethod.GET)
+	@ResponseBody
+	public void sms() {
+		try {
+			webServiceService.smsTest();
+		} catch (ClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 	
 

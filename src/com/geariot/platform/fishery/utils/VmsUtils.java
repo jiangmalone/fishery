@@ -2,22 +2,11 @@ package com.geariot.platform.fishery.utils;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
-import com.aliyuncs.dyvmsapi.model.v20170525.IvrCallRequest;
-import com.aliyuncs.dyvmsapi.model.v20170525.IvrCallRequest.MenuKeyMap;
-import com.aliyuncs.dyvmsapi.model.v20170525.IvrCallResponse;
 import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsRequest;
 import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
-import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByVoiceRequest;
-import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByVoiceResponse;
 import com.aliyuncs.exceptions.ClientException;
-import com.aliyuncs.exceptions.ServerException;
-import com.aliyuncs.http.FormatType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Created on 17/6/10.
@@ -37,8 +26,10 @@ public class VmsUtils {
     static final String domain = "dyvmsapi.aliyuncs.com";
 
     //TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-    static final String accessKeyId = "LTAIn3g4DqQFIuVP";
-    static final String accessKeySecret = "nt5XbfunKpwwv9M5U1Moy0v7JSl3DQ";
+    static final String accessKeyId = "LTAINPjOCCQlrxNH";
+    static final String accessKeySecret = "Z4A53V9WvzcupDzjHfCHoAc9uvRewo";
+    /*static final String accessKeyId = "LTAIn3g4DqQFIuVP";
+    static final String accessKeySecret = "nt5XbfunKpwwv9M5U1Moy0v7JSl3DQ";*/
 /*    static final String accessKeyId = "LTAIOnROT0Zn3EL6";
     static final String accessKeySecret = "AKVqINrsKfhJiQf1nBtBR76DQw9Jog";*/
     

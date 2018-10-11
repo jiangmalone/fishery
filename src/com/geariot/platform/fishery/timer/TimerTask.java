@@ -220,7 +220,7 @@ public class TimerTask {
 			    		
 						String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());	
 			    		WechatSendMessageUtils.sendWechatAlarmMessages("设备离线", publicOpenID, device.getDevice_sn(),deviceName);
-						String json = "{\"deviceName\":\"" + deviceName + "\",\"way\":" + "0" + "}";
+						/*String json = "{\"deviceName\":\"" + deviceName + "\",\"way\":" + "0" + "}";
 						try {
 							logger.debug("准备启用阿里云语音服务");
 							SingleCallByTtsResponse singleCallByTtsResponse =VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_142385982", json);
@@ -231,7 +231,7 @@ public class TimerTask {
 							logger.debug("CallId=" + singleCallByTtsResponse.getCallId());
 						} catch (ClientException e) {							
 							e.printStackTrace();
-						}
+						}*/
 						deviceOld.setOnline(false);
 						deviceDao.updateIsOnline(deviceOld);
 			    	 }

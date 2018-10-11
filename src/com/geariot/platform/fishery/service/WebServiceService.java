@@ -3,6 +3,7 @@
  */
 package com.geariot.platform.fishery.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;
+import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse.SmsSendDetailDTO;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.geariot.platform.fishery.dao.WXUserDao;
@@ -252,9 +255,38 @@ public class WebServiceService {
 		}
 	}
 	
-	public void smsTest() throws ClientException {
-		SendSmsResponse response =  SmsDemo.sendSms();
-		System.out.println(response.toString());
-		System.out.println(response.getMessage());
+	public SendSmsResponse sendSms(String phone) {
+		Integer code = getRandom();
+		SendSmsResponse sendsmsresponse = null;
+		try {
+			sendsmsresponse = SmsDemo.sendSms(phone,String.valueOf(code));
+		} catch (ClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sendsmsresponse;
+	}
+	
+	public int getRandom() {
+		double i = Math.random();		
+		int code = (int) Math.round(i*1000000);
+		if(code == 1000000 || code <100000) {
+			code = getRandom();
+		}
+		return code;
+	}
+	public SmsSendDetailDTO getCode(String phone) {
+		List<SmsSendDetailDTO> codelist = new ArrayList<>();
+		try {
+			QuerySendDetailsResponse response = SmsDemo.querySendDetails(phone);
+			System.out.println(response.getMessage());
+			codelist = response.getSmsSendDetailDTOs();
+			logger.debug(codelist.get(0).getContent());				
+			logger.debug("接收到的时间为："+codelist.get(0).getReceiveDate() +".");	
+		} catch (ClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return codelist.get(0);
 	}
 }

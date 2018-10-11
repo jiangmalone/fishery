@@ -2233,7 +2233,7 @@ public class EquipmentService {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}						
-					String json = "{\"deviceName\":\"" +controllerList.get(0).getDevice_sn()+ "\",\"way\":" + 0 + "}";
+					/*String json = "{\"deviceName\":\"" +controllerList.get(0).getDevice_sn()+ "\",\"way\":" + 0 + "}";
 					try {
 						logger.debug("准备启用阿里云语音服务");
 						SingleCallByTtsResponse singleCallByTtsResponse = VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
@@ -2245,7 +2245,7 @@ public class EquipmentService {
 					} catch (ClientException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
+					}*/
 				}else if(ds_id.contains("DP")){
 					String dp = ds_id.substring(2, 3);
 					int i = Integer.parseInt(dp);
@@ -2264,7 +2264,7 @@ public class EquipmentService {
 					
 					String name = controllerList.get(j).getName();
 					logger.debug("设备名："+name);
-					String json = "{\"deviceName\":\"" + name + "\",\"way\":" + i + "}";
+					/*String json = "{\"deviceName\":\"" + name + "\",\"way\":" + i + "}";
 					logger.debug("语音消息:"+ json);
 					try {
 						logger.debug("准备启用阿里云语音服务");
@@ -2277,7 +2277,7 @@ public class EquipmentService {
 					} catch (ClientException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
+					}*/
 				}
 			}
 			if(trigger.getTrigertype()==2) {//增氧机上下限触发

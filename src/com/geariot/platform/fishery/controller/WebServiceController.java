@@ -2,6 +2,9 @@ package com.geariot.platform.fishery.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse.SmsSendDetailDTO;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -152,7 +157,7 @@ public class WebServiceController {
 	@ResponseBody
 	public String getVerification(String phone) {
 		logger.debug("用户首次登陆/退出再登陆，获得手机号"+phone);
-		JSONObject param = new JSONObject();
+		/*JSONObject param = new JSONObject();
 		param.put("mobilePhoneNumber", phone);
 		HttpEntity entity = HttpRequest.getEntity(param);
 		Map<String, Object> head = setLeancloudHead();
@@ -171,6 +176,20 @@ public class WebServiceController {
 		} else {
 			json.put(Constants.RESPONSE_CODE_KEY, json.getInt("code"));
 			json.put(Constants.RESPONSE_MSG_KEY, json.getString("error"));
+		}
+		return json.toString();*/
+		SendSmsResponse response = webServiceService.sendSms(phone);
+		JSONObject json = null;
+		
+		json = new JSONObject(response);
+	
+		
+		if(response.getCode().equals("OK")){
+			json.put(Constants.RESPONSE_CODE_KEY, RESCODE.SUCCESS);
+			json.put(Constants.RESPONSE_MSG_KEY, RESCODE.SUCCESS.getMsg());
+		}else {
+			json.put(Constants.RESPONSE_CODE_KEY, json.getInt("code"));
+			json.put(Constants.RESPONSE_MSG_KEY, json.getString(response.getCode()));
 		}
 		return json.toString();
 	}
@@ -254,23 +273,53 @@ public class WebServiceController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		JSONObject json = this.verifySmscode(phone, smscode);
-		logger.debug("openId:"+openId);
-		if (json.getString("error") != null) {
+		SmsSendDetailDTO smsDetail = webServiceService.getCode(phone);
+		if(smsDetail!=null) {
+			logger.debug("smsDetail不为空");
+			//最新短息消息
+			String code = smsDetail.getOutId();
+			logger.debug(code);
+			String receiveDate = smsDetail.getReceiveDate();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			int min =0;
+			try {
+				Date date = sdf.parse(receiveDate);
+				Date now = new Date();
+				long cost = now.getTime()-date.getTime();
+				min = (int) (cost/1000/60);				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(min<5) {//短信有效时间
+				logger.debug("短信在有效期内");
+				if(smscode.equals(code)) {
+					logger.debug(phone + ";code:" + smscode + " 验证成功。。。");
+					if(unionid == null || unionid.equals("")) {
+						//使用String encryptedData,String iv,String session_key解码获取unionid
+					}			
+					return webServiceService.login(phone,openId,headimgurl,newwxUserName,unionid);
+				}
+				
+				
+			}
+		}
+		//JSONObject json = this.verifySmscode(phone, smscode);
+		//logger.debug("openId:"+openId);
+		//if (json.getString("error") != null) {
 			//验证失败
 			logger.debug(phone + ";code:" + smscode + " 验证失败。。。");
 			Map<String, Object> obj = new HashMap<>();
-			obj.put(Constants.RESPONSE_CODE_KEY, json.getInt("code"));
-			obj.put(Constants.RESPONSE_MSG_KEY, json.getString("error"));
+			obj.put(Constants.RESPONSE_CODE_KEY, "error");
+			obj.put(Constants.RESPONSE_MSG_KEY, smsDetail.getErrCode());
 			return obj;
-		} else {
-			//验证成功
-			logger.debug(phone + ";code:" + smscode + " 验证成功。。。");
-			if(unionid == null || unionid.equals("")) {
-				//使用String encryptedData,String iv,String session_key解码获取unionid
-			}			
-			return webServiceService.login(phone,openId,headimgurl,newwxUserName,unionid);
-		}
+		//}
+		
+	}
+	@RequestMapping(value = "/getcode", method = RequestMethod.GET)
+	@ResponseBody
+	public void getCode(String phone) {
+		webServiceService.getCode(phone);		
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -347,14 +396,8 @@ public class WebServiceController {
 	}
 	@RequestMapping(value = "/sms", method = RequestMethod.GET)
 	@ResponseBody
-	public void sms(String phone) {
-		try {
-			webServiceService.smsTest();
-		} catch (ClientException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	public SendSmsResponse sms(String phone) {
+		return webServiceService.sendSms(phone);		
 	}
 	
 	

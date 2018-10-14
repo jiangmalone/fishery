@@ -87,8 +87,9 @@ export default class EquipmentDetail extends React.Component {
       device_sn: this.props.match.params.device_sn
     }).then((res) => {
       let newList = []
+      console.log('res',res)
       for(let i =0;i<res.length;i++){
-        newList.push(this.arrangementControllerList(res[i].controller))
+        newList.push(res[i].controller)
       }
       console.log(newList)
       this.setState({

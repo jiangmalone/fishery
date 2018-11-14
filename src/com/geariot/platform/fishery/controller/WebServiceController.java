@@ -1,19 +1,13 @@
 package com.geariot.platform.fishery.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -28,8 +22,6 @@ import com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse.SmsSendDet
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.dyvmsapi.model.v20170525.SingleCallByTtsResponse;
 import com.aliyuncs.exceptions.ClientException;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.geariot.platform.fishery.entities.WXUser;
 import com.geariot.platform.fishery.model.RESCODE;
 import com.geariot.platform.fishery.service.UserService;
 import com.geariot.platform.fishery.service.WebServiceService;
@@ -37,9 +29,7 @@ import com.geariot.platform.fishery.utils.Constants;
 import com.geariot.platform.fishery.utils.HttpRequest;
 import com.geariot.platform.fishery.utils.MD5;
 import com.geariot.platform.fishery.utils.VmsUtils;
-import com.geariot.platform.fishery.wxutils.WeChatOpenIdExchange;
 import com.geariot.platform.fishery.wxutils.WechatConfig;
-import com.geariot.platform.fishery.wxutils.WechatLoginUse;
 
 import net.sf.json.JSONArray;
 
@@ -92,7 +82,7 @@ public class WebServiceController {
 
 	}*/
 	
-	@RequestMapping(value = "/weather", method = RequestMethod.GET)
+	@RequestMapping(value = "/weather", method = RequestMethod.GET,produces="text/html;charset=UTF-8")
 	@ResponseBody
 	public String getWeatherTest(Float lon,Float lat) {
 		/*经度在前，纬度在后，经纬度间以“,”分割，经纬度小数点后不要超过 6 位。*/

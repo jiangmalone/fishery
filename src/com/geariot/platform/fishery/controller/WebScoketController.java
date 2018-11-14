@@ -3,8 +3,6 @@ package com.geariot.platform.fishery.controller;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.Style;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -17,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.geariot.platform.fishery.Thread.RealTimeThread;
 import com.geariot.platform.fishery.Thread.ServerEncoder;
-import com.geariot.platform.fishery.service.WebServiceService;
 
 @ServerEndpoint(value ="/websocket",encoders= {ServerEncoder.class})
 public class WebScoketController {

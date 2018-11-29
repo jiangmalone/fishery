@@ -202,6 +202,7 @@ public class TimerTask {
 			    		 switch (deviceOld.getType()) {
 							case 1:
 								Sensor sensor = sensorDao.findSensorByDeviceSns(deviceOld.getDevice_sn());
+								logger.debug("用户relation："+sensor.getRelation());
 								wxUser = wxUserDao.findUserByRelation(sensor.getRelation());
 								deviceName = sensor.getName();
 								break;
@@ -216,16 +217,22 @@ public class TimerTask {
 							default:
 								break;
 						}
-			    		
-						String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());	
-			    		WechatSendMessageUtils.sendWechatAlarmMessages("设备离线", publicOpenID, device.getDevice_sn(),deviceName);
-						String json = "{\"deviceName\":\"" + deviceName + "\",\"way\":" + "0" + "}";
-						try {
-							logger.debug("准备启用阿里云语音服务");
-							VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_142385982", json);
-						} catch (ClientException e) {							
-							e.printStackTrace();
-						}
+			    		if(wxUser.getOpenId()!=null&&wxUser.getOpenId()!="") {
+			    			String publicOpenID = userService.getPublicOpenId(wxUser.getOpenId());
+			    			logger.debug("用户openId");
+			    			logger.debug(wxUser.getOpenId());
+				    		WechatSendMessageUtils.sendWechatAlarmMessages("设备离线", publicOpenID, device.getDevice_sn(),deviceName);
+							
+			    		}
+			    		if(wxUser.getPhone()!=null&&wxUser.getPhone()!="") {
+			    			String json = "{\"deviceName\":\"" + deviceName + "\",\"way\":" + "0" + "}";
+							try {
+								logger.debug("准备启用阿里云语音服务");
+								VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_142385982", json);
+							} catch (ClientException e) {							
+								e.printStackTrace();
+							}
+			    		}
 						deviceOld.setOnline(false);
 						deviceDao.updateIsOnline(deviceOld);
 			    	 }

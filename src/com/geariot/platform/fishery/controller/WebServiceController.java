@@ -225,9 +225,6 @@ public class WebServiceController {
 		return jsSDKConfig.toString();
 	}
 
-
-
-
 	// 注册验证结果请求
 	@RequestMapping(value = "/verifySmsCode", method = RequestMethod.GET)
 	@ResponseBody

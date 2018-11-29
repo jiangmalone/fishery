@@ -3240,11 +3240,12 @@ public class EquipmentService {
 					Sensor sensor = sensorDao.findSensorByDeviceSns(device.getDevice_sn());
 					if(sensor!=null) {						
 						String uName = wxUserDao.findUserByRelation(sensor.getRelation())==null?"":wxUserDao.findUserByRelation(sensor.getRelation()).getName();						
+						String phone = wxUserDao.findUserByRelation(sensor.getRelation())==null?"":wxUserDao.findUserByRelation(sensor.getRelation()).getPhone();
 						if(userName == null || userName=="") {
 							Equipment ed = new Equipment();
 							ed.setDevice_sn(sensor.getDevice_sn());
 							ed.setName(sensor.getName());
-							ed.setUserName(uName);
+							ed.setUserName(phone);
 							ed.setRelation(sensor.getRelation());
 							ed.setType(1);
 							GetDevicesStatus api = new GetDevicesStatus(sensor.getDevice_sn(),key);
@@ -3269,7 +3270,7 @@ public class EquipmentService {
 								ed.setDevice_sn(sensor.getDevice_sn());
 								ed.setRelation(sensor.getRelation());
 								ed.setName(sensor.getName());
-								ed.setUserName(uName);
+								ed.setUserName(phone);
 								ed.setType(1);
 								GetDevicesStatus api = new GetDevicesStatus(sensor.getDevice_sn(),key);
 						        BasicResponse<DevicesStatusList> response = api.executeApi();
@@ -3432,11 +3433,13 @@ public class EquipmentService {
 					String equipmentName = "";
 					ed.setDevice_sn(device.getDevice_sn());
 					List<Controller> conList = controllerDao.findControllerByDeviceSns(device.getDevice_sn());
-					if(conList == null || conList.isEmpty()) {
+					logger.debug("conList-size"+conList.size());
+					if(conList == null || conList.isEmpty()||conList.size()==0) {
 						ed.setType(3);
 					}else {
 						ed.setRelation(conList.get(0).getRelation());
-						ed.setUserName(wxUserDao.findUserByRelation(conList.get(0).getRelation()).getName());
+						logger.debug(conList.get(0).getRelation());
+						ed.setUserName(wxUserDao.findUserByRelation(conList.get(0).getRelation()).getPhone());
 						ed.setType(3);
 						for(Controller con : conList) {
 							equipmentName += con.getName() + "/";

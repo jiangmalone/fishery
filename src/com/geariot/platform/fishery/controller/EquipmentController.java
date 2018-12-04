@@ -264,8 +264,9 @@ public class EquipmentController {
 	@RequestMapping(value = "/setLimit", method = RequestMethod.POST)
 	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){
 		
-		logger.debug("设备编号:"+limit_Install.getDevice_sn());
+		/*logger.debug("设备编号:"+limit_Install.getDevice_sn());
 		logger.debug("way:"+limit_Install.getWay());
+		logger.debug(limit_Install.toString());
 		Limit_Install limit_Install2 = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
 		if(limit_Install2 == null) {
 			logger.debug("增氧限制未设置");
@@ -287,7 +288,8 @@ public class EquipmentController {
 			logger.debug("进入修改");
 			equipmentService.setLimit(limit_Install);
 		}
-		return RESCODE.SUCCESS.getJSONRES();
+		return RESCODE.SUCCESS.getJSONRES();*/
+		return equipmentService.limit(limit_Install);
 	}
 	
 	@RequestMapping(value = "/getLimit", method = RequestMethod.GET)

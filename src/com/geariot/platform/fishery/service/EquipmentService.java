@@ -1110,6 +1110,34 @@ public class EquipmentService {
 		}
 		return result;
 	}
+	
+	public Map<String, Object> limit(Limit_Install limit_Install){
+		logger.debug("设备编号:"+limit_Install.getDevice_sn());
+		logger.debug("way:"+limit_Install.getWay());
+		logger.debug(limit_Install.toString());
+		Limit_Install limit_Install2 = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
+		if(limit_Install2 == null) {
+			logger.debug("增氧限制未设置");
+			limit_Install.setValid(true);
+			limitDao.save(limit_Install);
+			List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
+			List<Sensor> sensorList = sensorDao.findSensorsByRelation(controllerList.get(0).getRelation());
+			for(Controller controller:controllerList) {
+				int pondId =controller.getPondId();
+				for(Sensor sensor:sensorList) {
+					if(sensor.getPondId() == pondId) {
+						addTrigger("DO", sensor.getDevice_sn(), "<", limit_Install.getLow_limit(), 2,limit_Install.getWay());
+						addTrigger("DO", sensor.getDevice_sn(), ">", limit_Install.getUp_limit(), 2,limit_Install.getWay());
+						addTrigger("DO", sensor.getDevice_sn(), ">", limit_Install.getHigh_limit(), 5,limit_Install.getWay());
+					}
+				}
+			}			
+		}else {
+			logger.debug("进入修改");
+			setLimit(limit_Install);
+		}
+		return RESCODE.SUCCESS.getJSONRES();
+	}
 
 	public Map<String, Object> setLimit(Limit_Install limit_Install){
 		logger.debug("limit_Install已有，进入更新修改");

@@ -1161,9 +1161,6 @@ public class EquipmentService {
 			}else {
 				return RESCODE.TRIGGER_FAILED.getJSONRES();
 			}
-			
-			
-	/*	}	*/	
 	}
 	
 	public Map<String, Object> companyFindEquipment(String device_sn, String relation, int page, int number) {

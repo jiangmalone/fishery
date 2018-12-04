@@ -264,11 +264,11 @@ public class EquipmentController {
 	@RequestMapping(value = "/setLimit", method = RequestMethod.POST)
 	public Map<String, Object> setLimit(@RequestBody Limit_Install limit_Install){
 		
-		System.out.println("设备编号:"+limit_Install.getDevice_sn());
-		System.out.println("way:"+limit_Install.getWay());
+		logger.debug("设备编号:"+limit_Install.getDevice_sn());
+		logger.debug("way:"+limit_Install.getWay());
 		Limit_Install limit_Install2 = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
 		if(limit_Install2 == null) {
-			System.out.println("增氧限制未设置");
+			logger.debug("增氧限制未设置");
 			limit_Install.setValid(true);
 			limitDao.save(limit_Install);
 			List<Controller> controllerList = controllerDao.findControllerByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
@@ -284,6 +284,7 @@ public class EquipmentController {
 				}
 			}			
 		}else {
+			logger.debug("进入修改");
 			equipmentService.setLimit(limit_Install);
 		}
 		return RESCODE.SUCCESS.getJSONRES();

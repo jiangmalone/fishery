@@ -72,14 +72,14 @@ public class LimitDaoImpl implements LimitDao {
 
 	@Override
 	public void updateLimit(Limit_Install limit_Install) {
-		String sql = "update limit_install set high_limit=:high_limit,low_limit=:low_limit,up_limit=:up_limit where device_sn = :device_sn and way = :way";
+		/*String sql = "update limit_install set high_limit=:high_limit,low_limit=:low_limit,up_limit=:up_limit where device_sn = :device_sn and way = :way";
 		getSession().createSQLQuery(sql)
 		.setFloat("high_limit", limit_Install.getHigh_limit())
 		.setFloat("low_limit", limit_Install.getLow_limit())
 		.setFloat("up_limit", limit_Install.getUp_limit())
 		.setString("device_sn", limit_Install.getDevice_sn())
-		.setInteger("way", limit_Install.getWay()).executeUpdate();
-		/*this.getSession().merge(limit_Install);*/
+		.setInteger("way", limit_Install.getWay()).executeUpdate();*/
+		this.getSession().merge(limit_Install);
 	}
 
 	

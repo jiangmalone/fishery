@@ -1114,7 +1114,6 @@ public class EquipmentService {
 	public Map<String, Object> limit(Limit_Install limit_Install){
 		logger.debug("设备编号:"+limit_Install.getDevice_sn());
 		logger.debug("way:"+limit_Install.getWay());
-		logger.debug(limit_Install.toString());
 		Limit_Install limit_Install2 = limitDao.findLimitByDeviceSnsAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());
 		if(limit_Install2 == null) {
 			logger.debug("增氧限制未设置");
@@ -1140,7 +1139,7 @@ public class EquipmentService {
 	}
 
 	public Map<String, Object> setLimit(Limit_Install limit_Install){
-		logger.debug("limit_Install已有，进入更新修改");
+			logger.debug("limit_Install已有，进入更新修改");
 			limitDao.updateLimit(limit_Install);
 			//limit_Install中设备编号及路数确定增氧机
 			List<Controller> controllerList =  controllerDao.findControllerByDeviceSnAndWay(limit_Install.getDevice_sn(), limit_Install.getWay());

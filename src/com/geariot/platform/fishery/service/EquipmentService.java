@@ -177,8 +177,7 @@ public class EquipmentService {
 	}
 	
 	
-	public Map<String, Object> queryEquipment(String device_sn, String userName, int page, int number){
-		
+	public Map<String, Object> queryEquipment(String device_sn, String userName, int page, int number){	
 		int from = (page - 1) * number;	
 		List<Device> deviceList = deviceDao.queryList(device_sn,page, number);
 		if(deviceList == null || deviceList.isEmpty()) {

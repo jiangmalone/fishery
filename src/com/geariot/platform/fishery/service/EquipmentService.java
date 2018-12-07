@@ -2252,8 +2252,15 @@ public class EquipmentService {
 				}else if(ds_id.contains("DP")){
 					String dp = ds_id.substring(2, 3);
 					int i = Integer.parseInt(dp);
+					boolean flag = false;
 					List<Controller> controllers = controllerDao.findControllerByDeviceSnAndWay(device_sn, i);
-					if(controllers.size()>0 && controllers.get(0).getStatus()==0) {
+					for(Controller controller:controllers) {
+						if(controller.getPort()==(i-1)) {
+							flag = true;
+							break;
+						}
+					}
+					if(controllers.size()>0 && controllers.get(0).getStatus()==0 && flag) {
 						logger.debug("向"+publicOpenID+"发送" + "控制器:"+device_sn+"缺相");
 						try {
 							Thread.currentThread();

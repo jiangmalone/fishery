@@ -19,8 +19,7 @@ public class Controller {
 	private int pondId;					//绑定的塘口Id
 	private String relation;			//绑定的用户relation
 	private String name;				//控制器名称
-	private int port;    				//控制器第几路0，1，2，3
-	
+	private int port;    				//控制器第几路0，1，2，3	
 	private int status;					//状态(0,1,2,3,4 == 正常,离线,断电,缺相,数据异常)
 	private int[] pondIds;				//全部塘口
 
@@ -69,8 +68,6 @@ public class Controller {
 	public void setPort(int port) {
 		this.port = port;
 	}
-
-	@Transient
 	public int getStatus() {
 		return status;
 	}

@@ -624,9 +624,6 @@
             </view>
 
             <view class="shezhi">
-
-              <!--自动设置-->
-              <!--<view class="{{item.online&&item.controller.status === 0?(item.controller.status === 0 ? 'choseAuto blueBtn' : 'choseAuto grayBtn'):'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}}, {{controllerIdx}}))">自动设置</view>-->
               <view class="{{item.autoIsValid? 'choseAuto blueBtn':'choseAuto grayBtn'}}" @tap="autoset({{item.Limit}}, {{item.TimerList}}, {{item.controller}}, {{tangkoudetail.pondname}}, {{item}}, {{controllerIdx}}))">自动设置</view>
 
               <!--开关-->
@@ -694,20 +691,20 @@ export default class Home extends wepy.page {
             this.tangkoudetail.controllerList[controllerIdx] = res.data
             if (res.data.result === 0) {
               this.tangkoudetail.controllerList[controllerIdx].switch = key
+              this.$apply()
               wepy.showToast({
                 title: '切换开关成功',
                 icon: 'success',
                 duration: 2000
               })
-              this.$apply()
             } else {
               this.tangkoudetail.controllerList[controllerIdx].switch = s
+              this.$apply()
               wepy.showToast({
                 title: '切换开关失败',
                 icon: 'none',
                 duration: 2000
               })
-              this.$apply()
             }
           },
           complete: () => {
@@ -715,11 +712,19 @@ export default class Home extends wepy.page {
           }
         })
       } else {
-        wepy.showToast({
-          title: '当前功能离线状态下不可用',
-          icon: 'none',
-          duration: 2000
-        })
+        if (controller.status === 3) {
+          wepy.showToast({
+            title: '当前功能缺相状态下不可用',
+            icon: 'none',
+            duration: 2000
+          })
+        } else {
+          wepy.showToast({
+            title: '当前功能离线状态下不可用',
+            icon: 'none',
+            duration: 2000
+          })
+        }
       }
     },
 

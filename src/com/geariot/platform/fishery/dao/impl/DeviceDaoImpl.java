@@ -89,4 +89,10 @@ public class DeviceDaoImpl implements DeviceDao {
 		Query query = qutils.addString("companyRelation", relation).getQuery();
 		return query.list();
 	}
+	@Override
+	public List<Device> findByType(int type) {
+		QueryUtils qutils = new QueryUtils(getSession(), "from Device");
+		Query query = qutils.addInteger("type", type).getQuery();
+		return query.list();
+	}
 }

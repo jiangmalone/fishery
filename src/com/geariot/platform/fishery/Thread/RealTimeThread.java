@@ -1,6 +1,7 @@
 package com.geariot.platform.fishery.Thread;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.websocket.Session;
 
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.service.EquipmentService;
+import com.geariot.platform.fishery.service.UserService;
 
 import net.sf.json.JSONObject;
 
@@ -18,35 +20,36 @@ public class RealTimeThread extends Thread {
 	private static Logger logger = LogManager.getLogger(EquipmentService.class);
 	private Session session;
     
-	private String device_sn;
+	private String relation;
 	
-	private EquipmentService equipmentService;
+	private UserService userService;
 	
 
     public RealTimeThread() {
 		super();
 	}
 
-	public RealTimeThread(Session session,String device_sn) {
+	public RealTimeThread(Session session,String relation) {
 	
         this.session = session;
-        this.device_sn = device_sn;
+        this.relation = relation;
     }
 
     @Override
     public void run() {   	
-    		this.equipmentService= BeanContext.getApplicationContext().getBean(EquipmentService.class);  
-    		Sensor sensor = equipmentService.realTimeData(device_sn); 
+    		this.userService= BeanContext.getApplicationContext().getBean(UserService.class);  
+    		Map<String, Object> map = userService.HomePageDetail(relation);
     		
-    		if(sensor!=null) {    	
+    		if(map!=null) {    	
     			while (true) {        			
-        			sensor = equipmentService.realTimeData(device_sn); 
+//        			sensor = equipmentService.realTimeData(relation); 
        
-                	logger.debug("Webscoket返回数据：+sensor:"+sensor.toString());
+//                	logger.debug("Webscoket返回数据：+sensor:"+sensor.toString());
+    				logger.debug("Webscoket返回数据：+map:"+map.toString());
                 	/*JSONObject jo = JSONObject.fromObject(sensor);
                 	session.getAsyncRemote().sendObject(jo);*/
-                	JSONObject obj = JSONObject.fromObject(sensor);
-                	session.getAsyncRemote().sendObject(sensor);
+//                	JSONObject obj = JSONObject.fromObject(sensor);
+                	session.getAsyncRemote().sendObject(map);
 /*                	JSONObject obj = JSONObject.fromObject(sensor);
                     session.getAsyncRemote().sendText(obj.toString());*/
 //                  session.getBasicRemote().sendObject(list.get(i)); //No encoder specified for object of class [class AlarmMessage]

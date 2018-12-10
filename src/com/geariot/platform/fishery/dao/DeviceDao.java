@@ -23,4 +23,5 @@ public interface DeviceDao {
     List<Device> queryList(String device_sn,int page, int number);    
     List<Device> findDevicesByCompanyRelation(String relation, int page, int number);
     List<Device> findDevicesByCompanyRelation(String relation);
+    List<Device> findByType(int type);
 }

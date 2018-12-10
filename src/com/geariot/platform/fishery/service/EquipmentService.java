@@ -2225,50 +2225,70 @@ public class EquipmentService {
 						delLimit(con.getDevice_sn(), con.getPort());
 						delTimer(con.getDevice_sn(), con.getPort());
 					}*/
-					
-					logger.debug("向"+publicOpenID+"发送" + "控制器:"+device_sn+"断电");
-					try {
-						Thread.currentThread();
-						Thread.sleep(100);
-						WechatSendMessageUtils.sendWechatAlarmMessages("控制器断电", publicOpenID, device_sn,controllerList.get(0).getName());
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}						
-					String json = "{\"deviceName\":\"" +controllerList.get(0).getDevice_sn()+ "\",\"way\":" + 0 + "}";
-					try {
-						logger.debug("准备启用阿里云语音服务");
-						SingleCallByTtsResponse scbtr =VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
-					} catch (ClientException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					List<Controller> controllers = controllerDao.findControllerByDeviceSns(device_sn);
+					if(controllers.size()>0 && controllers.get(0).getStatus()==0) {
+						logger.debug("向"+publicOpenID+"发送" + "控制器:"+device_sn+"断电");
+						try {
+							Thread.currentThread();
+							Thread.sleep(100);
+							WechatSendMessageUtils.sendWechatAlarmMessages("控制器断电", publicOpenID, device_sn,controllerList.get(0).getName());
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}						
+						String json = "{\"deviceName\":\"" +controllerList.get(0).getDevice_sn()+ "\",\"way\":" + 0 + "}";
+						try {
+							logger.debug("准备启用阿里云语音服务");
+							SingleCallByTtsResponse scbtr =VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126781509", json);
+						} catch (ClientException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
+					for(Controller controller : controllers) {
+						controller.setStatus(2);//断电
+						controllerDao.updateController(controller);
+					}					
 				}else if(ds_id.contains("DP")){
 					String dp = ds_id.substring(2, 3);
 					int i = Integer.parseInt(dp);
-					logger.debug("向"+publicOpenID+"发送" + "控制器:"+device_sn+"缺相");
-					try {
-						Thread.currentThread();
-						Thread.sleep(100);
-						WechatSendMessageUtils.sendWechatAlarmMessages("控制器第"+i+"路缺相", publicOpenID, device_sn,controllerList.get(0).getName());
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					boolean flag = false;
+					List<Controller> controllers = controllerDao.findControllerByDeviceSnAndWay(device_sn, i);
+					for(Controller controller:controllers) {
+						if(controller.getPort()==(i-1)) {
+							flag = true;
+							break;
+						}
 					}
-					int j = i-1;
-					/*delLimit(controllerList.get(0).getDevice_sn(), j);
-					delTimer(controllerList.get(0).getDevice_sn(), j);*/
-					
-					String name = controllerList.get(j).getName();
-					logger.debug("设备名："+name);
-					String json = "{\"deviceName\":\"" + name + "\",\"way\":" + i + "}";
-					logger.debug("语音消息:"+ json);
-					try {
-						logger.debug("准备启用阿里云语音服务");
-						VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
-					} catch (ClientException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if(controllers.size()>0 && controllers.get(0).getStatus()==0 && flag) {
+						logger.debug("向"+publicOpenID+"发送" + "控制器:"+device_sn+"缺相");
+						try {
+							Thread.currentThread();
+							Thread.sleep(100);
+							WechatSendMessageUtils.sendWechatAlarmMessages("控制器第"+i+"路缺相", publicOpenID, device_sn,controllerList.get(0).getName());
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						int j = i-1;
+						/*delLimit(controllerList.get(0).getDevice_sn(), j);
+						delTimer(controllerList.get(0).getDevice_sn(), j);*/
+						
+						String name = controllerList.get(j).getName();
+						logger.debug("设备名："+name);
+						String json = "{\"deviceName\":\"" + name + "\",\"way\":" + i + "}";
+						logger.debug("语音消息:"+ json);
+						try {
+							logger.debug("准备启用阿里云语音服务");
+							VmsUtils.singleCallByTts(wxUser.getPhone(), "TTS_126866281", json);
+						} catch (ClientException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}	
+					for(Controller controller:controllers) {
+						controller.setStatus(3);//缺相
+						controllerDao.updateController(controller);
 					}
 				}
 			}

@@ -3,8 +3,9 @@ package com.geariot.platform.fishery.timer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import com.geariot.platform.fishery.dao.TimerDao;
 import com.geariot.platform.fishery.dao.WXUserDao;
 import com.geariot.platform.fishery.entities.Controller;
 import com.geariot.platform.fishery.entities.Device;
+import com.geariot.platform.fishery.entities.Limit_Install;
 import com.geariot.platform.fishery.entities.Sensor;
 import com.geariot.platform.fishery.entities.Timer;
 import com.geariot.platform.fishery.entities.WXUser;
@@ -113,7 +115,7 @@ public class TimerTask {
 						     	        		DP = Integer.parseInt(DatastreamsList.get(i).getValue().toString()) ;	
 						     	        	}					     	   					     	        	
 						     	      }					     	    	  					     	    						     	    	  
-					     	    	 if (now-sdf.parse(timer.getEndTime()).getTime() < 0 && now-sdf.parse(timer.getStartTime()).getTime() >= 0) {
+					     	    	 if (now-sdf.parse(timer.getEndTime()).getTime() < 0 && now-sdf.parse(timer.getStartTime()).getTime() >= 0 && now-sdf.parse(timer.getStartTime()).getTime() <= 15*60*1000) {
 					     	    		logger.debug("检测到数据中有待执行的定时任务，准备向终端发送打开增氧机的命令");
 										WechatSendMessageUtils.sendWechatOnOffMessages("定时开始，准备打开"+controllertype[controllerList.get(0).getType()], publicOpenID, device_sn);
 										if(PF==0&&DP==0) {
@@ -134,7 +136,7 @@ public class TimerTask {
 						     	    	  }
 					     	    	 }
 					     	    	 
-					     	    	if (now-sdf.parse(timer.getEndTime()).getTime() <= 60000 && now-sdf.parse(timer.getEndTime()).getTime() >= 0) {
+					     	    	if (now-sdf.parse(timer.getEndTime()).getTime() <= 15*60*1000 && now-sdf.parse(timer.getEndTime()).getTime() >= 0) {
 					     	    		logger.debug("检测到数据中有待执行的定时任务，准备向终端发送关闭增氧机的命令");
 										WechatSendMessageUtils.sendWechatOnOffMessages("定时结束，准备关闭增氧机", publicOpenID, device_sn);
 										if(PF==0&&DP==0) {
@@ -241,5 +243,68 @@ public class TimerTask {
 		}		
 		long end = System.currentTimeMillis();
 		logger.debug("共耗时："+(end-start)+",每小时定时检测离线结束！");
+	}
+	
+	@Scheduled(cron = "0 0 */1 * * ?")//每小时执行一次
+	public void checkController() {
+		logger.debug("进入控制器检测");
+		List<Device> devices = deviceDao.findByType(3);
+		for(Device device : devices) {
+			List<Controller> controllerList = controllerDao.findControllerByDeviceSns(device.getDevice_sn());
+			if(controllerList!=null) {
+				for(Controller controller:controllerList) {
+					Map<String, Object> controllerMap=new HashMap<>();
+					Map<String, Object> controllerDataMap=new HashMap<>();
+					//获得设备离线/在线状态
+					GetDevicesStatus api = new GetDevicesStatus(controller.getDevice_sn(),key);
+			        BasicResponse<DevicesStatusList> response = api.executeApi();
+			        logger.debug("获取首页控制器状态："+response.getJson());	
+			        if(response.errno == 0) {
+			        	Boolean online = response.data.getDevices().get(0).getIsonline();
+			        	if(online) {//在线
+			        		 GetLatesDeviceData lddapi = new GetLatesDeviceData(controller.getDevice_sn(), key);
+						        BasicResponse<DeciceLatestDataPoint> response2 = lddapi.executeApi();
+						        logger.debug("获取控制器数据："+response2.getJson());
+						        if(response2.errno == 0) {
+						        	List<cmcc.iot.onenet.javasdk.response.device.DeciceLatestDataPoint.DeviceItem.DatastreamsItem> datastreamsList = response2.data.getDevices().get(0).getDatastreams();
+						        	if(datastreamsList!=null) {
+						        		for(int i=0;i<datastreamsList.size();i++) {
+								        	controllerDataMap.put(datastreamsList.get(i).getId(), datastreamsList.get(i).getValue());
+								        }        	
+								        controllerMap.put("data", controllerDataMap);	
+								        String  PF =  (String) controllerDataMap.get("PF");						       
+								        if(controllerDataMap.get("PF") !=null) {	
+									        logger.debug("断电1或正常0："+PF);
+									        if(PF.equals("1")) {
+									        	controller.setStatus(2);							        								        								        		
+									        }else {
+									        	if(controllerDataMap.get("DP"+(controller.getPort()+1))!=null) {
+									        		 String DP = (String) controllerDataMap.get("DP"+(controller.getPort()+1));
+										        	if(DP.equals("1")) {
+										        		logger.debug("缺相1或正常0："+DP);
+										        		controller.setStatus(3);								        		
+										        	}else {
+										        		controller.setStatus(0);
+										        	}
+									        	}
+									        }
+								        }
+								        controllerDao.updateController(controller);
+						        	}else {
+						        		controller.setStatus(4);
+						        		controllerDao.updateController(controller);
+						        	}						        	
+						        }else {
+						        	controller.setStatus(4);
+						        	controllerDao.updateController(controller);
+						        }
+			        	}else {
+			        		controller.setStatus(1);
+			        		controllerDao.updateController(controller);
+			        	}				       
+			        }			     	
+				}
+			}
+		}
 	}
 }

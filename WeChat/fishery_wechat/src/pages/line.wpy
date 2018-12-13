@@ -438,6 +438,7 @@ export default class Line extends wepy.page {
       showModal: false,
       time: '',
       ind: 0,
+      temporarilyInd: 0,
       tangkoulist: [],
       chooseToday: true,
       realTimeDataInfo: [],
@@ -967,45 +968,46 @@ export default class Line extends wepy.page {
         this.showModal = true
       },
       selectRep(e) {
-        this.ind = e.currentTarget.dataset.selectindex
+        this.temporarilyInd = e.currentTarget.dataset.selectindex
       },
       chooseTK() {
+        this.ind = this.temporarilyInd
         if (this.tangkoulist[this.ind].sensorlist.length > 0) {
           this.chooseToday = true
           this.showModal = false
           let deviceSn = this.tangkoulist[this.ind].sensorlist[0].sensor.device_sn
-          wepy.closeSocket()
-          wepy.onSocketClose((res)=> {
-            console.log('WebSocket 已关闭！', res)
-          })
-          wepy.connectSocket({
-            url: 'wss://www.fisherymanager.net/websocket'
-          })
-
-          wepy.onSocketOpen((res) => {
-            console.log('WebSocket连接已打开！' + res.data)
-            wepy.sendSocketMessage({
-              data: deviceSn
-            })
-          })
-
-          wepy.onSocketMessage((res) => {
-            console.log('收到服务器内容：' + res.data)
-            this.realTimeDataInfo = JSON.parse(res.data)
-            // yyyy/mm/dd
-            let nowDate = new Date()
-            let year = nowDate.getFullYear()
-            let month = nowDate.getMonth() + 1 < 10 ? '0' + (nowDate.getMonth() + 1)
-              : nowDate.getMonth() + 1
-            let day = nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate
-              .getDate()
-            let hour = nowDate.getHours()
-            let min = nowDate.getMinutes() < 10 ? '0' + nowDate.getMinutes() : nowDate.getMinutes()
-            let dateStr = year + '/' + month + '/' + day + ' ' + hour + ':' + min
-            this.time = dateStr
-            console.log(this.time)
-            this.$apply()
-          })
+//          wepy.closeSocket()
+//          wepy.onSocketClose((res)=> {
+//            console.log('WebSocket 已关闭！', res)
+//          })
+//          wepy.connectSocket({
+//            url: 'wss://www.fisherymanager.net/websocket'
+//          })
+//          let relation = this.$parent.globalData.relation
+//          wepy.onSocketOpen((res) => {
+//            console.log('WebSocket连接已打开！' + res.data)
+//            wepy.sendSocketMessage({
+//              data: relation
+//            })
+//          })
+//
+//          wepy.onSocketMessage((res) => {
+//            console.log('收到服务器内容：' + res.data)
+//            this.realTimeDataInfo = JSON.parse(res.data)
+//            // yyyy/mm/dd
+//            let nowDate = new Date()
+//            let year = nowDate.getFullYear()
+//            let month = nowDate.getMonth() + 1 < 10 ? '0' + (nowDate.getMonth() + 1)
+//              : nowDate.getMonth() + 1
+//            let day = nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate
+//              .getDate()
+//            let hour = nowDate.getHours()
+//            let min = nowDate.getMinutes() < 10 ? '0' + nowDate.getMinutes() : nowDate.getMinutes()
+//            let dateStr = year + '/' + month + '/' + day + ' ' + hour + ':' + min
+//            this.time = dateStr
+//            console.log(this.time)
+//            this.$apply()
+//          })
           wepy.showLoading()
           wepy.request({
             url: this.$parent.globalData.baseUrl + 'api/' + 'equipment/dataToday',
@@ -1313,38 +1315,42 @@ export default class Line extends wepy.page {
         success: res => {
           // 如果有塘口
           this.tangkoulist = res.data.myHome
+          wepy.connectSocket({
+            url: 'wss://www.fisherymanager.net/websocket'
+          })
+          let relation = this.$parent.globalData.relation
+          wepy.onSocketOpen((res) => {
+            console.log('WebSocket连接已打开！' + res.data)
+            wepy.sendSocketMessage({
+              data: relation
+            })
+          })
+
+          wepy.onSocketMessage((res) => {
+            console.log('收到服务器内容：' + res.data)
+            let data = JSON.parse(res.data)
+            if (data.myHome[this.ind].sensorlist.length>0) {
+              this.realTimeDataInfo = data.myHome[this.ind].sensorlist[0].sensor
+            }
+            // yyyy/mm/dd
+            let nowDate = new Date()
+            let year = nowDate.getFullYear()
+            let month = nowDate.getMonth() + 1 < 10 ? '0' + (nowDate.getMonth() + 1)
+              : nowDate.getMonth() + 1
+            let day = nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate
+              .getDate()
+            let hour = nowDate.getHours()
+            let min = nowDate.getMinutes() < 10 ? '0' + nowDate.getMinutes() : nowDate.getMinutes()
+            let dateStr = year + '/' + month + '/' + day + ' ' + hour + ':' + min
+            this.time = dateStr
+            console.log(this.time)
+            this.$apply()
+          })
+
           if (res.data.myHome[this.ind].sensorlist.length > 0) {
             // 获取实时数据
             let deviceSn = res.data.myHome[this.ind].sensorlist[0].sensor.device_sn
 
-            wepy.connectSocket({
-              url: 'wss://www.fisherymanager.net/websocket'
-            })
-
-            wepy.onSocketOpen((res) => {
-              console.log('WebSocket连接已打开！' + res.data)
-              wepy.sendSocketMessage({
-                data: deviceSn
-              })
-            })
-
-            wepy.onSocketMessage((res) => {
-              console.log('收到服务器内容：' + res.data)
-              this.realTimeDataInfo = JSON.parse(res.data)
-              // yyyy/mm/dd
-              let nowDate = new Date()
-              let year = nowDate.getFullYear()
-              let month = nowDate.getMonth() + 1 < 10 ? '0' + (nowDate.getMonth() + 1)
-                : nowDate.getMonth() + 1
-              let day = nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate
-                .getDate()
-              let hour = nowDate.getHours()
-              let min = nowDate.getMinutes() < 10 ? '0' + nowDate.getMinutes() : nowDate.getMinutes()
-              let dateStr = year + '/' + month + '/' + day + ' ' + hour + ':' + min
-              this.time = dateStr
-              console.log(this.time)
-              this.$apply()
-            })
 
             // wepy.showLoading()
             wepy.request({

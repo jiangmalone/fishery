@@ -254,7 +254,7 @@ public static void sendDataAlarmMSG(String msg,String openId,String deviceSn) {
 		params.put("touser", openId);
 		params.put("template_id", ALARM_TEMPLATE_ID);
 		data.put("first", keywordFactory("报警信息","#173177"));
-		if(pondName!="") {
+		if(!"".equals(pondName)) {
 		data.put("keyword1", keywordFactory(pondName,"#173177"));
 		}else {
 		data.put("keyword1", keywordFactory("报警的设备没有绑定塘口","#173177"));

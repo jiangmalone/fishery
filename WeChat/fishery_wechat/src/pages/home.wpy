@@ -744,29 +744,27 @@ export default class Home extends wepy.page {
           }
         })
         let deviceSn = e.target.dataset.tangkou.sensorlist[0].sensor.device_sn
-        wepy.closeSocket()
-        wepy.onSocketClose((res)=> {
-          console.log('WebSocket 已关闭！', res)
-        })
-        wepy.connectSocket({
-          url: 'wss://www.fisherymanager.net/websocket'
-        })
-
-        wepy.onSocketOpen((res) => {
-          console.log('WebSocket连接已打开！' + res.data)
-          this.socketOpen=true
-          wepy.sendSocketMessage({
-            data: deviceSn
-          })
-        })
-
-        wepy.onSocketMessage((res) => {
-          if(res.data){
-            console.log('收到服务器内容：' + res.data)
-            this.realTimeDataInfo = JSON.parse(res.data)
-            this.$apply()
-          }
-        })
+//        wepy.closeSocket()
+//        wepy.onSocketClose((res)=> {
+//          console.log('WebSocket 已关闭！', res)
+//        })
+//        wepy.connectSocket({
+//          url: 'wss://www.fisherymanager.net/websocket'
+//        })
+//        wepy.onSocketOpen((res) => {
+//          console.log('WebSocket连接已打开！' + res.data)
+//          this.socketOpen=true
+//          wepy.sendSocketMessage({
+//            data: deviceSn
+//          })
+//        })
+//        wepy.onSocketMessage((res) => {
+//          if(res.data){
+//            console.log('收到服务器内容：' + res.data)
+//            this.realTimeDataInfo = JSON.parse(res.data)
+//            this.$apply()
+//          }
+//        })
       }
       if (!this.location) {
         return 0
@@ -951,6 +949,30 @@ export default class Home extends wepy.page {
                 } else {
                   this.isWeather = false
                 }
+                wepy.connectSocket({
+                  url: 'wss://www.fisherymanager.net/websocket'
+                })
+                let relation = this.$parent.globalData.relation
+                wepy.onSocketOpen((res) => {
+                  console.log('WebSocket连接已打开！' + res.data)
+                  this.socketOpen=true
+                  wepy.sendSocketMessage({
+                    data: relation
+                  })
+                })
+                wepy.onSocketMessage((res) => {
+                  if(res.data){
+                    console.log('收到服务器内容：' + res.data)
+                    let data = JSON.parse(res.data)
+                    let index = this.currentId
+                    console.log(index)
+                    this.tangkoudetail = data.myHome[index]
+                    if (data.myHome[index].sensorlist.length>0){
+                      this.realTimeDataInfo = data.myHome[index].sensorlist[0].sensor
+                    }
+                    this.$apply()
+                  }
+                })
                 // 如果有传感器，就获取实时数据
                 if (res.data.myHome[num].sensorlist.length > 0) {
                   wepy.request({
@@ -962,24 +984,7 @@ export default class Home extends wepy.page {
                       this.$apply()
                     }
                   })
-                  wepy.connectSocket({
-                    url: 'wss://www.fisherymanager.net/websocket'
-                  })
-                  console.log('ws.myhome',res.data.myHome[num])
-                  wepy.onSocketOpen((res) => {
-                    console.log('WebSocket连接已打开！' + res.data)
-                    this.socketOpen=true
-                    wepy.sendSocketMessage({
-                      data: deviceSn
-                    })
-                  })
-                  wepy.onSocketMessage((res) => {
-                    if(res.data){
-                      console.log('收到服务器内容：' + res.data)
-                      this.realTimeDataInfo = JSON.parse(res.data)
-                      this.$apply()
-                    }
-                  })
+
                 }
               } else {
                 // 如果没塘口，暂无数据

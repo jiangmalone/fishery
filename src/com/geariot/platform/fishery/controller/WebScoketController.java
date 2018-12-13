@@ -70,7 +70,7 @@ public class WebScoketController {
 			logger.debug("来自客户端的消息:" + message);
 			rtthread = new RealTimeThread(session, message);
 			rtthread.start();
-	  /*      session.getAsyncRemote().*/
+//			session.getAsyncRemote().sendText("2333");
 		}
 
 		/**
@@ -89,9 +89,8 @@ public class WebScoketController {
 		 * @param message
 		 * @throws IOException
 		 */
-		public void sendMessage(String message) throws IOException{
-			//this.session.getBasicRemote().sendText(message);
-			//this.session.getAsyncRemote().sendText(message);
+		public static synchronized void sendText(Session webSocketSession, String message) {
+			webSocketSession.getAsyncRemote().sendText(message);
 		}
 
 		public static synchronized int getOnlineCount() {

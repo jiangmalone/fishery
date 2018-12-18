@@ -52,7 +52,7 @@ public class RealTimeThread extends Thread {
                 WebScoketController.sendText(this.session,obj.toString());
                 try {
                     //一分钟刷新一次
-                    Thread.sleep(60000);
+                    Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

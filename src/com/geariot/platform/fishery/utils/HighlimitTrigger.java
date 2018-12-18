@@ -11,10 +11,11 @@ import com.geariot.platform.fishery.wxutils.WechatSendMessageUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
+@Component
 public class HighlimitTrigger {
 
     private static final Logger log = LogManager.getLogger(HighlimitTrigger.class);

@@ -2421,7 +2421,13 @@ public class EquipmentService {
 								int currentvalue =  Integer.parseInt(response.data.getCurrentValue().toString()) ;	
 								if(currentvalue != 1) {
 									logger.debug("增氧机未打开");
+									logger.debug("准备打开增氧机，进行高限增氧");									
 									WechatSendMessageUtils.sendWechatOnOffMessages("触发溶氧高限，准备打开增氧机", publicOpenID, controllerList.get(0).getDevice_sn());						
+									
+									logger.debug("上下限触发有效性置为false");
+									limit.setValid(false);
+									limitDao.updateLimit(limit);									
+									
 									String text = "KM"+(way+1)+":"+1;
 									int results = CMDUtils.sendStrCmd(divsn,text);							
 									if(results==0) {
